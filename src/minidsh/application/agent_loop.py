@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from minidsh.domain import (
     AgentBudget,
     Event,
+    LatencyBreakdown,
     Message,
     ModelPricing,
     ModelRequest,
@@ -28,12 +29,33 @@ class _RunCounters:
     steps: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
+    cached_input_tokens: int = 0
     cost_usd: float = 0.0
     tool_calls: int = 0
+    model_ms: float = 0.0
+    tool_ms: float = 0.0
+    model_calls: int = 0
 
     @property
     def token_usage(self) -> TokenUsage:
-        return TokenUsage(self.input_tokens, self.output_tokens, self.cost_usd)
+        return TokenUsage(
+            self.input_tokens,
+            self.output_tokens,
+            self.cost_usd,
+            self.cached_input_tokens,
+        )
+
+    def latency(self, total_ms: float) -> LatencyBreakdown:
+        """Attribute end-to-end latency to model, tools, and harness residual."""
+        observed = self.model_ms + self.tool_ms
+        return LatencyBreakdown(
+            model_ms=self.model_ms,
+            tool_ms=self.tool_ms,
+            harness_ms=max(0.0, total_ms - observed),
+            total_ms=total_ms,
+            model_calls=self.model_calls,
+            tool_calls=self.tool_calls,
+        )
 
 
 class AgentLoop:
@@ -114,12 +136,17 @@ class AgentLoop:
                         ],
                     },
                 )
+                model_started = time.monotonic()
                 response = await self._model.complete(request)
+                model_duration_ms = (time.monotonic() - model_started) * 1_000
                 call_usage = response.usage
                 call_cost = self._pricing.cost_usd(call_usage)
                 counters.input_tokens += call_usage.input_tokens
                 counters.output_tokens += call_usage.output_tokens
+                counters.cached_input_tokens += call_usage.cached_input_tokens
                 counters.cost_usd += call_cost
+                counters.model_ms += model_duration_ms
+                counters.model_calls += 1
                 history.append(
                     Message(
                         Role.ASSISTANT,
@@ -145,7 +172,9 @@ class AgentLoop:
                         "tool_call_count": len(response.tool_calls),
                         "input_tokens": response.usage.input_tokens,
                         "output_tokens": response.usage.output_tokens,
+                        "cached_input_tokens": response.usage.cached_input_tokens,
                         "cost_usd": call_cost,
+                        "duration_ms": model_duration_ms,
                     },
                 )
 
@@ -167,6 +196,7 @@ class AgentLoop:
                         break
                     counters.tool_calls += 1
                     observation = await self._tools.execute(call, actual_run_id, step_id)
+                    counters.tool_ms += observation.duration_ms
                     history.append(self._observation_message(observation))
                 if self._reflection_enabled:
                     history.append(
@@ -264,6 +294,7 @@ class AgentLoop:
         failure_reason: str | None = None,
     ) -> RunResult:
         duration_ms = (time.monotonic() - started) * 1_000
+        latency = counters.latency(duration_ms)
         await self._emit(
             "run_finished",
             run_id,
@@ -272,9 +303,11 @@ class AgentLoop:
                 "status": status.value,
                 "steps": counters.steps,
                 "tokens": counters.token_usage.total_tokens,
+                "cached_input_tokens": counters.cached_input_tokens,
                 "cost_usd": counters.cost_usd,
                 "tool_calls": counters.tool_calls,
                 "duration_ms": duration_ms,
+                "latency": latency.to_json(),
                 "failure_reason": failure_reason,
             },
         )
@@ -288,6 +321,7 @@ class AgentLoop:
             duration_ms=duration_ms,
             failure_reason=failure_reason,
             history=tuple(history),
+            latency=latency,
         )
         if self._sessions is not None:
             try:
