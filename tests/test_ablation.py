@@ -176,15 +176,30 @@ def test_comparison_table_has_one_row_per_variant() -> None:
     )
 
     markdown = report.to_markdown()
+    comparison_section = markdown.split("## Pareto trade-off analysis")[0]
     rows = [
         line
-        for line in markdown.splitlines()
+        for line in comparison_section.splitlines()
         if line.startswith("|") and not line.startswith("| ---") and "Variant |" not in line
     ]
 
     assert len(rows) == len(CONTEXT_VARIANTS)
     assert "| full_history |" in markdown
     assert "| symbol_retrieval |" in markdown
+
+
+def test_markdown_always_carries_the_trade_off_section() -> None:
+    report = AblationReport(
+        "suite",
+        tuple(_variant_report(variant, _report(variant.name)) for variant in CONTEXT_VARIANTS),
+    )
+
+    markdown = report.to_markdown()
+
+    assert "## Pareto trade-off analysis" in markdown
+    assert "### Success rate vs Tokens" in markdown
+    assert "### Success rate vs Cost (USD)" in markdown
+    assert "### Success rate vs Steps" in markdown
 
 
 # --- integration --------------------------------------------------------------

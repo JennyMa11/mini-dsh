@@ -98,3 +98,29 @@ async def test_script_file_honours_an_explicit_input_token_count(tmp_path: Path)
     completed = await model.complete(ModelRequest((Message(Role.USER, "x" * 4_000),)))
 
     assert completed.usage == TokenUsage(7, 1)
+
+
+@pytest.mark.asyncio
+async def test_trace_writer_can_own_the_lifetime_of_its_file(tmp_path: Path) -> None:
+    path = tmp_path / "traces" / "run.jsonl"
+    path.parent.mkdir(parents=True)
+    path.write_text('{"stale": true}\n', encoding="utf-8")
+
+    writer = JsonlTraceWriter(path, truncate_on_start=True)
+    await writer.append(Event("run_started", "r1", 0, {"task_length": 3}))
+    await writer.append(Event("run_finished", "r1", 1, {"status": "finished"}))
+
+    lines = path.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 2
+    assert "stale" not in path.read_text(encoding="utf-8")
+
+
+@pytest.mark.asyncio
+async def test_trace_writer_appends_by_default(tmp_path: Path) -> None:
+    path = tmp_path / "run.jsonl"
+    writer = JsonlTraceWriter(path)
+
+    await writer.append(Event("run_started", "r1", 0))
+    await writer.append(Event("run_finished", "r1", 1))
+
+    assert len(path.read_text(encoding="utf-8").splitlines()) == 2

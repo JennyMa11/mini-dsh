@@ -280,6 +280,8 @@ class _ProviderHandler(BaseHTTPRequestHandler):
 
     response_body: ClassVar[dict[str, Any]] = {}
     status_code: ClassVar[int] = 200
+    status_sequence: ClassVar[list[int]] = []
+    call_count: ClassVar[int] = 0
     last_request: ClassVar[dict[str, Any]] = {}
     last_headers: ClassVar[dict[str, str]] = {}
 
@@ -287,8 +289,12 @@ class _ProviderHandler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", "0"))
         type(self).last_request = json.loads(self.rfile.read(length))
         type(self).last_headers = dict(self.headers.items())
+        sequence = type(self).status_sequence
+        index = type(self).call_count
+        status = sequence[index] if index < len(sequence) else type(self).status_code
+        type(self).call_count = index + 1
         payload = json.dumps(type(self).response_body).encode()
-        self.send_response(type(self).status_code)
+        self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(payload)))
         self.end_headers()
@@ -300,6 +306,11 @@ class _ProviderHandler(BaseHTTPRequestHandler):
 
 @pytest.fixture
 def provider() -> Any:
+    _ProviderHandler.status_code = 200
+    _ProviderHandler.status_sequence = []
+    _ProviderHandler.call_count = 0
+    _ProviderHandler.last_request = {}
+    _ProviderHandler.last_headers = {}
     server = ThreadingHTTPServer(("127.0.0.1", 0), _ProviderHandler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
@@ -309,6 +320,14 @@ def provider() -> Any:
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+def _endpoint(provider: Any) -> str:
+    return f"http://127.0.0.1:{provider.server_port}/v1/chat/completions"
+
+
+async def _no_sleep(delay: float) -> None:
+    del delay
 
 
 @pytest.mark.integration
@@ -376,14 +395,98 @@ async def test_openai_compatible_model_sends_tool_schemas(provider: Any) -> None
 async def test_openai_compatible_model_raises_on_provider_failure(provider: Any) -> None:
     _ProviderHandler.status_code = 500
     _ProviderHandler.response_body = {"error": "boom"}
+    delays: list[float] = []
+
+    async def _record(delay: float) -> None:
+        delays.append(delay)
+
     model = OpenAICompatibleModel(
-        endpoint=f"http://127.0.0.1:{provider.server_port}/v1/chat/completions",
+        endpoint=_endpoint(provider),
+        model="test-model",
+        api_key="test-key",
+        max_attempts=3,
+        backoff_seconds=0.25,
+        sleep=_record,
+    )
+
+    with pytest.raises(ModelAdapterError) as captured:
+        await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert captured.value.code == "server_error"
+    assert captured.value.retryable is True
+    assert _ProviderHandler.call_count == 3
+    assert delays == [0.25, 0.5]
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_transient_provider_failure_is_retried_then_succeeds(provider: Any) -> None:
+    _ProviderHandler.status_sequence = [429, 503]
+    _ProviderHandler.response_body = {
+        "choices": [{"message": {"content": "recovered"}, "finish_reason": "stop"}],
+        "usage": {"prompt_tokens": 5, "completion_tokens": 2},
+    }
+    delays: list[float] = []
+
+    async def _record(delay: float) -> None:
+        delays.append(delay)
+
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
+        model="test-model",
+        api_key="test-key",
+        sleep=_record,
+    )
+
+    response = await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert response.content == "recovered"
+    assert _ProviderHandler.call_count == 3
+    assert len(delays) == 2
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_authentication_failure_is_not_retried(provider: Any) -> None:
+    _ProviderHandler.status_code = 401
+    _ProviderHandler.response_body = {"error": "bad key"}
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
+        model="test-model",
+        api_key="wrong",
+        sleep=_no_sleep,
+    )
+
+    with pytest.raises(ModelAdapterError) as captured:
+        await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert captured.value.code == "auth_error"
+    assert captured.value.retryable is False
+    assert _ProviderHandler.call_count == 1
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_prompt_cache_hits_are_reported_separately(provider: Any) -> None:
+    _ProviderHandler.status_code = 200
+    _ProviderHandler.response_body = {
+        "choices": [{"message": {"content": "ok"}, "finish_reason": "stop"}],
+        "usage": {
+            "prompt_tokens": 1000,
+            "completion_tokens": 20,
+            "prompt_tokens_details": {"cached_tokens": 768},
+        },
+    }
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
         model="test-model",
         api_key="test-key",
     )
 
-    with pytest.raises(ModelAdapterError, match="model request failed"):
-        await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+    response = await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert response.usage.cached_input_tokens == 768
+    assert response.usage.billable_input_tokens == 232
 
 
 @pytest.mark.integration
