@@ -1,0 +1,791 @@
+{
+  "ablations": {
+    "core-context": {
+      "manifest": "mini-dsh-core",
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.55485332524404,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "full_history",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "full_history"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 23.903431727085263,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "sliding",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "sliding_window",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "sliding_window"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.163945000618696,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "summary",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "summary_compaction",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "summary_compaction"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.004397519999999999,
+            "average_latency_ms": 25.548971677199006,
+            "average_steps": 4.0,
+            "average_tokens": 1355.12,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.109938,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "retrieval",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "repo_retrieval",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "repo_retrieval"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.004397519999999999,
+            "average_latency_ms": 24.594675130210817,
+            "average_steps": 4.0,
+            "average_tokens": 1355.12,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.109938,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "retrieval_summary",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "retrieval_summary",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "retrieval_summary"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0034704000000000002,
+            "average_latency_ms": 25.680226685944945,
+            "average_steps": 4.0,
+            "average_tokens": 1046.08,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.08676,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "symbol",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "symbol_retrieval",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "symbol_retrieval"
+        }
+      ]
+    },
+    "core-permission": {
+      "manifest": "mini-dsh-core",
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.55209008185193,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 0,
+            "name": "no_retry",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "no_retry"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.025290003046393,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "single_retry",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "single_retry"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.00229116,
+            "average_latency_ms": 23.905243452172726,
+            "average_steps": 4.0,
+            "average_tokens": 653.0,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.057279,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": false,
+            "max_retries": 1,
+            "name": "basic_feedback",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "basic_feedback"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.96771172620356,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "detailed_feedback",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "detailed_feedback"
+        }
+      ]
+    },
+    "core-tool_output": {
+      "manifest": "mini-dsh-core",
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.50127660529688,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": false,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "unbounded_output",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 200000
+          },
+          "name": "unbounded_output"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 25.14260163763538,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": false,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "bounded_output",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "bounded_output"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0025818000000000004,
+            "average_latency_ms": 24.366310036275536,
+            "average_steps": 4.0,
+            "average_tokens": 749.88,
+            "average_tool_calls": 3.32,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 25,
+            "total_cost_usd": 0.064545,
+            "unsafe_blocked": 0
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "bounded_output_artifact",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "bounded_output_artifact"
+        }
+      ]
+    },
+    "stress-context": {
+      "manifest": "mini-dsh-stress",
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.031674,
+            "average_latency_ms": 32.12366666411981,
+            "average_steps": 10.0,
+            "average_tokens": 9534.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.095022,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "full_history",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "full_history"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.030015,
+            "average_latency_ms": 31.216652656439692,
+            "average_steps": 10.0,
+            "average_tokens": 8981.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.090045,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "sliding",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "sliding_window",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "sliding_window"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.030773,
+            "average_latency_ms": 31.072778006394703,
+            "average_steps": 10.0,
+            "average_tokens": 9233.666666666666,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.092319,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "summary",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "summary_compaction",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "summary_compaction"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.040923,
+            "average_latency_ms": 39.15206965757534,
+            "average_steps": 10.0,
+            "average_tokens": 12617.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.122769,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "retrieval",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "repo_retrieval",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "repo_retrieval"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.040022999999999996,
+            "average_latency_ms": 38.81898599987229,
+            "average_steps": 10.0,
+            "average_tokens": 12317.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.120069,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "retrieval_summary",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "retrieval_summary",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "retrieval_summary"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.030773,
+            "average_latency_ms": 35.68163865323489,
+            "average_steps": 10.0,
+            "average_tokens": 9233.666666666666,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.092319,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "symbol",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "symbol_retrieval",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "symbol_retrieval"
+        }
+      ]
+    },
+    "stress-permission": {
+      "manifest": "mini-dsh-stress",
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.031674,
+            "average_latency_ms": 32.16369436510528,
+            "average_steps": 10.0,
+            "average_tokens": 9534.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.095022,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 0,
+            "name": "no_retry",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "no_retry"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.031674,
+            "average_latency_ms": 31.16351435892284,
+            "average_steps": 10.0,
+            "average_tokens": 9534.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.095022,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "single_retry",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "single_retry"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.028939999999999997,
+            "average_latency_ms": 33.4792363185746,
+            "average_steps": 10.0,
+            "average_tokens": 8622.666666666666,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.08682,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": false,
+            "max_retries": 1,
+            "name": "basic_feedback",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "basic_feedback"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.031674,
+            "average_latency_ms": 31.226958342206974,
+            "average_steps": 10.0,
+            "average_tokens": 9534.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.095022,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "detailed_feedback",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "detailed_feedback"
+        }
+      ]
+    },
+    "stress-tool_output": {
+      "manifest": "mini-dsh-stress",
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.09948,
+            "average_latency_ms": 34.176763360543795,
+            "average_steps": 10.0,
+            "average_tokens": 32136.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.29844,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": false,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "unbounded_output",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 200000
+          },
+          "name": "unbounded_output"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.031606,
+            "average_latency_ms": 31.39679168816656,
+            "average_steps": 10.0,
+            "average_tokens": 9511.333333333334,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.09481800000000001,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": false,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "bounded_output",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "bounded_output"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.031674,
+            "average_latency_ms": 31.373916678906728,
+            "average_steps": 10.0,
+            "average_tokens": 9534.0,
+            "average_tool_calls": 9.0,
+            "permission_denied": 1,
+            "retry_success_rate": 0.0,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.095022,
+            "unsafe_blocked": 4
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "bounded_output_artifact",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "bounded_output_artifact"
+        }
+      ]
+    }
+  },
+  "baselines": {
+    "core": {
+      "aggregate": {
+        "average_cost_usd": 0.0025818000000000004,
+        "average_latency_ms": 23.48355327732861,
+        "average_steps": 4.0,
+        "average_tokens": 749.88,
+        "average_tool_calls": 3.32,
+        "permission_denied": 0,
+        "retry_success_rate": 0.0,
+        "success_rate": 1.0,
+        "tasks": 25,
+        "total_cost_usd": 0.064545,
+        "unsafe_blocked": 0
+      },
+      "categories": {
+        "bug-fix": 5,
+        "code-understanding": 4,
+        "feature": 4,
+        "multi-file": 4,
+        "refactor": 4,
+        "test-repair": 4
+      },
+      "failure_types": {
+        "none": 25
+      },
+      "schema_version": "2.0"
+    },
+    "smoke": {
+      "aggregate": {
+        "average_cost_usd": 0.00108,
+        "average_latency_ms": 28.47654203651473,
+        "average_steps": 4.0,
+        "average_tokens": 208.0,
+        "average_tool_calls": 3.0,
+        "permission_denied": 0,
+        "retry_success_rate": 0.0,
+        "success_rate": 1.0,
+        "tasks": 1,
+        "total_cost_usd": 0.00108,
+        "unsafe_blocked": 0
+      },
+      "categories": {
+        "general": 1
+      },
+      "failure_types": {
+        "none": 1
+      },
+      "schema_version": "1.0"
+    },
+    "stress": {
+      "aggregate": {
+        "average_cost_usd": 0.031674,
+        "average_latency_ms": 45.27248634258285,
+        "average_steps": 10.0,
+        "average_tokens": 9534.0,
+        "average_tool_calls": 9.0,
+        "permission_denied": 1,
+        "retry_success_rate": 0.0,
+        "success_rate": 1.0,
+        "tasks": 3,
+        "total_cost_usd": 0.095022,
+        "unsafe_blocked": 4
+      },
+      "categories": {
+        "large-output": 1,
+        "long-history": 1,
+        "permission": 1
+      },
+      "failure_types": {
+        "none": 3
+      },
+      "schema_version": "2.0"
+    }
+  },
+  "model": "scripted",
+  "pricing_usd_per_million": {
+    "input": 3.0,
+    "output": 15.0
+  },
+  "seed": 0
+}
