@@ -207,6 +207,16 @@ def _add_model_options(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument(
+        "--thinking",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "provider chain-of-thought; defaults to the profile's setting. "
+            "DeepSeek ignores temperature while thinking is on, so leaving it off "
+            "is what makes temperature=0 mean anything"
+        ),
+    )
+    parser.add_argument(
         "--max-attempts",
         type=int,
         default=4,
@@ -339,13 +349,15 @@ def _apply_model_overrides(profile: ModelProfile, args: argparse.Namespace) -> M
     model = getattr(args, "model", None)
     endpoint = getattr(args, "endpoint", None)
     api_key_env = getattr(args, "api_key_env", None)
-    if model is None and endpoint is None and api_key_env is None:
+    thinking = getattr(args, "thinking", None)
+    if model is None and endpoint is None and api_key_env is None and thinking is None:
         return profile
     return replace(
         profile,
         model=str(model) if model else profile.model,
         endpoint=str(endpoint) if endpoint else profile.endpoint,
         api_key_env=str(api_key_env) if api_key_env else profile.api_key_env,
+        thinking=profile.thinking if thinking is None else bool(thinking),
     )
 
 
@@ -551,7 +563,7 @@ async def _benchmark(args: argparse.Namespace) -> int:
         output.parent / f"{output.stem}-artifacts",
         verification_allowlist=verification_allowlist,
         repeats=int(args.repeat),
-        model_label=selection.label if selection.is_real_provider else None,
+        model=selection.describe(),
     )
     report = await runner.run(manifest)
     markdown = Path(args.markdown) if args.markdown is not None else output.with_suffix(".md")
@@ -587,7 +599,7 @@ async def _ablation(args: argparse.Namespace) -> int:
             output.parent / f"{output.stem}-{variant.name}",
             verification_allowlist=verification_allowlist,
             repeats=int(args.repeat),
-            model_label=selection.label if selection.is_real_provider else None,
+            model=selection.describe(),
         )
 
     report: AblationReport = await AblationRunner(factory).run(manifest, variants)

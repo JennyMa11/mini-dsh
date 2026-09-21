@@ -392,6 +392,100 @@ async def test_openai_compatible_model_sends_tool_schemas(provider: Any) -> None
 
 @pytest.mark.integration
 @pytest.mark.asyncio
+async def test_thinking_is_omitted_unless_the_provider_declares_it(provider: Any) -> None:
+    """A provider that does not know the parameter must never receive it.
+
+    ``thinking`` is a DeepSeek extension, and stricter OpenAI-compatible gateways
+    reject unknown top-level fields, so its absence has to be expressible.
+    """
+    _ProviderHandler.response_body = {"choices": [{"message": {"content": "ok"}}]}
+    model = OpenAICompatibleModel(endpoint=_endpoint(provider), model="m", api_key="k")
+
+    await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert "thinking" not in _ProviderHandler.last_request
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("toggle", "expected"),
+    [("on", "enabled"), ("off", "disabled")],
+)
+async def test_thinking_toggle_is_sent_verbatim(provider: Any, toggle: str, expected: str) -> None:
+    """The harness turns thinking OFF by default because it disables temperature."""
+    _ProviderHandler.response_body = {"choices": [{"message": {"content": "ok"}}]}
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
+        model="m",
+        api_key="k",
+        thinking=toggle == "on",
+    )
+
+    await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert _ProviderHandler.last_request["thinking"] == {"type": expected}
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_reasoning_content_is_parsed_and_echoed_back(provider: Any) -> None:
+    """DeepSeek answers 400 if a tool-carrying request drops earlier reasoning.
+
+    So the chain-of-thought is not decoration: it has to survive the round trip
+    through the domain Message and come back out in the next request body.
+    """
+    _ProviderHandler.response_body = {
+        "choices": [
+            {
+                "message": {
+                    "content": "let me look",
+                    "reasoning_content": "the user wants a file read",
+                    "tool_calls": [
+                        {
+                            "id": "c1",
+                            "function": {"name": "read_file", "arguments": '{"path": "a"}'},
+                        }
+                    ],
+                },
+                "finish_reason": "tool_calls",
+            }
+        ],
+        "usage": {"prompt_tokens": 5, "completion_tokens": 2},
+    }
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider), model="m", api_key="k", thinking=True
+    )
+
+    response = await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    assert response.reasoning_content == "the user wants a file read"
+
+    # Now send that turn back the way the agent loop does, and check it survives.
+    assistant = Message(
+        Role.ASSISTANT,
+        response.content,
+        tool_calls=response.tool_calls,
+        reasoning_content=response.reasoning_content,
+    )
+    await model.complete(
+        ModelRequest(
+            (
+                Message(Role.USER, "hi"),
+                assistant,
+                Message(Role.TOOL, "contents", tool_call_id="c1"),
+            ),
+            (ToolDefinition("read_file", "read", {"type": "object"}),),
+        )
+    )
+
+    sent = _ProviderHandler.last_request["messages"]
+    assert sent[1]["reasoning_content"] == "the user wants a file read"
+    assert sent[0].get("reasoning_content") is None
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
 async def test_openai_compatible_model_raises_on_provider_failure(provider: Any) -> None:
     _ProviderHandler.status_code = 500
     _ProviderHandler.response_body = {"error": "boom"}

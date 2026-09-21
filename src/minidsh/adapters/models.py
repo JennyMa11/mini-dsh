@@ -148,6 +148,7 @@ class _ProviderCall(BaseModel):
 class _ProviderMessage(BaseModel):
     content: str | None = None
     tool_calls: list[_ProviderCall] = Field(default_factory=list)
+    reasoning_content: str | None = None
 
 
 class _ProviderChoice(BaseModel):
@@ -197,6 +198,7 @@ class OpenAICompatibleModel:
         backoff_seconds: float = 0.5,
         max_backoff_seconds: float = 8.0,
         sleep: Callable[[float], Awaitable[None]] | None = None,
+        thinking: bool | None = None,
     ) -> None:
         if not endpoint.startswith(("https://", "http://")):
             msg = "model endpoint must be an HTTP(S) URL"
@@ -216,6 +218,7 @@ class OpenAICompatibleModel:
         self._backoff_seconds = backoff_seconds
         self._max_backoff_seconds = max_backoff_seconds
         self._sleep = sleep or asyncio.sleep
+        self._thinking = thinking
 
     @property
     def model(self) -> str:
@@ -238,12 +241,17 @@ class OpenAICompatibleModel:
         growth = self._backoff_seconds * float(2 ** (attempt - 1))
         return float(min(growth, self._max_backoff_seconds))
 
-    def _complete_sync(self, request: ModelRequest) -> ModelResponse:
+    def _build_payload(self, request: ModelRequest) -> dict[str, object]:
+        """Return the OpenAI-compatible request body for one model call."""
         payload: dict[str, object] = {
             "model": self._model,
             "temperature": self._temperature,
             "messages": [self._message_payload(message) for message in request.messages],
         }
+        if self._thinking is not None:
+            # DeepSeek-specific.  Sent only for providers that declare it, because
+            # an unknown top-level parameter is rejected by stricter gateways.
+            payload["thinking"] = {"type": "enabled" if self._thinking else "disabled"}
         if request.tools:
             payload["tools"] = [
                 {
@@ -256,7 +264,10 @@ class OpenAICompatibleModel:
                 }
                 for tool in request.tools
             ]
-        body = json.dumps(payload).encode()
+        return payload
+
+    def _complete_sync(self, request: ModelRequest) -> ModelResponse:
+        body = json.dumps(self._build_payload(request)).encode()
         headers = {"Content-Type": "application/json"}
         if self._api_key:
             headers["Authorization"] = f"Bearer {self._api_key}"
@@ -313,15 +324,16 @@ class OpenAICompatibleModel:
                 )
             calls.append(ToolCall(call.id, call.function.name, arguments))
         return ModelResponse(
-            choice.message.content or "",
-            tuple(calls),
-            choice.finish_reason,
-            TokenUsage(
+            content=choice.message.content or "",
+            tool_calls=tuple(calls),
+            finish_reason=choice.finish_reason,
+            usage=TokenUsage(
                 parsed.usage.prompt_tokens,
                 parsed.usage.completion_tokens,
                 0.0,
                 parsed.usage.cached_tokens,
             ),
+            reasoning_content=choice.message.reasoning_content or "",
         )
 
     @staticmethod
@@ -347,6 +359,8 @@ class OpenAICompatibleModel:
     @staticmethod
     def _message_payload(message: Message) -> dict[str, object]:
         payload: dict[str, object] = {"role": message.role.value, "content": message.content}
+        if message.reasoning_content is not None:
+            payload["reasoning_content"] = message.reasoning_content
         if message.name is not None:
             payload["name"] = message.name
         if message.role is Role.TOOL and message.tool_call_id is not None:

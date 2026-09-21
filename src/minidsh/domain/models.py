@@ -79,6 +79,10 @@ class Message:
     name: str | None = None
     tool_call_id: str | None = None
     tool_calls: tuple[ToolCall, ...] = ()
+    # Provider chain-of-thought, when the provider returns one.  DeepSeek requires
+    # it to be echoed back on every request that carries ``tools``, and rejects the
+    # request with a 400 otherwise; other providers simply never set it.
+    reasoning_content: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -230,6 +234,7 @@ class ModelResponse:
     tool_calls: tuple[ToolCall, ...] = ()
     finish_reason: str = "stop"
     usage: TokenUsage = field(default_factory=TokenUsage)
+    reasoning_content: str = ""
 
 
 @dataclass(frozen=True, slots=True)

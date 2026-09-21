@@ -30,6 +30,11 @@ class ModelProfile:
     context_window: int = 128_000
     requires_api_key: bool = True
     supports_tool_calling: bool = True
+    # Chain-of-thought as a request-level toggle.  Declared separately from
+    # ``thinking`` so that a provider which does not understand the parameter
+    # never receives it, while a provider that does can still default it off.
+    supports_thinking: bool = False
+    thinking: bool = False
     pricing: ModelPricing | None = None
     pricing_source: str = ""
     pricing_as_of: str = ""
@@ -64,35 +69,56 @@ class ModelProfile:
             "pricing_declared": self.pricing is not None,
             "pricing_source": self.pricing_source,
             "pricing_as_of": self.pricing_as_of,
+            "thinking": self.thinking if self.supports_thinking else None,
+            "temperature_effective": not (self.supports_thinking and self.thinking),
         }
 
 
 _DEEPSEEK_PRICING_NOTE = (
-    "DeepSeek bills in CNY on a peak/off-peak schedule and revises rates frequently. "
-    "Read the current rates from the official pricing page and pass them explicitly "
-    "(--input-usd-per-million / --output-usd-per-million / --cached-input-usd-per-million) "
-    "before quoting any cost number."
+    "DeepSeek publishes USD rates on a peak/off-peak schedule: off-peak is half of "
+    "peak, and peak hours are 01:00-04:00 and 06:00-10:00 UTC Monday-Friday, "
+    "excluding Chinese public holidays. A single rate card therefore cannot "
+    "describe a run that crosses a tariff boundary, so the rates are deliberately "
+    "not pinned here. As of 2026-09-21 the official page lists deepseek-flash at "
+    "$0.003 cache-hit input / $0.15 cache-miss input / $0.6 output per 1M tokens "
+    "off-peak (double at peak), and deepseek-v4-pro at $0.022 / $0.66 / $1.98. "
+    "Read https://api-docs.deepseek.com/quick_start/pricing and pass the rates "
+    "explicitly (--input-usd-per-million / --output-usd-per-million / "
+    "--cached-input-usd-per-million) before quoting any cost number."
+)
+
+_DEEPSEEK_THINKING_NOTE = (
+    "Thinking is ON by default upstream and the harness turns it off: in thinking "
+    "mode the API ignores temperature, so a run cannot be pinned to temperature=0 "
+    "while it is on. Turn it back on with --thinking, which also makes the harness "
+    "echo reasoning_content back on every tool-carrying request (the API rejects "
+    "the request with a 400 otherwise)."
 )
 
 BUILTIN_PROFILES: dict[str, ModelProfile] = {
     "deepseek": ModelProfile(
         name="deepseek",
-        endpoint="https://api.deepseek.com/v1/chat/completions",
-        model="deepseek-chat",
+        endpoint="https://api.deepseek.com/chat/completions",
+        model="deepseek-flash",
         api_key_env="DEEPSEEK_API_KEY",
-        context_window=128_000,
+        context_window=1_000_000,
+        supports_thinking=True,
+        thinking=False,
         pricing=None,
         pricing_source=_DEEPSEEK_PRICING_NOTE,
+        notes=_DEEPSEEK_THINKING_NOTE,
     ),
-    "deepseek-reasoner": ModelProfile(
-        name="deepseek-reasoner",
-        endpoint="https://api.deepseek.com/v1/chat/completions",
-        model="deepseek-reasoner",
+    "deepseek-v4-pro": ModelProfile(
+        name="deepseek-v4-pro",
+        endpoint="https://api.deepseek.com/chat/completions",
+        model="deepseek-v4-pro",
         api_key_env="DEEPSEEK_API_KEY",
-        context_window=128_000,
+        context_window=1_000_000,
+        supports_thinking=True,
+        thinking=False,
         pricing=None,
         pricing_source=_DEEPSEEK_PRICING_NOTE,
-        notes="Reasoning models reject some sampling parameters and are much slower per step.",
+        notes=_DEEPSEEK_THINKING_NOTE + " Roughly 3x the Flash price.",
     ),
     "openai": ModelProfile(
         name="openai",
@@ -139,6 +165,8 @@ def resolve_profile(name: str, *, environ: Mapping[str, str] | None = None) -> M
         context_window=profile.context_window,
         requires_api_key=profile.requires_api_key,
         supports_tool_calling=profile.supports_tool_calling,
+        supports_thinking=profile.supports_thinking,
+        thinking=profile.thinking,
         pricing=profile.pricing,
         pricing_source=profile.pricing_source,
         pricing_as_of=profile.pricing_as_of,
@@ -169,6 +197,9 @@ def build_provider_model(
         timeout_seconds=timeout_seconds,
         temperature=temperature,
         max_attempts=max_attempts,
+        # None means "this provider has no such parameter", which keeps the field
+        # out of the request body entirely rather than sending it as false.
+        thinking=profile.thinking if profile.supports_thinking else None,
     )
 
 

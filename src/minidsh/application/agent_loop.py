@@ -149,6 +149,10 @@ class AgentLoop:
                         Role.ASSISTANT,
                         response.content,
                         tool_calls=response.tool_calls,
+                        # Kept so it can be echoed back on the next request: DeepSeek
+                        # rejects a tool-carrying request with a 400 if the reasoning
+                        # from earlier turns is missing.
+                        reasoning_content=response.reasoning_content or None,
                     )
                 )
                 await self._emit(
