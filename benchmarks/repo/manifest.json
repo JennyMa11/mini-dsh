@@ -1,0 +1,276 @@
+{
+  "name": "mini-dsh-repo",
+  "schema_version": "2.0",
+  "tasks": [
+    {
+      "id": "repo-cross-file-bug",
+      "goal": "Running `python -m unittest discover -s .` fails. Find the defect, fix it, and re-run the suite until every test passes.",
+      "workspace": "fixtures/repo-cross-file-bug",
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "repo-level",
+        "cross-file",
+        "bug-fix"
+      ],
+      "category": "repo-bug-fix",
+      "repo_commit": "sha256:c05f674c10e3b53e",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "repo-callsite-contract",
+      "goal": "`python -m unittest discover -s .` fails. One helper does not honour the contract its callers rely on. Fix the helper so the whole suite passes, and check the call sites before changing anything.",
+      "workspace": "fixtures/repo-callsite-contract",
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "repo-level",
+        "callsite",
+        "contract"
+      ],
+      "category": "repo-callsite",
+      "repo_commit": "sha256:881dbb02c3e3fdff",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "repo-failing-test-localization",
+      "goal": "Some tests in this project fail. Locate the module responsible, fix it, and confirm the entire suite passes with `python -m unittest discover -s .`.",
+      "workspace": "fixtures/repo-failing-test-localization",
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "repo-level",
+        "localization",
+        "test-repair"
+      ],
+      "category": "repo-test-repair",
+      "repo_commit": "sha256:752bf35834ab057a",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "repo-feature-with-tests",
+      "goal": "Implement the two unimplemented functions so that `python -m unittest discover -s .` passes, including the round-trip test.",
+      "workspace": "fixtures/repo-feature-with-tests",
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "repo-level",
+        "feature",
+        "tests-provided"
+      ],
+      "category": "repo-feature",
+      "repo_commit": "sha256:d6702aa5c6a53642",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "repo-config-change",
+      "goal": "The suite expects a `prod` configuration profile that does not exist yet. Add it with the values the tests require and make the suite pass.",
+      "workspace": "fixtures/repo-config-change",
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "repo-level",
+        "config",
+        "multi-file"
+      ],
+      "category": "repo-config",
+      "repo_commit": "sha256:a48f7b7f2562edef",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "repo-error-recovery",
+      "goal": "`python -m unittest discover -s .` fails. The obvious one-line fix breaks a different test, so work out the intended contract of each module and satisfy the full suite.",
+      "workspace": "fixtures/repo-error-recovery",
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "repo-level",
+        "error-recovery",
+        "multi-round"
+      ],
+      "category": "repo-error-recovery",
+      "repo_commit": "sha256:328d756505322671",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    }
+  ]
+}
