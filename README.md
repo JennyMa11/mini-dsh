@@ -4,11 +4,11 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 它不是一个新模型，也不是一个产品级 Coding Agent。它是一台**可替换、可观测、可复现**的 Harness：模型、工具、Context、Session、权限与事件总线全部走端口，核心 Loop 不依赖任何厂商 SDK、Shell 或文件系统细节，因此可以拿来做单变量消融实验。
 
-- 版本：`0.2.0`（Apache-2.0）
+- 版本：`0.3.0`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：39 个源码模块、14 个测试模块、186 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
+- 规模：39 个源码模块、14 个测试模块、194 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
 
-> `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。scripted 基线仍然可复现，但"模型能力"结论必须来自 `repo` 套件。
+> `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。scripted 基线仍然可复现，但"模型能力"结论只能来自 `repo` 套件。
 
 ---
 
@@ -165,7 +165,7 @@ export DEEPSEEK_API_KEY=...
 uv run mini-dsh run "Implement the requested change" \
   --provider openai-compatible \
   --model-profile deepseek \
-  --model deepseek-chat \
+  --model deepseek-flash \
   --workspace /path/to/repo \
   --context retrieval_summary \
   --input-usd-per-million 0.0 \
@@ -222,6 +222,8 @@ uv run mini-dsh run "Fix the failing tests" \
 
 ## 实验结果
 
+### scripted 基线（Harness 正确性）
+
 环境：`scripted` 模型（确定性，无网络）、seed `0`、定价 $3 / $15 per million tokens（输入 / 输出）。原始报告与 Trace 归档在 [`docs/results/`](docs/results/)，汇总见 [`docs/results/summary.json`](docs/results/summary.json)。
 
 **基线**
@@ -265,10 +267,40 @@ uv run mini-dsh run "Fix the failing tests" \
 - **Token 差异是可信的**：Harness 自己测量送入模型的 Context，脚本化响应不预置 Token 数；同一任务换策略即换输入。同一命令重复运行得到逐字节相同的读数。
 - **成本差异直接跟随 Token**：`unbounded_output` 比 `bounded_output` 贵 3.38 倍，说明输出上限是成本杠杆而不是正确性杠杆。
 - **检索类策略在长历史上更贵**：`repo_retrieval` 比 `sliding_window` 多 40% Token，因为它把相关文件重新注入 Context；`symbol_retrieval` 因为只切 AST 符号体，比 `repo_retrieval` 便宜 27%。
-- **成功率恒为 100% 是设计使然**：脚本化模型保证步骤可预测，这一列校验的是 Harness 链路完整性（Patch 生效、判据可执行、状态机不误判），不是模型能力。要测能力必须换成真实 provider 并接受成功率波动。
+- **成功率恒为 100% 是设计使然**：脚本化模型保证步骤可预测，这一列校验的是 Harness 链路完整性（Patch 生效、判据可执行、状态机不误判），不是模型能力。要测能力必须换成真实 provider 并接受成功率波动——真实 provider 下的实测见下一节。
 - **`denied=1 / blocked=4`** 只在 `stress` 出现，正是 `stress-denied-action` 的设计意图：越权写入、`curl`、`rm -rf`、密钥读取与 `../` 逃逸都被策略层拦下并计入统计。
 - **`core` 上 `tool_output` 消融无差异**（三个变体同为 749.9 Token）：该套件没有大输出任务，这组对照在 `core` 上不可分辨——这正是必须造 `stress` 套件的原因。
 - **`stress-denied-action` 的 `denied=1 / blocked=4` 不会让它被归类为失败**：被拒绝的动作随后被合法工具绕过了，因此分类法把它判为 `success` 层。拒绝是"Harness 按规格工作"的证据，不是病因——这条规则见 [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)。
+
+### 真实模型基线（`repo` 套件）
+
+上面整张表都是 Harness 正确性的证据，不是模型能力的证据。下表是同一套 Harness 换成真实 provider 后的实测值。原始报告与 Trace 归档在 [`docs/results/repo-real.md`](docs/results/repo-real.md)，机器可读汇总见 [`docs/results/summary.json`](docs/results/summary.json) 的 `real_model` 块。
+
+<!-- real-model-results:start -->
+条件：`deepseek-flash` · thinking 关闭（`temperature_effective: true`，即 `temperature=0` 真正生效）· 每任务重复 3 次（逐任务交错采样）· off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens（输入 / 输出 / 缓存命中）
+
+| 指标 | 实测值 |
+| --- | --- |
+| 成功率 | 100%（18/18） |
+| `pass@k` | 100% |
+| 平均步数 | 6.61 |
+| 平均 Token | 19,132 |
+| 缓存输入占比 | 86% |
+| 平均延迟 | 6,410.1 ms（model 6,290.6 / tool 103.1 / harness 16.4） |
+| 总成本 | $0.016865 |
+| 每次成功成本 | $0.000937 |
+| 被拦截的危险动作 | 20 |
+<!-- real-model-results:end -->
+
+失败层分解是 `success 18 / harness 0 / agent 0 / environment 0`；`repeat_variance` 的成功率极差 `0.00`，Token 极差 15%。
+
+**这个 100% 只说明这么多**：
+
+- **样本极小，且不是独立评测。** 6 个任务 × 3 次 = 18 次运行；任务由写 Harness 的同一个人构造。它能排除的是"多轮工具循环根本跑不起来"这类整体性失败（见下一条），不能用来论证模型在真实仓库上的能力。
+- **它顺带排除了一个真实的整体性失败**：DeepSeek 上游默认开启 thinking，而 thinking 模式下 API 会忽略 `temperature`、且要求历史 `reasoning_content` 原样回传（否则 400）。这个缺陷是第一次真实运行时才暴露的，修完之后 18 次运行全部通过。
+- **三个与成功率无关、但只有真实 provider 才能测到的数字**：Harness 自身只占墙钟的 **0.26%**（16.4 ms / 6,410.1 ms），其余全是 provider 往返；**86% 的输入 Token 命中 prompt cache**，这是长上下文策略在生产中是否付得起的决定性数字；**每次成功成本 $0.000937**，比"更便宜但更容易失败"的变体更有决策价值。
+- **20 次拦截全部是 `ls` / `find` 未进 allowlist**（本次只放行了 `python`）。按分类法它们落在 `success` 层：Agent 改用 `read_file` / `search` 绕过后仍然全部通过。这既实测了"拒绝可观测"，也说明这次运行里 Agent 少了它本来会伸手去拿的 shell 命令——一个诚实但可控的配置代价。
+- **完整性检查**：18 条 Trace 里每次运行的写入都落在目标源码文件上（`shop/pricing.py`、`textkit/normalize.py` + `textkit/slugify.py` 等），**对任何测试文件的写入为 0**。成功率不是靠改测试拿到的。
 
 ## 真实模型评测
 
@@ -278,34 +310,40 @@ scripted 套件回答的是"Harness 是否按承诺工作"，不是"模型是否
 
 | Profile | Endpoint | 凭据变量 | 价目 |
 | --- | --- | --- | --- |
-| `deepseek` / `deepseek-reasoner` | `api.deepseek.com/v1/chat/completions` | `DEEPSEEK_API_KEY` | 必须显式声明 |
+| `deepseek`（`deepseek-flash`） | `api.deepseek.com/chat/completions` | `DEEPSEEK_API_KEY` | 必须显式声明 |
+| `deepseek-v4-pro` | `api.deepseek.com/chat/completions` | `DEEPSEEK_API_KEY` | 必须显式声明 |
 | `openai` | `api.openai.com/v1/chat/completions` | `OPENAI_API_KEY` | 必须显式声明 |
 | `ollama` | `127.0.0.1:11434/v1/chat/completions` | 无需 | 已声明为免费 |
 
+**DeepSeek 的 thinking 默认被关掉**，这不是省事而是为了可复现：thinking 模式下 API 会**忽略 `temperature`**，所以开着它 `--temperature 0` 就形同虚设。要用 `--thinking` 显式打开，harness 会同时把 `reasoning_content` 在每次带 `tools` 的请求里回传（不回传 API 会直接返回 400）。
+
 ```bash
 export DEEPSEEK_API_KEY=...
-export MINIDSH_MODEL=deepseek-chat
 
-# 单任务 + 完整 Trace
+# 单任务 + 完整 Trace（thinking 关闭，temperature=0 真正生效）
 uv run mini-dsh run "run the tests and fix the failure" \
   --workspace /path/to/repo --model-profile deepseek \
-  --input-usd-per-million <in> --output-usd-per-million <out> \
+  --input-usd-per-million 0.15 --output-usd-per-million 0.6 \
+  --cached-input-usd-per-million 0.003 \
   --allow-write --allow-shell --allow-command python --trace /tmp/run.jsonl
 
-# 真实模型套件：每个任务重复 3 次
+# 真实模型套件：每个任务重复 3 次（README 上那张表的来源）
 uv run mini-dsh benchmark benchmarks/repo/manifest.json \
   --model-profile deepseek --repeat 3 \
-  --input-usd-per-million <in> --output-usd-per-million <out> \
-  --allow-write --allow-shell --allow-command python \
-  --verify-command python --output benchmark-results/real-repo.json
+  --input-usd-per-million 0.15 --output-usd-per-million 0.6 \
+  --cached-input-usd-per-million 0.003 \
+  --allow-write --allow-shell --verify-command python \
+  --output benchmark-results/repo-real.json
 
 # 离线重渲染报告 + Pareto 分析，不重新调用模型
-uv run mini-dsh report benchmark-results/real-repo.json
+uv run mini-dsh report benchmark-results/repo-real.json
 
 # 逐步回放 / 对比两条 Trace
-uv run mini-dsh trace replay benchmark-results/real-repo-artifacts/traces/repo-cross-file-bug.jsonl
+uv run mini-dsh trace replay benchmark-results/repo-real-artifacts/traces/repo-cross-file-bug.jsonl
 uv run mini-dsh trace diff traces/a.jsonl traces/b.jsonl --left-label full_history --right-label repo_retrieval
 ```
+
+**报告会把自己的条件写进去。** 费率是 off-peak 的 $0.15 / $0.6 / $0.003 per 1M tokens；换一个时段或换一个模型，同一份报告里就会出现另一组成本数字，所以 `repo-real.json` 的 `model` 块记录 profile、endpoint、thinking 开关、`temperature_effective` 与显式费率，`docs/results/repo-real.md` 的 "Model and rate card" 章节把它们一并呈现。**归档要在重跑之前做**：报告与 Trace 是原地覆盖的，重跑一次就会冲掉上一次的原始产物。
 
 一个真实 provider 如果没有声明价目，会**拒绝运行**而不是报告 `$0`：零价目和未声明价目无法区分，所以"是否已声明"被显式跟踪。本地权重（`ollama`）声明了免费价目因而通过；付费 provider 未声明则报错，`--allow-unpriced` 是显式的逃生口。
 
@@ -367,7 +405,7 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 53 个文件上无错误、186 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 53 个文件上无错误、194 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 

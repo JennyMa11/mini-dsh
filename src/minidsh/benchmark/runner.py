@@ -6,9 +6,10 @@ import asyncio
 import json
 import shutil
 import tempfile
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import cast
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -213,13 +214,35 @@ class _TaskStats:
             self.unsafe_blocked += 1
 
 
+def _flatten_conditions(prefix: str, payload: Mapping[str, object]) -> list[str]:
+    """Render nested conditions as flat ``a.b: value`` bullets.
+
+    Nested one level because the two facts a reader needs first — which model,
+    which rate card — live at different depths, and a single nested JSON blob
+    makes them equally hard to find.
+    """
+    rows: list[str] = []
+    for key in sorted(payload):
+        name = f"{prefix}.{key}" if prefix else key
+        value = payload[key]
+        if isinstance(value, dict):
+            rows.extend(_flatten_conditions(name, cast("dict[str, object]", value)))
+        else:
+            rows.append(f"- `{name}`: {json.dumps(value, sort_keys=True)}")
+    return rows
+
+
 @dataclass(frozen=True, slots=True)
 class BenchmarkReport:
-    """Task outcomes plus computed aggregate metrics."""
+    """Task outcomes, computed aggregate metrics, and the conditions they held under."""
 
     name: str
     schema_version: str
     results: tuple[TaskMetrics, ...]
+    # Which model and which rate card produced these numbers.  A cost figure
+    # without its tariff is not a measurement, so the conditions travel inside
+    # the report instead of living in a shell history.
+    model: dict[str, object] | None = None
 
     def aggregate(self) -> dict[str, float | int]:
         """Compute comparable success, cost, and latency metrics over all runs."""
@@ -334,21 +357,23 @@ class BenchmarkReport:
 
     def to_json(self) -> str:
         """Serialize a stable machine-readable report."""
-        return json.dumps(
-            {
-                "name": self.name,
-                "schema_version": self.schema_version,
-                "aggregate": self.aggregate(),
-                "repeat_variance": self.repeat_variance(),
-                "failure_types": self.failure_type_counts(),
-                "failure_categories": self.failure_category_counts(),
-                "failure_layers": self.failure_layer_counts(),
-                "categories": self.category_counts(),
-                "results": [asdict(result) for result in self.results],
-            },
-            indent=2,
-            sort_keys=True,
-        )
+        payload: dict[str, object] = {
+            "name": self.name,
+            "schema_version": self.schema_version,
+            "aggregate": self.aggregate(),
+            "repeat_variance": self.repeat_variance(),
+            "failure_types": self.failure_type_counts(),
+            "failure_categories": self.failure_category_counts(),
+            "failure_layers": self.failure_layer_counts(),
+            "categories": self.category_counts(),
+            "results": [asdict(result) for result in self.results],
+        }
+        if self.model is not None:
+            # Omitted rather than written as null when unknown: an absent
+            # condition means "not recorded", which is not the same claim as
+            # "there was no model".
+            payload["model"] = self.model
+        return json.dumps(payload, indent=2, sort_keys=True)
 
     def to_jsonl(self) -> str:
         """Serialize one task metrics record per line for append-only analysis."""
@@ -381,6 +406,12 @@ class BenchmarkReport:
             f"- Permission denied: {aggregate['permission_denied']}",
             f"- Unsafe actions blocked: {aggregate['unsafe_blocked']}",
             "",
+        ]
+        if self.model is not None:
+            lines += ["## Model and rate card", ""]
+            lines += _flatten_conditions("", self.model)
+            lines += [""]
+        lines += [
             "## Outcome by layer",
             "",
             "| Layer | Runs | Meaning |",
@@ -430,7 +461,7 @@ class BenchmarkRunner:
         *,
         verification_allowlist: frozenset[str],
         repeats: int = 1,
-        model_label: str | None = None,
+        model: dict[str, object] | None = None,
     ) -> None:
         if repeats < 1:
             msg = "repeats must be at least 1"
@@ -439,7 +470,13 @@ class BenchmarkRunner:
         self._output = output_directory.resolve()
         self._verification_allowlist = verification_allowlist
         self._repeats = repeats
-        self._model_label = model_label
+        # The per-run label and the report-level conditions describe the same
+        # model, so they are passed as one value.  Two independent parameters
+        # would let a report's rows name a different model than its conditions
+        # block, which is easy to introduce and hard to notice.
+        label = model.get("label") if model else None
+        self._model_label = str(label) if label is not None else None
+        self._model = model
 
     async def run(self, manifest: BenchmarkManifest) -> BenchmarkReport:
         """Run tasks sequentially for deterministic local resource use.
@@ -454,7 +491,9 @@ class BenchmarkRunner:
             for task in manifest.tasks
             for run_index in range(self._repeats)
         ]
-        report = BenchmarkReport(manifest.name, manifest.schema_version, tuple(results))
+        report = BenchmarkReport(
+            manifest.name, manifest.schema_version, tuple(results), model=self._model
+        )
         await asyncio.to_thread(self._persist_jsonl, report)
         return report
 

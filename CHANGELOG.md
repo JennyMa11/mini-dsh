@@ -2,9 +2,41 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.0] - 2026-09-21
+
+**Real-model results release。** `0.2.0` 补上了"在真实模型上做实验"所需的全部工程，但它的报告里没有一个真实模型的数字；`0.3.0` 交付第一批实测结果，并修掉接入过程中暴露的 provider 缺陷。`0.2.0` 的条目保持发布时的原样，修正集中记在本节。
+
+### Added
+
+**真实模型实测结果**
+
+- 首次在真实 provider 上跑通 `repo` 套件：6 个跨文件任务 × 3 次逐任务交错重复 = **18 次运行全部通过**，`pass@k` 100%，成功率极差 0.00，失败层分解 `success 18 / harness 0 / agent 0 / environment 0`。报告归档在 [`docs/results/repo-real.md`](docs/results/repo-real.md)，机器可读汇总进入 `docs/results/summary.json` 的 `real_model` 块。
+- 实测读数（`deepseek-flash`，thinking 关闭，`temperature=0`，off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens）：平均 6.61 步、19,132 Token、10.28 次工具调用；**缓存输入占比 86%**；平均延迟 6,410.1 ms = model 6,290.6 + tool 103.1 + **harness 16.4（占墙钟 0.26%）**；总成本 **$0.016865**，**每次成功成本 $0.000937**。
+- **报告现在记录自己的实验条件。** `BenchmarkReport` 新增 `model` 块，写入 profile / endpoint / 上下文窗口 / thinking 开关 / `temperature_effective` / 显式费率，Markdown 报告新增 "Model and rate card" 章节。此前这些事实只存在于产生报告的那条 shell 命令里，一份成本报告脱离命令行历史就无法审计。
+- `scripts/archive-results.py` 归档真实模型报告并在 `summary.json` 中生成 `real_model` 块。费率必须由环境变量显式声明：缺失时保留上一份而不是写入未知费率，因为 off-peak 是 peak 的一半，同一份报告有两组都正确的成本数字。
+- 文档：README 新增"真实模型基线"一节，含"这个 100% 只说明这么多"的四条限制；[`docs/real-model-evaluation.md`](docs/real-model-evaluation.md) 新增第 9 节，分别记录这次实测**成立**与**不成立**的结论；`docs/resume.md`、`docs/technical-highlights.md` 同步。
+
+### Changed
+
+- README 的真实模型示例命令改用实际费率，不再是 `<in>` / `<out>` 占位符，并写明"归档要在重跑之前做"——报告与 Trace 是原地覆盖的。
+
+### Fixed
+
+- **DeepSeek profile 与官方文档不符。** 实测官方 API 后修正三处：endpoint 应为 `https://api.deepseek.com/chat/completions`（`0.2.0` 记录的 `/v1/chat/completions` 可通，但不是文档给出的形式）；`deepseek-chat` / `deepseek-reasoner` 已不在官方模型列表内，改为 `deepseek-flash` 与 `deepseek-v4-pro`；上下文窗口由 128K 改为官方公布的 1M。
+- **thinking 模式（上游默认开启）会让 harness 在第一次工具调用后收到 400。** 官方文档明确：请求带 `tools` 时，历史每一轮的 `reasoning_content` 必须原样回传，否则 API 返回 400。原实现既不解析也不回传该字段，因此默认配置下多步工具循环必然失败——这是换成真实 provider 才暴露的第一个整体性缺陷。现在 `Message` / `ModelResponse` 携带 `reasoning_content`，adapter 解析并在带 `tools` 的请求中回传。
+- **thinking 模式会静默忽略 `temperature`**，所以开着它 `--temperature 0` 等于没设——重复采样协议赖以成立的确定性假设会被悄悄破坏。harness 现在默认关闭 thinking，`--thinking/--no-thinking` 可显式切换，并在 `describe()` 里记录 `temperature_effective`，让报告自己说清属于哪种情况。
+- **`mini-dsh report` 从不显示模型信息。** 渲染器读取 `model` 键，但 `BenchmarkReport.to_json()` 从来没有写过它：一个只存在于阅读路径、在写入路径上缺失的字段，而消融报告早已写入同一键。现在基准报告也写入该键，缺失时省略而不是写 `null`——"未记录"与"没有模型"不是同一个断言。
+- **逐次运行标签与报告级条件可能互相矛盾。** `BenchmarkRunner` 的 `model_label` 与报告条件描述同一个模型却分别传入，两者可以不一致且很难被发现。合并为单个 `model` 参数，标签由它派生。
+
+### Tests
+
+- 194 个测试（+8）：`tests/test_docs.py` 新增两个门禁，把 README 上**需要花钱才能产生**的真实模型数字（成功率、`pass@k`、平均步数 / Token、缓存占比、三层延迟、总成本、每次成功成本、拦截数）与 `docs/results/summary.json` 的归档值逐项比对，并单独校验 README 引用的模型名、thinking 开关与费率与归档一致——费率断言用 `$` 锚定，避免"6,290.6 里含有 0.6"这类假通过；`tests/test_benchmark.py` 新增两个测试，覆盖报告写入条件块、以及无条件时省略该键而非写 `null`。
+
 ## [0.2.0] - 2026-09-21
 
 **Real-model evaluation release。** `0.1.0` 证明了 Harness 按规格工作；`0.2.0` 补上"在真实模型上做实验"所需的全部工程：可复现的 provider 接入、重复采样、成本与延迟分解、失败分类、Trace 回放与差分、以及报告里的 Pareto trade-off。
+
+> 本节记录发布时的内容。DeepSeek profile 的三处事实修正、`reasoning_content` 回传与 thinking 开关见 [`0.3.0`](#030---2026-09-21)。
 
 ### Added
 

@@ -17,6 +17,7 @@ import json
 import re
 import tomllib
 from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -235,4 +236,130 @@ def test_coverage_is_quoted_consistently_across_documents() -> None:
     quoted = {value for _, _, value in claims}
     assert len(quoted) == 1, "documents disagree on coverage: " + ", ".join(
         f"{path.relative_to(REPO_ROOT)}:{number}={value}" for path, number, value in claims
+    )
+
+
+# The real-model results are the only numbers in the repository that cost money
+# to produce, which makes them the ones least likely to be re-derived by hand and
+# most likely to be quietly edited.  They are delimited so the gate can find them
+# without pattern-matching prose, and derived from the archiver's own output.
+_REAL_MODEL_BLOCK = re.compile(
+    r"<!--\s*real-model-results:start\s*-->(.*?)<!--\s*real-model-results:end\s*-->",
+    flags=re.DOTALL,
+)
+_TABLE_ROW = re.compile(r"^\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$", flags=re.MULTILINE)
+
+
+def _real_model_record() -> dict[str, object]:
+    summary = json.loads(_read(REPO_ROOT / "docs" / "results" / "summary.json"))
+    record = summary["real_model"]["repo-real"]
+    assert isinstance(record, dict)
+    return cast("dict[str, object]", record)
+
+
+def _real_model_aggregate() -> dict[str, object]:
+    aggregate = _real_model_record()["aggregate"]
+    assert isinstance(aggregate, dict)
+    return cast("dict[str, object]", aggregate)
+
+
+def _number(aggregate: dict[str, object], key: str) -> float:
+    value = aggregate[key]
+    assert isinstance(value, (int, float)), f"the archived aggregate has a non-numeric {key}"
+    return float(value)
+
+
+def _readme_real_model_block() -> str:
+    match = _REAL_MODEL_BLOCK.search(_read(README))
+    assert match is not None, (
+        "README no longer carries a real-model results block; the numbers that "
+        "cost money to produce must stay inside the markers so they can be gated"
+    )
+    return match.group(1)
+
+
+def test_readme_real_model_numbers_match_the_archived_run() -> None:
+    """The expensive numbers are measured, not typed.
+
+    Every other claim in this module is derivable from the tree for free.  These
+    are not: re-running the suite costs money and an API key, so a hand-edited
+    figure would survive unnoticed.  They are therefore derived from
+    ``docs/results/summary.json``, which the archiver writes from the run's own
+    report rather than from anyone's memory.
+    """
+    aggregate = _real_model_aggregate()
+    runs = int(_number(aggregate, "runs"))
+    success_rate = _number(aggregate, "success_rate")
+    expected = {
+        "成功率": f"{success_rate:.0%}（{round(success_rate * runs)}/{runs}）",
+        "`pass@k`": f"{_number(aggregate, 'pass_at_k'):.0%}",
+        "平均步数": f"{_number(aggregate, 'average_steps'):.2f}",
+        "平均 Token": f"{_number(aggregate, 'average_tokens'):,.0f}",
+        "缓存输入占比": f"{_number(aggregate, 'cached_input_share'):.0%}",
+        "平均延迟": (
+            f"{_number(aggregate, 'average_latency_ms'):,.1f} ms（"
+            f"model {_number(aggregate, 'average_model_ms'):,.1f} / "
+            f"tool {_number(aggregate, 'average_tool_ms'):,.1f} / "
+            f"harness {_number(aggregate, 'average_harness_ms'):,.1f}）"
+        ),
+        "总成本": f"${_number(aggregate, 'total_cost_usd'):.6f}",
+        "每次成功成本": f"${_number(aggregate, 'cost_per_success_usd'):.6f}",
+        "被拦截的危险动作": f"{int(_number(aggregate, 'unsafe_blocked'))}",
+    }
+
+    rows = {
+        label: value
+        for label, value in _TABLE_ROW.findall(_readme_real_model_block())
+        if label not in {"指标", "---"}
+    }
+    assert rows, "the README real-model block has no table rows"
+
+    drift = [
+        f"{key}: README says {rows.get(key)!r}, the archived run says {value!r}"
+        for key, value in expected.items()
+        if rows.get(key) != value
+    ]
+    assert not drift, "README's real-model numbers disagree with docs/results/summary.json: " + (
+        "; ".join(drift)
+    )
+
+
+def test_readme_states_the_archived_real_model_conditions() -> None:
+    """A cost figure is meaningless without the model and the tariff behind it.
+
+    The tariff is not decoration: DeepSeek bills off-peak at half of peak, so the
+    same run has two correct totals depending on when it happened.  The thinking
+    flag matters for the same reason — with thinking on the provider ignores
+    ``temperature``, so a run that quotes ``temperature=0`` while thinking was on
+    would be describing a determinism it did not have.
+    """
+    record = _real_model_record()
+    conditions = _readme_real_model_block()
+
+    model = record["model"]
+    assert isinstance(model, str), "the archived run did not record which model it used"
+    assert f"`{model}`" in conditions, f"README does not name the archived model {model!r}"
+
+    assert record["thinking"] is False, (
+        "the archived run enabled thinking, so its temperature was not effective; "
+        "the README cannot claim a temperature-pinned protocol for it"
+    )
+    assert "thinking 关闭" in conditions, (
+        "README must say thinking was off: with it on the provider ignores temperature"
+    )
+
+    # Each rate is anchored on its own currency sign.  A bare substring check
+    # would pass on any number that happens to contain the digits, which is
+    # exactly how a dropped tariff survives review.
+    rates = record["rate_card_usd_per_million"]
+    assert isinstance(rates, dict), "the archived run did not record a rate card"
+    card = cast("dict[str, float]", rates)
+    expected = (
+        f"off-peak 费率 ${card['input_usd_per_million']:g} / "
+        f"${card['output_usd_per_million']:g} / "
+        f"${card['cached_input_usd_per_million']:g}"
+    )
+    assert expected in conditions, (
+        f"README must quote the tariff the archived costs were billed under, as {expected!r}; "
+        "off-peak is half of peak, so a cost figure without its tariff is ambiguous"
     )

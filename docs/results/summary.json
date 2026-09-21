@@ -1019,5 +1019,50 @@
     "input": 3.0,
     "output": 15.0
   },
+  "real_model": {
+    "repo-real": {
+      "aggregate": {
+        "average_cost_usd": 0.0009369303333333334,
+        "average_harness_ms": 16.39933333333333,
+        "average_latency_ms": 6410.1262731645775,
+        "average_model_ms": 6290.578555555556,
+        "average_steps": 6.611111111111111,
+        "average_tokens": 19132.166666666668,
+        "average_tool_calls": 10.277777777777779,
+        "average_tool_ms": 103.14833333333334,
+        "cached_input_share": 0.8635527543925257,
+        "cached_input_tokens": 284032,
+        "cost_per_success_usd": 0.0009369303333333334,
+        "pass_at_k": 1.0,
+        "permission_denied": 0,
+        "retry_success_rate": 0.0,
+        "runs": 18,
+        "success_rate": 1.0,
+        "tasks": 6,
+        "total_cost_usd": 0.016864746,
+        "unsafe_blocked": 20
+      },
+      "failure_layers": {
+        "agent": 0,
+        "environment": 0,
+        "harness": 0,
+        "success": 18
+      },
+      "model": "deepseek-flash",
+      "name": "mini-dsh-repo",
+      "rate_card_usd_per_million": {
+        "cached_input_usd_per_million": 0.003,
+        "input_usd_per_million": 0.15,
+        "output_usd_per_million": 0.6
+      },
+      "repeat_variance": {
+        "repeated_tasks": 6.0,
+        "success_spread": 0.0,
+        "token_spread": 0.14658436381145903
+      },
+      "schema_version": "2.0",
+      "thinking": false
+    }
+  },
   "seed": 0
 }

@@ -24,7 +24,13 @@
 
 ### 5. 工程门禁全绿
 
-`ruff format --check`、`ruff check`、`mypy --strict`（53 个文件，`src` + `tests`）、`pytest`（186 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
+`ruff format --check`、`ruff check`、`mypy --strict`（53 个文件，`src` + `tests`）、`pytest`（194 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
+
+### 6. 真实模型实测，而且报告自带实验条件
+
+`repo` 套件在 `deepseek-flash` 上跑 6 个跨文件任务 × 3 次交错重复，**18/18 通过**，每次成功成本 **$0.000937**，86% 输入 Token 命中 prompt cache。比成功率更有信息量的是延迟拆解：**Harness 自身只占墙钟 0.26%**（16.4 ms / 6,410.1 ms），其余全是 provider 往返——"Harness 不是瓶颈"因此是一个测量结果而不是主张。
+
+报告本身记录了 profile、endpoint、thinking 开关、`temperature_effective` 与显式费率，README 上的这些数字由测试与归档报告比对：改一个数字而不同步归档，门禁就会失败。**这些数字是全仓库唯一需要花钱才能产生的数字，因此也是最容易被手改、最需要被门禁盯住的一类。**
 
 ---
 
@@ -84,7 +90,7 @@
 
 ## 三、通往 SWE-bench 与更复杂 Repo Benchmark
 
-当前 Benchmark 是**自建、小规模、脚本化**的，用于验证 Harness 机制。要证明它在真实任务上有效，必须走向 SWE-bench 这类真实仓库、真实 issue、真实测试的任务集。
+`core` / `stress` 是**自建、小规模、脚本化**的，用于验证 Harness 机制。`v0.3.0` 已经把 `repo` 套件（6 个跨文件任务）跑在真实 provider 上，结论是"Harness 侧站得住、任务形态可行"；但 6 个任务 × 3 次重复既小、任务又由 Harness 作者构造，**不构成独立评测**。要证明它在真实任务上有效，必须走向 SWE-bench 这类真实仓库、真实 issue、真实测试的任务集。
 
 ### 3.1 SWE-bench 与当前任务的差异
 
@@ -124,7 +130,8 @@
 3. **输出上限**：真实仓库的测试输出与 diff 更大，`bounded_output` 的收益预期更高，需要重测阈值（20 000 是否合适）。
 4. **权限反馈粒度**：当前 `basic_feedback` 更便宜但正确率无法判断；真实模型下应能观测到"反馈粒度 → 重试成功率"的因果。
 5. **模型**：从 `ScriptedModel` 切换到真实 provider，接受成功率波动，并引入多 seed 与置信区间。
-   → **`v0.2.0` 已完成前半**：Provider Profile、瞬时错误重试、`--repeat` 交错采样与 `pass@k` / `repeat_variance` 已就位；多 seed 置信区间仍待补。
+   → **`v0.2.0` 完成前半、`v0.3.0` 完成真实运行**：Provider Profile、瞬时错误重试、`--repeat` 交错采样、`pass@k` / `repeat_variance` 已就位，`repo` 套件已在 `deepseek-flash` 上跑出 18/18；多 seed 置信区间仍待补。
+   → **实测暴露的第一个真实 provider 缺陷**：DeepSeek 上游默认开启 thinking，而 thinking 模式下 API 忽略 `temperature`、且带 `tools` 的请求必须回传历史 `reasoning_content`（否则 400）。这类缺陷在脚本化模型下永远不会出现——"换成真实 provider"本身就是一次对 Harness 的检验，而不只是对模型的检验。
 
 **阶段 D：指标与报告升级**
 
@@ -135,7 +142,7 @@
 
 **阶段 E：更复杂的 Repo Benchmark**
 
-> `v0.2.0` 已先行落地一个中间台阶：`benchmarks/repo/` 的 6 个 Repo-Level 任务（跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复）。它们没有 response script、每个跨至少两个模块，是「真实模型能力」结论的最小可信来源。SWE-bench 接入是在此之上把仓库规模与依赖环境提到真实量级，判据换成官方评测器；任务形态本身已经在这里被验证过一遍。
+> `v0.2.0` 已先行落地一个中间台阶：`benchmarks/repo/` 的 6 个 Repo-Level 任务（跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复）。它们没有 response script、每个跨至少两个模块，是「真实模型能力」结论的最小可信来源；`v0.3.0` 已用真实 provider 把这 6 个任务跑通（18/18，每次成功 $0.000937），并核实 18 条 Trace 里对测试文件的写入为 0。SWE-bench 接入是在此之上把仓库规模与依赖环境提到真实量级，判据换成官方评测器；任务形态本身已经在这里被验证过一遍。
 
 1. **多语言**：`symbol_retrieval` 目前只支持 Python，扩展 Tree-sitter 到 JS/TS/Go/Java/Rust。
 2. **长周期任务**：需要跨会话的 Session 恢复与上下文续接（`JsonSessionStore` 已是起点）。
