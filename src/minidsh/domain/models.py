@@ -38,6 +38,29 @@ class ToolStatus(StrEnum):
     TIMED_OUT = "timed_out"
 
 
+class FailureCategory(StrEnum):
+    """Closed vocabulary describing *where* a run failed.
+
+    The categories are deliberately layered rather than ranked: a harness-level
+    category (``permission_denied``, ``invalid_tool_call``) means the runtime did its
+    job and the agent misused it, while ``model_reasoning_failure`` means the agent
+    had every opportunity and still produced a wrong change. Keeping them disjoint is
+    what makes "is the harness correct?" and "is the model capable?" separable
+    questions instead of one blended success rate.
+    """
+
+    NONE = "none"
+    MODEL_REASONING_FAILURE = "model_reasoning_failure"
+    CONTEXT_MISS = "context_miss"
+    TOOL_ERROR = "tool_error"
+    PERMISSION_DENIED = "permission_denied"
+    BUDGET_EXHAUSTED = "budget_exhausted"
+    INVALID_TOOL_CALL = "invalid_tool_call"
+    VERIFICATION_FAILED = "verification_failed"
+    LOOP_STUCK = "loop_stuck"
+    PROVIDER_ERROR = "provider_error"
+
+
 @dataclass(frozen=True, slots=True)
 class ToolCall:
     """A model request to invoke one named tool."""
@@ -73,15 +96,28 @@ class ToolDefinition:
 
 @dataclass(frozen=True, slots=True)
 class TokenUsage:
-    """Provider-reported or estimated token usage and derived spend."""
+    """Provider-reported or estimated token usage and derived spend.
+
+    ``cached_input_tokens`` is a *subset* of ``input_tokens``, matching how
+    OpenAI-compatible providers report prompt-cache hits. It is tracked separately
+    because cached input is billed at a different rate on every major provider, and
+    collapsing the two would make a real-model cost comparison wrong in the
+    direction that flatters long-context strategies.
+    """
 
     input_tokens: int = 0
     output_tokens: int = 0
     cost_usd: float = 0.0
+    cached_input_tokens: int = 0
 
     @property
     def total_tokens(self) -> int:
         return self.input_tokens + self.output_tokens
+
+    @property
+    def billable_input_tokens(self) -> int:
+        """Return input tokens billed at the uncached rate."""
+        return max(0, self.input_tokens - self.cached_input_tokens)
 
     def __add__(self, other: TokenUsage) -> TokenUsage:
         """Accumulate usage and cost across model calls."""
@@ -89,6 +125,7 @@ class TokenUsage:
             self.input_tokens + other.input_tokens,
             self.output_tokens + other.output_tokens,
             self.cost_usd + other.cost_usd,
+            self.cached_input_tokens + other.cached_input_tokens,
         )
 
 
@@ -98,16 +135,29 @@ class ModelPricing:
 
     input_usd_per_million: float = 0.0
     output_usd_per_million: float = 0.0
+    cached_input_usd_per_million: float | None = None
 
     def __post_init__(self) -> None:
-        if self.input_usd_per_million < 0 or self.output_usd_per_million < 0:
+        rates = (self.input_usd_per_million, self.output_usd_per_million)
+        cached = self.cached_input_usd_per_million
+        if any(rate < 0 for rate in rates) or (cached is not None and cached < 0):
             msg = "pricing rates must be non-negative"
             raise ValueError(msg)
 
     def cost_usd(self, usage: TokenUsage) -> float:
-        """Return the USD cost of one model call at this rate card."""
+        """Return the USD cost of one model call at this rate card.
+
+        When no cached rate is declared the cached tokens fall back to the standard
+        input rate, which reproduces the pre-cache cost model exactly.
+        """
+        cached_rate = (
+            self.input_usd_per_million
+            if self.cached_input_usd_per_million is None
+            else self.cached_input_usd_per_million
+        )
         return (
-            usage.input_tokens * self.input_usd_per_million
+            usage.billable_input_tokens * self.input_usd_per_million
+            + usage.cached_input_tokens * cached_rate
             + usage.output_tokens * self.output_usd_per_million
         ) / 1_000_000
 
@@ -115,6 +165,53 @@ class ModelPricing:
     def free(cls) -> ModelPricing:
         """Return a zero-cost rate card for scripted/offline runs."""
         return cls()
+
+
+@dataclass(frozen=True, slots=True)
+class LatencyBreakdown:
+    """Wall-clock attribution across the three layers a harness can observe.
+
+    ``harness_ms`` is the residual of the end-to-end run minus the time spent inside
+    model calls and tool executions. It is the number that answers "how much does the
+    runtime itself cost?", which is the only latency component the harness author can
+    actually optimize.
+    """
+
+    model_ms: float = 0.0
+    tool_ms: float = 0.0
+    harness_ms: float = 0.0
+    total_ms: float = 0.0
+    model_calls: int = 0
+    tool_calls: int = 0
+
+    @property
+    def model_share(self) -> float:
+        """Return the fraction of end-to-end latency spent waiting on the provider."""
+        return self.model_ms / self.total_ms if self.total_ms > 0 else 0.0
+
+    @property
+    def overhead_share(self) -> float:
+        """Return the fraction of end-to-end latency attributable to the harness."""
+        return self.harness_ms / self.total_ms if self.total_ms > 0 else 0.0
+
+    @property
+    def mean_model_ms(self) -> float:
+        """Return the mean latency of one model call."""
+        return self.model_ms / self.model_calls if self.model_calls else 0.0
+
+    def to_json(self) -> dict[str, JsonValue]:
+        """Return a stable serialization for reports and traces."""
+        return {
+            "model_ms": round(self.model_ms, 3),
+            "tool_ms": round(self.tool_ms, 3),
+            "harness_ms": round(self.harness_ms, 3),
+            "total_ms": round(self.total_ms, 3),
+            "model_calls": self.model_calls,
+            "tool_calls": self.tool_calls,
+            "model_share": round(self.model_share, 4),
+            "overhead_share": round(self.overhead_share, 4),
+            "mean_model_ms": round(self.mean_model_ms, 3),
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -217,6 +314,7 @@ class RunResult:
     duration_ms: float
     failure_reason: str | None = None
     history: tuple[Message, ...] = ()
+    latency: LatencyBreakdown = field(default_factory=LatencyBreakdown)
 
     @property
     def cost_usd(self) -> float:
