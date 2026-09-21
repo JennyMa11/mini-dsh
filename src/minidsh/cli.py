@@ -368,7 +368,11 @@ def _profile_for(args: argparse.Namespace) -> ModelProfile | None:
         name="openai-compatible",
         endpoint=str(endpoint),
         model=str(model_name),
-        api_key_env=str(getattr(args, "api_key_env", None) or "MINIDSH_API_KEY"),
+        api_key_env=str(
+            getattr(args, "api_key_env", None)
+            or os.environ.get("MINIDSH_API_KEY_ENV")
+            or "MINIDSH_API_KEY"
+        ),
         pricing=None,
         pricing_source="Explicit endpoint: declare the rate card on the command line.",
     )

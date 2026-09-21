@@ -178,3 +178,41 @@ def test_a_paid_profile_without_a_rate_card_is_rejected(
 
     assert exit_info.value.code == 2
     assert "no declared rate card" in capsys.readouterr().err
+
+
+def test_api_key_env_names_the_credential_for_an_ad_hoc_endpoint(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """``MINIDSH_API_KEY_ENV`` must mean the same thing on every provider path.
+
+    It is honoured for named profiles, so ignoring it for an explicit endpoint
+    would make "where does my key come from" depend on which flag was used.
+    The observable proof is that the error names the variable it looked for.
+    """
+    monkeypatch.setenv("MINIDSH_API_KEY_ENV", "MY_PROVIDER_TOKEN")
+    monkeypatch.delenv("MY_PROVIDER_TOKEN", raising=False)
+
+    with pytest.raises(SystemExit) as exit_info:
+        main(
+            [
+                "run",
+                "do something",
+                "--workspace",
+                str(tmp_path),
+                "--provider",
+                "openai-compatible",
+                "--endpoint",
+                "https://provider.example/v1/chat/completions",
+                "--model",
+                "example-model",
+                "--input-usd-per-million",
+                "1.0",
+                "--output-usd-per-million",
+                "1.0",
+            ]
+        )
+
+    assert exit_info.value.code == 2
+    assert "MY_PROVIDER_TOKEN" in capsys.readouterr().err

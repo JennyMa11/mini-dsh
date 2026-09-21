@@ -58,9 +58,12 @@
 - 旧 Trace 未被清理时会与新运行的事件交错；现在由 writer 在首次写入时截断。
 - **失败的模型调用其耗时此前不计入任何一层**，于是被算进 `harness_ms` 残差——provider 越慢越像"harness 慢"，正好与延迟分解的目的相反。修复覆盖两处：Loop 现在把失败与被取消的调用也计入 `model_ms` / `model_calls`；`latency_from_trace` 改为优先采用 `run_finished` 上由 Loop 记录的权威分解，只在旧 Trace 缺该字段时才回退到按事件求和（失败的调用没有 `model_call_completed` 事件，按事件求和必然丢时间）。这个缺陷是在用本地 `ollama` profile 做端到端探测时暴露的：连接失败的 3.5 秒被全部记到了 harness 头上。
 
+- **`.env.example` 的说明与运行时行为不符**：文件头写"Copy to .env"，但运行时从不读取 `.env`（没有 dotenv 依赖，也没有任何代码加载它），而 `.gitignore` 又特意为 `.env` 开了豁免——三者互相矛盾。现已改成诚实的说明：这是一份**变量名对照表**，不是会被自动加载的文件，并给出可用配方 `set -a; source .env; set +a`。同时写明凭据**不接受**来自 `minidsh.toml`（该文件会被提交与共享，密钥写进去就是等着泄露；写进去会被直接拒绝，而不是被静默忽略）。
+- `MINIDSH_API_KEY_ENV`（"我的密钥在哪个变量里"）此前只对命名 profile 生效，在 `--endpoint` 直连路径上被静默忽略——同一件事的含义取决于用了哪个 flag。现在两条路径一致，优先级为 `--api-key-env` > `MINIDSH_API_KEY_ENV` > 默认 `MINIDSH_API_KEY`。
+
 ### Tests
 
-- 185 个测试（+54）：新增 `tests/test_evaluation.py`（29 个）覆盖 Trace 解析、失败分类的每一条分支与决策优先级、延迟分解、Pareto 前沿与并列、回放与差分；`tests/test_docs.py`（9 个）把 README 与 `docs/` 上的版本、模块数、任务数与测试数变成**由仓库推导的断言**，任一数字手改失配即门禁失败；`tests/test_agent_loop.py` 新增"失败的模型调用必须记在模型账上而非 harness 账上"的回归测试；`tests/test_integration.py` 新增 429→503→200 重试成功、401 不重试、prompt cache 解析；`tests/test_benchmark.py` 新增重复采样与层归属；`tests/test_cli.py` 新增 report / replay / diff 与 profile 拒绝路径。
+- 186 个测试（+55）：新增 `tests/test_evaluation.py`（29 个）覆盖 Trace 解析、失败分类的每一条分支与决策优先级、延迟分解、Pareto 前沿与并列、回放与差分；`tests/test_docs.py`（9 个）把 README 与 `docs/` 上的版本、模块数、任务数与测试数变成**由仓库推导的断言**，任一数字手改失配即门禁失败；`tests/test_agent_loop.py` 新增"失败的模型调用必须记在模型账上而非 harness 账上"的回归测试；`tests/test_integration.py` 新增 429→503→200 重试成功、401 不重试、prompt cache 解析；`tests/test_benchmark.py` 新增重复采样与层归属；`tests/test_cli.py` 新增 report / replay / diff 与 profile 拒绝路径。
 
 ## [0.1.0] - 2026-09-21
 
