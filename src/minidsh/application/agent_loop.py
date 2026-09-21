@@ -15,6 +15,7 @@ from minidsh.domain import (
     Message,
     ModelPricing,
     ModelRequest,
+    ModelResponse,
     Role,
     RunResult,
     RunStatus,
@@ -136,17 +137,13 @@ class AgentLoop:
                         ],
                     },
                 )
-                model_started = time.monotonic()
-                response = await self._model.complete(request)
-                model_duration_ms = (time.monotonic() - model_started) * 1_000
+                response, model_duration_ms = await self._call_model(request, counters)
                 call_usage = response.usage
                 call_cost = self._pricing.cost_usd(call_usage)
                 counters.input_tokens += call_usage.input_tokens
                 counters.output_tokens += call_usage.output_tokens
                 counters.cached_input_tokens += call_usage.cached_input_tokens
                 counters.cost_usd += call_cost
-                counters.model_ms += model_duration_ms
-                counters.model_calls += 1
                 history.append(
                     Message(
                         Role.ASSISTANT,
@@ -228,6 +225,30 @@ class AgentLoop:
                 started,
                 failure_reason=f"{type(exc).__name__}: {exc}",
             )
+
+    async def _call_model(
+        self,
+        request: ModelRequest,
+        counters: _RunCounters,
+    ) -> tuple[ModelResponse, float]:
+        """Call the provider, charging the elapsed time to the model either way.
+
+        A call that fails or is cancelled still spent its time in the provider.
+        Leaving it unrecorded would push that time into the harness residual,
+        making the harness look slow exactly when the provider was at fault --
+        the opposite of what the split is for.
+        """
+        started = time.monotonic()
+        try:
+            response = await self._model.complete(request)
+        except (Exception, asyncio.CancelledError):
+            counters.model_ms += (time.monotonic() - started) * 1_000
+            counters.model_calls += 1
+            raise
+        duration_ms = (time.monotonic() - started) * 1_000
+        counters.model_ms += duration_ms
+        counters.model_calls += 1
+        return response, duration_ms
 
     def _budget_reason(self, counters: _RunCounters, started: float) -> str | None:
         if counters.steps >= self._budget.max_steps:

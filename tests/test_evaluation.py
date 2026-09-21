@@ -311,6 +311,51 @@ def test_latency_splits_model_tool_and_harness_time() -> None:
     assert breakdown.mean_model_ms == pytest.approx(150.0)
 
 
+def test_latency_prefers_the_breakdown_the_loop_recorded() -> None:
+    """A failed model call leaves no ``model_call_completed`` to sum.
+
+    Reconstructing from per-call events would lose the provider's time to the
+    harness residual, which inverts what the split is for.  The recorded block
+    is authoritative; reconstruction is only the fallback.
+    """
+    trace = _run(
+        _record("model_call_started", 1),
+        _record(
+            "run_finished",
+            1,
+            status="failed",
+            duration_ms=3500.0,
+            latency={
+                "model_ms": 3499.0,
+                "tool_ms": 0.0,
+                "harness_ms": 1.0,
+                "total_ms": 3500.0,
+                "model_calls": 1,
+                "tool_calls": 0,
+            },
+        ),
+    )
+
+    breakdown = latency_from_trace(trace)
+
+    assert breakdown.model_ms == pytest.approx(3499.0)
+    assert breakdown.harness_ms == pytest.approx(1.0)
+    assert breakdown.model_calls == 1
+
+
+def test_latency_falls_back_to_reconstruction_for_older_traces() -> None:
+    """Traces written before the recorded block still produce a split."""
+    trace = _run(
+        _record("model_call_completed", 1, duration_ms=100.0),
+        _record("run_finished", 1, status="finished", duration_ms=400.0),
+    )
+
+    breakdown = latency_from_trace(trace)
+
+    assert breakdown.model_ms == pytest.approx(100.0)
+    assert breakdown.harness_ms == pytest.approx(300.0)
+
+
 def test_tool_latencies_are_aggregated_and_sorted() -> None:
     trace = _run(
         _record("tool_call_completed", 1, tool="read_file", duration_ms=5.0),

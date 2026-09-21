@@ -147,7 +147,8 @@ def test_readme_test_count_matches_the_collected_suite(
     declared = {int(chinese or english) for chinese, english in claims}
 
     assert declared == {collected}, (
-        f"README claims {sorted(declared)} tests, pytest collected {collected}"
+        f"README claims {sorted(declared)} tests, pytest collected {collected}; "
+        f"update the scale line to {collected}"
     )
 
 

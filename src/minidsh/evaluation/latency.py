@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from minidsh.domain import JsonValue, LatencyBreakdown
-from minidsh.evaluation.tracefile import TraceRun, as_float, as_str
+from minidsh.evaluation.tracefile import TraceRecord, TraceRun, as_float, as_int, as_str
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,8 +28,39 @@ class ToolLatency:
         return self.total_ms / self.calls if self.calls else 0.0
 
 
+def _recorded_breakdown(final: TraceRecord | None) -> LatencyBreakdown | None:
+    """Return the breakdown the loop published, when the trace carries one."""
+    if final is None:
+        return None
+    payload = final.data.get("latency")
+    if not isinstance(payload, dict):
+        return None
+    return LatencyBreakdown(
+        model_ms=as_float(payload.get("model_ms")),
+        tool_ms=as_float(payload.get("tool_ms")),
+        harness_ms=as_float(payload.get("harness_ms")),
+        total_ms=as_float(payload.get("total_ms")),
+        model_calls=as_int(payload.get("model_calls")),
+        tool_calls=as_int(payload.get("tool_calls")),
+    )
+
+
 def latency_from_trace(trace: TraceRun) -> LatencyBreakdown:
-    """Compute the three-layer latency split from a completed trace."""
+    """Return the run's three-layer latency split.
+
+    The loop's own accounting is preferred, because it is the only place that
+    sees a model call *fail*: a failed call emits no ``model_call_completed``
+    event, so a purely event-derived sum would silently hand the provider's time
+    to the harness residual and invert the meaning of the split.
+
+    Reconstruction from per-call events remains as the fallback for traces
+    written before the recorded block existed.
+    """
+    final = trace.final()
+    recorded = _recorded_breakdown(final)
+    if recorded is not None:
+        return recorded
+
     model_ms = 0.0
     model_calls = 0
     for record in trace.by_name("model_call_completed"):
@@ -40,7 +71,6 @@ def latency_from_trace(trace: TraceRun) -> LatencyBreakdown:
     for record in trace.by_name("tool_call_completed"):
         tool_ms += as_float(record.data.get("duration_ms"))
         tool_calls += 1
-    final = trace.final()
     total_ms = as_float(final.data.get("duration_ms")) if final is not None else model_ms + tool_ms
     observed = model_ms + tool_ms
     return LatencyBreakdown(

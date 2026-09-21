@@ -56,10 +56,11 @@
 
 - 真实 provider 的 HTTP 失败此前统一抛出无结构的 `ModelAdapterError`，且 5xx/429 不会重试；现在按状态码分类并只对瞬时错误重试。
 - 旧 Trace 未被清理时会与新运行的事件交错；现在由 writer 在首次写入时截断。
+- **失败的模型调用其耗时此前不计入任何一层**，于是被算进 `harness_ms` 残差——provider 越慢越像"harness 慢"，正好与延迟分解的目的相反。修复覆盖两处：Loop 现在把失败与被取消的调用也计入 `model_ms` / `model_calls`；`latency_from_trace` 改为优先采用 `run_finished` 上由 Loop 记录的权威分解，只在旧 Trace 缺该字段时才回退到按事件求和（失败的调用没有 `model_call_completed` 事件，按事件求和必然丢时间）。这个缺陷是在用本地 `ollama` profile 做端到端探测时暴露的：连接失败的 3.5 秒被全部记到了 harness 头上。
 
 ### Tests
 
-- 182 个测试（+51）：新增 `tests/test_evaluation.py`（27 个）覆盖 Trace 解析、失败分类的每一条分支与决策优先级、延迟分解、Pareto 前沿与并列、回放与差分；`tests/test_docs.py`（9 个）把 README 与 `docs/` 上的版本、模块数、任务数与测试数变成**由仓库推导的断言**，任一数字手改失配即门禁失败；`tests/test_integration.py` 新增 429→503→200 重试成功、401 不重试、prompt cache 解析；`tests/test_benchmark.py` 新增重复采样与层归属；`tests/test_cli.py` 新增 report / replay / diff 与 profile 拒绝路径。
+- 185 个测试（+54）：新增 `tests/test_evaluation.py`（29 个）覆盖 Trace 解析、失败分类的每一条分支与决策优先级、延迟分解、Pareto 前沿与并列、回放与差分；`tests/test_docs.py`（9 个）把 README 与 `docs/` 上的版本、模块数、任务数与测试数变成**由仓库推导的断言**，任一数字手改失配即门禁失败；`tests/test_agent_loop.py` 新增"失败的模型调用必须记在模型账上而非 harness 账上"的回归测试；`tests/test_integration.py` 新增 429→503→200 重试成功、401 不重试、prompt cache 解析；`tests/test_benchmark.py` 新增重复采样与层归属；`tests/test_cli.py` 新增 report / replay / diff 与 profile 拒绝路径。
 
 ## [0.1.0] - 2026-09-21
 
