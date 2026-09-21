@@ -8,6 +8,8 @@ from dataclasses import asdict, dataclass, field
 from typing import Protocol
 
 from minidsh.benchmark.runner import BenchmarkManifest, BenchmarkReport
+from minidsh.evaluation import pareto
+from minidsh.evaluation.pareto import MetricPoint, ParetoAnalysis
 
 
 @dataclass(frozen=True, slots=True)
@@ -44,10 +46,13 @@ class AblationReport:
         return json.dumps(
             {
                 "manifest": self.manifest_name,
+                "pareto": [item.to_json() for item in self.pareto()],
                 "variants": [
                     {
                         "configuration": asdict(item.variant),
                         "aggregate": item.report.aggregate(),
+                        "failure_categories": item.report.failure_category_counts(),
+                        "failure_layers": item.report.failure_layer_counts(),
                         "failure_types": item.report.failure_type_counts(),
                         "results": [asdict(result) for result in item.report.results],
                     }
@@ -57,6 +62,17 @@ class AblationReport:
             indent=2,
             sort_keys=True,
         )
+
+    def points(self) -> tuple[MetricPoint, ...]:
+        """Reduce every variant to the four comparable metrics."""
+        return tuple(
+            MetricPoint.from_aggregate(item.variant.name, item.report.aggregate())
+            for item in self.variants
+        )
+
+    def pareto(self) -> tuple[ParetoAnalysis, ...]:
+        """Return the trade-off analysis across every cost axis."""
+        return pareto.analyze(self.points())
 
     def to_jsonl(self) -> str:
         """Serialize one variant summary record per line."""
@@ -77,13 +93,13 @@ class AblationReport:
         return "".join(record + "\n" for record in records)
 
     def to_markdown(self) -> str:
-        """Render a variant comparison table over the shared manifest."""
+        """Render a variant comparison table plus the Pareto trade-off section."""
         lines = [
             f"# Ablation report: {self.manifest_name}",
             "",
-            "| Variant | Context | Reflection | Feedback | Success | Steps |"
-            " Tokens | Cost (USD) | Retry OK | Denied | Blocked |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| Variant | Context | Reflection | Feedback | Success | Pass@k | Steps |"
+            " Tokens | Cost (USD) | Cost/success | Retry OK | Denied | Blocked |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
         for item in self.variants:
             aggregate = item.report.aggregate()
@@ -91,11 +107,14 @@ class AblationReport:
                 f"| {item.variant.name} | {item.variant.context_strategy} | "
                 f"{'on' if item.variant.reflection_enabled else 'off'} | "
                 f"{'detailed' if item.variant.detailed_tool_feedback else 'basic'} | "
-                f"{aggregate['success_rate']:.0%} | {aggregate['average_steps']:.2f} | "
+                f"{aggregate['success_rate']:.0%} | {aggregate['pass_at_k']:.0%} | "
+                f"{aggregate['average_steps']:.2f} | "
                 f"{aggregate['average_tokens']:.1f} | {aggregate['total_cost_usd']:.6f} | "
+                f"{aggregate['cost_per_success_usd']:.6f} | "
                 f"{aggregate['retry_success_rate']:.0%} | {aggregate['permission_denied']} | "
                 f"{aggregate['unsafe_blocked']} |"
             )
+        lines += ["", pareto.to_markdown(self.points(), self.pareto()).rstrip(), ""]
         return "\n".join(lines) + "\n"
 
 

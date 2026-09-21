@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from minidsh.adapters import JsonlTraceWriter
 from minidsh.composition import LocalRuntime
 from minidsh.domain import AgentBudget, Event, RunStatus
+from minidsh.evaluation import TraceError, TraceRun, classify_failure, latency_from_trace
 from minidsh.infrastructure import (
     CommandDeniedError,
     CommandPolicy,
@@ -147,7 +148,13 @@ class BenchmarkManifest:
 
 @dataclass(frozen=True, slots=True)
 class TaskMetrics:
-    """Measured outcome and harness statistics for one task."""
+    """Measured outcome and harness statistics for one task run.
+
+    The fields are grouped by the question they answer: ``success``/``status``/
+    ``failure_*`` answer *what happened*, the token and latency fields answer *what it
+    cost*, and ``retries``/``permission_denied``/``unsafe_blocked`` answer *did the
+    harness behave as specified*.
+    """
 
     task_id: str
     success: bool
@@ -168,6 +175,16 @@ class TaskMetrics:
     retry_successes: int = 0
     permission_denied: int = 0
     unsafe_blocked: int = 0
+    run_index: int = 0
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cached_input_tokens: int = 0
+    failure_category: str = "none"
+    failure_layer: str = "success"
+    failure_reason: str = ""
+    model_ms: float = 0.0
+    tool_ms: float = 0.0
+    harness_ms: float = 0.0
 
 
 @dataclass(slots=True)
@@ -205,34 +222,55 @@ class BenchmarkReport:
     results: tuple[TaskMetrics, ...]
 
     def aggregate(self) -> dict[str, float | int]:
-        """Compute comparable success and execution-cost metrics."""
+        """Compute comparable success, cost, and latency metrics over all runs."""
         count = len(self.results)
         if count == 0:
             return {
                 "tasks": 0,
+                "runs": 0,
                 "success_rate": 0.0,
+                "pass_at_k": 0.0,
                 "average_steps": 0.0,
                 "average_tokens": 0.0,
                 "average_tool_calls": 0.0,
                 "average_latency_ms": 0.0,
+                "average_model_ms": 0.0,
+                "average_tool_ms": 0.0,
+                "average_harness_ms": 0.0,
                 "total_cost_usd": 0.0,
                 "average_cost_usd": 0.0,
+                "cost_per_success_usd": 0.0,
+                "cached_input_tokens": 0,
+                "cached_input_share": 0.0,
                 "retry_success_rate": 0.0,
                 "permission_denied": 0,
                 "unsafe_blocked": 0,
             }
         retries = sum(result.retries for result in self.results)
         retry_successes = sum(result.retry_successes for result in self.results)
+        successes = sum(result.success for result in self.results)
         total_cost = sum(result.cost_usd for result in self.results)
+        total_input = sum(result.input_tokens for result in self.results)
+        cached = sum(result.cached_input_tokens for result in self.results)
+        task_ids = {result.task_id for result in self.results}
+        tasks_with_success = {result.task_id for result in self.results if result.success}
         return {
-            "tasks": count,
-            "success_rate": sum(result.success for result in self.results) / count,
+            "tasks": len(task_ids),
+            "runs": count,
+            "success_rate": successes / count,
+            "pass_at_k": len(tasks_with_success) / len(task_ids) if task_ids else 0.0,
             "average_steps": sum(result.steps for result in self.results) / count,
             "average_tokens": sum(result.tokens for result in self.results) / count,
             "average_tool_calls": sum(result.tool_calls for result in self.results) / count,
             "average_latency_ms": sum(result.latency_ms for result in self.results) / count,
+            "average_model_ms": sum(result.model_ms for result in self.results) / count,
+            "average_tool_ms": sum(result.tool_ms for result in self.results) / count,
+            "average_harness_ms": sum(result.harness_ms for result in self.results) / count,
             "total_cost_usd": total_cost,
             "average_cost_usd": total_cost / count,
+            "cost_per_success_usd": total_cost / successes if successes else 0.0,
+            "cached_input_tokens": cached,
+            "cached_input_share": cached / total_input if total_input else 0.0,
             "retry_success_rate": (retry_successes / retries) if retries else 0.0,
             "permission_denied": sum(result.permission_denied for result in self.results),
             "unsafe_blocked": sum(result.unsafe_blocked for result in self.results),
@@ -245,6 +283,47 @@ class BenchmarkReport:
             key = result.failure_type or "none"
             counts[key] = counts.get(key, 0) + 1
         return dict(sorted(counts.items()))
+
+    def failure_category_counts(self) -> dict[str, int]:
+        """Count runs by taxonomy category."""
+        counts: dict[str, int] = {}
+        for result in self.results:
+            counts[result.failure_category] = counts.get(result.failure_category, 0) + 1
+        return dict(sorted(counts.items()))
+
+    def failure_layer_counts(self) -> dict[str, int]:
+        """Count runs by responsible layer: success, harness, agent, or environment."""
+        counts: dict[str, int] = {"success": 0, "harness": 0, "agent": 0, "environment": 0}
+        for result in self.results:
+            counts[result.failure_layer] = counts.get(result.failure_layer, 0) + 1
+        return counts
+
+    def repeat_variance(self) -> dict[str, float]:
+        """Report run-to-run spread for tasks that were repeated.
+
+        A single-sample real-model result cannot be distinguished from a lucky one,
+        so the spread is a first-class output rather than a footnote.
+        """
+        grouped: dict[str, list[TaskMetrics]] = {}
+        for result in self.results:
+            grouped.setdefault(result.task_id, []).append(result)
+        repeated = [items for items in grouped.values() if len(items) > 1]
+        if not repeated:
+            return {"repeated_tasks": 0.0, "success_spread": 0.0, "token_spread": 0.0}
+        success_spreads = [
+            max(item.success for item in items) - min(item.success for item in items)
+            for items in repeated
+        ]
+        token_spreads = []
+        for items in repeated:
+            highest = max(item.tokens for item in items)
+            lowest = min(item.tokens for item in items)
+            token_spreads.append((highest - lowest) / max(1, highest))
+        return {
+            "repeated_tasks": float(len(repeated)),
+            "success_spread": sum(success_spreads) / len(success_spreads),
+            "token_spread": sum(token_spreads) / len(token_spreads),
+        }
 
     def category_counts(self) -> dict[str, int]:
         """Count tasks by declared category."""
@@ -260,7 +339,10 @@ class BenchmarkReport:
                 "name": self.name,
                 "schema_version": self.schema_version,
                 "aggregate": self.aggregate(),
+                "repeat_variance": self.repeat_variance(),
                 "failure_types": self.failure_type_counts(),
+                "failure_categories": self.failure_category_counts(),
+                "failure_layers": self.failure_layer_counts(),
                 "categories": self.category_counts(),
                 "results": [asdict(result) for result in self.results],
             },
@@ -275,33 +357,62 @@ class BenchmarkReport:
     def to_markdown(self) -> str:
         """Render a human-readable Markdown summary with a per-task table."""
         aggregate = self.aggregate()
+        layers = self.failure_layer_counts()
+        variance = self.repeat_variance()
         lines = [
             f"# Benchmark report: {self.name}",
             "",
             f"- Schema version: `{self.schema_version}`",
-            f"- Tasks: {aggregate['tasks']}",
+            f"- Tasks: {aggregate['tasks']} ({aggregate['runs']} runs)",
             f"- Success rate: {aggregate['success_rate']:.0%}",
+            f"- Pass@k (task solved at least once): {aggregate['pass_at_k']:.0%}",
             f"- Average steps: {aggregate['average_steps']:.2f}",
             f"- Average tokens: {aggregate['average_tokens']:.1f}",
+            f"- Cached input tokens: {aggregate['cached_input_tokens']} "
+            f"({aggregate['cached_input_share']:.0%} of input)",
             f"- Average tool calls: {aggregate['average_tool_calls']:.2f}",
-            f"- Average latency: {aggregate['average_latency_ms']:.1f} ms",
+            f"- Average latency: {aggregate['average_latency_ms']:.1f} ms "
+            f"(model {aggregate['average_model_ms']:.1f} / "
+            f"tool {aggregate['average_tool_ms']:.1f} / "
+            f"harness {aggregate['average_harness_ms']:.1f})",
             f"- Total cost: ${aggregate['total_cost_usd']:.6f}",
+            f"- Cost per successful run: ${aggregate['cost_per_success_usd']:.6f}",
             f"- Retry success rate: {aggregate['retry_success_rate']:.0%}",
             f"- Permission denied: {aggregate['permission_denied']}",
             f"- Unsafe actions blocked: {aggregate['unsafe_blocked']}",
             "",
-            "| Task | Category | Success | Steps | Tokens | Tool calls |"
-            " Latency (ms) | Cost (USD) | Failure |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "## Outcome by layer",
+            "",
+            "| Layer | Runs | Meaning |",
+            "| --- | --- | --- |",
+            f"| success | {layers['success']} | finished and the criterion passed |",
+            f"| harness | {layers['harness']} | the runtime correctly bounded the agent |",
+            f"| agent | {layers['agent']} | the model had a working harness and still failed |",
+            f"| environment | {layers['environment']} | the model provider failed |",
+            "",
+        ]
+        if variance["repeated_tasks"]:
+            lines += [
+                f"- Repeated tasks: {variance['repeated_tasks']:.0f}; "
+                f"mean success spread {variance['success_spread']:.2f}; "
+                f"mean token spread {variance['token_spread']:.0%}",
+                "",
+            ]
+        lines += [
+            "| Task | Run | Category | Success | Steps | Tokens | Tool calls |"
+            " Latency (ms) | Cost (USD) | Category of failure |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
         lines.extend(
-            f"| {result.task_id} | {result.category} | "
+            f"| {result.task_id} | {result.run_index} | {result.category} | "
             f"{'yes' if result.success else 'no'} | {result.steps} | {result.tokens} | "
             f"{result.tool_calls} | {result.latency_ms:.1f} | {result.cost_usd:.6f} | "
-            f"{result.failure_type or '-'} |"
+            f"{result.failure_category} |"
             for result in self.results
         )
-        lines += ["", "## Failure types", ""]
+        lines += ["", "## Failure categories", ""]
+        lines += [f"- `{name}`: {count}" for name, count in self.failure_category_counts().items()]
+        lines += ["", "## Raw failure types", ""]
         lines += [f"- `{name}`: {count}" for name, count in self.failure_type_counts().items()]
         return "\n".join(lines) + "\n"
 
@@ -318,15 +429,31 @@ class BenchmarkRunner:
         output_directory: Path,
         *,
         verification_allowlist: frozenset[str],
+        repeats: int = 1,
+        model_label: str | None = None,
     ) -> None:
+        if repeats < 1:
+            msg = "repeats must be at least 1"
+            raise BenchmarkError(msg)
         self._runtime_factory = runtime_factory
         self._output = output_directory.resolve()
         self._verification_allowlist = verification_allowlist
+        self._repeats = repeats
+        self._model_label = model_label
 
     async def run(self, manifest: BenchmarkManifest) -> BenchmarkReport:
-        """Run tasks sequentially for deterministic local resource use."""
+        """Run tasks sequentially for deterministic local resource use.
+
+        Repeats are interleaved per task rather than batched per sweep so that a
+        transient provider incident lands inside one task's sample instead of
+        correlating across the whole suite.
+        """
         self._validate_manifest(manifest)
-        results = [await self._run_task(task) for task in manifest.tasks]
+        results = [
+            await self._run_task(task, run_index)
+            for task in manifest.tasks
+            for run_index in range(self._repeats)
+        ]
         report = BenchmarkReport(manifest.name, manifest.schema_version, tuple(results))
         await asyncio.to_thread(self._persist_jsonl, report)
         return report
@@ -337,21 +464,25 @@ class BenchmarkRunner:
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_text(report.to_jsonl(), encoding="utf-8")
 
-    async def _run_task(self, task: BenchmarkTask) -> TaskMetrics:
+    def _trace_path(self, task: BenchmarkTask, run_index: int) -> Path:
+        suffix = "" if run_index == 0 else f".run{run_index}"
+        return self._output / "traces" / f"{task.task_id}{suffix}.jsonl"
+
+    async def _run_task(self, task: BenchmarkTask, run_index: int = 0) -> TaskMetrics:
         with tempfile.TemporaryDirectory(prefix=f"minidsh-{task.task_id}-") as temporary:
             workspace = Path(temporary) / "workspace"
             shutil.copytree(task.workspace, workspace, symlinks=True)
             runtime = self._runtime_factory(workspace, task)
-            trace_path = self._output / "traces" / f"{task.task_id}.jsonl"
-            await asyncio.to_thread(trace_path.unlink, missing_ok=True)
+            trace_path = self._trace_path(task, run_index)
             stats = _TaskStats()
-            runtime.events.subscribe("*", JsonlTraceWriter(trace_path))
+            runtime.events.subscribe("*", JsonlTraceWriter(trace_path, truncate_on_start=True))
             runtime.events.subscribe("*", stats)
             result = await runtime.agent.run(task.goal)
             verifier_exit_code: int | None = None
             failure_type: str | None = None
-            verified = False
+            verified: bool | None = None
             if result.status is RunStatus.FINISHED:
+                verified = False
                 try:
                     runner = LocalCommandRunner(
                         WorkspaceSandbox(workspace),
@@ -370,26 +501,45 @@ class BenchmarkRunner:
                     failure_type = "verification_denied"
             else:
                 failure_type = result.status.value
+            trace = await asyncio.to_thread(_read_trace, trace_path)
+            diagnosis = classify_failure(
+                status=result.status.value,
+                verified=verified,
+                trace=trace,
+                verifier_exit_code=verifier_exit_code,
+                failure_reason=result.failure_reason,
+            )
+            latency = latency_from_trace(trace) if trace is not None else result.latency
             return TaskMetrics(
-                task.task_id,
-                result.status is RunStatus.FINISHED and verified,
-                result.status.value,
-                result.steps,
-                result.token_usage.total_tokens,
-                result.cost_usd,
-                result.tool_calls,
-                result.duration_ms,
-                failure_type,
-                verifier_exit_code,
-                str(trace_path),
+                task_id=task.task_id,
+                success=result.status is RunStatus.FINISHED and verified is True,
+                status=result.status.value,
+                steps=result.steps,
+                tokens=result.token_usage.total_tokens,
+                cost_usd=result.cost_usd,
+                tool_calls=result.tool_calls,
+                latency_ms=result.duration_ms,
+                failure_type=failure_type,
+                verifier_exit_code=verifier_exit_code,
+                trace_path=str(trace_path),
                 category=task.category,
                 repo_commit=task.repo_commit,
                 seed=task.seed,
-                model=task.model,
+                model=self._model_label or task.model,
                 retries=stats.retries,
                 retry_successes=stats.retry_successes,
                 permission_denied=stats.permission_denied,
                 unsafe_blocked=stats.unsafe_blocked,
+                run_index=run_index,
+                input_tokens=result.token_usage.input_tokens,
+                output_tokens=result.token_usage.output_tokens,
+                cached_input_tokens=result.token_usage.cached_input_tokens,
+                failure_category=diagnosis.category.value,
+                failure_layer=diagnosis.layer,
+                failure_reason=diagnosis.reason,
+                model_ms=latency.model_ms,
+                tool_ms=latency.tool_ms,
+                harness_ms=latency.harness_ms,
             )
 
     @staticmethod
@@ -405,6 +555,20 @@ class BenchmarkRunner:
             if not task.success_argv:
                 msg = f"benchmark task has no success command: {task.task_id}"
                 raise BenchmarkError(msg)
+
+
+def _read_trace(path: Path) -> TraceRun | None:
+    """Read a trace back for derived analysis, tolerating a missing file.
+
+    Analysis is best-effort: a trace that cannot be read must not turn a measured
+    task outcome into a harness crash, so the caller falls back to in-memory metrics.
+    """
+    if not path.is_file():
+        return None
+    try:
+        return TraceRun.from_file(path)
+    except TraceError:
+        return None
 
 
 class _StrictInput(BaseModel):
