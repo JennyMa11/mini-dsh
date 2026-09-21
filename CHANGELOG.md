@@ -2,6 +2,65 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.2.0] - 2026-09-21
+
+**Real-model evaluation release。** `0.1.0` 证明了 Harness 按规格工作；`0.2.0` 补上"在真实模型上做实验"所需的全部工程：可复现的 provider 接入、重复采样、成本与延迟分解、失败分类、Trace 回放与差分、以及报告里的 Pareto trade-off。
+
+### Added
+
+**真实模型接入**
+
+- `ModelProfile` 与四个内置 profile：`deepseek`、`deepseek-reasoner`、`openai`、`ollama`，声明 endpoint / model / 凭据变量 / 上下文窗口，支持 `MINIDSH_MODEL_PROFILE` 与逐字段 `--endpoint` / `--model` / `--api-key-env` 覆盖。
+- **价目不内置**：真实 provider 的 `pricing` 为 `None`，未声明价目时拒绝运行（而不是报告 `$0`）。零价目与未声明价目不可区分，因此"是否已声明"被显式跟踪；`--allow-unpriced` 是显式逃生口。
+- `OpenAICompatibleModel` 强化：429/5xx/超时/网络错误有限重试与指数退避（上限可配，`sleep` 可注入以便测试）；HTTP 失败分类为 `auth_error` / `rate_limited` / `server_error` / `client_error`；`ModelAdapterError` 带 `code` 与 `retryable`，失败分类不再依赖解析错误文本。
+- Prompt cache 支持：解析 `usage.prompt_tokens_details.cached_tokens`，`TokenUsage` 新增 `cached_input_tokens` 与 `billable_input_tokens`。
+
+**评测层（新包 `minidsh/evaluation/`）**
+
+- `tracefile.py`：JSONL Trace 的类型化只读视图，按 step 分组，导出状态、失败原因、Token 与成本。Trace 是唯一事实源，其余全部是可再生成的视图。
+- `taxonomy.py`：9 个失败类别归并成 4 层（`success` / `harness` / `agent` / `environment`），带证据链的 `FailureDiagnosis`。决策顺序先测无歧义的结构化事实，再对模型做推断；"被绕过的拒绝不算病因"与"`context_miss` 需要两半证据"是两条关键规则。
+- `latency.py`：`model_ms` / `tool_ms` / `harness_ms` 三层分解与按工具的延迟聚合。
+- `pareto.py`：Success Rate vs Tokens / Cost / Steps 的 Pareto 前沿、被支配变体及其支配者与差值；全并列时明确报告"这一轴无法区分"，而不是伪装成 trade-off。
+- `replay.py`：不重新调用模型的逐步回放，按 Loop 自身词汇输出 `Context → Model → Tool Call → Observation → State`。
+- `diff.py`：对齐两条 Trace 的逐步差分，定位第一个行为分叉点，给出 Context 差、Token 差与工具调用分叉原因。
+
+**Benchmark**
+
+- `BenchmarkRunner` 支持 `--repeat N`（逐任务交错采样，避免 provider 抖动在整个套件上相关）与 `model_label` 覆盖；`TaskMetrics` 新增 `run_index`、`cached_input_tokens`、`failure_category` / `failure_layer` / `failure_reason` 与三项延迟分量。
+- 聚合指标新增 `runs`、`pass_at_k`、`cost_per_success_usd`、`cached_input_share`、三项平均延迟与 `repeat_variance`（`success_spread` / `token_spread`）。
+- 报告新增 "Outcome by layer" 层分解表与失败类别 / 原始失败类型两张分布表。
+- `AblationReport` 新增 `points()` / `pareto()`，Markdown 追加完整的 Pareto trade-off 章节，JSON 内嵌 `pareto` 结论。
+- 新增 `repo` 套件（6 个任务，无 response script，每个跨至少两个模块）：跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复。生成脚本 `benchmarks/build_repo.py` 固定每个 fixture 的 `sha256:` 摘要。
+- `JsonlTraceWriter` 新增 `truncate_on_start`：writer 自己拥有文件生命周期，调用方不再需要先删除旧 Trace。
+
+**CLI**
+
+- `benchmark` / `ablation` 新增 `--provider` / `--model-profile` / `--model` / `--endpoint` / `--api-key-env` / `--temperature` / `--max-attempts` / `--repeat` / `--allow-unpriced` / `--cached-input-usd-per-million`。
+- `mini-dsh report <json>`：离线重渲染已保存报告并附 Pareto 分析，不重新调用模型。
+- `mini-dsh trace replay <jsonl>` 与 `mini-dsh trace diff <a> <b>`，均支持 `--json`。
+
+**文档**
+
+- 新增 [`docs/real-model-evaluation.md`](docs/real-model-evaluation.md)：profile 表、成本模型、延迟模型、重复采样协议、套件选型、结果读法，以及 `3.38×` / `+40%` / `−27%` 三个数字的 workload / baseline / variant / metric / run count / 是否真实模型六项来源说明。
+- 新增 [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)：类别表、层归属、决策顺序、诊断证据格式、Trace 回放与差分工作流、失败案例分析流程。
+
+### Changed
+
+- `ModelPricing` 新增 `cached_input_usd_per_million`；未声明时回落到未缓存费率，**与旧成本模型逐位等价**（`0.1.0` 的全部成本读数不变）。
+- `AgentLoop` 在 `model_call_completed` 中发布 `duration_ms` 与 `cached_input_tokens`，`run_finished` 中发布 `latency` 分解；`RunResult` 新增 `latency` 字段。
+- `BenchmarkRunner` 不再删除旧 Trace 文件，改为由 writer 截断；Trace 路径在 `--repeat > 1` 时为 `<task>.run<N>.jsonl`（第 0 次仍为 `<task>.jsonl`，保持既有产物路径）。
+- 配置层新增 `MINIDSH_CACHED_INPUT_USD_PER_MILLION`。
+- 环境变量 `--api-key-env` 默认值由固定字符串改为"沿用 profile 声明的变量"。
+
+### Fixed
+
+- 真实 provider 的 HTTP 失败此前统一抛出无结构的 `ModelAdapterError`，且 5xx/429 不会重试；现在按状态码分类并只对瞬时错误重试。
+- 旧 Trace 未被清理时会与新运行的事件交错；现在由 writer 在首次写入时截断。
+
+### Tests
+
+- 182 个测试（+51）：新增 `tests/test_evaluation.py`（27 个）覆盖 Trace 解析、失败分类的每一条分支与决策优先级、延迟分解、Pareto 前沿与并列、回放与差分；`tests/test_docs.py`（9 个）把 README 与 `docs/` 上的版本、模块数、任务数与测试数变成**由仓库推导的断言**，任一数字手改失配即门禁失败；`tests/test_integration.py` 新增 429→503→200 重试成功、401 不重试、prompt cache 解析；`tests/test_benchmark.py` 新增重复采样与层归属；`tests/test_cli.py` 新增 report / replay / diff 与 profile 拒绝路径。
+
 ## [0.1.0] - 2026-09-21
 
 首个可用版本：一个可替换、可观测、可复现的 Coding Agent Harness，附带可执行的消融实验协议。

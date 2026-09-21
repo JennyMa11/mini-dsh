@@ -24,7 +24,7 @@
 
 ### 5. 工程门禁全绿
 
-`ruff format --check`、`ruff check`、`mypy --strict`（43 个源文件）、`pytest`（131 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
+`ruff format --check`、`ruff check`、`mypy --strict`（53 个文件，`src` + `tests`）、`pytest`（182 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
 
 ---
 
@@ -123,15 +123,19 @@
 2. **Context 策略重跑**：当前结论是"检索在长历史上更贵"，在数万行仓库上需要重新验证——检索质量可能从"净成本"变成"净收益"。`repo_retrieval` 与 `symbol_retrieval` 是主要候选。
 3. **输出上限**：真实仓库的测试输出与 diff 更大，`bounded_output` 的收益预期更高，需要重测阈值（20 000 是否合适）。
 4. **权限反馈粒度**：当前 `basic_feedback` 更便宜但正确率无法判断；真实模型下应能观测到"反馈粒度 → 重试成功率"的因果。
-5. **模型**：从 `ScriptedModel` 切换到真实 provider（OpenAI-compatible 适配器已就位），接受成功率波动，并引入多 seed 与置信区间。
+5. **模型**：从 `ScriptedModel` 切换到真实 provider，接受成功率波动，并引入多 seed 与置信区间。
+   → **`v0.2.0` 已完成前半**：Provider Profile、瞬时错误重试、`--repeat` 交错采样与 `pass@k` / `repeat_variance` 已就位；多 seed 置信区间仍待补。
 
 **阶段 D：指标与报告升级**
 
 1. 主指标从 `success_rate` 升级为 **resolve rate**（官方判定），并报告 **cost per resolved instance**——这是最有决策价值的一列。
-2. 增加轨迹级指标：首次修改命中率、无效工具调用占比、失败类型分布（`verification_failed` vs `budget_exhausted` vs 权限拒绝）。
+2. 增加轨迹级指标：首次修改命中率、无效工具调用占比、失败类型分布。
+   → **`v0.2.0` 已完成**：失败分类法把 9 个类别归并成 `success` / `harness` / `agent` / `environment` 四层并附证据链；`cost per successful run` 与 `pass@k` 已进入报告；`model / tool / harness` 三层延迟分解已落地。
 3. 报告按仓库与难度分层，避免平均值掩盖长尾。
 
 **阶段 E：更复杂的 Repo Benchmark**
+
+> `v0.2.0` 已先行落地一个中间台阶：`benchmarks/repo/` 的 6 个 Repo-Level 任务（跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复）。它们没有 response script、每个跨至少两个模块，是「真实模型能力」结论的最小可信来源。SWE-bench 接入是在此之上把仓库规模与依赖环境提到真实量级，判据换成官方评测器；任务形态本身已经在这里被验证过一遍。
 
 1. **多语言**：`symbol_retrieval` 目前只支持 Python，扩展 Tree-sitter 到 JS/TS/Go/Java/Rust。
 2. **长周期任务**：需要跨会话的 Session 恢复与上下文续接（`JsonSessionStore` 已是起点）。
