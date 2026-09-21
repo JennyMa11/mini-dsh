@@ -58,7 +58,8 @@
 
 **工程与文档**
 
-- `ruff format` / `ruff check` / `mypy --strict` / `pytest` 四项门禁，CI 覆盖；112 个测试分 `unit` / `integration` / `e2e` 三层。
+- `ruff format` / `ruff check` / `mypy --strict` / `pytest` 四项门禁，CI 覆盖；131 个测试分 `unit` / `integration` / `e2e` 三层，覆盖率 83%。
+- `runtime/` 覆盖率为 100%：插件重复 ID、重复服务提供者、依赖环、声明未注册、启动回滚、回滚失败、聚合关停失败、热替换三类失败路径全部有测试守住。
 - 最小端到端示例 `examples/minimal_demo.py` 与一键脚本 `scripts/run-{benchmark,ablation,all-experiments}.sh`。
 - 文档：README（架构图、Loop 流程图、Benchmark 方法、真实结果表）、`docs/benchmark.md`、`docs/context-engineering.md`、`docs/sandbox-security.md`、`docs/technical-highlights.md`、6 条 ADR。
 

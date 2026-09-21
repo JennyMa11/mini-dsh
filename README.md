@@ -6,7 +6,7 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 - 版本：`0.1.0`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：31 个源码模块、12 个测试模块、112 个测试、29 个 Benchmark 任务
+- 规模：31 个源码模块、12 个测试模块、131 个测试、29 个 Benchmark 任务
 
 ---
 
@@ -274,7 +274,7 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：70 个文件格式通过、ruff 无告警、`mypy --strict` 在 43 个源文件上无错误、112 个测试通过。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+四项全部为绿：70 个文件格式通过、ruff 无告警、`mypy --strict` 在 43 个源文件上无错误、131 个测试通过（覆盖率 83%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 
