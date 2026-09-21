@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Virtual environments and local configuration
+.venv/
+.env
+.env.*
+!.env.example
+
+# Runtime artifacts
+.minidsh/
+artifacts/
+traces/
+benchmark-workspaces/
+benchmark-results/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local agent workspace state
+.workbuddy-ai/
