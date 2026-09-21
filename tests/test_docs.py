@@ -363,3 +363,150 @@ def test_readme_states_the_archived_real_model_conditions() -> None:
         f"README must quote the tariff the archived costs were billed under, as {expected!r}; "
         "off-peak is half of peak, so a cost figure without its tariff is ambiguous"
     )
+
+
+# The ablations cost money for the same reason the baseline does, and they are the
+# numbers a *conclusion* rests on — which makes a stale cell here worse than a stale
+# one in the baseline table.  Gated the same way: a delimited block, and every cell
+# compared against the archiver's own output.
+_REAL_MODEL_ABLATION_BLOCK = re.compile(
+    r"<!--\s*real-model-ablation-results:start\s*-->(.*?)"
+    r"<!--\s*real-model-ablation-results:end\s*-->",
+    flags=re.DOTALL,
+)
+_VARIANT_NAME = re.compile(r"`([^`]+)`")
+
+
+def _readme_ablation_block() -> str:
+    match = _REAL_MODEL_ABLATION_BLOCK.search(_read(README))
+    assert match is not None, (
+        "README no longer carries a real-model ablation block; the numbers that cost "
+        "money to produce must stay inside the markers so they can be gated"
+    )
+    return match.group(1)
+
+
+def _real_model_ablation_records() -> list[dict[str, object]]:
+    summary = json.loads(_read(REPO_ROOT / "docs" / "results" / "summary.json"))
+    ablations = summary["real_model_ablations"]
+    assert isinstance(ablations, dict), "summary.json has no real_model_ablations block"
+    records: list[dict[str, object]] = []
+    for name in sorted(ablations):
+        record = ablations[name]
+        assert isinstance(record, dict)
+        records.append(cast("dict[str, object]", record))
+    return records
+
+
+def _readme_ablation_rows() -> dict[str, dict[str, str]]:
+    """Map every archived variant name to its README row, keyed by column header.
+
+    Keying by header rather than by position means reordering a table cannot
+    silently pair a number with the wrong label — the failure mode a positional
+    parser would hide.
+    """
+    rows: dict[str, dict[str, str]] = {}
+    header: list[str] | None = None
+    for line in _readme_ablation_block().splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            header = None
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if header is None:
+            header = cells
+            continue
+        if all(set(cell) <= {"-"} for cell in cells) or len(cells) != len(header):
+            continue
+        match = _VARIANT_NAME.match(cells[0])
+        if match is None:
+            continue
+        rows[match.group(1)] = dict(zip(header[1:], cells[1:], strict=True))
+    return rows
+
+
+def test_readme_real_model_ablation_numbers_match_the_archived_runs() -> None:
+    """Both ablation tables are compared cell by cell against the archive.
+
+    These are the numbers the README's conclusions are drawn from, so a cell that
+    drifts here changes a claim rather than a decoration.  Columns are looked up by
+    header name, so the two tables may print different column sets.
+    """
+    rows = _readme_ablation_rows()
+    assert rows, "the README ablation block has no table rows to check"
+
+    drift: list[str] = []
+    compared = 0
+    for record in _real_model_ablation_records():
+        variants = record["variants"]
+        assert isinstance(variants, list), "an archived ablation's variants is not a list"
+        assert variants, "an archived ablation has no variants"
+        for variant in variants:
+            assert isinstance(variant, dict)
+            name = str(variant["name"])
+            aggregate = variant["aggregate"]
+            assert isinstance(aggregate, dict)
+            row = rows.get(name)
+            if row is None:
+                drift.append(f"{name}: archived variant has no README row")
+                continue
+            expected = {
+                "成功率": f"{_number(aggregate, 'success_rate'):.0%}",
+                "平均 Token": f"{_number(aggregate, 'average_tokens'):,.0f}",
+                "平均步数": f"{_number(aggregate, 'average_steps'):.2f}",
+                "缓存占比": f"{_number(aggregate, 'cached_input_share'):.0%}",
+                "总成本": f"${_number(aggregate, 'total_cost_usd'):.6f}",
+                "每次成功成本": f"${_number(aggregate, 'cost_per_success_usd'):.6f}",
+            }
+            for column, value in expected.items():
+                if column not in row:
+                    continue  # the tool-output table prints fewer columns by design
+                compared += 1
+                if row[column] != value:
+                    drift.append(
+                        f"{name}/{column}: README says {row[column]!r}, archive says {value!r}"
+                    )
+
+    assert not drift, (
+        "README's real-model ablation numbers disagree with docs/results/summary.json: "
+        + "; ".join(drift)
+    )
+    assert compared >= 20, (
+        f"only {compared} cells were compared, so the gate is not reading the tables"
+    )
+
+
+def test_readme_states_the_archived_real_model_ablation_conditions() -> None:
+    """Every archived ablation must name its model, its tariff, and its thinking flag.
+
+    Both ablations happened to share these conditions, which is exactly why the
+    check is written per record rather than once: if one is ever re-run under a
+    different tariff, a single shared sentence would become a lie.
+    """
+    block = _readme_ablation_block()
+    for record in _real_model_ablation_records():
+        model = record["model"]
+        assert isinstance(model, str), "an archived ablation did not record its model"
+        assert f"`{model}`" in block, f"README does not name the ablation model {model!r}"
+
+        assert record["thinking"] is False, (
+            "an archived ablation enabled thinking, so its temperature was not effective"
+        )
+        assert "thinking 关闭" in block, (
+            "README must say thinking was off: with it on the provider ignores temperature"
+        )
+
+        rates = record["rate_card_usd_per_million"]
+        assert isinstance(rates, dict), "an archived ablation did not record a rate card"
+        card = cast("dict[str, float]", rates)
+        # Anchored on the currency signs, for the same reason as the baseline gate:
+        # a bare digit check passes on any cell that happens to contain those digits.
+        expected = (
+            f"${card['input_usd_per_million']:g} / "
+            f"${card['output_usd_per_million']:g} / "
+            f"${card['cached_input_usd_per_million']:g} per 1M tokens"
+        )
+        assert expected in block, (
+            f"README must quote the tariff the ablation costs were billed under, as "
+            f"{expected!r}; off-peak is half of peak"
+        )

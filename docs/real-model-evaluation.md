@@ -291,3 +291,98 @@ Unsafe actions blocked 20
   before reports recorded their own conditions, also finished 18/18, but its raw
   artefacts were overwritten and are therefore deliberately not quoted here.
 
+
+## 10. Real-model ablations, and the harness bug that had to be fixed first
+
+The scripted ablations prove that the harness *can* separate strategies on cost; they
+cannot prove that any strategy is more *accurate*, because a scripted model scores 100%
+by construction. Moving the same single-variable ablation onto a real provider is
+therefore the only way to learn anything new — and the first attempt produced a result
+that looked like a finding and was not.
+
+### The first attempt measured a bug
+
+Six Context variants x 3 tasks x 3 repeats, `deepseek-flash`. Four of them scored
+between 0% and 22%, and **every** failure was classified `provider_error`, which lands
+in the `environment` layer — read at face value, the provider had been unreliable.
+Reading the traces gave `ModelAdapterError: provider returned HTTP 400`, and the shape
+of the failures matched the base strategy exactly: the two variants built on full
+history passed 9/9, and all four truncating variants failed.
+
+The cause was in the harness. An OpenAI-compatible provider rejects a request whose
+`tool` message has no preceding assistant message declaring the matching `tool_call_id`,
+and `sliding_window` / `summary_compaction` sliced history at a raw index — keeping a
+tool result while dropping the assistant turn that declared it. Execution order
+(`full_history, sliding_window, summary_compaction, repo_retrieval, retrieval_summary,
+symbol_retrieval`) ruled out a transient outage, since the clean `repo_retrieval` sat
+between failing variants.
+
+**This defect is structurally invisible to a scripted model**, which does not validate
+the request it is handed. It could not have been found by running the deterministic
+suites more often or more carefully; it needed a real provider to surface, and then it
+needed the error body to be readable rather than discarded. Both halves are fixed in
+`0.3.1`: `_window_start()` grows a window back to the assistant message that opened the
+round, and `_error_detail()` carries the provider's own redacted words into the failure
+reason. The invariant is written down in
+[`context-engineering.md`](context-engineering.md) §3.1.
+
+### The corrected Context ablation
+
+Six variants x 3 tasks x 3 repeats, `deepseek-flash`, thinking off, off-peak tariff
+`$0.15` / `$0.6` / `$0.003` per 1M tokens. Archived as
+[`results/stress-real-context-ablation.md`](results/stress-real-context-ablation.md).
+
+| Variant | Success | Tokens | Steps | Cache share | Total cost | Cost/success |
+| --- | --- | --- | --- | --- | --- | --- |
+| `full_history` | 100% | 29,315 | 8.33 | 92% | $0.011553 | $0.001284 |
+| `sliding_window` | 100% | 26,096 | 8.56 | 85% | $0.012579 | $0.001398 |
+| `summary_compaction` | 100% | 26,073 | 8.22 | 83% | $0.013322 | $0.001480 |
+| `repo_retrieval` | 100% | 17,767 | 6.56 | 80% | $0.011184 | $0.001243 |
+| `retrieval_summary` | 100% | 16,747 | 6.33 | 75% | $0.011803 | $0.001311 |
+| `symbol_retrieval` | 100% | 29,331 | 7.56 | 77% | $0.016193 | $0.001799 |
+
+- **Success is 100% for all six, so that column still carries no signal.** 54 runs, every
+  failure layer `success 9`. The `stress` suite is too easy for this model to separate
+  the strategies on accuracy. **This is a cost result, not a capability result** — the
+  same limitation as the scripted ablation, now stated on a real provider.
+- **Fewer tokens is not cheaper, and under prompt caching the ordering inverts.**
+  `sliding_window` (26,096) and `summary_compaction` (26,073) both use ~11% fewer tokens
+  than `full_history` (29,315) and both cost *more* ($0.012579 / $0.013322 vs
+  $0.011553). The mechanism is the cache: a hit bills at $0.003 against $0.15 uncached,
+  a 50x difference, and a truncating strategy rewrites its prefix every step while
+  `full_history` only appends — hence 92% cache share for the latter and 75–85% for the
+  rest. **Token count is a systematically wrong proxy for cost on a cached provider.**
+- **`repo_retrieval` is the cost winner** ($0.011184, the only variant undominated on
+  cost) with near-fewest steps (6.56): it is the best balance between injecting a little
+  more context and keeping the cacheable prefix intact.
+- **`retrieval_summary` wins on tokens, steps and latency** (16,747 / 6.33 / 6,826 ms)
+  yet costs more than `repo_retrieval`, because its summary message is recomputed every
+  step and its cache share is the lowest of the six.
+- **Harness overhead is 18.9–27.1 ms, 0.2–0.4% of wall clock**, consistent across
+  variants — the spread in this table is not harness-side.
+
+### The corrected tool-output ablation
+
+Three variants x 3 tasks x 3 repeats, same conditions. Archived as
+[`results/stress-real-tool_output-ablation.md`](results/stress-real-tool_output-ablation.md).
+All 27 runs passed, so this is also a cost result.
+
+| Variant | Success | Tokens | Total cost | Cost/success |
+| --- | --- | --- | --- | --- |
+| `unbounded_output` (limit 200K) | 100% | 32,687 | $0.011849 | $0.001317 |
+| `bounded_output` (limit 20K) | 100% | 31,986 | $0.011743 | $0.001305 |
+| `bounded_output_artifact` (limit 20K + offload) | 100% | 30,523 | $0.011148 | $0.001239 |
+
+- **The lever that works is offloading, not the limit.** `bounded_output_artifact` is
+  undominated on tokens, cost and steps: 6.6% fewer tokens and 5.9% lower cost than no
+  limit at all, with success unchanged. Lowering the limit alone (200K to 20K) buys only
+  2.1%. Capping output is cheap to implement; persisting the overflow is what pays.
+
+### What these two ablations do not show
+
+- **No accuracy claim.** Both suites are fully saturated at 100%, so neither can rank
+  strategies by correctness. A harder task set is a prerequisite for that, not a
+  refinement of this one.
+- **No independent replication.** 3 tasks x 3 repeats per variant is enough to make a
+  cost ordering visible and not enough to make it robust. The orderings above are the
+  first measurement, not an established result.

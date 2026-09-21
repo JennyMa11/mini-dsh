@@ -1064,5 +1064,337 @@
       "thinking": false
     }
   },
+  "real_model_ablations": {
+    "stress-real-context-ablation": {
+      "manifest": "mini-dsh-stress",
+      "model": "deepseek-flash",
+      "rate_card_usd_per_million": {
+        "cached_input_usd_per_million": 0.003,
+        "input_usd_per_million": 0.15,
+        "output_usd_per_million": 0.6
+      },
+      "thinking": false,
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0012836479999999999,
+            "average_harness_ms": 19.556444444444445,
+            "average_latency_ms": 8979.074411993173,
+            "average_model_ms": 8865.713777777777,
+            "average_steps": 8.333333333333334,
+            "average_tokens": 29314.777777777777,
+            "average_tool_calls": 17.555555555555557,
+            "average_tool_ms": 93.80433333333333,
+            "cached_input_share": 0.9171860802474056,
+            "cached_input_tokens": 230144,
+            "cost_per_success_usd": 0.0012836479999999999,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.011552831999999999,
+            "unsafe_blocked": 30
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "full_history",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "full_history"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0013976339999999998,
+            "average_harness_ms": 21.48122222222222,
+            "average_latency_ms": 8611.26031934206,
+            "average_model_ms": 8494.211222222222,
+            "average_steps": 8.555555555555555,
+            "average_tokens": 26095.555555555555,
+            "average_tool_calls": 17.555555555555557,
+            "average_tool_ms": 95.56788888888889,
+            "cached_input_share": 0.8512568173771976,
+            "cached_input_tokens": 189952,
+            "cost_per_success_usd": 0.0013976339999999998,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.012578705999999999,
+            "unsafe_blocked": 30
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "sliding",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "sliding_window",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "sliding_window"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0014801733333333334,
+            "average_harness_ms": 18.875555555555554,
+            "average_latency_ms": 8108.168504666537,
+            "average_model_ms": 7995.810777777779,
+            "average_steps": 8.222222222222221,
+            "average_tokens": 26073.222222222223,
+            "average_tool_calls": 17.0,
+            "average_tool_ms": 93.48244444444444,
+            "cached_input_share": 0.8263099379550264,
+            "cached_input_tokens": 184320,
+            "cost_per_success_usd": 0.0014801733333333334,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.01332156,
+            "unsafe_blocked": 28
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "summary",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "summary_compaction",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "summary_compaction"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0012426966666666667,
+            "average_harness_ms": 20.727,
+            "average_latency_ms": 7136.6832453253055,
+            "average_model_ms": 7031.834,
+            "average_steps": 6.555555555555555,
+            "average_tokens": 17767.444444444445,
+            "average_tool_calls": 13.777777777777779,
+            "average_tool_ms": 84.12222222222222,
+            "cached_input_share": 0.7964193244084058,
+            "cached_input_tokens": 119040,
+            "cost_per_success_usd": 0.0012426966666666667,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.01118427,
+            "unsafe_blocked": 27
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "retrieval",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "repo_retrieval",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "repo_retrieval"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0013114683333333333,
+            "average_harness_ms": 20.815,
+            "average_latency_ms": 6825.945814883906,
+            "average_model_ms": 6700.595222222222,
+            "average_steps": 6.333333333333333,
+            "average_tokens": 16747.222222222223,
+            "average_tool_calls": 13.444444444444445,
+            "average_tool_ms": 104.53544444444444,
+            "cached_input_share": 0.7472659698687096,
+            "cached_input_tokens": 104955,
+            "cost_per_success_usd": 0.0013114683333333333,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.011803214999999999,
+            "unsafe_blocked": 24
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "retrieval_summary",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "retrieval_summary",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "retrieval_summary"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0017991826666666666,
+            "average_harness_ms": 27.064888888888888,
+            "average_latency_ms": 7933.610935113393,
+            "average_model_ms": 7805.827555555556,
+            "average_steps": 7.555555555555555,
+            "average_tokens": 29331.222222222223,
+            "average_tool_calls": 16.22222222222222,
+            "average_tool_ms": 100.71833333333333,
+            "cached_input_share": 0.7681966096863841,
+            "cached_input_tokens": 194048,
+            "cost_per_success_usd": 0.0017991826666666666,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.016192644,
+            "unsafe_blocked": 27
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "symbol",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "symbol_retrieval",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "symbol_retrieval"
+        }
+      ]
+    },
+    "stress-real-tool_output-ablation": {
+      "manifest": "mini-dsh-stress",
+      "model": "deepseek-flash",
+      "rate_card_usd_per_million": {
+        "cached_input_usd_per_million": 0.003,
+        "input_usd_per_million": 0.15,
+        "output_usd_per_million": 0.6
+      },
+      "thinking": false,
+      "variants": [
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0013165613333333333,
+            "average_harness_ms": 23.48766666666667,
+            "average_latency_ms": 9740.927111111685,
+            "average_model_ms": 9605.737888888889,
+            "average_steps": 9.11111111111111,
+            "average_tokens": 32686.555555555555,
+            "average_tool_calls": 18.555555555555557,
+            "average_tool_ms": 111.70166666666665,
+            "cached_input_share": 0.9234249937746789,
+            "cached_input_tokens": 259584,
+            "cost_per_success_usd": 0.0013165613333333333,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.011849052,
+            "unsafe_blocked": 35
+          },
+          "configuration": {
+            "artifact_offload": false,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "unbounded_output",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 200000
+          },
+          "name": "unbounded_output"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.001304776,
+            "average_harness_ms": 20.557333333333332,
+            "average_latency_ms": 9467.695180669478,
+            "average_model_ms": 9340.653777777778,
+            "average_steps": 8.666666666666666,
+            "average_tokens": 31985.88888888889,
+            "average_tool_calls": 17.666666666666668,
+            "average_tool_ms": 106.4841111111111,
+            "cached_input_share": 0.9193637500363488,
+            "cached_input_tokens": 252928,
+            "cost_per_success_usd": 0.001304776,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.011742984,
+            "unsafe_blocked": 30
+          },
+          "configuration": {
+            "artifact_offload": false,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "bounded_output",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "bounded_output"
+        },
+        {
+          "aggregate": {
+            "average_cost_usd": 0.0012386166666666666,
+            "average_harness_ms": 20.752111111111113,
+            "average_latency_ms": 8866.663981552443,
+            "average_model_ms": 8746.163444444444,
+            "average_steps": 8.666666666666666,
+            "average_tokens": 30522.555555555555,
+            "average_tool_calls": 17.555555555555557,
+            "average_tool_ms": 99.74844444444444,
+            "cached_input_share": 0.9280565381812076,
+            "cached_input_tokens": 243200,
+            "cost_per_success_usd": 0.0012386166666666666,
+            "pass_at_k": 1.0,
+            "permission_denied": 0,
+            "retry_success_rate": 0.0,
+            "runs": 9,
+            "success_rate": 1.0,
+            "tasks": 3,
+            "total_cost_usd": 0.011147549999999999,
+            "unsafe_blocked": 32
+          },
+          "configuration": {
+            "artifact_offload": true,
+            "context_strategy": "full",
+            "detailed_tool_feedback": true,
+            "max_retries": 1,
+            "name": "bounded_output_artifact",
+            "permission_profile": "workspace_default_deny",
+            "reflection_enabled": false,
+            "tool_output_limit": 20000
+          },
+          "name": "bounded_output_artifact"
+        }
+      ]
+    }
+  },
   "seed": 0
 }

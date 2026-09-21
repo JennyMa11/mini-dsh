@@ -4,9 +4,9 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 它不是一个新模型，也不是一个产品级 Coding Agent。它是一台**可替换、可观测、可复现**的 Harness：模型、工具、Context、Session、权限与事件总线全部走端口，核心 Loop 不依赖任何厂商 SDK、Shell 或文件系统细节，因此可以拿来做单变量消融实验。
 
-- 版本：`0.3.0`（Apache-2.0）
+- 版本：`0.3.1`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：40 个源码模块、14 个测试模块、201 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
+- 规模：40 个源码模块、14 个测试模块、203 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
 
 > `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。scripted 基线仍然可复现，但"模型能力"结论只能来自 `repo` 套件。
 
@@ -215,10 +215,12 @@ uv run mini-dsh run "Fix the failing tests" \
 | --- | --- | --- | --- |
 | `smoke` | 1 | scripted | 端到端链路自检 |
 | `core` | 25 | scripted | Bug Fix / Feature / Test Repair / Refactor / Code Understanding / Multi-file |
-| `stress` | 3 | scripted | 长历史（18 步）、大输出（75 KB 日志）、被拒绝动作（越权 + 逃逸 + 密钥读取） |
+| `stress` | 3 | scripted + **provider** | 长历史（18 步）、大输出（75 KB 日志）、被拒绝动作（越权 + 逃逸 + 密钥读取） |
 | `repo` | 6 | **provider** | 跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复 |
 
 `repo` 套件没有 response script：每个任务至少跨两个模块，且其中几个 fixture 被刻意构造成"第一反应的那个改法会让另一个测试挂掉"，用来逼出多轮错误恢复而不是一次蒙对。生成脚本是 [`benchmarks/build_repo.py`](benchmarks/build_repo.py)。
+
+`stress` 同时用于 scripted 与真实 provider 的消融：它的任务足够长，长历史与大输出两组变量才有区分度（`core` 上这两组对照被压平）。
 
 ## 实验结果
 
@@ -301,6 +303,47 @@ uv run mini-dsh run "Fix the failing tests" \
 - **三个与成功率无关、但只有真实 provider 才能测到的数字**：Harness 自身只占墙钟的 **0.26%**（16.4 ms / 6,410.1 ms），其余全是 provider 往返；**86% 的输入 Token 命中 prompt cache**，这是长上下文策略在生产中是否付得起的决定性数字；**每次成功成本 $0.000937**，比"更便宜但更容易失败"的变体更有决策价值。
 - **20 次拦截全部是 `ls` / `find` 未进 allowlist**（本次只放行了 `python`）。按分类法它们落在 `success` 层：Agent 改用 `read_file` / `search` 绕过后仍然全部通过。这既实测了"拒绝可观测"，也说明这次运行里 Agent 少了它本来会伸手去拿的 shell 命令——一个诚实但可控的配置代价。
 - **完整性检查**：18 条 Trace 里每次运行的写入都落在目标源码文件上（`shop/pricing.py`、`textkit/normalize.py` + `textkit/slugify.py` 等），**对任何测试文件的写入为 0**。成功率不是靠改测试拿到的。
+
+### 真实模型消融（`stress` 套件）
+
+scripted 消融能证明"策略之间有成本差异"，但**不能**证明"某个策略更准"——脚本化模型成功率恒为 100%，那一列没有区分度。把同一套消融换到真实 provider 上，第一次就暴露了一个 harness 缺陷（见本节末），修完之后才拿到可解释的对照。
+
+报告归档在 [`docs/results/stress-real-context-ablation.md`](docs/results/stress-real-context-ablation.md) 与 [`docs/results/stress-real-tool_output-ablation.md`](docs/results/stress-real-tool_output-ablation.md)，机器可读汇总见 [`docs/results/summary.json`](docs/results/summary.json) 的 `real_model_ablations` 块。
+
+<!-- real-model-ablation-results:start -->
+条件：`deepseek-flash` · thinking 关闭 · 3 个 `stress` 任务 × 3 次重复 = 每变体 9 次运行 · off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens（输入 / 输出 / 缓存命中）
+
+**Context 策略消融**
+
+| 变体 | 成功率 | 平均 Token | 平均步数 | 缓存占比 | 总成本 | 每次成功成本 |
+| --- | --- | --- | --- | --- | --- | --- |
+| `full_history` | 100% | 29,315 | 8.33 | 92% | $0.011553 | $0.001284 |
+| `sliding_window` | 100% | 26,096 | 8.56 | 85% | $0.012579 | $0.001398 |
+| `summary_compaction` | 100% | 26,073 | 8.22 | 83% | $0.013322 | $0.001480 |
+| `repo_retrieval` | 100% | 17,767 | 6.56 | 80% | $0.011184 | $0.001243 |
+| `retrieval_summary` | 100% | 16,747 | 6.33 | 75% | $0.011803 | $0.001311 |
+| `symbol_retrieval` | 100% | 29,331 | 7.56 | 77% | $0.016193 | $0.001799 |
+
+**工具输出消融**
+
+| 变体 | 成功率 | 平均 Token | 总成本 | 每次成功成本 |
+| --- | --- | --- | --- | --- |
+| `unbounded_output`（上限 200K） | 100% | 32,687 | $0.011849 | $0.001317 |
+| `bounded_output`（上限 20K） | 100% | 31,986 | $0.011743 | $0.001305 |
+| `bounded_output_artifact`（上限 20K + 溢出落盘） | 100% | 30,523 | $0.011148 | $0.001239 |
+<!-- real-model-ablation-results:end -->
+
+**结论与限制**：
+
+- **成功率仍然是 100%，所以这一列依然没有区分度。** Context 消融 6 变体 × 9 次 = 54 次、工具输出消融 3 × 9 = 27 次，全部通过，失败层分解全部是 `success 9`。`stress` 套件对 `deepseek-flash` 太容易——**这组实验只能得出成本结论，不能得出"某策略更准"的结论**，和 scripted 消融是同一个限制，只是现在发生在真实模型上。
+- **Token 更少 ≠ 更便宜，在缓存计价下会反号。** `sliding_window`（26,096）与 `summary_compaction`（26,073）都比 `full_history`（29,315）省约 11% Token，但**都更贵**（$0.012579 / $0.013322 vs $0.011553）。机制是 prompt cache：命中价 $0.003 与未命中价 $0.15 相差 **50 倍**，而截断策略每一步都在改动前缀、把可复用前缀打断；`full_history` 只追加不修改，因此拿到最高的 92% 命中率。**这是"用 Token 数当成本代理"会系统性出错的地方。**
+- **`repo_retrieval` 是成本赢家**（$0.011184，唯一在成本轴上不被支配的变体），步数也接近最少（6.56）：它在"多注入一点 Token"与"保住缓存前缀"之间取到了最好的平衡。
+- **`retrieval_summary` 在 Token（16,747）、步数（6.33）、延迟（6,826 ms）三项上都是最少**，但成本高于 `repo_retrieval`——它的缓存命中率是六个里最低的 75%，因为摘要消息每步都要重算。
+- **`symbol_retrieval` 最贵**（$0.016193）：Token 数与 `full_history` 几乎相同（29,331 vs 29,315），成本却高 40%，同样是缓存命中率只有 77%。
+- **工具输出消融里真正有效的杠杆是落盘，不是上限。** `bounded_output_artifact` 在 Token、成本、步数三轴都不被支配：相比不设上限省 6.6% Token、5.9% 成本且成功率不变；而单把上限从 200K 压到 20K 只省 2.1%。
+- **harness 自身开销 18.9–27.1 ms，占墙钟 0.2–0.4%**，六个 Context 变体一致，说明上表的差异不是 harness 侧造成的。
+
+**这次消融是先修了一个 bug 才成立的。** 第一版跑出来四个变体成功率 0–22%，且全部记成 `provider_error`——而 `provider_error` 落在 `environment` 层，读起来就是"provider 挂了"。实际原因是截断型策略把一次工具调用回合从中间切开：保留了工具结果，却丢掉了声明它的那一轮 assistant 消息，provider 因此返回 400。**脚本模型不校验它收到的请求，所以这个缺陷在 deterministic 阶段结构性不可见**——deterministic 基线跑多少遍都照不出来。修复、回归测试与协议约束见 [`CHANGELOG.md`](CHANGELOG.md) 的 `0.3.1` 与 [`docs/context-engineering.md`](docs/context-engineering.md) §3.1；上表是修复后重跑的结果，修复前那版数字不作为 Context 结论。
 
 ## 真实模型评测
 
@@ -405,7 +448,7 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 54 个文件上无错误、201 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 54 个文件上无错误、203 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 

@@ -13,6 +13,7 @@ import json
 import os
 import shutil
 import sys
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +28,7 @@ ABLATION_MANIFESTS = ("core", "stress")
 # regenerated without a paid API key, so they are never *required*: re-archiving
 # the scripted suites must not delete the only committed copy of a paid run.
 REAL_MODEL_REPORTS = ("repo-real",)
+REAL_MODEL_ABLATIONS = ("stress-real-context-ablation", "stress-real-tool_output-ablation")
 
 # The tariff a real-model run was billed under.  It cannot be recovered from the
 # report or guessed from the totals — DeepSeek bills off-peak at half of peak, so
@@ -93,7 +95,7 @@ def _declared_rate_card() -> dict[str, float] | None:
         if raw is None:
             sys.stderr.write(
                 f"{variable} is not set, so the tariff behind the real-model cost "
-                "figures is unknown; leaving the previous real_model block in place\n"
+                "figures is unknown; leaving the previously archived blocks in place\n"
             )
             return None
         rates[variable] = float(raw)
@@ -104,17 +106,22 @@ def _declared_rate_card() -> dict[str, float] | None:
     }
 
 
-def _real_model_summary(name: str, previous: dict[str, Any] | None) -> dict[str, Any] | None:
+def _conditions(report: dict[str, Any]) -> tuple[object, object]:
+    """Return the model label and thinking flag a report recorded, if any."""
+    block = report.get("model")
+    if not isinstance(block, dict):
+        return None, None
+    profile = block.get("profile")
+    return block.get("label"), (profile.get("thinking") if isinstance(profile, dict) else None)
+
+
+def _real_model_summary(name: str, rates: dict[str, float]) -> dict[str, Any] | None:
     path = SOURCE / f"{name}.json"
     if not path.exists():
         sys.stderr.write(f"missing report, skipping: {path}\n")
-        return _carried_forward(previous)
-    rates = _declared_rate_card()
-    if rates is None:
-        return _carried_forward(previous)
+        return None
     report = _load(path)
-    conditions = report.get("model")
-    profile = conditions.get("profile") if isinstance(conditions, dict) else None
+    model, thinking = _conditions(report)
     return {
         "name": report["name"],
         "schema_version": report["schema_version"],
@@ -124,14 +131,56 @@ def _real_model_summary(name: str, previous: dict[str, Any] | None) -> dict[str,
         "rate_card_usd_per_million": rates,
         # Recorded inside the report since v0.3.0; absent for older runs, which
         # is itself worth knowing when reading the numbers.
-        "model": conditions.get("label") if isinstance(conditions, dict) else None,
-        "thinking": profile.get("thinking") if isinstance(profile, dict) else None,
+        "model": model,
+        "thinking": thinking,
     }
 
 
-def _carried_forward(previous: dict[str, Any] | None) -> dict[str, Any] | None:
-    carried = (previous or {}).get("real_model")
-    return carried if isinstance(carried, dict) else None
+def _real_model_ablation_summary(name: str, rates: dict[str, float]) -> dict[str, Any] | None:
+    path = SOURCE / f"{name}.json"
+    if not path.exists():
+        sys.stderr.write(f"missing report, skipping: {path}\n")
+        return None
+    report = _load(path)
+    model, thinking = _conditions(report)
+    return {
+        "manifest": report["manifest"],
+        "rate_card_usd_per_million": rates,
+        "model": model,
+        "thinking": thinking,
+        "variants": [
+            {
+                "name": variant["configuration"]["name"],
+                "configuration": variant["configuration"],
+                "aggregate": variant["aggregate"],
+            }
+            for variant in report["variants"]
+        ],
+    }
+
+
+def _real_model_block(
+    names: tuple[str, ...],
+    section: str,
+    previous: dict[str, Any] | None,
+    build: Callable[[str, dict[str, float]], dict[str, Any] | None],
+    rates: dict[str, float] | None,
+) -> dict[str, Any]:
+    """Assemble one real-model section, carrying forward whatever is missing.
+
+    Carrying forward is per name rather than per section: a re-archive that has
+    only some of the paid reports available must not drop the rest.  These are the
+    only entries in the summary that cannot be regenerated for free.
+    """
+    carried = (previous or {}).get(section)
+    result: dict[str, Any] = {}
+    for name in names:
+        value = build(name, rates) if rates is not None else None
+        if value is None and isinstance(carried, dict):
+            value = carried.get(name)
+        if isinstance(value, dict):
+            result[name] = value
+    return result
 
 
 def main() -> int:
@@ -149,6 +198,8 @@ def main() -> int:
         for suite in ABLATION_SUITES:
             archived += _archive_markdown(f"{manifest}-{suite}-ablation")
     for name in REAL_MODEL_REPORTS:
+        archived += _archive_markdown(name)
+    for name in REAL_MODEL_ABLATIONS:
         archived += _archive_markdown(name)
 
     # The scripted rate card is a property of the archived scripted runs, so it is
@@ -177,13 +228,21 @@ def main() -> int:
             if (value := _ablation_summary(f"{manifest}-{suite}-ablation")) is not None
         },
     }
-    real_model = {
-        name: value
-        for name in REAL_MODEL_REPORTS
-        if (value := _real_model_summary(name, previous)) is not None
-    }
+    rates = _declared_rate_card()
+    real_model = _real_model_block(
+        REAL_MODEL_REPORTS, "real_model", previous, _real_model_summary, rates
+    )
     if real_model:
         summary["real_model"] = real_model
+    real_model_ablations = _real_model_block(
+        REAL_MODEL_ABLATIONS,
+        "real_model_ablations",
+        previous,
+        _real_model_ablation_summary,
+        rates,
+    )
+    if real_model_ablations:
+        summary["real_model_ablations"] = real_model_ablations
 
     with (TARGET / "summary.json").open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, ensure_ascii=False, indent=2, sort_keys=True)

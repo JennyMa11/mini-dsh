@@ -2,6 +2,40 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.1] - 2026-09-21
+
+**Context 协议修复。** 第一次真实模型的 Context 消融给出了一组"看起来很像结论"的数字：六个变体里四个成功率只有 0–22%，而全部失败都被记成 `provider_error`。查下去发现那不是模型能力，而是 harness 缺陷——截断型 Context 策略会把一次工具调用回合从中间切开，provider 因此返回 400。**这个缺陷在 scripted 模型下结构性不可见**：脚本模型不校验它收到的请求，所以 deterministic 阶段无论跑多少遍都照不出来；换成真实 provider 后它表现为一个不透明的 400，并且被失败分类归到 `environment` 层，与"provider 挂了"无法区分。本节修掉这个缺陷、让下一次 400 能被诊断，并交付修复后重跑的消融结果。
+
+### Added
+
+**真实模型消融结果**
+
+- **Context 策略消融**（6 变体 × 3 任务 × 3 次重复 = 54 次运行，全部通过）：归档在 [`docs/results/stress-real-context-ablation.md`](docs/results/stress-real-context-ablation.md)。`repo_retrieval` 是成本赢家（每次成功 **$0.001243**，唯一在成本轴上不被支配的变体），步数也接近最少（6.56）。
+- **核心读数：Token 更少 ≠ 更便宜，在缓存计价下会反号。** `sliding_window`（26,096 Token）与 `summary_compaction`（26,073）都比 `full_history`（29,315）省约 11% Token，**却都更贵**（$0.001398 / $0.001480 vs $0.001284）。机制是 prompt cache：命中价 $0.003 与未命中价 $0.15 相差 **50 倍**，而截断策略每一步都在改动前缀、把可复用前缀打断；`full_history` 只追加不修改，因此拿到最高的 92% 命中率。**这是"用 Token 数当成本代理"会系统性出错的地方**，也是只有真实 provider 才能测到的东西。
+- **工具输出消融**（3 变体 × 3 任务 × 3 次重复 = 27 次运行，全部通过）：归档在 [`docs/results/stress-real-tool_output-ablation.md`](docs/results/stress-real-tool_output-ablation.md)。`bounded_output_artifact` 在 Token / 成本 / 步数三轴都不被支配——相比不设上限省 6.6% Token、5.9% 成本而成功率不变；**单把上限从 200K 压到 20K 只省 2.1%，真正的杠杆是溢出落盘而不是上限**。
+- `summary.json` 新增 `real_model_ablations` 块；README 新增"真实模型消融"一节，两组表格都放在 `<!-- real-model-ablation-results:start -->` 标记内；[`docs/real-model-evaluation.md`](docs/real-model-evaluation.md) 新增第 10 节，分列两组结果、这次修复的发现路径，以及"这两组实验不成立什么"；[`docs/context-engineering.md`](docs/context-engineering.md) §4 补上真实模型读数与缓存反号结论。
+
+### Fixed
+
+- **截断型 Context 策略会把工具调用回合切成两半。** OpenAI 兼容协议要求 `tool` 消息前面必须有声明其 `tool_call_id` 的 assistant 消息；`sliding_window` / `summary_compaction`（以及基于后者的 `retrieval_summary` / `symbol_retrieval`）按裸下标切片，可能保留工具结果却丢掉声明它的那一轮 assistant，provider 直接返回 400。新增 `_window_start()`：窗口起点向前回退到开启该回合的 assistant 消息，但不越过钉住的 system/task 前缀；回退量记入 `window_extended_for_tool_round`，让这次加宽可观测而不是静默发生。`summary_compaction` 顺带修掉一个相关问题：没有可安全压缩的内容时不再插入一条空摘要消息。
+- **provider 的错误响应体被直接丢弃，导致 400 无法诊断。** `_http_error` 只保留状态码，而 400 的成因只存在于响应体里——于是"我们把请求拼错了"和"provider 出故障了"留下完全相同的记录，前者还会被永久归因给后者。现在读取、折叠、截断（400 字符）并脱敏响应体，附在四类 HTTP 失败之后。这是把请求构造失败从 provider 故障里分出来的第一步。
+- **`uv.lock` 里的项目版本停留在 `0.2.0`。** `0.3.0` 发布时漏改了锁文件中的自身版本，`uv sync` 会把它改回来，于是每次同步都产生一个无关的 diff。
+
+### Changed
+
+- **脱敏规则收敛为单一实现。** 新增 `minidsh.domain.redaction`（`redact_text` / `redact_value` / `SECRET_KEYS` / `REDACTED`），Trace 写入器与模型 adapter 共用同一套规则，删掉 Trace 写入器里的私有副本。错误响应体是最容易意外泄露凭据的路径——它是不可信文本，却要直接进入日志、Trace 与 `failure_reason`。
+
+### Tests
+
+- 203 个测试（+9）：`tests/test_context.py` 新增四个，用含真实工具调用回合的历史断言"任何策略保留的窗口都不以孤儿 `tool` 消息开头、且 assistant 声明的每个调用都有结果应答"，覆盖两个截断策略、检索包装器与 `floor` 边界；`tests/test_integration.py` 新增三个，覆盖错误响应体进入失败原因、其中凭据被脱敏而诊断信息保留、以及响应体被截断；`tests/test_docs.py` 新增两个，把 README 两组消融表**逐格**与 `summary.json` 的 `real_model_ablations` 比对（按列名而不是列位置取数，因此重排表格不会把数字配错标签），并逐份校验模型名、thinking 开关与费率。
+- 九个门禁全部通过"故意改坏、确认失败、再改回"验证：其中消融数字门禁分别用改 Token、改缓存占比、**交换两列**、删掉费率四种破坏方式实测，四种都被拦下。
+- **修复对 scripted 结果无影响，且已逐字段验证。** 重跑全部 scripted 基线与消融后与归档比对：成功率、步数、Token、成本、拦截数完全一致，只有受机器负载影响的墙钟延迟不同。Token 一致即说明送进模型的 prompt 一致——脚本历史里没有窗口会切断工具回合。因此 `docs/results/` 的脚本化部分无需改动，这本身就是"修复行为保持"的证据。
+
+### 说明
+
+- **两组消融的成功率都是 100%，因此都只能得出成本结论，不能得出"某策略更准"的结论。** `stress` 套件对 `deepseek-flash` 太容易，六个变体 54 次运行无一失败。要比较准确性需要更硬的任务集——这是下一步的前置条件，不是本次实验的精细化。
+- 修复前那版 Context 消融（0–22%）**不作为 Context 结论**，它测量的是上述 harness 缺陷；原始文件已不在归档中。
+
 ## [0.3.0] - 2026-09-21
 
 **Real-model results release。** `0.2.0` 补上了"在真实模型上做实验"所需的全部工程，但它的报告里没有一个真实模型的数字；`0.3.0` 交付第一批实测结果，并修掉接入过程中暴露的 provider 缺陷。`0.2.0` 的条目保持发布时的原样，修正集中记在本节。
