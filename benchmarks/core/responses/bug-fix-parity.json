@@ -1,0 +1,42 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "parity.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "patch_file",
+        "arguments": {
+          "path": "parity.py",
+          "expected": "def is_even(value: int) -> bool:\n    return value % 2 == 1",
+          "replacement": "def is_even(value: int) -> bool:\n    return value % 2 == 0"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Fixed is_even in parity.py and verified the unit test passes.",
+    "output_tokens": 8
+  }
+]

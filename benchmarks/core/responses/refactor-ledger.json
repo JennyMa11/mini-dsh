@@ -1,0 +1,42 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "ledger.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "patch_file",
+        "arguments": {
+          "path": "ledger.py",
+          "expected": "def balance(values: list[int]) -> int:\n    running = 0\n    for value in values:\n        running += value\n    return running",
+          "replacement": "def balance(values: list[int]) -> int:\n    return sum(values)"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Refactored balance to use sum while preserving behavior.",
+    "output_tokens": 8
+  }
+]

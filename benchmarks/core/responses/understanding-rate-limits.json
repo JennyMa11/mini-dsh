@@ -1,0 +1,41 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "limits.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "write_file",
+        "arguments": {
+          "path": "answer.json",
+          "content": "{\n  \"per_second\": 1.67,\n  \"requests\": 100,\n  \"seconds\": 60\n}\n"
+        }
+      }
+    ],
+    "output_tokens": 8
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Recorded the defaults for limits.py in answer.json.",
+    "output_tokens": 8
+  }
+]

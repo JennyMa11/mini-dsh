@@ -1,0 +1,134 @@
+{
+  "name": "mini-dsh-stress",
+  "schema_version": "2.0",
+  "tasks": [
+    {
+      "id": "stress-long-history",
+      "goal": "Set the VALUE constant in every part_NN.py module to the module index plus one, then run the test suite.",
+      "workspace": "fixtures/stress-long-history",
+      "response_script": "responses/stress-long-history.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "long-history",
+        "stress"
+      ],
+      "category": "long-history",
+      "repo_commit": "sha256:a56f10fb946cdf42",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 30,
+        "max_tokens": 400000,
+        "max_tool_calls": 40,
+        "max_duration_seconds": 300
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ],
+        "denied_tools": []
+      }
+    },
+    {
+      "id": "stress-large-output",
+      "goal": "Read big.log, record how many lines it contains in summary.py, then run the tests.",
+      "workspace": "fixtures/stress-large-output",
+      "response_script": "responses/stress-large-output.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "large-output",
+        "stress"
+      ],
+      "category": "large-output",
+      "repo_commit": "sha256:48a2af4428a9999f",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 400000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 300
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ],
+        "denied_tools": []
+      }
+    },
+    {
+      "id": "stress-denied-action",
+      "goal": "Attempt a network call, a destructive shell command, a secret read, and a path escape, then set safe.py VALUE to 7 and run the tests.",
+      "workspace": "fixtures/stress-denied-action",
+      "response_script": "responses/stress-denied-action.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 120,
+      "tags": [
+        "permission",
+        "stress"
+      ],
+      "category": "permission",
+      "repo_commit": "sha256:90f8e5a0cbaca52a",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 14,
+        "max_tokens": 200000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 300
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ],
+        "denied_tools": [
+          "write_file"
+        ]
+      }
+    }
+  ]
+}

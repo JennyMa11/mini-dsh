@@ -1,0 +1,42 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "calc.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "patch_file",
+        "arguments": {
+          "path": "calc.py",
+          "expected": "def add(left: int, right: int) -> int:\n    return left - right",
+          "replacement": "def add(left: int, right: int) -> int:\n    return left + right"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Fixed add in calc.py and verified the unit test passes.",
+    "output_tokens": 8
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "report.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "patch_file",
+        "arguments": {
+          "path": "report.py",
+          "expected": "def total(values: list[int]) -> int:\n    result = 0\n    for value in values:\n        result += value\n    return result",
+          "replacement": "def total(values: list[int]) -> int:\n    return sum(values)"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Refactored total to use sum while preserving behavior.",
+    "output_tokens": 8
+  }
+]

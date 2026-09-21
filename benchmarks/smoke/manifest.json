@@ -1,0 +1,15 @@
+{
+  "name": "mini-dsh-smoke",
+  "schema_version": "1.0",
+  "tasks": [
+    {
+      "id": "fix-addition",
+      "goal": "Fix calc.add so the included unit test passes, then run the test.",
+      "workspace": "fixtures/addition",
+      "response_script": "responses.json",
+      "test_argv": ["python", "-m", "unittest", "discover", "-s", "."],
+      "success_argv": ["python", "-m", "unittest", "discover", "-s", "."],
+      "tags": ["bug-fix", "single-file", "smoke"]
+    }
+  ]
+}

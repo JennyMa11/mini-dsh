@@ -1,0 +1,1067 @@
+{
+  "name": "mini-dsh-core",
+  "schema_version": "2.0",
+  "tasks": [
+    {
+      "id": "bug-fix-arithmetic",
+      "goal": "Fix calc.add so the unit test passes, then run the test.",
+      "workspace": "fixtures/bug-fix-arithmetic",
+      "response_script": "responses/bug-fix-arithmetic.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "bug-fix",
+        "core"
+      ],
+      "category": "bug-fix",
+      "repo_commit": "sha256:259dc2292e231948",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "bug-fix-comparison",
+      "goal": "Fix compare.larger so it returns the larger value, then run the test.",
+      "workspace": "fixtures/bug-fix-comparison",
+      "response_script": "responses/bug-fix-comparison.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "bug-fix",
+        "core"
+      ],
+      "category": "bug-fix",
+      "repo_commit": "sha256:115620e75beadc9c",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "bug-fix-string",
+      "goal": "Fix shout.shout so it uppercases its input, then run the test.",
+      "workspace": "fixtures/bug-fix-string",
+      "response_script": "responses/bug-fix-string.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "bug-fix",
+        "core"
+      ],
+      "category": "bug-fix",
+      "repo_commit": "sha256:5f48d70939df4201",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "bug-fix-off-by-one",
+      "goal": "Fix the off-by-one error in countdown.count_up, then run the test.",
+      "workspace": "fixtures/bug-fix-off-by-one",
+      "response_script": "responses/bug-fix-off-by-one.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "bug-fix",
+        "core"
+      ],
+      "category": "bug-fix",
+      "repo_commit": "sha256:f0395f9b5c4947d3",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "bug-fix-parity",
+      "goal": "Fix parity.is_even so it reports even numbers correctly, then run the test.",
+      "workspace": "fixtures/bug-fix-parity",
+      "response_script": "responses/bug-fix-parity.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "bug-fix",
+        "core"
+      ],
+      "category": "bug-fix",
+      "repo_commit": "sha256:798f38de37b1fd54",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "feature-slugify",
+      "goal": "Add texttools.slugify and run the tests.",
+      "workspace": "fixtures/feature-slugify",
+      "response_script": "responses/feature-slugify.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "feature",
+        "core"
+      ],
+      "category": "feature",
+      "repo_commit": "sha256:5a3d2757c760ad86",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "feature-unique",
+      "goal": "Add listtools.unique and run the tests.",
+      "workspace": "fixtures/feature-unique",
+      "response_script": "responses/feature-unique.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "feature",
+        "core"
+      ],
+      "category": "feature",
+      "repo_commit": "sha256:2b5237821a601949",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "feature-mean",
+      "goal": "Add stats.mean and run the tests.",
+      "workspace": "fixtures/feature-mean",
+      "response_script": "responses/feature-mean.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "feature",
+        "core"
+      ],
+      "category": "feature",
+      "repo_commit": "sha256:5ff2f4a0da75027d",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "feature-word-count",
+      "goal": "Add wordtools.word_count and run the tests.",
+      "workspace": "fixtures/feature-word-count",
+      "response_script": "responses/feature-word-count.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "feature",
+        "core"
+      ],
+      "category": "feature",
+      "repo_commit": "sha256:71f67fad68d3ba01",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "test-repair-double",
+      "goal": "Repair the incorrect unit test without changing logic.py.",
+      "workspace": "fixtures/test-repair-double",
+      "response_script": "responses/test-repair-double.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "test-repair",
+        "core"
+      ],
+      "category": "test-repair",
+      "repo_commit": "sha256:46e4e1be62281b44",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "test-repair-average",
+      "goal": "Repair the incorrect unit test without changing averages.py.",
+      "workspace": "fixtures/test-repair-average",
+      "response_script": "responses/test-repair-average.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "test-repair",
+        "core"
+      ],
+      "category": "test-repair",
+      "repo_commit": "sha256:52ed6c64eb5ff7f9",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "test-repair-area",
+      "goal": "Repair the incorrect unit test without changing geometry.py.",
+      "workspace": "fixtures/test-repair-area",
+      "response_script": "responses/test-repair-area.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "test-repair",
+        "core"
+      ],
+      "category": "test-repair",
+      "repo_commit": "sha256:87a2d40bc088dd1d",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "test-repair-celsius",
+      "goal": "Repair the incorrect unit test without changing convert.py.",
+      "workspace": "fixtures/test-repair-celsius",
+      "response_script": "responses/test-repair-celsius.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "test-repair",
+        "core"
+      ],
+      "category": "test-repair",
+      "repo_commit": "sha256:7187c82ab119ba0b",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "refactor-report",
+      "goal": "Refactor report.total to use sum while preserving behavior.",
+      "workspace": "fixtures/refactor-report",
+      "response_script": "responses/refactor-report.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "refactor",
+        "core"
+      ],
+      "category": "refactor",
+      "repo_commit": "sha256:c058a87509a2318e",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "refactor-inventory",
+      "goal": "Refactor inventory.stock to use sum while preserving behavior.",
+      "workspace": "fixtures/refactor-inventory",
+      "response_script": "responses/refactor-inventory.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "refactor",
+        "core"
+      ],
+      "category": "refactor",
+      "repo_commit": "sha256:66eb12057f3314f8",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "refactor-scores",
+      "goal": "Refactor scores.points to use sum while preserving behavior.",
+      "workspace": "fixtures/refactor-scores",
+      "response_script": "responses/refactor-scores.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "refactor",
+        "core"
+      ],
+      "category": "refactor",
+      "repo_commit": "sha256:d95cfbb49eeaee49",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "refactor-ledger",
+      "goal": "Refactor ledger.balance to use sum while preserving behavior.",
+      "workspace": "fixtures/refactor-ledger",
+      "response_script": "responses/refactor-ledger.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "refactor",
+        "core"
+      ],
+      "category": "refactor",
+      "repo_commit": "sha256:ad1a260b773f4e5a",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "understanding-retry",
+      "goal": "Read retry.py and record the default retries and delay for attempt 4 in answer.json.",
+      "workspace": "fixtures/understanding-retry",
+      "response_script": "responses/understanding-retry.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "code-understanding",
+        "core"
+      ],
+      "category": "code-understanding",
+      "repo_commit": "sha256:886e31d65c4cd5b9",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "understanding-defaults",
+      "goal": "Read settings.py and record the three default values in answer.json.",
+      "workspace": "fixtures/understanding-defaults",
+      "response_script": "responses/understanding-defaults.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "code-understanding",
+        "core"
+      ],
+      "category": "code-understanding",
+      "repo_commit": "sha256:c1fd5f9ea95c666d",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "understanding-rate-limits",
+      "goal": "Read limits.py and record the rate limit defaults in answer.json.",
+      "workspace": "fixtures/understanding-rate-limits",
+      "response_script": "responses/understanding-rate-limits.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "code-understanding",
+        "core"
+      ],
+      "category": "code-understanding",
+      "repo_commit": "sha256:b4f4ab202d81ba28",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "understanding-timeouts",
+      "goal": "Read timeouts.py and record the timeout defaults and their total in answer.json.",
+      "workspace": "fixtures/understanding-timeouts",
+      "response_script": "responses/understanding-timeouts.json",
+      "test_argv": [
+        "python",
+        "verify.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "code-understanding",
+        "core"
+      ],
+      "category": "code-understanding",
+      "repo_commit": "sha256:3efee7e3a4f5a485",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "multi-file-discount",
+      "goal": "Apply a ten percent discount by fixing both rules.py and pricing.py, then test.",
+      "workspace": "fixtures/multi-file-discount",
+      "response_script": "responses/multi-file-discount.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "multi-file",
+        "core"
+      ],
+      "category": "multi-file",
+      "repo_commit": "sha256:8415964daf406e88",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "multi-file-tax",
+      "goal": "Apply a five percent tax by fixing both tax_rules.py and invoice.py, then test.",
+      "workspace": "fixtures/multi-file-tax",
+      "response_script": "responses/multi-file-tax.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "multi-file",
+        "core"
+      ],
+      "category": "multi-file",
+      "repo_commit": "sha256:e585bbc0948ce371",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "multi-file-fees",
+      "goal": "Add a two unit shipping fee by fixing both fees.py and checkout.py, then test.",
+      "workspace": "fixtures/multi-file-fees",
+      "response_script": "responses/multi-file-fees.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "multi-file",
+        "core"
+      ],
+      "category": "multi-file",
+      "repo_commit": "sha256:3a25edf5d057bb49",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "multi-file-cart",
+      "goal": "Apply a twenty percent member discount by fixing both discounts.py and cart.py, then test.",
+      "workspace": "fixtures/multi-file-cart",
+      "response_script": "responses/multi-file-cart.json",
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "success_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "."
+      ],
+      "timeout_seconds": 60,
+      "tags": [
+        "multi-file",
+        "core"
+      ],
+      "category": "multi-file",
+      "repo_commit": "sha256:ffc2518dd1beaa91",
+      "seed": 0,
+      "model": "scripted",
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 50000,
+        "max_tool_calls": 20,
+        "max_duration_seconds": 120
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    }
+  ]
+}

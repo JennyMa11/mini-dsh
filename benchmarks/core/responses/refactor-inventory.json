@@ -1,0 +1,42 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "inventory.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "patch_file",
+        "arguments": {
+          "path": "inventory.py",
+          "expected": "def stock(values: list[int]) -> int:\n    count = 0\n    for value in values:\n        count += value\n    return count",
+          "replacement": "def stock(values: list[int]) -> int:\n    return sum(values)"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Refactored stock to use sum while preserving behavior.",
+    "output_tokens": 8
+  }
+]

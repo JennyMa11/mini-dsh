@@ -1,0 +1,41 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "c1",
+        "name": "read_file",
+        "arguments": {
+          "path": "settings.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c2",
+        "name": "write_file",
+        "arguments": {
+          "path": "answer.json",
+          "content": "{\n  \"retries\": 3,\n  \"timeout\": 30,\n  \"verbose\": false\n}\n"
+        }
+      }
+    ],
+    "output_tokens": 8
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "c3",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Recorded the defaults for settings.py in answer.json.",
+    "output_tokens": 8
+  }
+]
