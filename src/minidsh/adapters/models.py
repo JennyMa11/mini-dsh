@@ -21,11 +21,31 @@ from minidsh.domain import (
     TokenUsage,
     ToolCall,
     estimate_tokens,
+    redact_text,
 )
 
 _AUTH_STATUS = frozenset({401, 403})
 _RATE_LIMIT_STATUS = 429
 _TRANSIENT_STATUS = frozenset({408, 409, 425, 500, 502, 503, 504})
+
+# Enough of a provider error body to carry the diagnosis, little enough that a
+# whole HTML error page never ends up in a failure reason.
+_MAX_ERROR_DETAIL = 400
+
+
+def _error_detail(exc: urllib.error.HTTPError) -> str:
+    """Return the provider's own error text, collapsed, truncated, and redacted.
+
+    The body is untrusted text on its way into a message that reaches logs, traces
+    and reports, so it passes through the same redaction as everything else.  A
+    body that cannot be read or decoded must not mask the status code, hence the
+    broad catch: the status is the fact, the detail is only the diagnosis.
+    """
+    try:
+        detail = exc.read().decode("utf-8", errors="replace")
+    except Exception:  # an unreadable body must not hide the status code
+        return ""
+    return redact_text(" ".join(detail.split())[:_MAX_ERROR_DETAIL])
 
 
 class ModelAdapterError(RuntimeError):
@@ -340,21 +360,29 @@ class OpenAICompatibleModel:
     def _http_error(exc: urllib.error.HTTPError) -> ModelAdapterError:
         """Classify one HTTP failure into a safe, actionable adapter error."""
         status = exc.code
+        # The status alone is not a diagnosis.  An HTTP 400 is the failure whose
+        # cause exists *only* in the body — a request rejected for a malformed
+        # message sequence says so there and nowhere else — so the provider's own
+        # words are carried through, trimmed and redacted.
+        detail = _error_detail(exc)
+        suffix = f": {detail}" if detail else ""
         if status in _AUTH_STATUS:
             return ModelAdapterError(
-                f"provider rejected the credential (HTTP {status})", code="auth_error"
+                f"provider rejected the credential (HTTP {status}){suffix}", code="auth_error"
             )
         if status == _RATE_LIMIT_STATUS:
             return ModelAdapterError(
-                "provider rate limit reached (HTTP 429)", code="rate_limited", retryable=True
+                f"provider rate limit reached (HTTP 429){suffix}",
+                code="rate_limited",
+                retryable=True,
             )
         if status in _TRANSIENT_STATUS:
             return ModelAdapterError(
-                f"provider returned a transient error (HTTP {status})",
+                f"provider returned a transient error (HTTP {status}){suffix}",
                 code="server_error",
                 retryable=True,
             )
-        return ModelAdapterError(f"provider returned HTTP {status}", code="client_error")
+        return ModelAdapterError(f"provider returned HTTP {status}{suffix}", code="client_error")
 
     @staticmethod
     def _message_payload(message: Message) -> dict[str, object]:

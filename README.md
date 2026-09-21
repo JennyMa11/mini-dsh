@@ -6,7 +6,7 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 - 版本：`0.3.0`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：39 个源码模块、14 个测试模块、194 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
+- 规模：40 个源码模块、14 个测试模块、201 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
 
 > `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。scripted 基线仍然可复现，但"模型能力"结论只能来自 `repo` 套件。
 
@@ -405,7 +405,7 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 53 个文件上无错误、194 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 54 个文件上无错误、201 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 

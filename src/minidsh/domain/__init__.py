@@ -22,8 +22,11 @@ from minidsh.domain.models import (
     ToolStatus,
     estimate_tokens,
 )
+from minidsh.domain.redaction import REDACTED, SECRET_KEYS, redact_text, redact_value
 
 __all__ = [
+    "REDACTED",
+    "SECRET_KEYS",
     "AgentBudget",
     "ContextView",
     "ErrorInfo",
@@ -44,4 +47,6 @@ __all__ = [
     "ToolObservation",
     "ToolStatus",
     "estimate_tokens",
+    "redact_text",
+    "redact_value",
 ]

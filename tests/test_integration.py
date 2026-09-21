@@ -561,6 +561,88 @@ async def test_authentication_failure_is_not_retried(provider: Any) -> None:
 
 @pytest.mark.integration
 @pytest.mark.asyncio
+async def test_provider_error_body_is_carried_into_the_failure_reason(provider: Any) -> None:
+    """A 400's cause exists only in the body, so the body has to survive.
+
+    Discarding it makes a malformed request indistinguishable from a provider
+    outage: the failure is classified ``environment``, the diagnosis is thrown away,
+    and a request-construction bug reads as a model that cannot answer.  That is
+    exactly how a context-strategy defect was first mistaken for a capability result.
+    """
+    _ProviderHandler.status_code = 400
+    _ProviderHandler.response_body = {
+        "error": {"message": "Invalid message sequence: tool message without tool_calls"}
+    }
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
+        model="test-model",
+        api_key="test-key",
+        sleep=_no_sleep,
+    )
+
+    with pytest.raises(ModelAdapterError) as captured:
+        await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    message = str(captured.value)
+    assert captured.value.code == "client_error"
+    assert captured.value.retryable is False
+    assert "HTTP 400" in message
+    assert "tool message without tool_calls" in message
+    assert _ProviderHandler.call_count == 1
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_provider_error_body_cannot_leak_a_credential(provider: Any) -> None:
+    """The body is untrusted text on its way into a trace, so it is redacted first."""
+    secret = "sk-test-0123456789abcdef0123456789ab"
+    _ProviderHandler.status_code = 400
+    _ProviderHandler.response_body = {
+        "error": {"message": f"rejected request for api_key={secret}"}
+    }
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
+        model="test-model",
+        api_key="test-key",
+        sleep=_no_sleep,
+    )
+
+    with pytest.raises(ModelAdapterError) as captured:
+        await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    message = str(captured.value)
+    assert secret not in message
+    assert "[REDACTED]" in message
+    # Redaction must not cost the diagnosis.
+    assert "rejected request for" in message
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_provider_error_body_is_truncated(provider: Any) -> None:
+    """A provider that answers with an HTML error page must not fill the trace."""
+    _ProviderHandler.status_code = 400
+    _ProviderHandler.response_body = {
+        "error": {"message": "HEAD-MARKER" + "x" * 5_000 + "TAIL-MARKER"}
+    }
+    model = OpenAICompatibleModel(
+        endpoint=_endpoint(provider),
+        model="test-model",
+        api_key="test-key",
+        sleep=_no_sleep,
+    )
+
+    with pytest.raises(ModelAdapterError) as captured:
+        await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+
+    message = str(captured.value)
+    assert "HEAD-MARKER" in message  # the body is carried, not discarded
+    assert "TAIL-MARKER" not in message  # but it is bounded
+    assert len(message) < 600
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
 async def test_prompt_cache_hits_are_reported_separately(provider: Any) -> None:
     _ProviderHandler.status_code = 200
     _ProviderHandler.response_body = {
