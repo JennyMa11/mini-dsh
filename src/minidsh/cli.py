@@ -12,12 +12,20 @@ import shutil
 import sys
 import uuid
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Final
 
 from minidsh import __version__
-from minidsh.adapters import JsonlTraceWriter, OpenAICompatibleModel, ScriptedModel
+from minidsh.adapters import (
+    BUILTIN_PROFILES,
+    JsonlTraceWriter,
+    ModelAdapterError,
+    ModelProfile,
+    ScriptedModel,
+    build_provider_model,
+    resolve_profile,
+)
 from minidsh.benchmark import (
     AblationReport,
     AblationRunner,
@@ -30,7 +38,16 @@ from minidsh.benchmark import (
 )
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
 from minidsh.config import DEFAULT_CONFIG_NAME, ResolvedConfig, resolve_config
-from minidsh.domain import RunStatus, ToolCall
+from minidsh.domain import FailureCategory, ModelPricing, RunStatus, ToolCall
+from minidsh.evaluation import (
+    MetricPoint,
+    TraceRun,
+    build_replay,
+    diff_traces,
+    pareto,
+)
+from minidsh.evaluation.diff import to_markdown as diff_markdown
+from minidsh.evaluation.replay import to_markdown as replay_markdown
 from minidsh.ports import Model
 
 _MINIMUM_PYTHON: Final = (3, 12)
@@ -42,6 +59,7 @@ _CONTEXT_STRATEGIES: Final = (
     "retrieval_summary",
     "symbol",
 )
+_PROVIDERS: Final = ("scripted", "openai-compatible")
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -55,35 +73,28 @@ def _build_parser() -> argparse.ArgumentParser:
 
     run = subparsers.add_parser("run", help="run one coding-agent task")
     _add_common_options(run)
+    _add_model_options(run)
     run.add_argument("task", help="task given to the coding agent")
     run.add_argument("--workspace", type=Path, default=Path.cwd())
-    run.add_argument("--provider", choices=("scripted", "openai-compatible"), default="scripted")
-    run.add_argument("--script", type=Path, help="JSON response script for the scripted provider")
-    run.add_argument(
-        "--endpoint", help="Chat Completions endpoint; overrides MINIDSH_MODEL_ENDPOINT"
-    )
-    run.add_argument("--model", help="model name; overrides MINIDSH_MODEL")
-    run.add_argument(
-        "--api-key-env",
-        default="MINIDSH_API_KEY",
-        help="environment variable containing the provider API key",
-    )
     run.add_argument("--trace", type=Path, help="JSONL trace path")
 
-    benchmark = subparsers.add_parser("benchmark", help="run a scripted benchmark manifest")
+    benchmark = subparsers.add_parser("benchmark", help="run a benchmark manifest")
     _add_common_options(benchmark)
+    _add_model_options(benchmark)
     benchmark.add_argument("manifest", type=Path)
     benchmark.add_argument("--output", type=Path, default=Path("benchmark-results/report.json"))
     benchmark.add_argument("--markdown", type=Path, help="optional Markdown report path")
     benchmark.add_argument(
-        "--verify-command",
-        action="append",
-        default=[],
-        help="allow one success-criterion executable; repeat as needed",
+        "--repeat",
+        type=int,
+        default=1,
+        help="run every task this many times to expose run-to-run spread",
     )
+    _add_verification_option(benchmark)
 
     ablation = subparsers.add_parser("ablation", help="run a single-variable ablation suite")
     _add_common_options(ablation)
+    _add_model_options(ablation)
     ablation.add_argument("manifest", type=Path)
     ablation.add_argument("--output", type=Path, default=Path("benchmark-results/ablation.json"))
     ablation.add_argument(
@@ -91,17 +102,39 @@ def _build_parser() -> argparse.ArgumentParser:
         default="standard",
         help="variant suite: standard, context, tool_output, permission",
     )
-    ablation.add_argument(
-        "--verify-command",
-        action="append",
-        default=[],
-        help="allow one success-criterion executable; repeat as needed",
-    )
+    ablation.add_argument("--repeat", type=int, default=1)
+    _add_verification_option(ablation)
+
+    report = subparsers.add_parser("report", help="render a saved report with trade-off analysis")
+    report.add_argument("path", type=Path, help="a benchmark or ablation JSON report")
+    report.add_argument("--markdown", type=Path, help="write Markdown here instead of stdout")
+
+    trace = subparsers.add_parser("trace", help="replay or diff recorded JSONL traces")
+    trace_commands = trace.add_subparsers(dest="trace_command", required=True)
+    trace_replay = trace_commands.add_parser("replay", help="reconstruct a run step by step")
+    trace_replay.add_argument("path", type=Path)
+    trace_replay.add_argument("--json", action="store_true", dest="as_json")
+    trace_replay.add_argument("--preview-chars", type=int, default=120)
+    trace_diff = trace_commands.add_parser("diff", help="compare two traces of the same task")
+    trace_diff.add_argument("left", type=Path)
+    trace_diff.add_argument("right", type=Path)
+    trace_diff.add_argument("--left-label")
+    trace_diff.add_argument("--right-label")
+    trace_diff.add_argument("--json", action="store_true", dest="as_json")
 
     config = subparsers.add_parser("config", help="print the effective layered configuration")
     _add_common_options(config)
     config.add_argument("--workspace", type=Path, default=Path.cwd())
     return parser
+
+
+def _add_verification_option(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--verify-command",
+        action="append",
+        default=[],
+        help="allow one success-criterion executable; repeat as needed",
+    )
 
 
 def _add_common_options(parser: argparse.ArgumentParser) -> None:
@@ -149,6 +182,41 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--tool-output-limit", type=int)
     parser.add_argument("--input-usd-per-million", type=float)
     parser.add_argument("--output-usd-per-million", type=float)
+    parser.add_argument(
+        "--cached-input-usd-per-million",
+        type=float,
+        help="rate for prompt-cache hits; defaults to the uncached input rate",
+    )
+
+
+def _add_model_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--provider", choices=_PROVIDERS, default="scripted")
+    parser.add_argument(
+        "--model-profile",
+        help=f"named provider profile: {', '.join(sorted(BUILTIN_PROFILES))}",
+    )
+    parser.add_argument(
+        "--script", type=Path, help="JSON response script; required by the scripted provider"
+    )
+    parser.add_argument("--endpoint", help="Chat Completions endpoint; overrides the profile")
+    parser.add_argument("--model", help="model name; overrides the profile")
+    parser.add_argument(
+        "--api-key-env",
+        default=None,
+        help="environment variable containing the provider API key; defaults to the profile's",
+    )
+    parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--max-attempts",
+        type=int,
+        default=4,
+        help="attempts per model call before a transient provider error is fatal",
+    )
+    parser.add_argument(
+        "--allow-unpriced",
+        action="store_true",
+        help="permit a real provider with no declared rate card; cost is then not reportable",
+    )
 
 
 def _discover_config_path(explicit: Path | None, workspace: Path) -> Path | None:
@@ -185,6 +253,7 @@ def _cli_overrides(args: argparse.Namespace) -> dict[str, Any]:
         "tool_output_limit": getattr(args, "tool_output_limit", None),
         "input_usd_per_million": getattr(args, "input_usd_per_million", None),
         "output_usd_per_million": getattr(args, "output_usd_per_million", None),
+        "cached_input_usd_per_million": getattr(args, "cached_input_usd_per_million", None),
     }
     commands = getattr(args, "allow_command", None)
     if commands is not None:
@@ -231,25 +300,117 @@ def _doctor() -> int:
     return 0 if healthy else 1
 
 
-def _create_model(args: argparse.Namespace) -> Model:
-    provider = str(args.provider)
-    if provider == "scripted":
-        script = args.script
-        if not isinstance(script, Path):
-            msg = "--script is required for the scripted provider"
-            raise ValueError(msg)
-        return ScriptedModel.from_file(script)
+@dataclass(frozen=True, slots=True)
+class _ModelSelection:
+    """The model adapter plus everything a report needs to describe it."""
 
-    endpoint = args.endpoint or os.environ.get("MINIDSH_MODEL_ENDPOINT")
-    model_name = args.model or os.environ.get("MINIDSH_MODEL")
-    api_key = os.environ.get(str(args.api_key_env))
-    if not endpoint or not model_name or not api_key:
+    model: Model | None
+    label: str
+    profile: ModelProfile | None
+    pricing: ModelPricing
+    script: Path | None
+
+    @property
+    def is_real_provider(self) -> bool:
+        """Return whether a network provider will be called."""
+        return self.profile is not None
+
+    def describe(self) -> dict[str, Any]:
+        """Return the provider facts recorded alongside results."""
+        payload: dict[str, Any] = {
+            "label": self.label,
+            "pricing": {
+                "input_usd_per_million": self.pricing.input_usd_per_million,
+                "output_usd_per_million": self.pricing.output_usd_per_million,
+                "cached_input_usd_per_million": self.pricing.cached_input_usd_per_million,
+            },
+        }
+        if self.profile is not None:
+            payload["profile"] = self.profile.describe()
+        return payload
+
+
+def _is_free(pricing: ModelPricing) -> bool:
+    return pricing.input_usd_per_million == 0 and pricing.output_usd_per_million == 0
+
+
+def _apply_model_overrides(profile: ModelProfile, args: argparse.Namespace) -> ModelProfile:
+    """Let explicit flags win over the profile's pinned endpoint, model, and key var."""
+    model = getattr(args, "model", None)
+    endpoint = getattr(args, "endpoint", None)
+    api_key_env = getattr(args, "api_key_env", None)
+    if model is None and endpoint is None and api_key_env is None:
+        return profile
+    return replace(
+        profile,
+        model=str(model) if model else profile.model,
+        endpoint=str(endpoint) if endpoint else profile.endpoint,
+        api_key_env=str(api_key_env) if api_key_env else profile.api_key_env,
+    )
+
+
+def _profile_for(args: argparse.Namespace) -> ModelProfile | None:
+    """Resolve the named profile, or synthesise one from explicit endpoint flags."""
+    name = getattr(args, "model_profile", None) or os.environ.get("MINIDSH_MODEL_PROFILE")
+    if name:
+        return _apply_model_overrides(resolve_profile(str(name), environ=os.environ), args)
+    if getattr(args, "provider", "scripted") != "openai-compatible":
+        return None
+    endpoint = getattr(args, "endpoint", None) or os.environ.get("MINIDSH_MODEL_ENDPOINT")
+    model_name = getattr(args, "model", None) or os.environ.get("MINIDSH_MODEL")
+    if not endpoint or not model_name:
         msg = (
-            "openai-compatible requires --endpoint/MINIDSH_MODEL_ENDPOINT, "
-            "--model/MINIDSH_MODEL, and the configured API-key environment variable"
+            "openai-compatible requires --endpoint/MINIDSH_MODEL_ENDPOINT and "
+            "--model/MINIDSH_MODEL, or a named --model-profile"
+        )
+        raise ModelAdapterError(msg, code="missing_endpoint")
+    return ModelProfile(
+        name="openai-compatible",
+        endpoint=str(endpoint),
+        model=str(model_name),
+        api_key_env=str(getattr(args, "api_key_env", None) or "MINIDSH_API_KEY"),
+        pricing=None,
+        pricing_source="Explicit endpoint: declare the rate card on the command line.",
+    )
+
+
+def _select_model(args: argparse.Namespace, resolved: ResolvedConfig) -> _ModelSelection:
+    """Build the model adapter and the rate card its results will be priced with."""
+    profile = _profile_for(args)
+    if profile is None:
+        script = getattr(args, "script", None)
+        return _ModelSelection(
+            None,
+            "scripted",
+            None,
+            resolved.options.pricing,
+            script if isinstance(script, Path) else None,
+        )
+
+    # A zero rate card is indistinguishable from an undeclared one, so "declared" is
+    # tracked explicitly: a profile that genuinely costs nothing per token (local
+    # weights) must not be rejected as unpriced, while a paid provider must not
+    # silently report $0.
+    declared = not _is_free(resolved.options.pricing)
+    pricing = resolved.options.pricing
+    if profile.pricing is not None:
+        pricing = resolved.options.pricing if declared else profile.pricing
+        declared = True
+    if not declared and not getattr(args, "allow_unpriced", False):
+        msg = (
+            f"profile {profile.name!r} has no declared rate card, so cost cannot be reported. "
+            "Pass --input-usd-per-million and --output-usd-per-million (and optionally "
+            "--cached-input-usd-per-million) from the provider's current pricing page, "
+            "or pass --allow-unpriced to run without cost accounting."
         )
         raise ValueError(msg)
-    return OpenAICompatibleModel(endpoint=endpoint, model=model_name, api_key=api_key)
+    model = build_provider_model(
+        profile,
+        environ=os.environ,
+        temperature=float(getattr(args, "temperature", 0.0)),
+        max_attempts=int(getattr(args, "max_attempts", 4)),
+    )
+    return _ModelSelection(model, profile.resolved_model(os.environ), profile, pricing, None)
 
 
 def _task_options(base: RuntimeOptions, task: BenchmarkTask) -> RuntimeOptions:
@@ -287,7 +448,13 @@ def _write_outputs(report: BenchmarkReport, output: Path, markdown: Path | None)
 async def _run(args: argparse.Namespace) -> int:
     workspace = await asyncio.to_thread(Path(args.workspace).resolve, strict=True)
     resolved = await asyncio.to_thread(_resolve, args, workspace)
-    model = await asyncio.to_thread(_create_model, args)
+    selection = await asyncio.to_thread(_select_model, args, resolved)
+    model = selection.model
+    if model is None:
+        if selection.script is None:
+            msg = "--script is required for the scripted provider"
+            raise ValueError(msg)
+        model = ScriptedModel.from_file(selection.script)
     run_id = uuid.uuid4().hex
     trace_path = (
         Path(args.trace)
@@ -297,7 +464,7 @@ async def _run(args: argparse.Namespace) -> int:
     runtime = build_local_runtime(
         workspace=workspace,
         model=model,
-        options=resolved.options,
+        options=replace(resolved.options, pricing=selection.pricing),
         budget=resolved.budget,
     )
     runtime.events.subscribe("*", JsonlTraceWriter(trace_path))
@@ -318,11 +485,14 @@ async def _run(args: argparse.Namespace) -> int:
         "diff": diff_text,
         "duration_ms": round(result.duration_ms, 3),
         "failure_reason": result.failure_reason,
+        "latency": result.latency.to_json(),
+        "model": selection.describe(),
         "run_id": result.run_id,
         "status": result.status.value,
         "steps": result.steps,
         "tool_calls": result.tool_calls,
         "tokens": result.token_usage.total_tokens,
+        "cached_input_tokens": result.token_usage.cached_input_tokens,
         "trace": str(trace_path),
     }
     sys.stdout.write(f"{json.dumps(output, indent=2, ensure_ascii=False, sort_keys=True)}\n")
@@ -331,34 +501,53 @@ async def _run(args: argparse.Namespace) -> int:
 
 def _benchmark_factory(
     base: RuntimeOptions,
+    selection: _ModelSelection,
 ) -> Callable[[Path, BenchmarkTask], LocalRuntime]:
+    options = replace(base, pricing=selection.pricing)
+
     def factory(workspace: Path, task: BenchmarkTask) -> LocalRuntime:
-        if task.response_script is None:
-            msg = f"benchmark task {task.task_id} requires response_script"
-            raise ValueError(msg)
-        model = ScriptedModel.from_file(task.response_script)
+        model: Model
+        if selection.model is not None:
+            model = selection.model
+        else:
+            script = task.response_script or selection.script
+            if script is None:
+                msg = (
+                    f"benchmark task {task.task_id} has no response_script and no --script "
+                    "was given; either supply a script or select a real provider"
+                )
+                raise ValueError(msg)
+            model = ScriptedModel.from_file(script)
         return build_local_runtime(
             workspace=workspace,
             model=model,
-            options=_task_options(base, task),
+            options=_task_options(options, task),
             budget=task.budget,
         )
 
     return factory
 
 
+def _require_verification(args: argparse.Namespace) -> frozenset[str]:
+    allowlist = frozenset(str(item) for item in args.verify_command)
+    if not allowlist:
+        msg = "at least one explicit --verify-command is required"
+        raise ValueError(msg)
+    return allowlist
+
+
 async def _benchmark(args: argparse.Namespace) -> int:
     manifest = await asyncio.to_thread(BenchmarkManifest.from_file, Path(args.manifest))
     resolved = await asyncio.to_thread(_resolve, args, Path.cwd())
-    verification_allowlist = frozenset(str(item) for item in args.verify_command)
-    if not verification_allowlist:
-        msg = "benchmark requires at least one explicit --verify-command"
-        raise ValueError(msg)
+    selection = await asyncio.to_thread(_select_model, args, resolved)
+    verification_allowlist = _require_verification(args)
     output = await asyncio.to_thread(Path(args.output).resolve)
     runner = BenchmarkRunner(
-        _benchmark_factory(resolved.options),
+        _benchmark_factory(resolved.options, selection),
         output.parent / f"{output.stem}-artifacts",
         verification_allowlist=verification_allowlist,
+        repeats=int(args.repeat),
+        model_label=selection.label if selection.is_real_provider else None,
     )
     report = await runner.run(manifest)
     markdown = Path(args.markdown) if args.markdown is not None else output.with_suffix(".md")
@@ -382,24 +571,32 @@ def _variant_options(base: RuntimeOptions, variant: HarnessVariant) -> RuntimeOp
 async def _ablation(args: argparse.Namespace) -> int:
     manifest = await asyncio.to_thread(BenchmarkManifest.from_file, Path(args.manifest))
     resolved = await asyncio.to_thread(_resolve, args, Path.cwd())
-    verification_allowlist = frozenset(str(item) for item in args.verify_command)
-    if not verification_allowlist:
-        msg = "ablation requires at least one explicit --verify-command"
-        raise ValueError(msg)
+    selection = await asyncio.to_thread(_select_model, args, resolved)
+    verification_allowlist = _require_verification(args)
     variants = VariantRegistry().get(str(args.suite))
     output = await asyncio.to_thread(Path(args.output).resolve)
 
     def factory(variant: HarnessVariant) -> BenchmarkRunner:
         base = _variant_options(resolved.options, variant)
         return BenchmarkRunner(
-            _benchmark_factory(base),
+            _benchmark_factory(base, selection),
             output.parent / f"{output.stem}-{variant.name}",
             verification_allowlist=verification_allowlist,
+            repeats=int(args.repeat),
+            model_label=selection.label if selection.is_real_provider else None,
         )
 
     report: AblationReport = await AblationRunner(factory).run(manifest, variants)
     await asyncio.to_thread(output.parent.mkdir, parents=True, exist_ok=True)
-    await asyncio.to_thread(output.write_text, report.to_json() + "\n", encoding="utf-8")
+    payload = {
+        "manifest": report.manifest_name,
+        "model": selection.describe(),
+        "variants": json.loads(report.to_json())["variants"],
+        "pareto": [item.to_json() for item in report.pareto()],
+    }
+    await asyncio.to_thread(
+        output.write_text, json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     jsonl = output.parent / f"{output.stem}.jsonl"
     await asyncio.to_thread(jsonl.write_text, report.to_jsonl(), encoding="utf-8")
     markdown = output.with_suffix(".md")
@@ -408,6 +605,113 @@ async def _ablation(args: argparse.Namespace) -> int:
     return (
         0 if all(item.report.aggregate()["success_rate"] == 1.0 for item in report.variants) else 1
     )
+
+
+def _report(args: argparse.Namespace) -> int:
+    path = Path(args.path)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        msg = f"cannot read report: {path}"
+        raise ValueError(msg) from exc
+    if not isinstance(payload, dict):
+        msg = f"report must be a JSON object: {path}"
+        raise ValueError(msg)
+    rendered = (
+        _render_ablation_report(payload)
+        if "variants" in payload
+        else _render_benchmark_report(payload)
+    )
+    if args.markdown is not None:
+        destination = Path(args.markdown)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text(rendered, encoding="utf-8")
+        sys.stdout.write(f"wrote {destination}\n")
+    else:
+        sys.stdout.write(rendered)
+    return 0
+
+
+def _render_ablation_report(payload: dict[str, Any]) -> str:
+    variants = payload.get("variants")
+    if not isinstance(variants, list):
+        msg = "ablation report has no variants"
+        raise ValueError(msg)
+    lines = [f"# Ablation report: {payload.get('manifest', 'unknown')}", ""]
+    model = payload.get("model")
+    if isinstance(model, dict):
+        lines += [f"- Model: `{model.get('label')}`", ""]
+    lines += [
+        "| Variant | Success | Pass@k | Steps | Tokens | Cost (USD) | Cost/success |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    points: list[MetricPoint] = []
+    for item in variants:
+        if not isinstance(item, dict):
+            continue
+        configuration = item.get("configuration", {})
+        aggregate = item.get("aggregate", {})
+        name = str(configuration.get("name", "unknown"))
+        points.append(MetricPoint.from_aggregate(name, aggregate))
+        lines.append(
+            f"| {name} | {float(aggregate.get('success_rate', 0.0)):.0%} | "
+            f"{float(aggregate.get('pass_at_k', 0.0)):.0%} | "
+            f"{float(aggregate.get('average_steps', 0.0)):.2f} | "
+            f"{float(aggregate.get('average_tokens', 0.0)):.1f} | "
+            f"{float(aggregate.get('total_cost_usd', 0.0)):.6f} | "
+            f"{float(aggregate.get('cost_per_success_usd', 0.0)):.6f} |"
+        )
+    lines += ["", pareto.to_markdown(points, pareto.analyze(points)).rstrip(), ""]
+    return "\n".join(lines) + "\n"
+
+
+def _render_benchmark_report(payload: dict[str, Any]) -> str:
+    aggregate = payload.get("aggregate")
+    if not isinstance(aggregate, dict):
+        msg = "benchmark report has no aggregate"
+        raise ValueError(msg)
+    lines = [f"# Benchmark report: {payload.get('name', 'unknown')}", ""]
+    model = payload.get("model")
+    if isinstance(model, dict):
+        lines += [f"- Model: `{model.get('label')}`", ""]
+    for key in sorted(aggregate):
+        lines.append(f"- `{key}`: {aggregate[key]}")
+    layers = payload.get("failure_layers")
+    if isinstance(layers, dict):
+        lines += ["", "## Outcome by layer", ""]
+        lines += [f"- `{name}`: {value}" for name, value in sorted(layers.items())]
+    categories = payload.get("failure_categories")
+    if isinstance(categories, dict):
+        lines += ["", "## Failure categories", ""]
+        lines += [f"- `{name}`: {value}" for name, value in sorted(categories.items())]
+    return "\n".join(lines) + "\n"
+
+
+def _trace_replay(args: argparse.Namespace) -> int:
+    trace = TraceRun.from_file(Path(args.path))
+    if args.as_json:
+        sys.stdout.write(f"{json.dumps(build_replay(trace).to_json(), indent=2, sort_keys=True)}\n")
+    else:
+        sys.stdout.write(
+            replay_markdown(build_replay(trace), preview_chars=int(args.preview_chars))
+        )
+    return 0
+
+
+def _trace_diff(args: argparse.Namespace) -> int:
+    left = TraceRun.from_file(Path(args.left))
+    right = TraceRun.from_file(Path(args.right))
+    result = diff_traces(
+        left,
+        right,
+        left_label=args.left_label or Path(args.left).stem,
+        right_label=args.right_label or Path(args.right).stem,
+    )
+    if args.as_json:
+        sys.stdout.write(f"{json.dumps(result.to_json(), indent=2, sort_keys=True)}\n")
+    else:
+        sys.stdout.write(diff_markdown(result))
+    return 0
 
 
 def _config(args: argparse.Namespace) -> int:
@@ -438,7 +742,9 @@ def _config(args: argparse.Namespace) -> int:
             ),
             "input_usd_per_million": resolved.options.pricing.input_usd_per_million,
             "output_usd_per_million": resolved.options.pricing.output_usd_per_million,
+            "cached_input_usd_per_million": resolved.options.pricing.cached_input_usd_per_million,
         },
+        "failure_categories": [category.value for category in FailureCategory],
         "sources": resolved.sources,
     }
     sys.stdout.write(f"{json.dumps(payload, indent=2, sort_keys=True)}\n")
@@ -454,13 +760,21 @@ def main(argv: Sequence[str] | None = None) -> None:
         "run": _run,
         "benchmark": _benchmark,
         "ablation": _ablation,
+        "report": _report,
         "config": _config,
     }
-    handler = handlers.get(str(args.command))
-    if handler is None:
-        raise AssertionError(f"unhandled command: {args.command}")
     try:
-        exit_code = _config(args) if args.command == "config" else asyncio.run(handler(args))
+        if args.command == "config":
+            exit_code = _config(args)
+        elif args.command == "report":
+            exit_code = _report(args)
+        elif args.command == "trace":
+            exit_code = _trace_replay(args) if args.trace_command == "replay" else _trace_diff(args)
+        else:
+            handler = handlers.get(str(args.command))
+            if handler is None:
+                raise AssertionError(f"unhandled command: {args.command}")
+            exit_code = asyncio.run(handler(args))
     except (OSError, RuntimeError, ValueError) as exc:
         sys.stderr.write(f"mini-dsh: {exc}\n")
         exit_code = 2

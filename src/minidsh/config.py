@@ -39,6 +39,7 @@ _ENV_FIELDS: dict[str, str] = {
     "MAX_SECONDS": "max_duration_seconds",
     "INPUT_USD_PER_MILLION": "input_usd_per_million",
     "OUTPUT_USD_PER_MILLION": "output_usd_per_million",
+    "CACHED_INPUT_USD_PER_MILLION": "cached_input_usd_per_million",
 }
 
 _BOOL_FIELDS = frozenset({"allow_write", "allow_shell", "artifact_offload", "reflection_enabled"})
@@ -46,7 +47,12 @@ _INT_FIELDS = frozenset(
     {"tool_output_limit", "tool_max_retries", "max_steps", "max_tokens", "max_tool_calls"}
 )
 _FLOAT_FIELDS = frozenset(
-    {"max_duration_seconds", "input_usd_per_million", "output_usd_per_million"}
+    {
+        "max_duration_seconds",
+        "input_usd_per_million",
+        "output_usd_per_million",
+        "cached_input_usd_per_million",
+    }
 )
 
 
@@ -89,6 +95,7 @@ class _ConfigModel(BaseModel):
     max_duration_seconds: float = Field(default=900.0, gt=0)
     input_usd_per_million: float = Field(default=0.0, ge=0)
     output_usd_per_million: float = Field(default=0.0, ge=0)
+    cached_input_usd_per_million: float | None = Field(default=None, ge=0)
     network_rules: list[_NetworkRuleConfig] = Field(default_factory=list)
 
 
@@ -200,7 +207,11 @@ def resolve_config(
         test_command=tuple(config.test_command) if config.test_command else None,
         build_command=tuple(config.build_command) if config.build_command else None,
         network=network,
-        pricing=ModelPricing(config.input_usd_per_million, config.output_usd_per_million),
+        pricing=ModelPricing(
+            config.input_usd_per_million,
+            config.output_usd_per_million,
+            config.cached_input_usd_per_million,
+        ),
         tool_output_limit=config.tool_output_limit,
         artifact_offload=config.artifact_offload,
         tool_max_retries=config.tool_max_retries,
