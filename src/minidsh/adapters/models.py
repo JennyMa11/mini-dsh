@@ -6,7 +6,7 @@ import asyncio
 import json
 import urllib.error
 import urllib.request
-from collections.abc import Sequence
+from collections.abc import Awaitable, Callable, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
@@ -23,9 +23,24 @@ from minidsh.domain import (
     estimate_tokens,
 )
 
+_AUTH_STATUS = frozenset({401, 403})
+_RATE_LIMIT_STATUS = 429
+_TRANSIENT_STATUS = frozenset({408, 409, 425, 500, 502, 503, 504})
+
 
 class ModelAdapterError(RuntimeError):
-    """Safe provider or scripted-model failure."""
+    """Safe provider or scripted-model failure.
+
+    ``code`` and ``retryable`` exist so the loop and the failure taxonomy can tell a
+    transient provider hiccup (``rate_limited``, ``server_error``, ``timeout``) apart
+    from a configuration or capability problem (``missing_credentials``,
+    ``bad_response``, ``invalid_tool_arguments``) without parsing message text.
+    """
+
+    def __init__(self, message: str, *, code: str = "model_error", retryable: bool = False) -> None:
+        super().__init__(message)
+        self.code = code
+        self.retryable = retryable
 
 
 @dataclass(slots=True)
@@ -140,9 +155,20 @@ class _ProviderChoice(BaseModel):
     finish_reason: str = "stop"
 
 
+class _ProviderPromptDetails(BaseModel):
+    cached_tokens: int = 0
+
+
 class _ProviderUsage(BaseModel):
     prompt_tokens: int = 0
     completion_tokens: int = 0
+    prompt_tokens_details: _ProviderPromptDetails | None = None
+
+    @property
+    def cached_tokens(self) -> int:
+        """Return the prompt-cache hit count, which providers nest one level down."""
+        details = self.prompt_tokens_details
+        return details.cached_tokens if details is not None else 0
 
 
 class _ProviderResponse(BaseModel):
@@ -151,32 +177,66 @@ class _ProviderResponse(BaseModel):
 
 
 class OpenAICompatibleModel:
-    """Minimal Chat Completions adapter with explicit endpoint and credentials."""
+    """Chat Completions adapter with explicit endpoint, credentials, and retry policy.
 
-    def __init__(
+    Retrying a model call is safe because a completion has no side effect on the
+    workspace: a duplicate request costs tokens but cannot corrupt state. That is why
+    this adapter retries while the tool runtime deliberately does not retry tools that
+    declare side effects.
+    """
+
+    def __init__(  # noqa: PLR0913 - explicit transport policy is the point of this adapter
         self,
         *,
         endpoint: str,
         model: str,
-        api_key: str,
+        api_key: str = "",
         timeout_seconds: float = 120.0,
         temperature: float = 0.0,
+        max_attempts: int = 4,
+        backoff_seconds: float = 0.5,
+        max_backoff_seconds: float = 8.0,
+        sleep: Callable[[float], Awaitable[None]] | None = None,
     ) -> None:
         if not endpoint.startswith(("https://", "http://")):
             msg = "model endpoint must be an HTTP(S) URL"
             raise ValueError(msg)
-        if not model or not api_key:
-            msg = "model and api_key are required"
+        if not model:
+            msg = "model is required"
+            raise ValueError(msg)
+        if max_attempts < 1:
+            msg = "max_attempts must be at least 1"
             raise ValueError(msg)
         self._endpoint = endpoint
         self._model = model
         self._api_key = api_key
         self._timeout = timeout_seconds
         self._temperature = temperature
+        self._max_attempts = max_attempts
+        self._backoff_seconds = backoff_seconds
+        self._max_backoff_seconds = max_backoff_seconds
+        self._sleep = sleep or asyncio.sleep
+
+    @property
+    def model(self) -> str:
+        """Return the pinned model name recorded in reports."""
+        return self._model
 
     async def complete(self, request: ModelRequest) -> ModelResponse:
-        """Send a provider-compatible request on a worker thread."""
-        return await asyncio.to_thread(self._complete_sync, request)
+        """Send one request, retrying only explicitly transient failures."""
+        for attempt in range(1, self._max_attempts + 1):
+            try:
+                return await asyncio.to_thread(self._complete_sync, request)
+            except ModelAdapterError as exc:
+                if not exc.retryable or attempt == self._max_attempts:
+                    raise
+                await self._sleep(self._backoff(attempt))
+        raise AssertionError("unreachable model retry state")
+
+    def _backoff(self, attempt: int) -> float:
+        """Return capped exponential backoff for the given 1-based attempt."""
+        growth = self._backoff_seconds * float(2 ** (attempt - 1))
+        return float(min(growth, self._max_backoff_seconds))
 
     def _complete_sync(self, request: ModelRequest) -> ModelResponse:
         payload: dict[str, object] = {
@@ -197,43 +257,92 @@ class OpenAICompatibleModel:
                 for tool in request.tools
             ]
         body = json.dumps(payload).encode()
+        headers = {"Content-Type": "application/json"}
+        if self._api_key:
+            headers["Authorization"] = f"Bearer {self._api_key}"
         provider_request = urllib.request.Request(
             self._endpoint,
             data=body,
-            headers={
-                "Authorization": f"Bearer {self._api_key}",
-                "Content-Type": "application/json",
-            },
+            headers=headers,
             method="POST",
         )
         try:
             with urllib.request.urlopen(provider_request, timeout=self._timeout) as response:
                 raw = response.read()
+        except urllib.error.HTTPError as exc:
+            raise self._http_error(exc) from exc
+        except TimeoutError as exc:
+            raise ModelAdapterError(
+                "model request timed out", code="timeout", retryable=True
+            ) from exc
+        except urllib.error.URLError as exc:
+            reason = exc.reason
+            if isinstance(reason, TimeoutError):
+                raise ModelAdapterError(
+                    "model request timed out", code="timeout", retryable=True
+                ) from exc
+            raise ModelAdapterError(
+                "model request failed: network error", code="network_error", retryable=True
+            ) from exc
+        except OSError as exc:
+            raise ModelAdapterError(
+                f"model request failed: {type(exc).__name__}", code="network_error", retryable=True
+            ) from exc
+        try:
             parsed = _ProviderResponse.model_validate_json(raw)
-        except (OSError, urllib.error.URLError, ValidationError) as exc:
-            msg = f"model request failed: {type(exc).__name__}"
-            raise ModelAdapterError(msg) from exc
+        except ValidationError as exc:
+            raise ModelAdapterError(
+                "model returned an unparseable response", code="bad_response"
+            ) from exc
         if not parsed.choices:
-            msg = "model response contained no choices"
-            raise ModelAdapterError(msg)
+            raise ModelAdapterError("model response contained no choices", code="bad_response")
         choice = parsed.choices[0]
         calls: list[ToolCall] = []
         for call in choice.message.tool_calls:
             try:
                 arguments = json.loads(call.function.arguments)
             except json.JSONDecodeError as exc:
-                msg = f"model returned invalid tool arguments for {call.function.name}"
-                raise ModelAdapterError(msg) from exc
+                raise ModelAdapterError(
+                    f"model returned invalid tool arguments for {call.function.name}",
+                    code="invalid_tool_arguments",
+                ) from exc
             if not isinstance(arguments, dict):
-                msg = f"tool arguments for {call.function.name} must be an object"
-                raise ModelAdapterError(msg)
+                raise ModelAdapterError(
+                    f"tool arguments for {call.function.name} must be an object",
+                    code="invalid_tool_arguments",
+                )
             calls.append(ToolCall(call.id, call.function.name, arguments))
         return ModelResponse(
             choice.message.content or "",
             tuple(calls),
             choice.finish_reason,
-            TokenUsage(parsed.usage.prompt_tokens, parsed.usage.completion_tokens),
+            TokenUsage(
+                parsed.usage.prompt_tokens,
+                parsed.usage.completion_tokens,
+                0.0,
+                parsed.usage.cached_tokens,
+            ),
         )
+
+    @staticmethod
+    def _http_error(exc: urllib.error.HTTPError) -> ModelAdapterError:
+        """Classify one HTTP failure into a safe, actionable adapter error."""
+        status = exc.code
+        if status in _AUTH_STATUS:
+            return ModelAdapterError(
+                f"provider rejected the credential (HTTP {status})", code="auth_error"
+            )
+        if status == _RATE_LIMIT_STATUS:
+            return ModelAdapterError(
+                "provider rate limit reached (HTTP 429)", code="rate_limited", retryable=True
+            )
+        if status in _TRANSIENT_STATUS:
+            return ModelAdapterError(
+                f"provider returned a transient error (HTTP {status})",
+                code="server_error",
+                retryable=True,
+            )
+        return ModelAdapterError(f"provider returned HTTP {status}", code="client_error")
 
     @staticmethod
     def _message_payload(message: Message) -> dict[str, object]:

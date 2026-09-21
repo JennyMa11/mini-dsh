@@ -22,9 +22,18 @@ _SECRET_ASSIGNMENT = re.compile(
 
 @dataclass(slots=True)
 class JsonlTraceWriter:
-    """Serialize facts one per line while redacting common secret fields."""
+    """Serialize facts one per line while redacting common secret fields.
+
+    ``truncate_on_start`` makes the writer own the lifetime of the file: the first
+    append opens it with ``"w"`` and every later append with ``"a"``. A caller that
+    wants a fresh trace therefore never has to delete a stale one first, which removes
+    both a delete-then-create window and any chance of appending a second run onto the
+    first run's facts.
+    """
 
     path: Path
+    truncate_on_start: bool = False
+    _started: bool = field(default=False, init=False)
     _lock: asyncio.Lock = field(default_factory=asyncio.Lock, init=False)
 
     async def __call__(self, event: Event) -> None:
@@ -43,11 +52,13 @@ class JsonlTraceWriter:
         }
         line = json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n"
         async with self._lock:
-            await asyncio.to_thread(self._append_sync, line)
+            mode = "w" if self.truncate_on_start and not self._started else "a"
+            self._started = True
+            await asyncio.to_thread(self._append_sync, line, mode)
 
-    def _append_sync(self, line: str) -> None:
+    def _append_sync(self, line: str, mode: str = "a") -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.path.open("a", encoding="utf-8") as handle:
+        with self.path.open(mode, encoding="utf-8") as handle:
             handle.write(line)
             handle.flush()
 
