@@ -17,12 +17,30 @@ claim.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 
 from minidsh.domain import FailureCategory, JsonValue
 from minidsh.evaluation.tracefile import TraceRun, as_int, as_str
 
 _LOOP_STUCK_REPEATS = 3
+
+# Adapter error codes that mean an answer arrived and the model produced something
+# unusable: unparseable JSON, a response with no choices, or function-call arguments
+# that are not a JSON object.  Filing these under `environment` would hide the only
+# interesting fact -- that the model got it wrong -- and inflate the layer that is
+# supposed to mean "not the model's fault".
+#
+# The remaining codes stay environmental, but not because they are all certain to be
+# so.  `client_error` covers a 4xx, and the 0.3.1 defect -- a truncated Context window
+# that cut a tool-call round in half -- surfaced as exactly that, a request *we* built
+# wrong and blamed on the provider.  Telling those apart needs the response body,
+# which is why it is now carried into `failure_reason`; until something reads it, a
+# request-construction bug and a provider fault still look identical here.
+_MODEL_OUTPUT_ERROR_CODES = frozenset({"bad_response", "invalid_tool_arguments"})
+
+# The loop records an exception as `ClassName[code]: message` when it carries a code.
+_CODED_ADAPTER_ERROR = re.compile(r"ModelAdapterError\[([a-z_]+)\]")
 
 # Which layer owns the outcome. ``harness`` means the runtime behaved exactly as
 # specified and the agent misused it, so the runtime is *exonerated* by that failure.
@@ -127,6 +145,10 @@ def classify_failure(  # noqa: PLR0911 - a decision table reads better than a ne
             tuple(tool_errors),
         )
 
+    model_output = _model_output_failure(trace)
+    if model_output is not None:
+        return model_output
+
     if status == "failed":
         return FailureDiagnosis(
             FailureCategory.MODEL_REASONING_FAILURE,
@@ -146,19 +168,57 @@ def classify_failure(  # noqa: PLR0911 - a decision table reads better than a ne
 
 
 def _provider_failure(trace: TraceRun | None) -> FailureDiagnosis | None:
-    """Detect an unrecovered model-provider failure recorded by the loop."""
+    """Detect an unrecovered provider-side failure recorded by the loop.
+
+    Classification is by the error code the adapter attached, not by the exception
+    class name.  `ModelAdapterError` covers both a provider outage and a model that
+    emitted malformed tool arguments, and only the code separates them -- which is
+    exactly why the adapter carries one.
+
+    Codes that mean the *model* produced something unusable are deliberately not
+    claimed here.  They are not environmental, and they are judged by
+    `_model_output_failure` once the harness-level facts have had their say.
+    """
     if trace is None:
         return None
     reason = trace.failure_reason()
     if reason is None:
         return None
-    if "ModelAdapterError" in reason or "model request" in reason:
+
+    coded = _CODED_ADAPTER_ERROR.search(reason)
+    if coded is not None and coded.group(1) in _MODEL_OUTPUT_ERROR_CODES:
+        return None
+    if coded is not None or "ModelAdapterError" in reason or "model request" in reason:
         return FailureDiagnosis(
             FailureCategory.PROVIDER_ERROR,
             "the model provider failed and the run could not continue",
             (f"failure_reason:{reason}",),
         )
     return None
+
+
+def _model_output_failure(trace: TraceRun | None) -> FailureDiagnosis | None:
+    """Detect a response the model produced that the runtime could not use.
+
+    An adapter that cannot parse the response -- unparseable JSON, no choices, or
+    function-call arguments that are not a JSON object -- is reporting a bad
+    generation, not a bad network.  The model owns this failure, and calling it an
+    environment problem would put a capability number on an outage that never
+    happened.
+    """
+    if trace is None:
+        return None
+    reason = trace.failure_reason()
+    if reason is None:
+        return None
+    coded = _CODED_ADAPTER_ERROR.search(reason)
+    if coded is None or coded.group(1) not in _MODEL_OUTPUT_ERROR_CODES:
+        return None
+    return FailureDiagnosis(
+        FailureCategory.MODEL_REASONING_FAILURE,
+        "the model returned a response the runtime could not use",
+        (f"failure_reason:{reason}",),
+    )
 
 
 def _loop_stuck(trace: TraceRun) -> FailureDiagnosis | None:

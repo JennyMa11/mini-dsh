@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 
 import pytest
 
+from minidsh.adapters import ModelAdapterError
 from minidsh.application import AgentLoop
 from minidsh.domain import (
     AgentBudget,
@@ -127,6 +128,41 @@ async def test_loop_stops_at_step_budget() -> None:
 
     assert result.status is RunStatus.BUDGET_EXHAUSTED
     assert result.failure_reason == "step budget exhausted"
+
+
+@dataclass
+class CodedFailureModel:
+    """Fails the way the OpenAI-compatible adapter does on a malformed response."""
+
+    code: str
+
+    async def complete(self, request: ModelRequest) -> ModelResponse:
+        del request
+        raise ModelAdapterError("model returned invalid tool arguments for shell", code=self.code)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("code", ["invalid_tool_arguments", "bad_response", "server_error"])
+async def test_the_loop_records_the_adapter_error_code_in_the_failure_reason(code: str) -> None:
+    """The code has to reach the trace, or the taxonomy cannot classify by it.
+
+    `ModelAdapterError` covers both a provider outage and a model that produced an
+    unusable response.  The failure taxonomy separates them by code, so a reason that
+    keeps only the class name forces it back onto message matching -- which is what it
+    did, and what filed a malformed model response under `environment`.
+    """
+    loop = AgentLoop(
+        model=CodedFailureModel(code=code),
+        context_manager=FullContext(),
+        tools=FakeTools(),
+        events=FakeEvents(),
+    )
+
+    result = await loop.run("do something")
+
+    assert result.status is RunStatus.FAILED
+    assert result.failure_reason is not None
+    assert result.failure_reason.startswith(f"ModelAdapterError[{code}]:")
 
 
 @dataclass

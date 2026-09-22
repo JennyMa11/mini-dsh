@@ -6,11 +6,12 @@ import asyncio
 import json
 import sys
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
 
-from minidsh.adapters import ScriptedModel
+from minidsh.adapters import ModelAdapterError, ScriptedModel
 from minidsh.benchmark import (
     BenchmarkError,
     BenchmarkManifest,
@@ -19,7 +20,7 @@ from minidsh.benchmark import (
     BenchmarkTask,
 )
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
-from minidsh.domain import ModelResponse, ToolCall
+from minidsh.domain import ModelRequest, ModelResponse, ToolCall
 from minidsh.evaluation import TraceRun
 
 
@@ -509,3 +510,71 @@ def test_a_manifest_without_an_overlay_leaves_it_unset(tmp_path: Path) -> None:
 
     assert manifest.tasks[0].verification_overlay is None
     assert manifest.tasks[0].verification_commit is None
+
+
+@dataclass
+class _MalformedResponseModel:
+    """Fails the way the OpenAI-compatible adapter does on unusable tool arguments.
+
+    `ScriptedModel` cannot express this: running out of responses raises its own
+    uncoded error, so the code that decides the layer never appears.  What is under
+    test is the runner's classification, and it must not depend on which adapter
+    raised -- only on what the adapter said.
+    """
+
+    async def complete(self, request: ModelRequest) -> ModelResponse:
+        del request
+        raise ModelAdapterError(
+            "model returned invalid tool arguments for shell", code="invalid_tool_arguments"
+        )
+
+
+@pytest.mark.e2e
+@pytest.mark.asyncio
+async def test_a_malformed_model_response_is_reported_in_the_agent_layer(
+    tmp_path: Path,
+) -> None:
+    """A response the runtime cannot use is the model's failure, not the network's.
+
+    The adapter raises `ModelAdapterError` for a provider outage and for a model that
+    emitted malformed tool arguments alike, and the runner filed both under
+    `environment` -- the layer a reader takes to mean "not the model's fault".  A real
+    hard-suite run failed exactly this way and was briefly read as a provider hiccup,
+    which is the second time a real-model run has exposed a classification defect that
+    a scripted model cannot reach.
+    """
+    fixture = tmp_path / "fixture"
+    fixture.mkdir()
+    (fixture / "value.txt").write_text("broken\n", encoding="utf-8")
+    task = BenchmarkTask(
+        "malformed-response",
+        "fix value.txt",
+        fixture,
+        (sys.executable, "-c", "raise SystemExit(1)"),
+    )
+
+    def factory(workspace: Path, benchmark_task: BenchmarkTask) -> LocalRuntime:
+        del benchmark_task
+        return build_local_runtime(
+            workspace=workspace,
+            model=_MalformedResponseModel(),
+            options=RuntimeOptions(allow_write=True),
+        )
+
+    runner = BenchmarkRunner(
+        factory,
+        tmp_path / "out",
+        verification_allowlist=frozenset({Path(sys.executable).name}),
+    )
+    report = await runner.run(BenchmarkManifest("malformed", "2.1", (task,)))
+    metrics = report.results[0]
+
+    assert metrics.status == "failed"
+    assert metrics.failure_category == "model_reasoning_failure"
+    assert metrics.failure_layer == "agent"
+    assert report.failure_layer_counts()["environment"] == 0
+
+    # The raw reason stays in the trace, code and all: the layer is a summary, and the
+    # summary is only trustworthy if the detail behind it is still readable.
+    trace = await asyncio.to_thread(TraceRun.from_file, Path(metrics.trace_path))
+    assert "ModelAdapterError[invalid_tool_arguments]" in (trace.failure_reason() or "")

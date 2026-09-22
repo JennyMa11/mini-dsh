@@ -248,12 +248,97 @@ def test_verification_failure_after_inspection_is_a_plain_wrong_change() -> None
 
 
 def test_provider_failure_is_attributed_to_the_environment() -> None:
+    """A reason carrying only the class name keeps its historical diagnosis.
+
+    Traces written before the loop recorded error codes, and hand-built fixtures,
+    look like this.  Re-reading an archived trace must not change what it says.
+    """
     trace = _run(
         _record(
             "run_finished",
             1,
             status="failed",
             failure_reason="ModelAdapterError: provider returned a transient error (HTTP 500)",
+        )
+    )
+
+    diagnosis = classify_failure(status="failed", verified=None, trace=trace)
+
+    assert diagnosis.category is FailureCategory.PROVIDER_ERROR
+    assert diagnosis.layer == "environment"
+
+
+def test_a_malformed_model_response_is_attributed_to_the_agent() -> None:
+    """A response the runtime cannot use is a bad generation, not a bad network.
+
+    `ModelAdapterError` covers both a provider outage and a model that emitted
+    malformed tool arguments, so the exception class alone cannot classify it.  The
+    code can, and getting this wrong is not cosmetic: it files a model failure under
+    `environment`, the layer read as "not the model's fault", so a run that failed
+    because the model wrote bad JSON looks like a provider hiccup.  A real hard-suite
+    run failed exactly this way and was briefly read as one.
+    """
+    trace = _run(
+        _record(
+            "run_finished",
+            1,
+            status="failed",
+            failure_reason=(
+                "ModelAdapterError[invalid_tool_arguments]: "
+                "model returned invalid tool arguments for shell"
+            ),
+        )
+    )
+
+    diagnosis = classify_failure(status="failed", verified=None, trace=trace)
+
+    assert diagnosis.category is FailureCategory.MODEL_REASONING_FAILURE
+    assert diagnosis.layer == "agent"
+    assert "invalid_tool_arguments" in diagnosis.evidence[0]
+
+
+def test_an_unparseable_model_response_is_attributed_to_the_agent() -> None:
+    trace = _run(
+        _record(
+            "run_finished",
+            1,
+            status="failed",
+            failure_reason=(
+                "ModelAdapterError[bad_response]: model returned an unparseable response"
+            ),
+        )
+    )
+
+    diagnosis = classify_failure(status="failed", verified=None, trace=trace)
+
+    assert diagnosis.category is FailureCategory.MODEL_REASONING_FAILURE
+    assert diagnosis.layer == "agent"
+
+
+@pytest.mark.parametrize(
+    "code",
+    [
+        "auth_error",
+        "client_error",
+        "missing_credentials",
+        "network_error",
+        "rate_limited",
+        "timeout",
+    ],
+)
+def test_exchange_failure_codes_stay_in_the_environment(code: str) -> None:
+    """Everything that is not the model's output is still the environment's problem.
+
+    The point of splitting by code is not to move failures out of `environment` but
+    to stop moving *model* failures into it, so the other direction needs its own
+    guard: a coded provider outage must not become an agent failure.
+    """
+    trace = _run(
+        _record(
+            "run_finished",
+            1,
+            status="failed",
+            failure_reason=f"ModelAdapterError[{code}]: the exchange failed",
         )
     )
 

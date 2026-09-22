@@ -25,6 +25,24 @@ from minidsh.domain import (
 from minidsh.ports import ContextManager, EventSink, Model, SessionStore, ToolExecutor
 
 
+def _failure_reason(exc: BaseException) -> str:
+    """Render an exception for the trace, preserving any error code it carries.
+
+    The code is part of the record rather than decoration: it is what lets the
+    failure taxonomy tell a provider outage apart from a model that produced an
+    unusable response, without matching on message text.  `ModelAdapterError` covers
+    both, so a reason carrying only the class name cannot be classified correctly.
+
+    Read by attribute rather than by importing the adapter's exception class: the
+    loop depends on the `Model` port, not on any adapter.
+    """
+    code = getattr(exc, "code", None)
+    label = type(exc).__name__
+    if isinstance(code, str) and code:
+        label = f"{label}[{code}]"
+    return f"{label}: {exc}"
+
+
 @dataclass(slots=True)
 class _RunCounters:
     steps: int = 0
@@ -227,7 +245,7 @@ class AgentLoop:
                 history,
                 counters,
                 started,
-                failure_reason=f"{type(exc).__name__}: {exc}",
+                failure_reason=_failure_reason(exc),
             )
 
     async def _call_model(
