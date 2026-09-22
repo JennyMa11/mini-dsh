@@ -33,7 +33,12 @@ packages = ["src/minidsh"]
 target-version = "py312"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["benchmarks/**/fixtures"]
+# The benchmark trees are generator output: `fixtures` is the workspace an agent is
+# given, `verification` is the held-out overlay and `solutions` is the reference
+# solution.  They are data, not project code -- `benchmarks/build_*.py` is the code,
+# and it is linted.  Formatting them here would also fight the gate that regenerates
+# the tree and compares it byte for byte.
+extend-exclude = ["benchmarks/**/fixtures", "benchmarks/**/verification", "benchmarks/**/solutions"]
 
 [tool.ruff.lint]
 select = [

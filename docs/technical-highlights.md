@@ -24,7 +24,7 @@
 
 ### 5. 工程门禁全绿
 
-`ruff format --check`、`ruff check`、`mypy --strict`（54 个文件，`src` + `tests`）、`pytest`（204 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
+`ruff format --check`、`ruff check`、`mypy --strict`（54 个文件，`src` + `tests`）、`pytest`（209 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
 
 ### 6. 真实模型实测，而且报告自带实验条件
 

@@ -77,10 +77,18 @@ class BenchmarkTask:
     response_script: Path | None = None
     test_argv: tuple[str, ...] | None = None
     build_argv: tuple[str, ...] | None = None
+    # Files copied over the workspace *after* the agent finishes and *before* the
+    # success command runs.  This is what makes a verifier independent: without it
+    # the success command can only re-run tests the agent could read and edit, so it
+    # measures compliance with visible tests rather than correctness against a
+    # specification.  The overlay must contain verifier files only — anything a
+    # solution is expected to produce would be clobbered by it.
+    verification_overlay: Path | None = None
     timeout_seconds: float = 120.0
     tags: tuple[str, ...] = ()
     category: str = "general"
     repo_commit: str | None = None
+    verification_commit: str | None = None
     seed: int = 0
     model: str = "scripted"
     budget: AgentBudget = field(default_factory=AgentBudget)
@@ -116,10 +124,14 @@ class BenchmarkManifest:
                 else None,
                 test_argv=tuple(item.test_argv) if item.test_argv else None,
                 build_argv=tuple(item.build_argv) if item.build_argv else None,
+                verification_overlay=(base / item.verification_overlay).resolve()
+                if item.verification_overlay
+                else None,
                 timeout_seconds=item.timeout_seconds,
                 tags=tuple(item.tags),
                 category=item.category,
                 repo_commit=item.repo_commit,
+                verification_commit=item.verification_commit,
                 seed=item.seed,
                 model=item.model,
                 budget=AgentBudget(
@@ -522,22 +534,34 @@ class BenchmarkRunner:
             verified: bool | None = None
             if result.status is RunStatus.FINISHED:
                 verified = False
-                try:
-                    runner = LocalCommandRunner(
-                        WorkspaceSandbox(workspace),
-                        CommandPolicy(allowed_commands=self._verification_allowlist),
-                    )
-                    verification = await runner.run(
-                        task.success_argv, timeout_seconds=task.timeout_seconds
-                    )
-                    verifier_exit_code = verification.exit_code
-                    verified = verification.exit_code == 0 and not verification.timed_out
-                    if verification.timed_out:
-                        failure_type = "verification_timeout"
-                    elif verification.exit_code != 0:
-                        failure_type = "verification_failed"
-                except (CommandDeniedError, OSError):
-                    failure_type = "verification_denied"
+                overlay_ready = True
+                if task.verification_overlay is not None:
+                    try:
+                        _apply_overlay(task.verification_overlay, workspace)
+                    except OSError:
+                        # The overlay could not be laid down -- an agent that left a
+                        # file where the overlay expects a directory, say.  That is a
+                        # failure of this task, not of the sweep: letting it propagate
+                        # would discard every result already measured.
+                        overlay_ready = False
+                        failure_type = "verification_overlay_failed"
+                if overlay_ready:
+                    try:
+                        runner = LocalCommandRunner(
+                            WorkspaceSandbox(workspace),
+                            CommandPolicy(allowed_commands=self._verification_allowlist),
+                        )
+                        verification = await runner.run(
+                            task.success_argv, timeout_seconds=task.timeout_seconds
+                        )
+                        verifier_exit_code = verification.exit_code
+                        verified = verification.exit_code == 0 and not verification.timed_out
+                        if verification.timed_out:
+                            failure_type = "verification_timeout"
+                        elif verification.exit_code != 0:
+                            failure_type = "verification_failed"
+                    except (CommandDeniedError, OSError):
+                        failure_type = "verification_denied"
             else:
                 failure_type = result.status.value
             trace = await asyncio.to_thread(_read_trace, trace_path)
@@ -594,6 +618,23 @@ class BenchmarkRunner:
             if not task.success_argv:
                 msg = f"benchmark task has no success command: {task.task_id}"
                 raise BenchmarkError(msg)
+            # A declared overlay that is missing would silently downgrade the task to
+            # "re-run the visible tests", which is exactly the weak criterion the
+            # overlay exists to replace.  Fail instead of running a weaker task.
+            if task.verification_overlay is not None and not task.verification_overlay.is_dir():
+                msg = f"benchmark verification overlay does not exist: {task.verification_overlay}"
+                raise BenchmarkError(msg)
+
+
+def _apply_overlay(overlay: Path, workspace: Path) -> None:
+    """Copy held-out verifier files over the workspace, after the agent has finished.
+
+    The copy happens *after* the run so the agent cannot read or edit what it will be
+    judged on, and *before* the success command so the verifier sees them.  Only
+    verifier files belong in an overlay: a file the agent is expected to produce
+    would be silently replaced by its own overlay entry.
+    """
+    shutil.copytree(overlay, workspace, dirs_exist_ok=True, symlinks=True)
 
 
 def _read_trace(path: Path) -> TraceRun | None:
@@ -644,10 +685,12 @@ class _TaskInput(_StrictInput):
     response_script: str | None = None
     test_argv: list[str] | None = None
     build_argv: list[str] | None = None
+    verification_overlay: str | None = None
     timeout_seconds: float = Field(default=120.0, gt=0, le=3_600)
     tags: list[str] = Field(default_factory=list)
     category: str = Field(default="general", pattern=r"^[a-z0-9][a-z0-9_-]*$")
     repo_commit: str | None = None
+    verification_commit: str | None = None
     seed: int = 0
     model: str = "scripted"
     budget: _TaskBudgetInput = Field(default_factory=_TaskBudgetInput)
