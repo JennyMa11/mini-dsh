@@ -72,7 +72,9 @@ def estimate_tokens(messages: tuple[Message, ...]) -> int:
 | `summary_compaction` | `SummaryCompactionContext` | 把中段压缩成有界摘要（`summary_max_chars` 默认 4000），保留最近 `recent_messages`（默认 12）条 | 头 + 有界摘要 + 近期原文 | 摘要丢细节，且自身耗 Token |
 | `repo_retrieval` | `RetrievalContext(FullHistoryContext, RepositoryRetriever)` | 全文透传 + 按任务词面相关度注入最多 5 个文件片段 | 全部历史 + 相关代码 | 额外注入推高输入 Token |
 | `retrieval_summary` | `RetrievalContext(SummaryCompactionContext, ...)` | 压缩历史 + 检索注入 | 有界摘要 + 相关代码 | 压缩损失 + 注入成本 |
-| `symbol_retrieval` | `RetrievalContext(FullHistoryContext, PythonSymbolRetriever)` | 用 AST 定位函数/类，只注入符号体 | 全部历史 + 精确定位代码 | 仅覆盖 Python |
+| `symbol_retrieval` | `RetrievalContext(SummaryCompactionContext, PythonSymbolRetriever)` | 用 AST 定位函数/类，只注入符号体 | 有界摘要 + 精确定位代码 | 压缩损失 + 仅覆盖 Python |
+
+**这张表要按"基础策略"读，不是按"注入什么"读。** 六个策略分成两组：`full_history` 与 `repo_retrieval` 保留全部历史（只追加，前缀稳定），其余四个都在裁剪历史。`symbol_retrieval` 特别容易读错——它注入的代码块最小，但基础策略是 `summary_compaction`，历史同样被压缩。这个区分在 §3.1（谁会被工具回合截断打中）和 §4（缓存命中率）里都有直接后果，所以"类"这一列由 `tests/test_docs.py` 的门禁与 `composition._build_context` 逐行核对，而不是靠人读。
 
 ### 检索实现
 

@@ -22,6 +22,8 @@ from typing import cast
 import pytest
 
 import minidsh
+from minidsh.benchmark.ablation import CONTEXT_VARIANTS
+from minidsh.composition import RuntimeOptions, _build_context
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 README = REPO_ROOT / "README.md"
@@ -510,3 +512,75 @@ def test_readme_states_the_archived_real_model_ablation_conditions() -> None:
             f"README must quote the tariff the ablation costs were billed under, as "
             f"{expected!r}; off-peak is half of peak"
         )
+
+
+# The Context strategy table in `docs/context-engineering.md` is read as a
+# specification: it is how a reader decides what a strategy keeps.  It is also the
+# place where "injects code" and "keeps history" get conflated, so it is checked
+# against the factory rather than trusted.
+_CONTEXT_DOC = REPO_ROOT / "docs" / "context-engineering.md"
+
+
+def _documented_context_classes() -> dict[str, str]:
+    """Map each documented strategy name to the class cell of its table row.
+
+    Only tables carrying a `类` column contribute, so the selection and results
+    tables further down the same document cannot be mistaken for the strategy table.
+    """
+    rows: dict[str, str] = {}
+    header: list[str] | None = None
+    for line in _read(_CONTEXT_DOC).splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            header = None
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if header is None:
+            header = cells
+            continue
+        if "类" not in header or len(cells) != len(header):
+            continue
+        if all(set(cell) <= {"-"} for cell in cells):
+            continue
+        match = _VARIANT_NAME.match(cells[0])
+        if match is None:
+            continue
+        rows[match.group(1)] = cells[header.index("类")]
+    return rows
+
+
+def test_the_context_strategy_table_names_the_base_class_the_factory_builds(
+    tmp_path: Path,
+) -> None:
+    """The table's `类` column must match what `_build_context` actually returns.
+
+    `symbol_retrieval` was documented as `RetrievalContext(FullHistoryContext, ...)`
+    while the factory gave it a `summary_compaction` base.  That is not a cosmetic
+    error: it is the difference between a prefix-stable strategy and a truncating
+    one, which is what decides whether it trips the tool-call-round truncation bug
+    and how well it hits the prompt cache.  The mapping is taken from
+    `CONTEXT_VARIANTS`, so renaming a strategy fails here instead of silently
+    dropping its row from the check.
+    """
+    documented = _documented_context_classes()
+    assert documented, "the context-engineering strategy table could not be found"
+
+    drift: list[str] = []
+    for variant in CONTEXT_VARIANTS:
+        cell = documented.get(variant.name)
+        if cell is None:
+            drift.append(f"{variant.name}: documented nowhere in the strategy table")
+            continue
+        built = _build_context(variant.context_strategy, tmp_path, RuntimeOptions())
+        # A retrieval strategy wraps a base, and the base is the part that decides
+        # whether history survives — so that is the name the row must carry.
+        base = getattr(built, "base", built)
+        drift.extend(
+            f"{variant.name}: the row omits {name} (row says {cell!r})"
+            for name in sorted({type(built).__name__, type(base).__name__})
+            if name not in cell
+        )
+
+    assert not drift, (
+        "docs/context-engineering.md disagrees with composition._build_context: " + "; ".join(drift)
+    )
