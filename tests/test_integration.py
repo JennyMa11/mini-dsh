@@ -595,6 +595,9 @@ async def test_provider_error_body_is_carried_into_the_failure_reason(provider: 
 @pytest.mark.asyncio
 async def test_provider_error_body_cannot_leak_a_credential(provider: Any) -> None:
     """The body is untrusted text on its way into a trace, so it is redacted first."""
+    # Deliberately synthetic.  A fixture that looks like a credential is exactly
+    # where a real one gets copied into a repository by accident, and the
+    # redactor matches on the `api_key=` prefix, not on the value's shape.
     secret = "sk-test-0123456789abcdef0123456789ab"
     _ProviderHandler.status_code = 400
     _ProviderHandler.response_body = {
