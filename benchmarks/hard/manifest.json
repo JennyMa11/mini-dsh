@@ -1,0 +1,150 @@
+{
+  "name": "mini-dsh-hard",
+  "schema_version": "2.1",
+  "tasks": [
+    {
+      "id": "hard-interval-merge",
+      "goal": "Implement `merge_intervals` in `intervals/merge.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for the touching-interval rule, the zero-length case, the rejected pair, and what kind of input the function must accept. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-interval-merge",
+      "success_argv": [
+        "python",
+        "run_verification.py",
+        "12"
+      ],
+      "verification_overlay": "verification/hard-interval-merge",
+      "verification_commit": "sha256:b2b82006a1461efe",
+      "timeout_seconds": 120,
+      "tags": [
+        "hard",
+        "spec",
+        "boundaries"
+      ],
+      "category": "hard-spec",
+      "repo_commit": "sha256:279e28db7f8eb87a",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "hard-token-bucket",
+      "goal": "Implement `TokenBucket` in `ratelimit/bucket.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for the refill cap, the over-sized and non-positive requests, and what a backwards clock must do. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-token-bucket",
+      "success_argv": [
+        "python",
+        "run_verification.py",
+        "10"
+      ],
+      "verification_overlay": "verification/hard-token-bucket",
+      "verification_commit": "sha256:a57fcf3b431e4759",
+      "timeout_seconds": 120,
+      "tags": [
+        "hard",
+        "spec",
+        "stateful"
+      ],
+      "category": "hard-spec",
+      "repo_commit": "sha256:198c49cbd18486f2",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "hard-config-precedence",
+      "goal": "Implement `resolve` in `config/resolve.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for how an override of `None` behaves, how each value is coerced, and what happens to a key that `defaults` does not declare. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-config-precedence",
+      "success_argv": [
+        "python",
+        "run_verification.py",
+        "15"
+      ],
+      "verification_overlay": "verification/hard-config-precedence",
+      "verification_commit": "sha256:a7c13f78c1007a88",
+      "timeout_seconds": 120,
+      "tags": [
+        "hard",
+        "spec",
+        "layers"
+      ],
+      "category": "hard-spec",
+      "repo_commit": "sha256:809a2ae612523a7c",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "hard-csv-records",
+      "goal": "Implement `parse_records` in `csvkit/reader.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for both record terminators, the doubled quote, quoted fields that span a newline, the blank-line and empty-document cases, and the unterminated quote. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-csv-records",
+      "success_argv": [
+        "python",
+        "run_verification.py",
+        "13"
+      ],
+      "verification_overlay": "verification/hard-csv-records",
+      "verification_commit": "sha256:795a7224aa537d49",
+      "timeout_seconds": 120,
+      "tags": [
+        "hard",
+        "spec",
+        "parsing"
+      ],
+      "category": "hard-spec",
+      "repo_commit": "sha256:a362a60650fb2c5d",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    }
+  ]
+}
