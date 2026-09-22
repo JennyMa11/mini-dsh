@@ -27,7 +27,7 @@ ABLATION_MANIFESTS = ("core", "stress")
 # Real-model reports are archived alongside the scripted ones, but they cannot be
 # regenerated without a paid API key, so they are never *required*: re-archiving
 # the scripted suites must not delete the only committed copy of a paid run.
-REAL_MODEL_REPORTS = ("repo-real",)
+REAL_MODEL_REPORTS = ("repo-real", "hard")
 REAL_MODEL_ABLATIONS = ("stress-real-context-ablation", "stress-real-tool_output-ablation")
 
 # The tariff a real-model run was billed under.  It cannot be recovered from the
@@ -115,6 +115,49 @@ def _conditions(report: dict[str, Any]) -> tuple[object, object]:
     return block.get("label"), (profile.get("thinking") if isinstance(profile, dict) else None)
 
 
+def _task_rollup(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Collapse a suite's per-run results into one row per task.
+
+    The aggregate answers "how did the suite do"; only the per-task split answers
+    "which capability is missing".  A suite whose success rate is 100% cannot be
+    read at all without this, and neither can one that is 80% for a single reason:
+    an aggregate hides whether five tasks each failed once or one task failed every
+    time, and those are different findings.  Derived here rather than in the docs so
+    the README's per-task table is gated against the run instead of against memory.
+    """
+    by_task: dict[str, list[dict[str, Any]]] = {}
+    for result in results:
+        by_task.setdefault(str(result["task_id"]), []).append(result)
+
+    rows: list[dict[str, Any]] = []
+    for task_id in sorted(by_task):
+        runs = by_task[task_id]
+        successes = sum(1 for run in runs if run["success"])
+        total_cost = sum(float(run["cost_usd"]) for run in runs)
+        rows.append(
+            {
+                "task_id": task_id,
+                "runs": len(runs),
+                "success_rate": successes / len(runs),
+                "average_steps": sum(float(run["steps"]) for run in runs) / len(runs),
+                "average_tokens": sum(float(run["tokens"]) for run in runs) / len(runs),
+                "total_cost_usd": total_cost,
+                # Undefined rather than zero when nothing succeeded: a suite where a
+                # task never passes has no cost per success to report, and printing
+                # $0.000000 there would read as the cheapest possible task.
+                "cost_per_success_usd": (total_cost / successes) if successes else None,
+                "failure_types": sorted(
+                    {
+                        str(run["failure_type"])
+                        for run in runs
+                        if not run["success"] and run["failure_type"] is not None
+                    }
+                ),
+            }
+        )
+    return rows
+
+
 def _real_model_summary(name: str, rates: dict[str, float]) -> dict[str, Any] | None:
     path = SOURCE / f"{name}.json"
     if not path.exists():
@@ -129,6 +172,7 @@ def _real_model_summary(name: str, rates: dict[str, float]) -> dict[str, Any] | 
         "failure_layers": report["failure_layers"],
         "repeat_variance": report["repeat_variance"],
         "rate_card_usd_per_million": rates,
+        "tasks": _task_rollup(report["results"]),
         # Recorded inside the report since v0.3.0; absent for older runs, which
         # is itself worth knowing when reading the numbers.
         "model": model,

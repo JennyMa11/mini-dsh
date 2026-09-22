@@ -57,12 +57,27 @@ Manifest 是 JSON，必须包含 `schema_version` 与 `tasks`。所有相对路�
 | `timeout_seconds` | 否 | 判据执行超时，默认 120s |
 | `tags` / `category` | 否 | 分组与报告维度 |
 | `repo_commit` | 否 | 输入版本钉扎（仓库内任务用 fixture 内容摘要，SWE-bench 类任务用真实 commit） |
+| `verification_overlay` | 否 | **留出判据目录**，相对 manifest 解析。Agent 结束后、`success_argv` 执行前覆盖进工作区；声明了却指不到目录会被直接拒绝 |
+| `verification_commit` | 否 | overlay 内容摘要，钉住留出判据的版本，语义同 `repo_commit` |
 | `seed` | 否 | 采样种子，默认 0 |
 | `model` | 否 | 模型标识，默认 `scripted` |
 | `budget` | 否 | `max_steps` / `max_tokens` / `max_tool_calls` / `max_duration_seconds` |
 | `isolation` | 否 | 沙箱后端、写/Shell 开关、命令 allowlist、工具 denylist、网络规则 |
 
 `isolation` 会被逐任务钉扎并原样写入报告，因此任何一次实验的权限面都是可审计的——不会出现"两次运行权限不同却比较指标"的情况。
+
+### `verification_overlay`：让判据不再是 Agent 能改的那份文件
+
+默认的判据是 `success_argv` 在工作区里跑测试——而工作区正是 Agent 能读、能改的地方。于是成功率测的是"是否让可见测试变绿"。`verification_overlay` 换掉了这份判据：
+
+```text
+copy workspace → temp dir
+run Agent Loop
+├─ copy verification_overlay → workspace     # 此刻起判据才存在
+└─ run success_argv                          # 判据 = Agent 从未见过的文件
+```
+
+**时机是全部关键**：覆盖早了判据可读可改；覆盖晚了判据不参与判定。overlay 里应当只放判据文件——放进 Agent 本该产出的文件，它会被静默覆盖。
 
 ## 2. 执行模型
 
@@ -74,6 +89,7 @@ for each task:
    ├─ copy workspace → temp dir          # 任务间零污染
    ├─ build runtime from isolation        # 权限面按任务重建
    ├─ run Agent Loop until terminal state
+   ├─ copy verification_overlay (if any)  # 留出判据在此刻落地
    ├─ run success_argv in the temp dir    # 独立进程，不信模型自报
    ├─ collect metrics from event stream
    └─ persist traces/<task_id>.jsonl
@@ -81,7 +97,7 @@ for each task:
 aggregate → report.md / report.json / results.jsonl
 ```
 
-Runner 为每个任务复制临时工作区，Agent 完成后**独立执行**成功判据。判据退出码为 0 才算成功；非 0 记为 `verification_failed`，超时记为 `verification_timeout`，被权限层拒绝记为 `verification_denied`。
+Runner 为每个任务复制临时工作区，Agent 完成后**独立执行**成功判据。判据退出码为 0 才算成功；非 0 记为 `verification_failed`，超时记为 `verification_timeout`，被权限层拒绝记为 `verification_denied`，overlay 无法落地（例如 Agent 在 overlay 期望目录的位置留了一个文件）记为 `verification_overlay_failed`——只让该任务失败，不中断整轮扫描。
 
 ## 3. 指标定义
 
@@ -96,7 +112,7 @@ Runner 为每个任务复制临时工作区，Agent 完成后**独立执行**成
 | `retry_success_rate` | 重试后成功的比例（`retry_successes / retries`） |
 | `permission_denied` | 被 PermissionPolicy 拒绝的工具调用数 |
 | `unsafe_blocked` | 被命令策略或沙箱判据拦截的危险动作数（`command_denied` + `sandbox_violation`） |
-| `failure_type` | `none` / `verification_failed` / `verification_timeout` / `verification_denied` / 运行终态 |
+| `failure_type` | `none` / `verification_failed` / `verification_timeout` / `verification_denied` / `verification_overlay_failed` / 运行终态 |
 
 指标同时按 `category` 与 `failure_type` 聚合，便于定位"哪一类任务变贵了"和"失败集中在哪种模式"。
 
@@ -158,8 +174,19 @@ uv run mini-dsh benchmark benchmarks/core/manifest.json \
 | `smoke` | 1 | 读 → Patch → 测试 → 回答的端到端链路自检 |
 | `core` | 25 | Bug Fix(5) / Feature(4) / Test Repair(4) / Refactor(4) / Code Understanding(4) / Multi-file(4) |
 | `stress` | 3 | 长历史(18 步、16 模块)、大输出(75 KB / 3000 行日志)、被拒绝动作(网络+破坏性命令+密钥读取+路径逃逸) |
+| `repo` | 6 | 跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复（真实 provider） |
+| `hard` | 4 | 模块级规格实现：区间合并、令牌桶、分层配置、RFC 4180 解析（真实 provider，**留出判据**） |
 
 `stress` 是专门为**让消融变量可观测**而设计的：如果任务太小，所有 Context 策略的 Token 几乎相同，实验就没有区分度。
+
+`repo` 与 `hard` 只跑真实 provider（无 response script）。两者的差别在判据：`repo` 的成功判据是 `unittest discover -s .`，跑的是 Agent 能读能改的可见测试；`hard` 的判据来自 overlay，Agent 在运行期间看不到。
+
+`hard` 的公平性是刻意设计的。**每个被留出检查覆盖的契约点都写在模块 docstring 里**，任务目标也明说"`tests/` 只是 smoke 子集，docstring 才是判据"，所以失败意味着"没有实现写明的契约"而不是"被藏了需求"。两份产物由 [`benchmarks/build_hard.py`](../benchmarks/build_hard.py) 生成，并由 `tests/test_hard_suite.py` 在离线、不调模型的前提下双向门禁：
+
+- 出厂 fixture 必须**失败**——否则任务一开始就是解好的，成功率会被一个不需要工作的任务抬高；
+- 随包参考解必须**通过**——否则低成功率无法与"任务本身做不了"区分，0% 就成了一个无法解读的数字。
+
+判据脚本 `run_verification.py` 也来自 overlay，它把发现范围钉死在 `verification_tests/` 并断言用例数不低于声明值：`unittest discover` 在空目录上退出码是 0，不设这条下限的话"删掉测试目录"就是最省事的作弊方式。
 
 ## 7. 结果解读
 
@@ -181,8 +208,18 @@ uv run mini-dsh benchmark benchmarks/core/manifest.json \
 
 ## 8. 新增任务的流程
 
+默认流程（判据 = 工作区里的可见测试）：
+
 1. 在 `benchmarks/<suite>/fixtures/<task-id>/` 放入初始仓库（含刻意损坏或缺失的实现）。
 2. 写 `verify.py` 作为独立判据，**只依赖标准库**，退出码 0 表示通过。
 3. 生成或手写 `responses/<task-id>.json`：省略 `input_tokens`，让 Harness 测量真实上下文。
 4. 在 `manifest.json` 中登记任务，补齐 `repo_commit`（内容摘要）、`budget` 与 `isolation`。
 5. 跑一次确认成功，再跑 `--suite` 确认消融有区分度（不同变体 Token 应可分辨）。
+
+要测**能力**而不是**顺从可见测试**，改用留出判据（`hard` 套件的做法）：
+
+1. 在 `benchmarks/<suite>/fixtures/<task-id>/` 放工作区，**规格写在模块 docstring 里**，`tests/` 只放 smoke 子集。
+2. 在 `benchmarks/<suite>/verification/<task-id>/` 放判据：`verification_tests/` + 一个 `run_verification.py`，后者断言收集到的用例数不低于声明值。
+3. 在 `benchmarks/<suite>/solutions/<task-id>/` 放参考解，并用一个离线门禁双向验证：出厂 fixture 必须失败、参考解必须通过。
+4. manifest 里补 `verification_overlay`、`verification_commit`，`success_argv` 指向 overlay 里的脚本。
+5. **不要**把 Agent 本该产出的文件放进 overlay——它会被静默覆盖。

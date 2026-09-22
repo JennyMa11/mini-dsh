@@ -2,6 +2,50 @@
 
 本项目遵循 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/) 与[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.2] - 2026-09-22
+
+**第一次测到能力。** 到 `0.3.1` 为止所有套件的成功率都是 100%，而这不是"模型强"，是**判据的问题**：`core` / `stress` / `repo` 的判据都是工作区里的可见测试，也就是 Agent 能读、能改的那份文件——测的是**顺从**，不是**正确**。本节给 harness 加上留出判据（判据在 Agent 结束之后才落地），建了第一套非饱和的任务集，并交付第一次低于 100% 的实测结果。同一轮还修掉了这次运行暴露出来的第二个失败归因缺陷。
+
+### Added
+
+**留出判据（held-out verification）**
+
+- manifest 新增 `verification_overlay` 与 `verification_commit`：Runner 在 **Agent 结束之后、`success_argv` 执行之前**把 overlay 目录覆盖进工作区。时机是全部关键——早一步判据可读可改，晚一步判据不参与判定。声明了 overlay 却指不到目录的 manifest 在验证期直接拒绝，而不是静默退化成弱判据。
+- overlay 落地失败（例如 Agent 在 overlay 期望目录的位置留了一个文件）只让该任务失败（`verification_overlay_failed`），不再抛出中断整轮扫描、丢掉已经测得的全部结果。
+
+**`hard` 套件：4 个模块级规格实现任务**
+
+- 区间合并、令牌桶限流、分层配置解析、RFC 4180 记录读取。每个工作区只带规格的 smoke 子集，任务目标明说"`tests/` 只是 smoke 子集，docstring 才是判据"。**被留出检查覆盖的每个契约点都写在 docstring 里**，所以失败意味着"没有实现写明的契约"，而不是"被藏了需求"。
+- 判据脚本 `run_verification.py` 本身也来自 overlay，它把发现范围钉死在 `verification_tests/`，并**断言收集到的用例数不低于声明值**：`unittest discover` 在空目录上退出码是 0，不设这条下限的话"删掉测试目录"就是最省事的作弊方式。
+- `tests/test_hard_suite.py` 在离线、不调模型的前提下双向门禁每个任务：出厂 fixture 必须**失败**（否则任务一开始就是解好的），随包参考解必须**通过**（否则低成功率无法与"任务本身做不了"区分，0% 会变成一个无法解读的数字）。
+
+**`hard` 套件实测结果**
+
+- 4 任务 × 5 次重复 = 20 次运行，`deepseek-flash`，thinking 关闭，off-peak 费率 $0.15 / $0.6 / $0.003：**成功率 95%（19/20）**，归档在 [`docs/results/hard.md`](docs/results/hard.md)。这是本仓库第一次给出低于 100% 的成功率——不是因为模型变弱了，是因为判据第一次不再由 Agent 自己维护。
+- 唯一的失败是 `hard-interval-merge` 第 2 次重复：17 步（上限 24）、21 次工具调用（上限 48）**全部成功**，累计 151,854 Token 撞上 15 万 Token 上限。**绑定约束是 Token 而不是步数**——它只走到 17/24 步，步数预算从未接近。
+- `summary.json` 的 `real_model` 条目新增 `tasks` 逐任务汇总（`archive-results.py` 的 `_task_rollup`）：聚合值区分不了"一个任务每次都失败"和"五个任务各失败一次"，而这是两个不同的结论。**没成功过的任务其 `cost_per_success_usd` 记 `null` 而不是 0**，否则最难的会显示成最便宜的。
+- README 新增"留出判据套件（`hard`）"一节，表格放在 `<!-- hard-suite-results:start -->` 标记内；[`docs/real-model-evaluation.md`](docs/real-model-evaluation.md) 新增第 11 节；[`docs/benchmark.md`](docs/benchmark.md) 补上 `verification_overlay` 的协议、执行顺序与新增任务的流程。
+
+### Fixed
+
+- **模型产出不可用响应时，失败被归到 `environment` 层。** `ModelAdapterError` 同时覆盖"provider 挂了"和"模型吐了无法解析的响应"，而 `_provider_failure` 按异常类名匹配，于是两者都被记成 `provider_error`——一个读起来就是"不怪模型"的层。现在 Agent Loop 把 adapter 的 `code` 写进 `failure_reason`（`ModelAdapterError[invalid_tool_arguments]: ...`），分类法按 code 判定：`bad_response` 与 `invalid_tool_arguments` 归 `agent` 层（`model_reasoning_failure`），其余 code 仍是环境问题。**这是第三次由真实模型运行照出、脚本模型结构性照不到的归因缺陷**（前两次是截断 400 与错误响应体被丢弃）。
+- 没有 code 的旧 trace 仍按类名判定，保持向后兼容——归档的 trace 不会因为格式演进改变诊断。
+
+### Changed
+
+- **生成型 benchmark 目录加入 lint 排除。** `benchmarks/**/fixtures`、`benchmarks/**/verification`、`benchmarks/**/solutions` 都是生成的数据，代码在 `benchmarks/build_*.py`（它仍然被 lint）。在这里做格式化还会与"重新生成并逐字节比对"的门禁打架。
+
+### Tests
+
+- 229 个测试（+13）：4 个覆盖 overlay 契约（overlay 在运行前落地、从未落地、缺 overlay 不被拒绝、相对路径按工作目录解析），4 个覆盖 `hard` 套件门禁（出厂 fixture 失败、参考解通过、用例数下限、生成物逐字节可复现），3 个覆盖失败归因（Loop 记录 code、taxonomy 按 code 分层、Runner 端到端落在 `agent` 层），2 个把 README 的 `hard` 表**逐格**与归档比对。
+- 全部 13 个新门禁都通过"故意改坏实现、确认失败、再改回"验证过会真的失败。`hard` 表门禁另用七种破坏方式实测：改 Token、改成功率、**交换两列**、改合计、删掉一行、删掉费率、改每次成功成本——七种都被拦下。
+
+### 说明
+
+- **`harness: 1` 不等于"模型没错"。** 失败层分解是 `success 19 / harness 1 / agent 0 / environment 0`。分类法里 `harness` 的含义是"运行时按规格执行了"（预算确实按规格执行了），它回答的是**运行时是否被免责**，不是"模型是否失败"。按能力读，这次就是一次**未收敛**。`agent: 0` 只说明没有任何失败可以归因到"harness 坏了"或"provider 挂了"。这一条留在文档里而不是改分类法：`harness` 的定义是有意的，改它等于重新定义这一层而不是修正它。
+- **20 次运行不足以给四个任务排序**，`pass@k` 仍是 100%（每个任务至少成功过一次）。它确立的是判据不再饱和——这是"在 `hard` 上比较 Context 策略准确性"的前置条件，不是那个实验本身。
+- **34 次拦截里 31 次是 `find` 未进 allowlist。** `hard` 与 `repo` 用同一份 `python` 单命令 allowlist，所以两次运行可比；但这也是最小 allowlist 的真实代价，且它的实际约束力有限——`python` 本来就能做那些被拒命令能做的事。
+
 ## [0.3.1] - 2026-09-21
 
 **Context 协议修复。** 第一次真实模型的 Context 消融给出了一组"看起来很像结论"的数字：六个变体里四个成功率只有 0–22%，而全部失败都被记成 `provider_error`。查下去发现那不是模型能力，而是 harness 缺陷——截断型 Context 策略会把一次工具调用回合从中间切开，provider 因此返回 400。**这个缺陷在 scripted 模型下结构性不可见**：脚本模型不校验它收到的请求，所以 deterministic 阶段无论跑多少遍都照不出来；换成真实 provider 后它表现为一个不透明的 400，并且被失败分类归到 `environment` 层，与"provider 挂了"无法区分。本节修掉这个缺陷、让下一次 400 能被诊断，并交付修复后重跑的消融结果。

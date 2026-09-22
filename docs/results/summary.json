@@ -1020,6 +1020,93 @@
     "output": 15.0
   },
   "real_model": {
+    "hard": {
+      "aggregate": {
+        "average_cost_usd": 0.0025581696,
+        "average_harness_ms": 31.97475,
+        "average_latency_ms": 17099.192433198914,
+        "average_model_ms": 16911.05635,
+        "average_steps": 10.1,
+        "average_tokens": 50049.95,
+        "average_tool_calls": 12.85,
+        "average_tool_ms": 156.1613,
+        "cached_input_share": 0.9271442900740551,
+        "cached_input_tokens": 868864,
+        "cost_per_success_usd": 0.002692810105263158,
+        "pass_at_k": 1.0,
+        "permission_denied": 0,
+        "retry_success_rate": 0.0,
+        "runs": 20,
+        "success_rate": 0.95,
+        "tasks": 4,
+        "total_cost_usd": 0.051163392,
+        "unsafe_blocked": 34
+      },
+      "failure_layers": {
+        "agent": 0,
+        "environment": 0,
+        "harness": 1,
+        "success": 19
+      },
+      "model": "deepseek-flash",
+      "name": "mini-dsh-hard",
+      "rate_card_usd_per_million": {
+        "cached_input_usd_per_million": 0.003,
+        "input_usd_per_million": 0.15,
+        "output_usd_per_million": 0.6
+      },
+      "repeat_variance": {
+        "repeated_tasks": 4.0,
+        "success_spread": 0.25,
+        "token_spread": 0.6375254246178209
+      },
+      "schema_version": "2.1",
+      "tasks": [
+        {
+          "average_steps": 7.8,
+          "average_tokens": 23487.8,
+          "cost_per_success_usd": 0.0015785568,
+          "failure_types": [],
+          "runs": 5,
+          "success_rate": 1.0,
+          "task_id": "hard-config-precedence",
+          "total_cost_usd": 0.007892784
+        },
+        {
+          "average_steps": 9.4,
+          "average_tokens": 47075.4,
+          "cost_per_success_usd": 0.002606952,
+          "failure_types": [],
+          "runs": 5,
+          "success_rate": 1.0,
+          "task_id": "hard-csv-records",
+          "total_cost_usd": 0.01303476
+        },
+        {
+          "average_steps": 9.2,
+          "average_tokens": 56817.6,
+          "cost_per_success_usd": 0.003702447,
+          "failure_types": [
+            "budget_exhausted"
+          ],
+          "runs": 5,
+          "success_rate": 0.8,
+          "task_id": "hard-interval-merge",
+          "total_cost_usd": 0.014809788
+        },
+        {
+          "average_steps": 14.0,
+          "average_tokens": 72819.0,
+          "cost_per_success_usd": 0.0030852120000000004,
+          "failure_types": [],
+          "runs": 5,
+          "success_rate": 1.0,
+          "task_id": "hard-token-bucket",
+          "total_cost_usd": 0.015426060000000002
+        }
+      ],
+      "thinking": false
+    },
     "repo-real": {
       "aggregate": {
         "average_cost_usd": 0.0009369303333333334,
@@ -1061,6 +1148,68 @@
         "token_spread": 0.14658436381145903
       },
       "schema_version": "2.0",
+      "tasks": [
+        {
+          "average_steps": 6.0,
+          "average_tokens": 22169.333333333332,
+          "cost_per_success_usd": 0.00117523,
+          "failure_types": [],
+          "runs": 3,
+          "success_rate": 1.0,
+          "task_id": "repo-callsite-contract",
+          "total_cost_usd": 0.0035256899999999997
+        },
+        {
+          "average_steps": 6.0,
+          "average_tokens": 16439.333333333332,
+          "cost_per_success_usd": 0.0006678080000000001,
+          "failure_types": [],
+          "runs": 3,
+          "success_rate": 1.0,
+          "task_id": "repo-config-change",
+          "total_cost_usd": 0.002003424
+        },
+        {
+          "average_steps": 6.666666666666667,
+          "average_tokens": 17422.666666666668,
+          "cost_per_success_usd": 0.000798686,
+          "failure_types": [],
+          "runs": 3,
+          "success_rate": 1.0,
+          "task_id": "repo-cross-file-bug",
+          "total_cost_usd": 0.002396058
+        },
+        {
+          "average_steps": 7.333333333333333,
+          "average_tokens": 20730.666666666668,
+          "cost_per_success_usd": 0.0010490939999999998,
+          "failure_types": [],
+          "runs": 3,
+          "success_rate": 1.0,
+          "task_id": "repo-error-recovery",
+          "total_cost_usd": 0.0031472819999999995
+        },
+        {
+          "average_steps": 7.0,
+          "average_tokens": 18058.0,
+          "cost_per_success_usd": 0.00077149,
+          "failure_types": [],
+          "runs": 3,
+          "success_rate": 1.0,
+          "task_id": "repo-failing-test-localization",
+          "total_cost_usd": 0.00231447
+        },
+        {
+          "average_steps": 6.666666666666667,
+          "average_tokens": 19973.0,
+          "cost_per_success_usd": 0.0011592739999999999,
+          "failure_types": [],
+          "runs": 3,
+          "success_rate": 1.0,
+          "task_id": "repo-feature-with-tests",
+          "total_cost_usd": 0.0034778219999999993
+        }
+      ],
       "thinking": false
     }
   },

@@ -4,11 +4,11 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 它不是一个新模型，也不是一个产品级 Coding Agent。它是一台**可替换、可观测、可复现**的 Harness：模型、工具、Context、Session、权限与事件总线全部走端口，核心 Loop 不依赖任何厂商 SDK、Shell 或文件系统细节，因此可以拿来做单变量消融实验。
 
-- 版本：`0.3.1`（Apache-2.0）
+- 版本：`0.3.2`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：40 个源码模块、15 个测试模块、228 个测试、31 个 Benchmark 任务（`core` 25 + `repo` 6）
+- 规模：40 个源码模块、15 个测试模块、231 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）
 
-> `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。scripted 基线仍然可复现，但"模型能力"结论只能来自 `repo` 套件。
+> `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。`0.3.2` 补上此前所有套件都缺的东西——**判据**：`core` / `stress` / `repo` 都拿 Agent 能读能改的可见测试当判据，所以它们的 100% 测的是顺从而不是正确；`hard` 套件用留出判据（Agent 结束后才落地）第一次给出低于 100% 的成功率（**19/20**）。
 
 ---
 
@@ -217,10 +217,24 @@ uv run mini-dsh run "Fix the failing tests" \
 | `core` | 25 | scripted | Bug Fix / Feature / Test Repair / Refactor / Code Understanding / Multi-file |
 | `stress` | 3 | scripted + **provider** | 长历史（18 步）、大输出（75 KB 日志）、被拒绝动作（越权 + 逃逸 + 密钥读取） |
 | `repo` | 6 | **provider** | 跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复 |
+| `hard` | 4 | **provider** | 模块级规格实现：区间合并、令牌桶、分层配置、RFC 4180 解析 |
 
 `repo` 套件没有 response script：每个任务至少跨两个模块，且其中几个 fixture 被刻意构造成"第一反应的那个改法会让另一个测试挂掉"，用来逼出多轮错误恢复而不是一次蒙对。生成脚本是 [`benchmarks/build_repo.py`](benchmarks/build_repo.py)。
 
 `stress` 同时用于 scripted 与真实 provider 的消融：它的任务足够长，长历史与大输出两组变量才有区分度（`core` 上这两组对照被压平）。
+
+### 留出判据（held-out verification）
+
+`core`、`stress`、`repo` 都用**可见测试**当判据——而可见测试正是 Agent 能读、能改的那份文件。于是它们测的是"是否让可见测试变绿"，不是"是否符合规格"：一个把测试改绿但没实现契约的 Agent 拿满分。这正是它们全部饱和在 100% 的结构性原因。
+
+`hard` 套件换掉了判据。任务在 manifest 里声明 `verification_overlay`，Runner 在 **Agent 结束之后、`success_argv` 执行之前**把该目录覆盖进工作区。时机是全部关键：
+
+- 覆盖早了，判据就摆在 Agent 面前，可读可改；
+- 覆盖晚了，判据不参与判定，等于装饰。
+
+判据脚本 `run_verification.py` 本身也来自 overlay，所以它同样是 Agent 没见过的文件。它把发现范围钉死在 `verification_tests/`，并**断言收集到的用例数不低于声明值**——`unittest discover` 在空目录上退出码是 0，不设这条下限的话，"删掉测试目录"就是最省事的作弊方式。`verification_commit` 像 `repo_commit` 钉工作区一样钉住 overlay；声明了 overlay 却指不到目录的 manifest 会被直接拒绝，而不是静默退化成弱判据。
+
+`hard` 的公平性是刻意设计的：**每个被留出检查覆盖的契约点都写在模块 docstring 里**，任务目标也明说"可见测试只是 smoke 子集，docstring 才是判据"。所以失败意味着"没有实现写明的契约"，而不是"被藏了需求"。`tests/test_hard_suite.py` 在离线、不调模型的前提下双向门禁每个任务：出厂 fixture 必须**失败**（否则任务一开始就是解好的），随包参考解必须**通过**（否则低成功率无法与"任务本身做不了"区分）。
 
 ## 实验结果
 
@@ -345,6 +359,36 @@ scripted 消融能证明"策略之间有成本差异"，但**不能**证明"某�
 
 **这次消融是先修了一个 bug 才成立的。** 第一版跑出来四个变体成功率 0–22%，且全部记成 `provider_error`——而 `provider_error` 落在 `environment` 层，读起来就是"provider 挂了"。实际原因是截断型策略把一次工具调用回合从中间切开：保留了工具结果，却丢掉了声明它的那一轮 assistant 消息，provider 因此返回 400。**脚本模型不校验它收到的请求，所以这个缺陷在 deterministic 阶段结构性不可见**——deterministic 基线跑多少遍都照不出来。修复、回归测试与协议约束见 [`CHANGELOG.md`](CHANGELOG.md) 的 `0.3.1` 与 [`docs/context-engineering.md`](docs/context-engineering.md) §3.1；上表是修复后重跑的结果，修复前那版数字不作为 Context 结论。
 
+### 留出判据套件（`hard`）：第一次测到能力
+
+前面几张表的成功率都是 100%。这不是"模型很强"的证据，而是**判据的问题**：`core` / `stress` / `repo` 的判据都是工作区里的可见测试，也就是 Agent 能读、能改的那份文件。一个把测试改绿、却没实现契约的 Agent 同样拿满分——那些成功率测的是**顺从**，不是**正确**。
+
+`hard` 换掉了判据（`verification_overlay`，见上文"留出判据"）。同一个模型、同一套 harness、同一档费率，**成功率第一次低于 100%**。报告归档在 [`docs/results/hard.md`](docs/results/hard.md)。
+
+<!-- hard-suite-results:start -->
+条件：`deepseek-flash` · thinking 关闭（`temperature_effective: true`）· 4 个 `hard` 任务 × 5 次重复 = 20 次运行 · off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens（输入 / 输出 / 缓存命中）· 合计 **19/20**
+
+| 任务 | 成功率 | 平均步数 | 平均 Token | 每次成功成本 |
+| --- | --- | --- | --- | --- |
+| `hard-config-precedence` | 100%（5/5） | 7.80 | 23,488 | $0.001579 |
+| `hard-csv-records` | 100%（5/5） | 9.40 | 47,075 | $0.002607 |
+| `hard-interval-merge` | 80%（4/5） | 9.20 | 56,818 | $0.003702 |
+| `hard-token-bucket` | 100%（5/5） | 14.00 | 72,819 | $0.003085 |
+<!-- hard-suite-results:end -->
+
+其余指标：`pass@k` 100% · 平均 12.85 次工具调用 · 缓存输入占比 92.7% · 平均延迟 17,099.2 ms（model 16,911.1 / tool 156.2 / harness 32.0）· 总成本 $0.051163 · 每次成功成本 $0.002693 · 危险动作被拦截 34 次 · 权限拒绝 0 次 · 重试 0 次。
+
+**结论与限制**：
+
+- **唯一的失败是 Token 预算耗尽，不是做不出来。** `hard-interval-merge` 第 2 次重复：17 步（上限 24）、21 次工具调用（上限 48）**全部成功**，累计 151,854 Token 撞上 15 万 Token 上限。Trace 显示它一直在用自写的 `python -c` 探针反复验证（含随机化输入的性质检查），最后一步正要回到 `unittest` 复核时被截断。**绑定约束是 Token 而不是步数**——24 步的上限它只走到 17 步。
+- **这一条落在 `harness` 层，但不能读成"模型没错"。** 失败层分解是 `success 19 / harness 1 / agent 0 / environment 0`。分类法里 `harness` 的含义是"运行时按规格执行了"（它确实按规格执行了预算），回答的是**运行时是否被免责**，而不是"模型是否失败"。按能力读，这就是一次**未收敛**。`agent: 0` 不等于"模型从未失败"——这层计数只说明没有任何一次失败可以归因到"harness 坏了"或"provider 挂了"。
+- **四个任务里三个 5/5，只有 `hard-interval-merge` 有方差**（成功 spread 0.25、Token spread 64%）。也就是说这套任务目前区分的是**同一个任务内的采样波动**，还不足以给四个任务排出难度序。
+- **最贵的任务不失败。** `hard-token-bucket` 是 Token（72,819）与步数（14.00）双料最高，却 5/5 全过——它只是慢。在这套任务上"贵"与"难"不是同一件事，这也再次说明 Token 数不是能力的代理量。
+- **成本比 `repo` 高一个档：每次成功 $0.002693 vs $0.000937（2.9×）**，平均 Token 50,050 vs 19,132（2.6×）。这是应该的——`repo` 是修跨文件小 bug，`hard` 是实现整份模块规格。
+- **34 次拦截里 31 次是 `find` 未进 allowlist**，3 次是绝对路径写入被沙箱拒绝。前者是诚实的配置代价（`hard` 与 `repo` 用同一份 `python` 单命令 allowlist，所以两次运行可比），后者是沙箱在按设计工作。
+
+**这组结果不成立什么**：20 次运行只够让一个 5% 的失败率显现出来，不够给四个任务排序，也不够在 `hard` 上比较 Context 策略——`pass@k` 仍是 100%（每个任务至少成功过一次）。但**判据第一次不再饱和**，意味着"某策略更准"这类问题终于有了可以被测的量；在 `hard` 上重跑 Context 消融是自然的下一步。
+
 ## 真实模型评测
 
 scripted 套件回答的是"Harness 是否按承诺工作"，不是"模型是否够好"。前者可以 100%，后者必须真实 provider 才能测。完整协议见 [`docs/real-model-evaluation.md`](docs/real-model-evaluation.md)。
@@ -377,6 +421,14 @@ uv run mini-dsh benchmark benchmarks/repo/manifest.json \
   --cached-input-usd-per-million 0.003 \
   --allow-write --allow-shell --verify-command python \
   --output benchmark-results/repo-real.json
+
+# 留出判据套件：判据来自 overlay，Agent 在运行期间看不到
+uv run mini-dsh benchmark benchmarks/hard/manifest.json \
+  --model-profile deepseek --repeat 3 \
+  --input-usd-per-million 0.15 --output-usd-per-million 0.6 \
+  --cached-input-usd-per-million 0.003 \
+  --allow-write --allow-shell --verify-command python \
+  --output benchmark-results/hard.json
 
 # 离线重渲染报告 + Pareto 分析，不重新调用模型
 uv run mini-dsh report benchmark-results/repo-real.json
@@ -420,6 +472,8 @@ billable_input = input_tokens − cached_input_tokens
 
 `permission_denied` 是"Harness 正确"的**证据**而不是缺陷。报告只给层分解，不给一个混合的成功率。
 
+**层回答的是"运行时是否被免责"，不是"模型是否失败"——这两问的答案可以相反。** `harness` 这一层里，`budget_exhausted` 尤其容易被误读：预算被按规格执行了，所以运行时免责，但一次跑到预算尽头的运行**按能力读就是一次未收敛**。`hard` 套件里唯一的失败正是这种情形（17/24 步、21 次工具调用全部成功、Token 撞顶），因此那份结果的 `agent: 0` **不能**读成"模型从未失败"，只能读成"没有任何失败可以归因到 harness 坏了或 provider 挂了"。逐类别的完整判读见 [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)。
+
 ## 配置
 
 优先级 `CLI > 环境变量 > minidsh.toml > 默认值`，可打印来源：
@@ -448,7 +502,7 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 55 个文件上无错误、228 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 55 个文件上无错误、231 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 

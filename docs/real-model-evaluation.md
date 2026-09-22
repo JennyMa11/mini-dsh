@@ -386,3 +386,85 @@ All 27 runs passed, so this is also a cost result.
 - **No independent replication.** 3 tasks x 3 repeats per variant is enough to make a
   cost ordering visible and not enough to make it robust. The orderings above are the
   first measurement, not an established result.
+
+## 11. The hard suite: the first result that is not 100%
+
+Every suite up to this point saturated. `core`, `stress` and `repo` all verify by running
+tests inside the workspace the agent could read and edit, so a success rate measured
+compliance with the visible suite rather than correctness against a specification, and a
+model that greened the tests scored full marks whether or not it honoured the contract.
+The `hard` suite moves the criterion out of the agent's reach (see
+[`benchmark.md`](benchmark.md) for `verification_overlay`), and the same model on the same
+harness finally scored below 100%.
+
+Archived as [`results/hard.md`](results/hard.md).
+
+### The run
+
+4 tasks x 5 repeats = 20 runs, `deepseek-flash`, thinking off, off-peak tariff
+`$0.15` / `$0.6` / `$0.003` per 1M tokens.
+
+| Task | Success | Steps | Tokens | Cost/success |
+| --- | --- | --- | --- | --- |
+| `hard-config-precedence` | 100% (5/5) | 7.80 | 23,488 | $0.001579 |
+| `hard-csv-records` | 100% (5/5) | 9.40 | 47,075 | $0.002607 |
+| `hard-interval-merge` | 80% (4/5) | 9.20 | 56,818 | $0.003702 |
+| `hard-token-bucket` | 100% (5/5) | 14.00 | 72,819 | $0.003085 |
+
+Aggregate: 95% (19/20), `pass@k` 100%, 10.1 steps, 50,050 tokens, 12.85 tool calls, 92.7%
+cache share, $0.002693 per success, 34 unsafe actions blocked, 0 permission denials.
+
+### The one failure is a token-budget exhaustion, and the layer name misleads
+
+`hard-interval-merge` run 2 ended at step 17 of a 24-step budget with **all 21 tool calls
+succeeded**, having spent 151,854 tokens against a 150,000 ceiling. The trace shows what it
+was doing: it patched the implementation, then verified with a series of self-written
+`python -c` probes — including randomised input — and the final step is it returning to
+`unittest` to re-check. The budget cut it off one step before the check that would have
+decided the run.
+
+Two things follow, and the second is the important one.
+
+**The binding constraint is tokens, not steps.** A reader who thinks in steps would look at
+17/24 and conclude there was headroom. The step budget was never close; the cumulative
+token budget was the wall, and cumulative tokens grow with every step because each request
+re-sends the history.
+
+**`harness` is an exoneration label, not a fault label.** The layer split is
+`success 19 / harness 1 / agent 0 / environment 0`, and the report's own gloss for
+`harness` is "the runtime correctly bounded the agent" — which is true, the budget was
+enforced as specified. But the taxonomy answers *is the runtime exonerated?*, not *did the
+model fail?*, and here those two questions have opposite answers. Read as capability, this
+is a run where the model iterated without converging. **`agent: 0` must not be read as "the
+model never failed"**; it means no failure was attributable to a broken harness or a dead
+provider.
+
+This is the third time a real-model run has surfaced a reporting defect that a scripted
+model cannot reach — the first was the truncation bug that produced opaque 400s, the second
+was `ModelAdapterError` being filed as environmental regardless of what it said, and this
+one is a label whose meaning is narrower than the question it gets asked. The first two
+were fixed in code; this one is left as a documented ambiguity, because the taxonomy's
+definition is deliberate and changing it would redefine the layer rather than correct it.
+
+### What the suite shows, and what it does not
+
+- **Cost is an order of magnitude above `repo`**: $0.002693 per success against $0.000937,
+  and 50,050 tokens against 19,132. That is the expected shape — `repo` fixes small
+  cross-file bugs, `hard` implements a whole module specification.
+- **The most expensive task does not fail.** `hard-token-bucket` is highest on both tokens
+  (72,819) and steps (14.00) and passes 5/5. On this task set "expensive" and "hard" are
+  not the same thing, which is the same warning as the ablation's cost inversion: no single
+  scalar tracks difficulty.
+- **Only one task has spread.** `hard-interval-merge` varies (success spread 0.25, token
+  spread 64%); the other three are 5/5. The suite therefore currently measures sampling
+  variance within a task, not a difficulty ordering across tasks.
+- **34 blocked actions, 31 of them `find`.** The `hard` manifest allows only `python`, the
+  same allowlist `repo` uses, so the two runs stay comparable — but the agent repeatedly
+  reaches for `find` to explore and is refused. It works around the refusal with
+  `python -c` and still passes. Worth stating because it is a real cost of a minimal
+  allowlist, and because the allowlist's practical effect is limited: `python` can already
+  do anything the denied commands could.
+- **20 runs cannot rank four tasks or strategies.** `pass@k` is still 100% — every task
+  passed at least once — so the suite cannot yet separate Context strategies on accuracy.
+  What it does establish is that the criterion is no longer saturated, which is the
+  precondition for that experiment rather than the experiment itself.

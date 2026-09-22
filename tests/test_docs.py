@@ -31,7 +31,7 @@ CHANGELOG = REPO_ROOT / "CHANGELOG.md"
 PYPROJECT = REPO_ROOT / "pyproject.toml"
 
 # Suites that contribute to the headline task count, in README order.
-COUNTED_SUITES = ("core", "repo")
+COUNTED_SUITES = ("core", "repo", "hard")
 
 
 def _read(path: Path) -> str:
@@ -110,13 +110,27 @@ def test_readme_task_count_matches_the_manifests() -> None:
     )
 
     # The per-suite breakdown in parentheses must add up too, otherwise the
-    # total can be right while the reader is told the wrong split.
-    breakdown = re.search(r"`([a-z_]+)`\s*(\d+)\s*(?:\+|\))", _read(README))
-    if breakdown is not None:
-        suite, count = breakdown.group(1), int(breakdown.group(2))
-        assert suite in COUNTED_SUITES
-        assert count == _manifest_task_count(suite), (
-            f"README says `{suite}` has {count} tasks, manifest has {_manifest_task_count(suite)}"
+    # total can be right while the reader is told the wrong split.  Every entry is
+    # checked, not just the first: a breakdown is read as a whole, so an unchecked
+    # tail is exactly where a stale number survives unnoticed.
+    breakdown = re.findall(r"`([a-z_]+)`\s*(\d+)", _read(README))
+    if breakdown:
+        named = {suite: int(count) for suite, count in breakdown}
+        unknown = sorted(set(named) - set(COUNTED_SUITES))
+        assert not unknown, (
+            f"README breaks the task count down by {unknown}, which no manifest backs"
+        )
+        assert sorted(named) == sorted(COUNTED_SUITES), (
+            f"README breaks the task count down by {sorted(named)}, but the counted "
+            f"suites are {sorted(COUNTED_SUITES)}"
+        )
+        for suite, count in named.items():
+            actual = _manifest_task_count(suite)
+            assert count == actual, (
+                f"README says `{suite}` has {count} tasks, manifest has {actual}"
+            )
+        assert sum(named.values()) == total, (
+            f"the README breakdown sums to {sum(named.values())} but the suites hold {total}"
         )
 
 
@@ -583,4 +597,149 @@ def test_the_context_strategy_table_names_the_base_class_the_factory_builds(
 
     assert not drift, (
         "docs/context-engineering.md disagrees with composition._build_context: " + "; ".join(drift)
+    )
+
+
+# The `hard` suite is the only suite whose result is *not* 100%, which makes its
+# numbers the most load-bearing in the README and the easiest to quietly round off.
+# The per-task split is the part that carries meaning -- "which capability is
+# missing" -- so it is gated per row rather than as an aggregate.
+_HARD_SUITE_BLOCK = re.compile(
+    r"<!--\s*hard-suite-results:start\s*-->(.*?)<!--\s*hard-suite-results:end\s*-->",
+    flags=re.DOTALL,
+)
+
+
+def _hard_suite_record() -> dict[str, object]:
+    summary = json.loads(_read(REPO_ROOT / "docs" / "results" / "summary.json"))
+    record = summary["real_model"]["hard"]
+    assert isinstance(record, dict)
+    return cast("dict[str, object]", record)
+
+
+def _readme_hard_suite_block() -> str:
+    match = _HARD_SUITE_BLOCK.search(_read(README))
+    assert match is not None, (
+        "README no longer carries a hard-suite results block; the only non-saturated "
+        "result in the repository must stay inside the markers so it can be gated"
+    )
+    return match.group(1)
+
+
+def _readme_hard_suite_rows() -> dict[str, dict[str, str]]:
+    """Map each task id to its README row, keyed by column header.
+
+    Header-keyed for the same reason as the ablation tables: a positional parser
+    would happily pair a success rate with a cost column and call it verified.
+    """
+    rows: dict[str, dict[str, str]] = {}
+    header: list[str] | None = None
+    for line in _readme_hard_suite_block().splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            header = None
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if header is None:
+            header = cells
+            continue
+        if all(set(cell) <= {"-"} for cell in cells) or len(cells) != len(header):
+            continue
+        match = _VARIANT_NAME.match(cells[0])
+        if match is None:
+            continue
+        rows[match.group(1)] = dict(zip(header[1:], cells[1:], strict=True))
+    return rows
+
+
+def test_readme_hard_suite_numbers_match_the_archived_run() -> None:
+    """Every task row is compared cell by cell against the archived run.
+
+    An aggregate can be reproduced by a suite that fails one task every time or by
+    one that fails five tasks once each, and those are different findings about the
+    model.  The row is therefore the unit of comparison, and a task that is archived
+    but missing from the README fails the gate rather than being skipped.
+    """
+    rows = _readme_hard_suite_rows()
+    assert rows, "the README hard-suite block has no table rows to check"
+
+    tasks = _hard_suite_record()["tasks"]
+    assert isinstance(tasks, list), "the archived hard suite has no per-task rollup"
+    assert tasks, "the archived hard suite has no tasks"
+
+    drift: list[str] = []
+    compared = 0
+    for task in tasks:
+        assert isinstance(task, dict)
+        task_id = str(task["task_id"])
+        row = rows.get(task_id)
+        if row is None:
+            drift.append(f"{task_id}: archived task has no README row")
+            continue
+
+        success = float(cast("float", task["success_rate"]))
+        runs = int(cast("int", task["runs"]))
+        cost = task["cost_per_success_usd"]
+        # `None` means nothing passed, so there is no cost per success to print.
+        # Formatting it as $0.000000 would make the hardest task look the cheapest.
+        cost_cell = "—" if cost is None else f"${float(cast('float', cost)):.6f}"
+        expected = {
+            "成功率": f"{success:.0%}（{round(success * runs)}/{runs}）",
+            "平均步数": f"{float(cast('float', task['average_steps'])):.2f}",
+            "平均 Token": f"{float(cast('float', task['average_tokens'])):,.0f}",
+            "每次成功成本": cost_cell,
+        }
+        for column, value in expected.items():
+            if column not in row:
+                continue
+            compared += 1
+            if row[column] != value:
+                drift.append(
+                    f"{task_id}/{column}: README says {row[column]!r}, archive says {value!r}"
+                )
+
+    assert not drift, (
+        "README's hard-suite numbers disagree with docs/results/summary.json: " + "; ".join(drift)
+    )
+    assert compared >= 12, (
+        f"only {compared} cells were compared, so the gate is not reading the table"
+    )
+
+
+def test_readme_states_the_archived_hard_suite_conditions() -> None:
+    """A cost figure is meaningless without the model and the tariff behind it."""
+    record = _hard_suite_record()
+    block = _readme_hard_suite_block()
+
+    model = record["model"]
+    assert isinstance(model, str), "the archived hard suite did not record its model"
+    assert f"`{model}`" in block, f"README does not name the hard-suite model {model!r}"
+
+    assert record["thinking"] is False, (
+        "the archived hard suite enabled thinking, so its temperature was not effective"
+    )
+    assert "thinking 关闭" in block, (
+        "README must say thinking was off: with it on the provider ignores temperature"
+    )
+
+    rates = record["rate_card_usd_per_million"]
+    assert isinstance(rates, dict), "the archived hard suite did not record a rate card"
+    card = cast("dict[str, float]", rates)
+    expected = (
+        f"${card['input_usd_per_million']:g} / "
+        f"${card['output_usd_per_million']:g} / "
+        f"${card['cached_input_usd_per_million']:g} per 1M tokens"
+    )
+    assert expected in block, (
+        f"README must quote the tariff the hard-suite costs were billed under, as "
+        f"{expected!r}; off-peak is half of peak"
+    )
+
+    aggregate = record["aggregate"]
+    assert isinstance(aggregate, dict)
+    total = f"{_number(aggregate, 'success_rate') * _number(aggregate, 'runs'):.0f}"
+    runs = f"{_number(aggregate, 'runs'):.0f}"
+    assert f"{total}/{runs}" in block, (
+        f"README must state the hard-suite total as {total}/{runs}, so a reader can see "
+        "the suite is not saturated"
     )
