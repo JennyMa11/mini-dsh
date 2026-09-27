@@ -40,7 +40,7 @@ _LOOP_STUCK_REPEATS = 3
 _MODEL_OUTPUT_ERROR_CODES = frozenset({"bad_response", "invalid_tool_arguments"})
 
 # The loop records an exception as `ClassName[code]: message` when it carries a code.
-_CODED_ADAPTER_ERROR = re.compile(r"ModelAdapterError\[([a-z_]+)\]")
+_CODED_ADAPTER_ERROR = re.compile(r"(?:ModelAdapterError|ModelCallError)\[([a-z_]+)\]")
 
 # Which layer owns the outcome. ``harness`` means the runtime behaved exactly as
 # specified and the agent misused it, so the runtime is *exonerated* by that failure.

@@ -49,8 +49,8 @@ def latency_from_trace(trace: TraceRun) -> LatencyBreakdown:
     """Return the run's three-layer latency split.
 
     The loop's own accounting is preferred, because it is the only place that
-    sees a model call *fail*: a failed call emits no ``model_call_completed``
-    event, so a purely event-derived sum would silently hand the provider's time
+    sees a model call *fail*: older traces have no ``model_call_failed``
+    event, so a purely event-derived sum could silently hand the provider's time
     to the harness residual and invert the meaning of the split.
 
     Reconstruction from per-call events remains as the fallback for traces
@@ -63,7 +63,9 @@ def latency_from_trace(trace: TraceRun) -> LatencyBreakdown:
 
     model_ms = 0.0
     model_calls = 0
-    for record in trace.by_name("model_call_completed"):
+    for record in trace.records:
+        if record.name not in {"model_call_completed", "model_call_failed"}:
+            continue
         model_ms += as_float(record.data.get("duration_ms"))
         model_calls += 1
     tool_ms = 0.0

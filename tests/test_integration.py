@@ -670,7 +670,10 @@ async def test_prompt_cache_hits_are_reported_separately(provider: Any) -> None:
 
 @pytest.mark.integration
 @pytest.mark.asyncio
-async def test_openai_compatible_model_rejects_invalid_tool_arguments(provider: Any) -> None:
+@pytest.mark.parametrize("arguments", ["{", "[]"])
+async def test_openai_compatible_model_rejects_invalid_tool_arguments(
+    provider: Any, arguments: str
+) -> None:
     _ProviderHandler.status_code = 200
     _ProviderHandler.response_body = {
         "choices": [
@@ -678,11 +681,16 @@ async def test_openai_compatible_model_rejects_invalid_tool_arguments(provider: 
                 "message": {
                     "content": "",
                     "tool_calls": [
-                        {"id": "c1", "function": {"name": "read_file", "arguments": "{"}}
+                        {"id": "c1", "function": {"name": "read_file", "arguments": arguments}}
                     ],
                 }
             }
-        ]
+        ],
+        "usage": {
+            "prompt_tokens": 100,
+            "completion_tokens": 20,
+            "prompt_tokens_details": {"cached_tokens": 60},
+        },
     }
     model = OpenAICompatibleModel(
         endpoint=f"http://127.0.0.1:{provider.server_port}/v1/chat/completions",
@@ -690,5 +698,35 @@ async def test_openai_compatible_model_rejects_invalid_tool_arguments(provider: 
         api_key="test-key",
     )
 
-    with pytest.raises(ModelAdapterError, match="invalid tool arguments"):
+    with pytest.raises(ModelAdapterError) as error:
         await model.complete(ModelRequest((Message(Role.USER, "hi"),)))
+    assert error.value.code == "invalid_tool_arguments"
+    assert error.value.usage == TokenUsage(100, 20, 0.0, 60)
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+@pytest.mark.parametrize("choices", [[], [{"message": None}]])
+async def test_bad_response_preserves_independently_valid_usage(
+    provider: Any, choices: list[dict[str, Any]]
+) -> None:
+    _ProviderHandler.response_body = {
+        "choices": choices,
+        "usage": {"prompt_tokens": 12, "completion_tokens": 3},
+    }
+    model = OpenAICompatibleModel(endpoint=_endpoint(provider), model="test", api_key="test-key")
+    with pytest.raises(ModelAdapterError) as error:
+        await model.complete(ModelRequest(()))
+    assert error.value.code == "bad_response"
+    assert error.value.usage == TokenUsage(12, 3)
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+@pytest.mark.parametrize("usage", [None, {}, {"prompt_tokens": -1, "completion_tokens": 2}])
+async def test_bad_response_does_not_invent_unknown_usage(provider: Any, usage: Any) -> None:
+    _ProviderHandler.response_body = {"choices": [], "usage": usage}
+    model = OpenAICompatibleModel(endpoint=_endpoint(provider), model="test", api_key="test-key")
+    with pytest.raises(ModelAdapterError) as error:
+        await model.complete(ModelRequest(()))
+    assert error.value.usage is None

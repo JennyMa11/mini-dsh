@@ -37,6 +37,58 @@ def _finished(**data: JsonValue) -> TraceRecord:
     return _record("run_finished", 4, status="finished", **data)
 
 
+def test_failed_model_usage_survives_replay_and_latency_fallback() -> None:
+    trace = _run(
+        _record(
+            "model_call_completed",
+            1,
+            input_tokens=10,
+            output_tokens=2,
+            cached_input_tokens=4,
+            cost_usd=0.01,
+            duration_ms=20.0,
+        ),
+        _record(
+            "model_call_failed",
+            2,
+            usage_known=True,
+            input_tokens=100,
+            output_tokens=20,
+            cached_input_tokens=60,
+            cost_usd=0.02,
+            duration_ms=30.0,
+        ),
+        _record(
+            "model_call_failed",
+            3,
+            usage_known=False,
+            input_tokens=None,
+            output_tokens=None,
+            cached_input_tokens=None,
+            cost_usd=None,
+            duration_ms=10.0,
+        ),
+        _record("run_finished", 3, status="failed", duration_ms=65.0),
+    )
+    replay = build_replay(trace)
+    assert trace.total_tokens() == replay.tokens == (110, 22, 64)
+    assert trace.cost_usd() == replay.cost_usd == pytest.approx(0.03)
+    assert replay.steps[1].state == replay.steps[2].state == "failed"
+    assert replay.latency.model_ms == 60.0
+    assert replay.latency.model_calls == 3
+    failed = _run(
+        _record(
+            "run_finished",
+            1,
+            status="failed",
+            failure_reason="ModelCallError[bad_response]: invalid action",
+        )
+    )
+    assert classify_failure(status="failed", verified=None, trace=failed).category is (
+        FailureCategory.MODEL_REASONING_FAILURE
+    )
+
+
 # --- tracefile -----------------------------------------------------------------
 
 

@@ -150,6 +150,23 @@ class TokenUsage:
         )
 
 
+class ModelCallError(RuntimeError):
+    """Safe model failure carrying reported usage, or None when usage is unknown."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        code: str = "model_error",
+        retryable: bool = False,
+        usage: TokenUsage | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.code = code
+        self.retryable = retryable
+        self.usage = usage
+
+
 @dataclass(frozen=True, slots=True)
 class ModelPricing:
     """Per-million-token USD pricing used for deterministic cost accounting."""

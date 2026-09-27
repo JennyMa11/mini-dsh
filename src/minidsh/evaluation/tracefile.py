@@ -159,7 +159,7 @@ class TraceRun:
         for record in items:
             if record.name == "context_built":
                 context = record
-            elif record.name == "model_call_completed":
+            elif record.name in {"model_call_completed", "model_call_failed"}:
                 model_call = record
             elif record.name == "tool_call_completed":
                 tool_calls.append(record)
@@ -177,7 +177,9 @@ class TraceRun:
                 _as_int(final.data.get("cached_input_tokens")),
             )
         input_tokens = output_tokens = cached = 0
-        for record in self.by_name("model_call_completed"):
+        for record in self.records:
+            if record.name not in {"model_call_completed", "model_call_failed"}:
+                continue
             input_tokens += _as_int(record.data.get("input_tokens"))
             output_tokens += _as_int(record.data.get("output_tokens"))
             cached += _as_int(record.data.get("cached_input_tokens"))
@@ -190,7 +192,8 @@ class TraceRun:
             return _as_float(final.data.get("cost_usd"))
         return sum(
             _as_float(record.data.get("cost_usd"))
-            for record in self.by_name("model_call_completed")
+            for record in self.records
+            if record.name in {"model_call_completed", "model_call_failed"}
         )
 
     def tool_call_count(self) -> int:

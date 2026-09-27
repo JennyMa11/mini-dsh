@@ -162,10 +162,13 @@ async def test_credential_redactor_keeps_safe_error_classification() -> None:
     class FailingModel:
         async def complete(self, request: ModelRequest) -> ModelResponse:
             del request
-            raise ModelAdapterError(secret, code="rate_limited", retryable=True)
+            raise ModelAdapterError(
+                secret, code="rate_limited", retryable=True, usage=TokenUsage(10, 5, 0.0, 4)
+            )
 
     model = CredentialRedactingModel(FailingModel(), secret)
     with pytest.raises(ModelAdapterError, match=r"\[REDACTED\]") as error:
         await model.complete(ModelRequest(()))
     assert error.value.code == "rate_limited"
     assert error.value.retryable
+    assert error.value.usage == TokenUsage(10, 5, 0.0, 4)

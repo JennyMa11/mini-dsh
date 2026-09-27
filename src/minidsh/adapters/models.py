@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from minidsh.domain import (
     JsonValue,
     Message,
+    ModelCallError,
     ModelRequest,
     ModelResponse,
     Role,
@@ -50,7 +51,7 @@ def _error_detail(exc: urllib.error.HTTPError) -> str:
     return redact_text(" ".join(detail.split())[:_MAX_ERROR_DETAIL])
 
 
-class ModelAdapterError(RuntimeError):
+class ModelAdapterError(ModelCallError):
     """Safe provider or scripted-model failure.
 
     ``code`` and ``retryable`` exist so the loop and the failure taxonomy can tell a
@@ -58,11 +59,6 @@ class ModelAdapterError(RuntimeError):
     from a configuration or capability problem (``missing_credentials``,
     ``bad_response``, ``invalid_tool_arguments``) without parsing message text.
     """
-
-    def __init__(self, message: str, *, code: str = "model_error", retryable: bool = False) -> None:
-        super().__init__(message)
-        self.code = code
-        self.retryable = retryable
 
 
 class CredentialRedactingModel:
@@ -91,9 +87,12 @@ class CredentialRedactingModel:
         try:
             response = await self._model.complete(request)
         except Exception as exc:
-            code = self._text(exc.code) if isinstance(exc, ModelAdapterError) else "model_error"
-            retryable = exc.retryable if isinstance(exc, ModelAdapterError) else False
-            raise ModelAdapterError(self._text(str(exc)), code=code, retryable=retryable) from None
+            code = self._text(exc.code) if isinstance(exc, ModelCallError) else "model_error"
+            retryable = exc.retryable if isinstance(exc, ModelCallError) else False
+            usage = exc.usage if isinstance(exc, ModelCallError) else None
+            raise ModelAdapterError(
+                self._text(str(exc)), code=code, retryable=retryable, usage=usage
+            ) from None
         return replace(
             response,
             content=self._text(response.content),
@@ -227,12 +226,12 @@ class _ProviderChoice(BaseModel):
 
 
 class _ProviderPromptDetails(BaseModel):
-    cached_tokens: int = 0
+    cached_tokens: int = Field(default=0, ge=0, strict=True)
 
 
 class _ProviderUsage(BaseModel):
-    prompt_tokens: int = 0
-    completion_tokens: int = 0
+    prompt_tokens: int = Field(default=0, ge=0, strict=True)
+    completion_tokens: int = Field(default=0, ge=0, strict=True)
     prompt_tokens_details: _ProviderPromptDetails | None = None
 
     @property
@@ -245,6 +244,24 @@ class _ProviderUsage(BaseModel):
 class _ProviderResponse(BaseModel):
     choices: list[_ProviderChoice]
     usage: _ProviderUsage = Field(default_factory=_ProviderUsage)
+
+
+def _reported_usage(raw: bytes) -> TokenUsage | None:
+    """Validate usage independently of choices; malformed responses may still be billed."""
+    try:
+        envelope = json.loads(raw)
+        usage = envelope.get("usage") if isinstance(envelope, dict) else None
+        if (
+            not isinstance(usage, dict)
+            or not {"prompt_tokens", "completion_tokens"} <= usage.keys()
+        ):
+            return None
+        parsed = _ProviderUsage.model_validate(usage)
+        if parsed.cached_tokens > parsed.prompt_tokens:
+            return None
+        return TokenUsage(parsed.prompt_tokens, parsed.completion_tokens, 0.0, parsed.cached_tokens)
+    except (ValueError, UnicodeDecodeError):
+        return None
 
 
 class OpenAICompatibleModel:
@@ -369,14 +386,17 @@ class OpenAICompatibleModel:
             raise ModelAdapterError(
                 f"model request failed: {type(exc).__name__}", code="network_error", retryable=True
             ) from exc
+        usage = _reported_usage(raw)
         try:
             parsed = _ProviderResponse.model_validate_json(raw)
         except ValidationError as exc:
             raise ModelAdapterError(
-                "model returned an unparseable response", code="bad_response"
+                "model returned an unparseable response", code="bad_response", usage=usage
             ) from exc
         if not parsed.choices:
-            raise ModelAdapterError("model response contained no choices", code="bad_response")
+            raise ModelAdapterError(
+                "model response contained no choices", code="bad_response", usage=usage
+            )
         choice = parsed.choices[0]
         calls: list[ToolCall] = []
         for call in choice.message.tool_calls:
@@ -386,11 +406,13 @@ class OpenAICompatibleModel:
                 raise ModelAdapterError(
                     f"model returned invalid tool arguments for {call.function.name}",
                     code="invalid_tool_arguments",
+                    usage=usage,
                 ) from exc
             if not isinstance(arguments, dict):
                 raise ModelAdapterError(
                     f"tool arguments for {call.function.name} must be an object",
                     code="invalid_tool_arguments",
+                    usage=usage,
                 )
             calls.append(ToolCall(call.id, call.function.name, arguments))
         return ModelResponse(

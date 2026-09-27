@@ -13,6 +13,7 @@ from minidsh.domain import (
     AgentBudget,
     Event,
     JsonValue,
+    ModelCallError,
     ModelPricing,
     ModelRequest,
     ModelResponse,
@@ -230,6 +231,26 @@ async def test_shared_token_budget_includes_child_tokens(tmp_path: Path) -> None
     assert result.status is RunStatus.BUDGET_EXHAUSTED
     assert result.failure_reason == "team token budget exhausted"
     assert result.token_usage.total_tokens >= 200
+
+
+@pytest.mark.asyncio
+async def test_shared_accounting_keeps_usage_from_failed_child(tmp_path: Path) -> None:
+    class FailedChild:
+        async def complete(self, request: ModelRequest) -> ModelResponse:
+            del request
+            raise ModelCallError("invalid action", usage=TokenUsage(100, 20, 0.0, 60))
+
+    runtime = build_multi_agent_runtime(
+        workspace=tmp_path,
+        model=ScriptedModel([_delegation("inspect"), ModelResponse("done")]),
+        subagent_model_factory=FailedChild,
+        options=RuntimeOptions(pricing=ModelPricing(2, 4, 0.5)),
+    )
+    result = await runtime.agent.run("task")
+    assert result.status is RunStatus.FINISHED
+    assert result.token_usage.total_tokens == 120
+    assert result.token_usage.cached_input_tokens == 60
+    assert result.cost_usd == pytest.approx(0.00019)
 
 
 @pytest.mark.asyncio

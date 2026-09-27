@@ -21,6 +21,7 @@ from minidsh.domain import (
     Event,
     JsonValue,
     Message,
+    ModelCallError,
     ModelPricing,
     ModelRequest,
     ModelResponse,
@@ -187,11 +188,17 @@ class _BudgetModel:
         except TimeoutError as exc:
             state.exhausted = "team duration budget exhausted"
             raise _TeamBudgetError(state.exhausted) from exc
-        usage = response.usage
+        except ModelCallError as exc:
+            if exc.usage is not None:
+                self._charge(state, exc.usage)
+            raise
+        self._charge(state, response.usage)
+        return response
+
+    def _charge(self, state: _TeamState, usage: TokenUsage) -> None:
         state.usage += replace(usage, cost_usd=self._pricing.cost_usd(usage))
         if state.usage.total_tokens >= state.budget.max_tokens:
             state.exhausted = "team token budget exhausted"
-        return response
 
 
 class _BudgetTools:

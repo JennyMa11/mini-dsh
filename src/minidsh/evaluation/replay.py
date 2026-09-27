@@ -132,6 +132,8 @@ def _state_for(step: TraceStep) -> str:
     """Return the loop state implied by a step's own facts."""
     if step.model_call is None:
         return "incomplete"
+    if step.model_call.name == "model_call_failed":
+        return "failed"
     if step.tool_calls:
         return "continue"
     return "finish"

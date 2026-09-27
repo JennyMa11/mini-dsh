@@ -15,6 +15,8 @@ from minidsh.domain import (
     ContextView,
     Event,
     Message,
+    ModelCallError,
+    ModelPricing,
     ModelRequest,
     ModelResponse,
     Role,
@@ -25,6 +27,8 @@ from minidsh.domain import (
     ToolObservation,
     ToolStatus,
 )
+from minidsh.evaluation import TraceRun, build_replay
+from minidsh.evaluation.tracefile import TraceRecord
 
 
 @dataclass
@@ -175,10 +179,59 @@ class CodedFailureModel:
     """Fails the way the OpenAI-compatible adapter does on a malformed response."""
 
     code: str
+    usage: TokenUsage | None = None
 
     async def complete(self, request: ModelRequest) -> ModelResponse:
         del request
-        raise ModelAdapterError("model returned invalid tool arguments for shell", code=self.code)
+        raise ModelAdapterError(
+            "model returned invalid tool arguments for shell", code=self.code, usage=self.usage
+        )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("usage", [None, TokenUsage(), TokenUsage(100, 20, 0.0, 60)])
+async def test_failed_call_preserves_known_usage_and_trace(usage: TokenUsage | None) -> None:
+    class FailingProvider:
+        async def complete(self, request: ModelRequest) -> ModelResponse:
+            del request
+            raise ModelCallError("invalid action", code="invalid_tool_arguments", usage=usage)
+
+    events = FakeEvents()
+    tools = FakeTools()
+    pricing = ModelPricing(2.0, 4.0, 0.5)
+    loop = AgentLoop(
+        model=FailingProvider(),
+        context_manager=FullContext(),
+        tools=tools,
+        events=events,
+        pricing=pricing,
+        budget=AgentBudget(max_tokens=1),
+    )
+    result = await loop.run("fail after consuming tokens")
+    expected = usage or TokenUsage()
+    assert result.status is RunStatus.FAILED
+    assert result.token_usage.total_tokens == expected.total_tokens
+    assert result.token_usage.cached_input_tokens == expected.cached_input_tokens
+    assert result.token_usage.cost_usd == pytest.approx(pricing.cost_usd(expected))
+    assert tools.calls == []
+    failures = [event for event in events.events if event.name == "model_call_failed"]
+    assert len(failures) == 1
+    assert failures[0].data["usage_known"] is (usage is not None)
+    assert failures[0].data["input_tokens"] == (usage.input_tokens if usage else None)
+    assert failures[0].data["duration_ms"] is not None
+    assert not any(event.name == "model_call_completed" for event in events.events)
+    trace = TraceRun.from_records(
+        tuple(
+            TraceRecord(event.name, event.run_id, event.step_id, event.data)
+            for event in events.events
+        )
+    )
+    assert build_replay(trace).tokens == (
+        expected.input_tokens,
+        expected.output_tokens,
+        expected.cached_input_tokens,
+    )
+    assert trace.cost_usd() == pytest.approx(result.token_usage.cost_usd)
 
 
 @pytest.mark.asyncio

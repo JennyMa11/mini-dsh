@@ -27,7 +27,7 @@ class Model(Protocol):
     """A replaceable language-model adapter."""
 
     async def complete(self, request: ModelRequest) -> ModelResponse:
-        """Generate the next agent action."""
+        """Generate an action; raise domain.ModelCallError with any reported failure usage."""
 
 
 @runtime_checkable

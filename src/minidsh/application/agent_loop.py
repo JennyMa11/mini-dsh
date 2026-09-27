@@ -14,6 +14,7 @@ from minidsh.domain import (
     Event,
     LatencyBreakdown,
     Message,
+    ModelCallError,
     ModelPricing,
     ModelRequest,
     ModelResponse,
@@ -177,7 +178,9 @@ class AgentLoop:
                         ],
                     },
                 )
-                response, model_duration_ms = await self._call_model(request, counters)
+                response, model_duration_ms = await self._call_model(
+                    request, counters, actual_run_id, step_id
+                )
                 call_usage = response.usage
                 call_cost = self._pricing.cost_usd(call_usage)
                 counters.input_tokens += call_usage.input_tokens
@@ -327,6 +330,8 @@ class AgentLoop:
         self,
         request: ModelRequest,
         counters: _RunCounters,
+        run_id: str,
+        step_id: int,
     ) -> tuple[ModelResponse, float]:
         """Call the provider, charging the elapsed time to the model either way.
 
@@ -338,9 +343,31 @@ class AgentLoop:
         started = time.monotonic()
         try:
             response = await self._model.complete(request)
-        except (Exception, asyncio.CancelledError):
-            counters.model_ms += (time.monotonic() - started) * 1_000
+        except (Exception, asyncio.CancelledError) as exc:
+            duration_ms = (time.monotonic() - started) * 1_000
+            counters.model_ms += duration_ms
             counters.model_calls += 1
+            usage = exc.usage if isinstance(exc, ModelCallError) else None
+            cost = self._pricing.cost_usd(usage) if usage is not None else None
+            if usage is not None:
+                counters.input_tokens += usage.input_tokens
+                counters.output_tokens += usage.output_tokens
+                counters.cached_input_tokens += usage.cached_input_tokens
+                counters.cost_usd += cost or 0.0
+            await self._emit(
+                "model_call_failed",
+                run_id,
+                step_id,
+                {
+                    "error": _failure_reason(exc),
+                    "usage_known": usage is not None,
+                    "input_tokens": usage.input_tokens if usage is not None else None,
+                    "output_tokens": usage.output_tokens if usage is not None else None,
+                    "cached_input_tokens": usage.cached_input_tokens if usage is not None else None,
+                    "cost_usd": cost,
+                    "duration_ms": duration_ms,
+                },
+            )
             raise
         duration_ms = (time.monotonic() - started) * 1_000
         counters.model_ms += duration_ms
