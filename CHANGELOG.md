@@ -4,6 +4,8 @@
 
 ## 未发布
 
+- 新增 hard 套件的两策略 Context 对照入口，交替任务内的策略顺序，保留重复采样、
+  失败样本和完整 Trace；不改动核心 Loop 或既有 BenchmarkRunner。
 - 新增连续终端会话和独立本地 GUI，支持恢复、取消与显式运行设置。
 - 新增可选只读 Sub Agent 协作、团队预算与有界并发；核心 Loop 保持单 Agent。
 - 新增显式 Runtime 扩展、Session 消息事实日志、Loop 工厂端口和可选 MCP HTTP adapter；
