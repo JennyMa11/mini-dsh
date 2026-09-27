@@ -204,3 +204,108 @@ def test_budget_layer_is_independent_of_runtime_options(tmp_path: Path) -> None:
 
     assert (budget.max_steps, budget.max_tokens) == (4, 500)
     assert (budget.max_tool_calls, budget.max_duration_seconds) == (6, 30.0)
+
+
+def test_named_profile_merges_below_environment_and_cli(tmp_path: Path) -> None:
+    path = _config(
+        tmp_path,
+        "[minidsh]\nmax_steps = 20\n"
+        '[profiles.review]\ncontext_strategy = "summary"\nmax_steps = 4\n'
+        'enabled_tools = ["read_file", "search"]\n',
+    )
+    resolved = resolve_config(
+        config_path=path,
+        profile="review",
+        environ={"MINIDSH_MAX_STEPS": "8"},
+        cli={"recent_messages": 3},
+    )
+    assert resolved.profile == "review"
+    assert resolved.options.context_strategy == "summary"
+    assert resolved.sources["context_strategy"] == "profile:review"
+    assert resolved.options.enabled_tools == frozenset({"read_file", "search"})
+    assert resolved.budget.max_steps == 8
+    assert resolved.options.recent_messages == 3
+
+
+def test_profile_selection_cli_over_environment_over_file(tmp_path: Path) -> None:
+    path = _config(
+        tmp_path,
+        '[minidsh]\nprofile = "a"\n[profiles.a]\nmax_steps = 1\n[profiles.b]\nmax_steps = 2\n',
+    )
+    assert resolve_config(config_path=path).budget.max_steps == 1
+    assert resolve_config(config_path=path, environ={"MINIDSH_PROFILE": "b"}).budget.max_steps == 2
+    assert (
+        resolve_config(
+            config_path=path, profile="a", environ={"MINIDSH_PROFILE": "b"}
+        ).budget.max_steps
+        == 1
+    )
+
+
+def test_unknown_profile_is_rejected(tmp_path: Path) -> None:
+    with pytest.raises(ConfigError, match="unknown configuration profile"):
+        resolve_config(config_path=_config(tmp_path, "[minidsh]\n"), profile="missing")
+
+
+def test_profiles_are_validated_even_if_not_selected(tmp_path: Path) -> None:
+    with pytest.raises(ConfigError, match="invalid configuration profile"):
+        resolve_config(config_path=_config(tmp_path, "[profiles.broken]\nallow_wirte = true\n"))
+
+
+def test_extended_environment_options_use_json_arrays() -> None:
+    resolved = resolve_config(
+        environ={
+            "MINIDSH_ENABLED_TOOLS": '["read_file"]',
+            "MINIDSH_ALLOWED_COMMANDS": '["git", "python"]',
+            "MINIDSH_DENIED_TOOLS": '["git"]',
+            "MINIDSH_SLIDING_WINDOW": "7",
+            "MINIDSH_RECENT_MESSAGES": "4",
+            "MINIDSH_REFLECTION_ENABLED": "true",
+            "MINIDSH_DETAILED_TOOL_FEEDBACK": "false",
+            "MINIDSH_SYSTEM_PROMPT": "Custom instructions.",
+        }
+    )
+    assert resolved.options.enabled_tools == frozenset({"read_file"})
+    assert resolved.options.denied_tools == frozenset({"git"})
+    assert resolved.options.allowed_commands == frozenset({"git", "python"})
+    assert resolved.options.sliding_window == 7
+    assert resolved.options.recent_messages == 4
+    assert resolved.options.reflection_enabled is True
+    assert resolved.options.detailed_tool_feedback is False
+    assert resolved.options.system_prompt == "Custom instructions."
+
+
+@pytest.mark.parametrize("raw", ["git,python", '"git"', "{}"])
+def test_invalid_environment_list_is_rejected(raw: str) -> None:
+    with pytest.raises(ConfigError, match="JSON array"):
+        environment_overrides({"MINIDSH_ALLOWED_COMMANDS": raw})
+
+
+@pytest.mark.parametrize("permission", ["fs.write", "process.exec"])
+def test_extra_permissions_cannot_bypass_dedicated_write_or_shell_flags(permission: str) -> None:
+    with pytest.raises(ConfigError, match="reserved permissions"):
+        resolve_config(cli={"extra_permissions": [permission]})
+
+
+def test_collaboration_options_are_layered_and_can_be_disabled(tmp_path: Path) -> None:
+    path = _config(
+        tmp_path, "[profiles.team]\nmulti_agent_enabled = true\nsubagent_max_agents = 6\n"
+    )
+    resolved = resolve_config(
+        config_path=path,
+        profile="team",
+        environ={"MINIDSH_SUBAGENT_MAX_PARALLEL": "3", "MINIDSH_SUBAGENT_MAX_SECONDS": "15"},
+        cli={"multi_agent_enabled": False},
+    )
+    assert resolved.options.multi_agent_enabled is False
+    assert resolved.options.subagent_max_agents == 6
+    assert resolved.options.subagent_max_parallel == 3
+    assert resolved.options.subagent_max_seconds == 15
+
+
+@pytest.mark.parametrize(
+    "field", ["subagent_max_agents", "subagent_max_parallel", "subagent_max_tokens"]
+)
+def test_invalid_collaboration_limit_is_rejected(field: str) -> None:
+    with pytest.raises(ConfigError, match="invalid effective configuration"):
+        resolve_config(cli={field: 0})

@@ -1,0 +1,8 @@
+[
+  {
+    "tool_calls": [
+      {"call_id": "inspect_file", "name": "read_file", "arguments": {"path": "hello.py"}}
+    ]
+  },
+  {"content": "hello.py defines greet(name) and returns a greeting string. The implementation is read-only and contains no external operations."}
+]

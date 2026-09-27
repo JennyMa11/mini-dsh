@@ -23,6 +23,8 @@ from minidsh.domain import (
     estimate_tokens,
     redact_text,
 )
+from minidsh.domain.redaction import REDACTED
+from minidsh.ports import Model
 
 _AUTH_STATUS = frozenset({401, 403})
 _RATE_LIMIT_STATUS = 429
@@ -61,6 +63,54 @@ class ModelAdapterError(RuntimeError):
         super().__init__(message)
         self.code = code
         self.retryable = retryable
+
+
+class CredentialRedactingModel:
+    """Remove known credentials from untrusted provider output before the loop."""
+
+    def __init__(self, model: Model, secret: str) -> None:
+        if not secret:
+            raise ValueError("credential must not be empty")
+        self._model = model
+        self._secret = secret
+
+    def _text(self, value: str) -> str:
+        return value.replace(self._secret, REDACTED)
+
+    def _value(self, value: JsonValue) -> JsonValue:
+        if isinstance(value, str):
+            return self._text(value)
+        if isinstance(value, list):
+            return [self._value(item) for item in value]
+        if isinstance(value, dict):
+            return {self._text(key): self._value(item) for key, item in value.items()}
+        return value
+
+    async def complete(self, request: ModelRequest) -> ModelResponse:
+        """Preserve response semantics and safe error classification."""
+        try:
+            response = await self._model.complete(request)
+        except Exception as exc:
+            code = self._text(exc.code) if isinstance(exc, ModelAdapterError) else "model_error"
+            retryable = exc.retryable if isinstance(exc, ModelAdapterError) else False
+            raise ModelAdapterError(self._text(str(exc)), code=code, retryable=retryable) from None
+        return replace(
+            response,
+            content=self._text(response.content),
+            reasoning_content=self._text(response.reasoning_content),
+            finish_reason=self._text(response.finish_reason),
+            tool_calls=tuple(
+                replace(
+                    call,
+                    call_id=self._text(call.call_id),
+                    name=self._text(call.name),
+                    arguments={
+                        self._text(key): self._value(value) for key, value in call.arguments.items()
+                    },
+                )
+                for call in response.tool_calls
+            ),
+        )
 
 
 @dataclass(slots=True)

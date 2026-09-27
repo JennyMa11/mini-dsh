@@ -1,6 +1,11 @@
 """Replaceable model and persistence adapters."""
 
-from minidsh.adapters.models import ModelAdapterError, OpenAICompatibleModel, ScriptedModel
+from minidsh.adapters.models import (
+    CredentialRedactingModel,
+    ModelAdapterError,
+    OpenAICompatibleModel,
+    ScriptedModel,
+)
 from minidsh.adapters.profiles import (
     BUILTIN_PROFILES,
     ModelProfile,
@@ -12,6 +17,7 @@ from minidsh.adapters.trace import JsonlTraceWriter
 
 __all__ = [
     "BUILTIN_PROFILES",
+    "CredentialRedactingModel",
     "JsonSessionStore",
     "JsonlTraceWriter",
     "ModelAdapterError",

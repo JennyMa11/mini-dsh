@@ -17,6 +17,7 @@ from minidsh.domain import (
     Message,
     ModelRequest,
     ModelResponse,
+    Role,
     RunStatus,
     TokenUsage,
     ToolCall,
@@ -77,6 +78,45 @@ class FailingModel:
 
 
 @pytest.mark.asyncio
+async def test_follow_up_keeps_history_and_resets_run_budgets() -> None:
+    model = ScriptedModel([ModelResponse(content="first"), ModelResponse(content="second")])
+    loop = AgentLoop(
+        model=model,
+        context_manager=FullContext(),
+        tools=FakeTools(),
+        events=FakeEvents(),
+        budget=AgentBudget(max_steps=1),
+    )
+    first = await loop.run("one")
+    second = await loop.run("two", prior_history=first.history)
+    assert first.run_id != second.run_id
+    assert second.steps == 1
+    assert [m.content for m in model.requests[1].messages[1:]] == ["one", "first", "two"]
+    assert sum(m.role is Role.SYSTEM for m in second.history) == 1
+
+
+@pytest.mark.asyncio
+async def test_follow_up_closes_unexecuted_tool_calls_without_mutating_trace_history() -> None:
+    calls = (ToolCall("a", "read_file", {}), ToolCall("b", "read_file", {}))
+    model = ScriptedModel([ModelResponse(tool_calls=calls), ModelResponse(content="recovered")])
+    loop = AgentLoop(
+        model=model,
+        context_manager=FullContext(),
+        tools=FakeTools(),
+        events=FakeEvents(),
+        budget=AgentBudget(max_tool_calls=1),
+    )
+    first = await loop.run("one")
+    assert first.status is RunStatus.BUDGET_EXHAUSTED
+    await loop.run("continue", prior_history=first.history)
+    messages = model.requests[1].messages
+    observations = [m for m in messages if m.role is Role.TOOL]
+    assert [m.tool_call_id for m in observations] == ["a", "b"]
+    assert json.loads(observations[-1].content)["error"]["code"] == "interrupted"
+    assert len([m for m in first.history if m.role is Role.TOOL]) == 1
+
+
+@pytest.mark.asyncio
 async def test_loop_executes_tool_and_continues_to_finish() -> None:
     expected_steps = 2
     expected_tokens = 38
@@ -99,7 +139,7 @@ async def test_loop_executes_tool_and_continues_to_finish() -> None:
     assert result.tool_calls == 1
     assert result.token_usage.total_tokens == expected_tokens
     assert tools.calls == [call]
-    assert [event.name for event in events.events] == [
+    assert [event.name for event in events.events if event.name != "session_message_committed"] == [
         "run_started",
         "context_built",
         "model_call_started",

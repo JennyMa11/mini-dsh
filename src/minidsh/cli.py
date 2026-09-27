@@ -12,6 +12,7 @@ import shutil
 import sys
 import uuid
 from collections.abc import Callable, Mapping, Sequence
+from contextlib import suppress
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, Final
@@ -19,6 +20,7 @@ from typing import Any, Final
 from minidsh import __version__
 from minidsh.adapters import (
     BUILTIN_PROFILES,
+    CredentialRedactingModel,
     JsonlTraceWriter,
     ModelAdapterError,
     ModelProfile,
@@ -36,6 +38,7 @@ from minidsh.benchmark import (
     HarnessVariant,
     VariantRegistry,
 )
+from minidsh.collaboration import build_multi_agent_runtime
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
 from minidsh.config import DEFAULT_CONFIG_NAME, ResolvedConfig, resolve_config
 from minidsh.domain import FailureCategory, ModelPricing, RunStatus, ToolCall
@@ -48,6 +51,8 @@ from minidsh.evaluation import (
 )
 from minidsh.evaluation.diff import to_markdown as diff_markdown
 from minidsh.evaluation.replay import to_markdown as replay_markdown
+from minidsh.gui import GuiSession, serve_gui
+from minidsh.interactive import InteractiveChat
 from minidsh.ports import Model
 
 _MINIMUM_PYTHON: Final = (3, 12)
@@ -62,7 +67,7 @@ _CONTEXT_STRATEGIES: Final = (
 _PROVIDERS: Final = ("scripted", "openai-compatible")
 
 
-def _build_parser() -> argparse.ArgumentParser:
+def _build_parser() -> argparse.ArgumentParser:  # noqa: PLR0915 - CLI command declarations
     parser = argparse.ArgumentParser(
         prog="mini-dsh",
         description="A lightweight coding-agent runtime.",
@@ -77,6 +82,22 @@ def _build_parser() -> argparse.ArgumentParser:
     run.add_argument("task", help="task given to the coding agent")
     run.add_argument("--workspace", type=Path, default=Path.cwd())
     run.add_argument("--trace", type=Path, help="JSONL trace path")
+
+    chat = subparsers.add_parser("chat", help="start an interactive coding-agent session")
+    _add_common_options(chat)
+    _add_model_options(chat)
+    chat.set_defaults(provider="openai-compatible", allow_unpriced=True)
+    chat.add_argument("--workspace", type=Path, default=Path.cwd())
+    chat.add_argument("--resume", help="continue a saved run ID in this workspace")
+
+    gui = subparsers.add_parser("gui", help="open the local browser interface")
+    _add_common_options(gui)
+    _add_model_options(gui)
+    gui.set_defaults(provider="openai-compatible", allow_unpriced=True)
+    gui.add_argument("--workspace", type=Path, default=Path.cwd())
+    gui.add_argument("--resume", help="continue a saved run ID")
+    gui.add_argument("--port", type=int, default=0, help="loopback port; default: automatic")
+    gui.add_argument("--no-open", action="store_true", help="print URL without opening a browser")
 
     benchmark = subparsers.add_parser("benchmark", help="run a benchmark manifest")
     _add_common_options(benchmark)
@@ -115,6 +136,7 @@ def _build_parser() -> argparse.ArgumentParser:
     trace_replay.add_argument("path", type=Path)
     trace_replay.add_argument("--json", action="store_true", dest="as_json")
     trace_replay.add_argument("--preview-chars", type=int, default=120)
+    trace_replay.add_argument("--run-id", help="inspect one Sub Agent run in a team trace")
     trace_diff = trace_commands.add_parser("diff", help="compare two traces of the same task")
     trace_diff.add_argument("left", type=Path)
     trace_diff.add_argument("right", type=Path)
@@ -144,8 +166,30 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
         help=f"configuration file; defaults to ./{DEFAULT_CONFIG_NAME} when present",
     )
     parser.add_argument("--context", choices=_CONTEXT_STRATEGIES)
-    parser.add_argument("--allow-write", action="store_true", default=None)
-    parser.add_argument("--allow-shell", action="store_true", default=None)
+    parser.add_argument("--profile", help="named runtime profile from [profiles.NAME]")
+    parser.add_argument("--multi-agent", action=argparse.BooleanOptionalAction, default=None)
+    for limit in ("agents", "parallel", "steps", "tokens", "tool-calls"):
+        parser.add_argument(f"--subagent-max-{limit}", type=int)
+    parser.add_argument("--subagent-max-seconds", type=float)
+    parser.add_argument("--allow-write", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--allow-shell", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--sliding-window", type=int)
+    parser.add_argument("--recent-messages", type=int)
+    parser.add_argument("--system-prompt")
+    parser.add_argument("--reflection-enabled", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument(
+        "--detailed-tool-feedback", action=argparse.BooleanOptionalAction, default=None
+    )
+    parser.add_argument("--artifact-offload", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--tool-max-retries", type=int)
+    parser.add_argument("--builtin-tools", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--extra-permission", action="append", metavar="CAPABILITY")
+    parser.add_argument(
+        "--enabled-tools",
+        nargs="*",
+        metavar="TOOL",
+        help="expose only these tools; an empty list disables all tools",
+    )
     parser.add_argument(
         "--allow-host",
         action="append",
@@ -189,8 +233,29 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
     )
 
 
+class _ProviderSelection(argparse.Action):
+    """Distinguish an explicit provider choice from the backward-compatible default."""
+
+    def __call__(
+        self,
+        parser: argparse.ArgumentParser,
+        namespace: argparse.Namespace,
+        values: Any,
+        option_string: str | None = None,
+    ) -> None:
+        del parser, option_string
+        setattr(namespace, self.dest, values)
+        namespace.provider_explicit = True
+
+
 def _add_model_options(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--provider", choices=_PROVIDERS, default="scripted")
+    parser.add_argument("--subagent-script", type=Path, help="independent offline Sub Agent script")
+    parser.add_argument(
+        "--provider",
+        choices=_PROVIDERS,
+        default="scripted",
+        action=_ProviderSelection,
+    )
     parser.add_argument(
         "--model-profile",
         help=f"named provider profile: {', '.join(sorted(BUILTIN_PROFILES))}",
@@ -252,6 +317,23 @@ def _network_rules(hosts: Sequence[str] | None) -> list[dict[str, Any]] | None:
 def _cli_overrides(args: argparse.Namespace) -> dict[str, Any]:
     overrides: dict[str, Any] = {
         "context_strategy": getattr(args, "context", None),
+        "multi_agent_enabled": getattr(args, "multi_agent", None),
+        "subagent_max_agents": getattr(args, "subagent_max_agents", None),
+        "subagent_max_parallel": getattr(args, "subagent_max_parallel", None),
+        "subagent_max_steps": getattr(args, "subagent_max_steps", None),
+        "subagent_max_tokens": getattr(args, "subagent_max_tokens", None),
+        "subagent_max_tool_calls": getattr(args, "subagent_max_tool_calls", None),
+        "subagent_max_seconds": getattr(args, "subagent_max_seconds", None),
+        "sliding_window": getattr(args, "sliding_window", None),
+        "recent_messages": getattr(args, "recent_messages", None),
+        "system_prompt": getattr(args, "system_prompt", None),
+        "reflection_enabled": getattr(args, "reflection_enabled", None),
+        "detailed_tool_feedback": getattr(args, "detailed_tool_feedback", None),
+        "artifact_offload": getattr(args, "artifact_offload", None),
+        "tool_max_retries": getattr(args, "tool_max_retries", None),
+        "enabled_tools": getattr(args, "enabled_tools", None),
+        "builtin_tools_enabled": getattr(args, "builtin_tools", None),
+        "extra_permissions": getattr(args, "extra_permission", None),
         "allow_write": getattr(args, "allow_write", None),
         "allow_shell": getattr(args, "allow_shell", None),
         "sandbox_backend": getattr(args, "sandbox_backend", None),
@@ -285,10 +367,56 @@ def _cli_overrides(args: argparse.Namespace) -> dict[str, Any]:
 
 def _resolve(args: argparse.Namespace, workspace: Path) -> ResolvedConfig:
     config_path = _discover_config_path(getattr(args, "config", None), workspace)
-    return resolve_config(
+    resolved = resolve_config(
         cli=_cli_overrides(args),
         environ=os.environ,
         config_path=config_path,
+        profile=getattr(args, "profile", None),
+    )
+    if resolved.options.multi_agent_enabled and args.command in {"benchmark", "ablation"}:
+        raise ValueError(
+            "Multi-Agent is supported by run/chat/gui; "
+            "benchmark and ablation remain single-agent baselines"
+        )
+    return resolved
+
+
+def _compose_runtime(
+    args: argparse.Namespace,
+    workspace: Path,
+    model: Model,
+    resolved: ResolvedConfig,
+    *,
+    environ: Mapping[str, str] | None = None,
+) -> LocalRuntime:
+    if not resolved.options.multi_agent_enabled:
+        options = resolved.options
+        if options.enabled_tools is not None:
+            options = replace(
+                options, enabled_tools=options.enabled_tools - {"delegate_sub_agents"}
+            )
+        return build_local_runtime(
+            workspace=workspace, model=model, options=options, budget=resolved.budget
+        )
+    script = getattr(args, "subagent_script", None)
+    if isinstance(model, ScriptedModel) and script is None:
+        raise ValueError("scripted Multi-Agent requires --subagent-script")
+
+    def factory() -> Model:
+        if script is not None:
+            return ScriptedModel.from_file(Path(script))
+        selected = _select_model(args, resolved, environ=environ)
+        if selected.model is None:
+            raise ValueError("Sub Agent model adapter is unavailable")
+        return selected.model
+
+    return build_multi_agent_runtime(
+        workspace=workspace,
+        model=model,
+        subagent_model_factory=factory,
+        options=resolved.options,
+        budget=resolved.budget,
+        subagent_pricing=ModelPricing.free() if script is not None else resolved.options.pricing,
     )
 
 
@@ -361,15 +489,23 @@ def _apply_model_overrides(profile: ModelProfile, args: argparse.Namespace) -> M
     )
 
 
-def _profile_for(args: argparse.Namespace) -> ModelProfile | None:
+def _profile_for(
+    args: argparse.Namespace, *, environ: Mapping[str, str] | None = None
+) -> ModelProfile | None:
     """Resolve the named profile, or synthesise one from explicit endpoint flags."""
-    name = getattr(args, "model_profile", None) or os.environ.get("MINIDSH_MODEL_PROFILE")
+    environment = os.environ if environ is None else environ
+    name = getattr(args, "model_profile", None)
+    if getattr(args, "provider", None) == "scripted" and getattr(args, "provider_explicit", False):
+        if name:
+            raise ValueError("--provider scripted cannot be combined with --model-profile")
+        return None
+    name = name or environment.get("MINIDSH_MODEL_PROFILE")
     if name:
-        return _apply_model_overrides(resolve_profile(str(name), environ=os.environ), args)
+        return _apply_model_overrides(resolve_profile(str(name), environ=environment), args)
     if getattr(args, "provider", "scripted") != "openai-compatible":
         return None
-    endpoint = getattr(args, "endpoint", None) or os.environ.get("MINIDSH_MODEL_ENDPOINT")
-    model_name = getattr(args, "model", None) or os.environ.get("MINIDSH_MODEL")
+    endpoint = getattr(args, "endpoint", None) or environment.get("MINIDSH_MODEL_ENDPOINT")
+    model_name = getattr(args, "model", None) or environment.get("MINIDSH_MODEL")
     if not endpoint or not model_name:
         msg = (
             "openai-compatible requires --endpoint/MINIDSH_MODEL_ENDPOINT and "
@@ -382,7 +518,7 @@ def _profile_for(args: argparse.Namespace) -> ModelProfile | None:
         model=str(model_name),
         api_key_env=str(
             getattr(args, "api_key_env", None)
-            or os.environ.get("MINIDSH_API_KEY_ENV")
+            or environment.get("MINIDSH_API_KEY_ENV")
             or "MINIDSH_API_KEY"
         ),
         pricing=None,
@@ -390,9 +526,12 @@ def _profile_for(args: argparse.Namespace) -> ModelProfile | None:
     )
 
 
-def _select_model(args: argparse.Namespace, resolved: ResolvedConfig) -> _ModelSelection:
+def _select_model(
+    args: argparse.Namespace, resolved: ResolvedConfig, *, environ: Mapping[str, str] | None = None
+) -> _ModelSelection:
     """Build the model adapter and the rate card its results will be priced with."""
-    profile = _profile_for(args)
+    environment = os.environ if environ is None else environ
+    profile = _profile_for(args, environ=environment)
     if profile is None:
         script = getattr(args, "script", None)
         return _ModelSelection(
@@ -420,13 +559,15 @@ def _select_model(args: argparse.Namespace, resolved: ResolvedConfig) -> _ModelS
             "or pass --allow-unpriced to run without cost accounting."
         )
         raise ValueError(msg)
-    model = build_provider_model(
+    model: Model = build_provider_model(
         profile,
-        environ=os.environ,
+        environ=environment,
         temperature=float(getattr(args, "temperature", 0.0)),
         max_attempts=int(getattr(args, "max_attempts", 4)),
     )
-    return _ModelSelection(model, profile.resolved_model(os.environ), profile, pricing, None)
+    if environ is not None and (secret := profile.api_key(environment)):
+        model = CredentialRedactingModel(model, secret)
+    return _ModelSelection(model, profile.resolved_model(environment), profile, pricing, None)
 
 
 def _task_options(base: RuntimeOptions, task: BenchmarkTask) -> RuntimeOptions:
@@ -477,11 +618,11 @@ async def _run(args: argparse.Namespace) -> int:
         if args.trace is not None
         else workspace / ".minidsh" / "traces" / f"{run_id}.jsonl"
     )
-    runtime = build_local_runtime(
-        workspace=workspace,
-        model=model,
-        options=replace(resolved.options, pricing=selection.pricing),
-        budget=resolved.budget,
+    runtime = _compose_runtime(
+        args,
+        workspace,
+        model,
+        replace(resolved, options=replace(resolved.options, pricing=selection.pricing)),
     )
     runtime.events.subscribe("*", JsonlTraceWriter(trace_path))
     result = await runtime.agent.run(str(args.task), run_id=run_id)
@@ -704,7 +845,7 @@ def _render_benchmark_report(payload: dict[str, Any]) -> str:
 
 
 def _trace_replay(args: argparse.Namespace) -> int:
-    trace = TraceRun.from_file(Path(args.path))
+    trace = TraceRun.from_file(Path(args.path), run_id=args.run_id)
     if args.as_json:
         sys.stdout.write(f"{json.dumps(build_replay(trace).to_json(), indent=2, sort_keys=True)}\n")
     else:
@@ -734,6 +875,8 @@ def _config(args: argparse.Namespace) -> int:
     workspace = Path(args.workspace).resolve(strict=True)
     resolved = _resolve(args, workspace)
     payload = {
+        "profile": resolved.profile,
+        "available_profiles": list(resolved.available_profiles),
         "budget": {
             "max_steps": resolved.budget.max_steps,
             "max_tokens": resolved.budget.max_tokens,
@@ -742,6 +885,27 @@ def _config(args: argparse.Namespace) -> int:
         },
         "options": {
             "context_strategy": resolved.options.context_strategy,
+            "multi_agent_enabled": resolved.options.multi_agent_enabled,
+            "subagent_max_agents": resolved.options.subagent_max_agents,
+            "subagent_max_parallel": resolved.options.subagent_max_parallel,
+            "subagent_max_steps": resolved.options.subagent_max_steps,
+            "subagent_max_tokens": resolved.options.subagent_max_tokens,
+            "subagent_max_tool_calls": resolved.options.subagent_max_tool_calls,
+            "subagent_max_seconds": resolved.options.subagent_max_seconds,
+            "sliding_window": resolved.options.sliding_window,
+            "recent_messages": resolved.options.recent_messages,
+            "system_prompt": resolved.options.system_prompt,
+            "reflection_enabled": resolved.options.reflection_enabled,
+            "detailed_tool_feedback": resolved.options.detailed_tool_feedback,
+            "builtin_tools_enabled": resolved.options.builtin_tools_enabled,
+            "extra_permissions": sorted(resolved.options.extra_permissions),
+            "enabled_tools": (
+                sorted(resolved.options.enabled_tools)
+                if resolved.options.enabled_tools is not None
+                else None
+            ),
+            "test_command": resolved.options.test_command,
+            "build_command": resolved.options.build_command,
             "allow_write": resolved.options.allow_write,
             "allow_shell": resolved.options.allow_shell,
             "allowed_commands": sorted(resolved.options.allowed_commands),
@@ -767,9 +931,106 @@ def _config(args: argparse.Namespace) -> int:
     return 0
 
 
+def _chat(args: argparse.Namespace) -> int:
+    workspace = Path(args.workspace).resolve(strict=True)
+    if args.script is not None and args.model_profile is None:
+        args.provider = "scripted"
+        # An explicit offline script must also win over environment profiles.
+        args.model_profile = None
+    elif (
+        args.provider != "scripted"
+        and not args.model_profile
+        and not os.environ.get("MINIDSH_MODEL_PROFILE")
+        and not args.endpoint
+        and not os.environ.get("MINIDSH_MODEL_ENDPOINT")
+    ):
+        args.model_profile = "deepseek"
+    resolved = _resolve(args, workspace)
+
+    def configured_factory(options: RuntimeOptions, api_key: str | None = None) -> LocalRuntime:
+        environment: Mapping[str, str] = os.environ
+        if api_key is not None:
+            profile = _profile_for(args)
+            if profile is None:
+                raise ValueError("offline models do not use an API Key")
+            environment = {**os.environ, profile.api_key_env: api_key}
+        if args.script is not None and args.model_profile is None:
+            model: Model = ScriptedModel.from_file(args.script)
+            pricing = resolved.options.pricing
+        else:
+            selection = _select_model(args, resolved, environ=environment)
+            if selection.model is None:
+                raise ValueError("--script is required for the scripted provider")
+            model = selection.model
+            pricing = selection.pricing
+        return _compose_runtime(
+            args,
+            workspace,
+            model,
+            replace(resolved, options=replace(options, pricing=pricing)),
+            environ=environment,
+        )
+
+    def factory() -> LocalRuntime:
+        return configured_factory(resolved.options)
+
+    label = (
+        "scripted"
+        if args.script is not None
+        else (
+            args.model
+            or os.environ.get("MINIDSH_MODEL")
+            or args.model_profile
+            or os.environ.get("MINIDSH_MODEL_PROFILE")
+            or "openai-compatible"
+        )
+    )
+    priced = not _is_free(resolved.options.pricing)
+    if args.command == "gui":
+        profile = _profile_for(args) if args.script is None else None
+        priced = priced or (profile is not None and profile.pricing is not None)
+        session = GuiSession(
+            workspace=workspace,
+            runtime_factory=factory,
+            model_label=str(label),
+            options=resolved.options,
+            cost_reportable=priced,
+            settings_factory=configured_factory,
+            credentials_editable=profile is not None,
+            api_key_available=bool(profile and os.environ.get(profile.api_key_env)),
+        )
+
+        async def browser_session() -> None:
+            if args.resume is not None:
+                await session.action("resume", {"run_id": args.resume})
+            await serve_gui(session, port=args.port, open_browser=not args.no_open)
+
+        with suppress(KeyboardInterrupt):
+            asyncio.run(browser_session())
+        return 0
+    return InteractiveChat(
+        workspace=workspace,
+        runtime_factory=factory,
+        model_label=str(label),
+        options=resolved.options,
+        cost_reportable=priced,
+        resume=args.resume,
+    ).run()
+
+
 def main(argv: Sequence[str] | None = None) -> None:
     """Run the Mini-dsh command-line interface."""
-    args = _build_parser().parse_args(argv)
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    if not arguments or (
+        arguments[0].startswith("--")
+        and arguments[0]
+        not in {
+            "--help",
+            "--version",
+        }
+    ):
+        arguments.insert(0, "chat")
+    args = _build_parser().parse_args(arguments)
     if args.command == "doctor":
         raise SystemExit(_doctor())
     handlers: Mapping[str, Any] = {
@@ -780,7 +1041,9 @@ def main(argv: Sequence[str] | None = None) -> None:
         "config": _config,
     }
     try:
-        if args.command == "config":
+        if args.command in {"chat", "gui"}:
+            exit_code = _chat(args)
+        elif args.command == "config":
             exit_code = _config(args)
         elif args.command == "report":
             exit_code = _report(args)

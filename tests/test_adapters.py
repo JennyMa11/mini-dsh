@@ -7,8 +7,13 @@ from pathlib import Path
 
 import pytest
 
-from minidsh.adapters import JsonlTraceWriter, ScriptedModel
-from minidsh.domain import Event, Message, ModelRequest, ModelResponse, Role, TokenUsage
+from minidsh.adapters import (
+    CredentialRedactingModel,
+    JsonlTraceWriter,
+    ModelAdapterError,
+    ScriptedModel,
+)
+from minidsh.domain import Event, Message, ModelRequest, ModelResponse, Role, TokenUsage, ToolCall
 
 
 @pytest.mark.asyncio
@@ -124,3 +129,43 @@ async def test_trace_writer_appends_by_default(tmp_path: Path) -> None:
     await writer.append(Event("run_finished", "r1", 1))
 
     assert len(path.read_text(encoding="utf-8").splitlines()) == 2
+
+
+@pytest.mark.asyncio
+async def test_credential_redactor_sanitizes_provider_output_before_loop() -> None:
+    secret = "synthetic_gui_secret"
+    model = CredentialRedactingModel(
+        ScriptedModel(
+            [
+                ModelResponse(
+                    content=secret,
+                    reasoning_content=secret,
+                    finish_reason=secret,
+                    tool_calls=(ToolCall(secret, secret, {secret: [secret, {"nested": secret}]}),),
+                )
+            ]
+        ),
+        secret,
+    )
+    response = await model.complete(ModelRequest(()))
+    assert secret not in str(response)
+    assert response.content == "[REDACTED]"
+    assert response.tool_calls[0].arguments == {
+        "[REDACTED]": ["[REDACTED]", {"nested": "[REDACTED]"}]
+    }
+
+
+@pytest.mark.asyncio
+async def test_credential_redactor_keeps_safe_error_classification() -> None:
+    secret = "synthetic_gui_secret"
+
+    class FailingModel:
+        async def complete(self, request: ModelRequest) -> ModelResponse:
+            del request
+            raise ModelAdapterError(secret, code="rate_limited", retryable=True)
+
+    model = CredentialRedactingModel(FailingModel(), secret)
+    with pytest.raises(ModelAdapterError, match=r"\[REDACTED\]") as error:
+        await model.complete(ModelRequest(()))
+    assert error.value.code == "rate_limited"
+    assert error.value.retryable

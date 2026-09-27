@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Mini-dsh · Harness</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+<svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v9H3Z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11a9 9 0 0 1-9 9H5l-3 2v-7a9 9 0 1 1 19-4Z"/><path d="M12 7v8m-4-4h8"/></symbol>
+  <symbol id="i-sidebar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-1 3-3 1-2 4 2 2v4l4 3 3-1 3 1 4-3v-4l2-2-2-4-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 3 8M3 4v7h7m2-4v5l3 2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="M12 8v5m0 3h.01"/></symbol>
+  <symbol id="i-mode" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="18" r="3"/><circle cx="19" cy="18" r="3"/><path d="m10 7-4 8m8-8 4 8M8 18h8"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 20V4m-7 7 7-7 7 7"/></symbol>
+  <symbol id="i-diff" viewBox="0 0 24 24"><path d="M9 3H5v18h14V3h-4M8 9h8m-4-4v8m-4 5h8"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="3" width="13" height="13" rx="3"/><path d="M16 18v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h1"/></symbol>
+  <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 6 6 6-6 6m9 0h7"/></symbol>
+</svg>
+<div class="shell">
+  <aside class="sidebar" id="sidebar" aria-label="工作区与会话">
+    <div class="brand-row">
+      <a class="brand" href="/" aria-label="Mini-dsh 首页"><svg class="brand-mark" aria-hidden="true"><use href="#i-terminal"/></svg><strong>mini-dsh</strong><span class="brand-tag">HARNESS</span></a>
+      <button id="collapse-sidebar" class="icon-button" aria-label="收起侧边栏" aria-expanded="true" aria-controls="sidebar"><svg class="icon"><use href="#i-sidebar"/></svg></button>
+    </div>
+    <button id="clear" class="new-chat"><svg class="icon"><use href="#i-chat"/></svg> 新会话</button>
+    <div class="workspace-label"><span>工作区</span><button id="open-resume" class="icon-button" aria-label="恢复保存的会话" title="恢复会话"><svg class="icon"><use href="#i-history"/></svg></button></div>
+    <div class="workspace-card"><svg class="icon"><use href="#i-folder"/></svg><strong id="workspace-name">工作区</strong></div>
+    <button id="chat-tab" class="session-item active"><span id="session-title">新会话</span><span id="session-state"></span></button>
+    <span id="workspace" class="workspace-path"></span>
+    <div class="sidebar-bottom">
+      <button id="diff" class="sidebar-action"><svg class="icon"><use href="#i-diff"/></svg> 工作区改动</button>
+      <button id="open-settings" class="sidebar-action"><svg class="icon"><use href="#i-settings"/></svg> 运行设置</button>
+      <span class="connection" id="connection">正在连接本地服务</span>
+    </div>
+  </aside>
+  <main id="main" data-view="chat">
+    <button id="expand-sidebar" class="icon-button expand-sidebar" aria-label="展开侧边栏" aria-expanded="false" aria-controls="sidebar" hidden><svg class="icon"><use href="#i-sidebar"/></svg></button>
+    <header class="topbar">
+      <div class="session-heading"><strong id="header-title">新会话</strong><span><svg class="icon"><use href="#i-mode"/></svg><span id="header-mode">标准模式</span></span><button id="run-info" class="text-button">运行信息 <svg class="icon"><use href="#i-settings"/></svg></button></div>
+      <div class="tabs" role="tablist" aria-label="会话视图"><button id="conversation-tab" class="tab active" role="tab" aria-selected="true" aria-controls="conversation">对话</button><button id="trace-tab" class="tab" role="tab" aria-selected="false" aria-controls="trajectory">轨迹 <span id="event-count">0</span></button></div>
+    </header>
+    <div class="stage">
+      <div id="error" class="error" role="alert" hidden></div>
+      <section class="conversation" id="conversation" role="tabpanel" aria-labelledby="conversation-tab">
+        <div class="welcome" id="welcome"><svg class="welcome-mark" aria-hidden="true"><use href="#i-terminal"/></svg><h1>探索代码之境</h1><span class="preview-badge">预览版</span></div>
+        <div id="messages" aria-live="polite"></div>
+        <section id="agent-board" class="agent-board" aria-label="Sub Agent 协作" hidden><h2>Sub Agent 协作 <span id="agent-count"></span></h2><div id="sub-agents" class="agent-grid" aria-live="polite"></div></section>
+        <div id="running" class="running" hidden><span class="thinking-dot"></span> Agent 正在执行任务…</div>
+      </section>
+      <section id="trajectory" class="trajectory" role="tabpanel" aria-labelledby="trace-tab" hidden>
+        <div class="trajectory-heading"><h2>执行轨迹</h2><p>每一步模型调用、工具执行与权限判断。</p></div>
+        <p id="event-empty" class="empty-state">开始一个任务后，执行事件会显示在这里。</p>
+        <p id="event-truncated" class="truncated" hidden>仅显示最近 100 条事件，完整记录见 Trace。</p>
+        <div id="events" class="events"></div>
+      </section>
+      <div class="composer-wrap">
+        <div class="composer-context"><span><svg class="icon"><use href="#i-folder"/></svg><span id="composer-workspace">工作区</span></span><button id="mode-details" class="text-button"><svg class="icon"><use href="#i-mode"/></svg><span id="composer-mode">标准模式</span><svg class="icon chevron"><use href="#i-chevron"/></svg></button></div>
+        <form id="task-form" class="composer">
+          <label class="sr-only" for="task">任务描述</label><textarea id="task" placeholder="描述你想要构建的内容" maxlength="32000" rows="3"></textarea>
+          <div class="composer-bottom"><button type="button" id="prompt-menu" class="add-button" aria-label="任务建议" aria-expanded="false" aria-controls="suggestions">＋</button><button id="permission-details" class="text-button permission-control" type="button"><svg class="icon"><use href="#i-shield"/></svg><span id="permission-pill">只读模式</span><svg class="icon chevron"><use href="#i-chevron"/></svg></button><span class="composer-model" id="composer-model">Model</span><span class="keyboard-hint" title="⌘ / Ctrl + Enter 发送">⌘ ↵</span><button id="cancel" type="button" class="send-button stop-button" aria-label="停止任务" title="停止任务" hidden>■</button><button id="send" type="submit" class="send-button" aria-label="发送任务" title="发送任务 · ⌘ / Ctrl + Enter"><svg class="icon"><use href="#i-arrow"/></svg></button></div>
+        </form>
+        <div id="suggestions" class="suggestions" hidden><button data-task="梳理这个项目的目录结构，解释主要模块之间的关系。"><svg class="icon"><use href="#i-folder"/></svg>了解项目结构</button><button data-task="检查代码中可能存在的问题，先给出分析和修复建议。"><svg class="icon"><use href="#i-diff"/></svg>排查代码问题</button><button data-task="帮我规划一个新功能的实现步骤，并说明需要修改哪些文件。"><svg class="icon"><use href="#i-mode"/></svg>规划一个功能</button></div>
+        <div class="usage-line" id="usage-line" hidden><span><b id="steps">—</b> 步</span><i>·</i><span><b id="tools">—</b> 次工具调用</span><i>｜</i><span><b id="tokens">—</b> tokens</span><i>｜</i><span><b id="seconds">—</b> 秒</span><i>｜</i><span id="cost">未配置价目</span></div>
+        <p class="composer-note">在当前工作区执行 · 正确性以测试结果为准</p>
+      </div>
+    </div>
+    <section id="diff-panel" class="diff-panel" aria-label="工作区 Diff" hidden><div class="panel-heading"><h2>工作区改动</h2><button id="close-diff" class="icon-button" aria-label="关闭 Diff"><svg class="icon"><use href="#i-close"/></svg></button></div><pre id="diff-content"></pre></section>
+  </main>
+</div>
+<dialog id="resume-dialog" class="dialog"><div class="dialog-heading"><h2>恢复会话</h2><button class="icon-button" data-close="resume-dialog" aria-label="关闭恢复会话"><svg class="icon"><use href="#i-close"/></svg></button></div><p class="dialog-description">输入当前工作区中已保存的 Run ID，继续之前的对话。</p><form id="resume-form"><label for="resume-id">Run ID</label><input id="resume-id" placeholder="输入已保存的 Run ID" autocomplete="off" maxlength="128" required><button id="resume" class="primary-button" type="submit">恢复会话</button></form><p id="resume-error" class="dialog-error" role="alert" hidden></p></dialog>
+<dialog id="settings-dialog" class="dialog inspector"><div class="dialog-heading"><h2>运行设置</h2><button class="icon-button" data-close="settings-dialog" aria-label="关闭运行设置"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="status-card"><span id="status-dot" class="status-dot"></span><strong id="status">等待任务</strong><span id="status-caption">准备好开始下一次探索</span></div><dl class="config-list"><div><dt>模型</dt><dd id="model">—</dd></div><div><dt>Context 策略</dt><dd id="context">—</dd></div><div><dt>文件权限</dt><dd id="write">—</dd></div><div><dt>命令执行</dt><dd id="shell">—</dd></div></dl><form id="settings-form" class="runtime-settings">
+<label class="setting-toggle"><span>Multi-Agent 协作</span><input id="multi-agent" type="checkbox"></label>
+<div class="setting-numbers"><label>累计子 Agent 上限<input id="max-agents" type="number" min="1" max="32" required></label><label>最多同时运行<input id="max-parallel" type="number" min="1" max="8" required></label></div>
+<label for="api-key">API Key <span id="credential-status"></span></label><input id="api-key" type="password" autocomplete="off" spellcheck="false" maxlength="4096" placeholder="输入当前模型服务的 API Key">
+<p class="config-note">Key 仅保存在当前服务的内存中，不回显、不写入配置或 Trace。留空保留当前凭证，关闭服务后需重新输入。子 Agent 只读，修改由主 Agent 完成。</p>
+<button id="save-settings" class="primary-button" type="submit">保存设置</button><span id="settings-feedback" class="settings-feedback" role="status"></span>
+</form><p class="config-note">设置在任务之间修改。模型、文件权限和总预算仍使用启动配置。</p><div class="trace-info"><span>RUN ID</span><code id="run-id">尚无运行记录</code><span>TRACE</span><code id="trace">—</code><p>原始记录保存在当前工作区内。</p></div></dialog>
+</body>
+</html>

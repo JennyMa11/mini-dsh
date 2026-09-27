@@ -64,10 +64,13 @@ class Replay:
     steps: tuple[ReplayStep, ...]
     latency: LatencyBreakdown
     cost_usd: float
+    team_tokens: tuple[int, int, int] | None = None
 
     @property
     def tokens(self) -> tuple[int, int, int]:
         """Return summed input, output, and cached-input tokens."""
+        if self.team_tokens is not None:
+            return self.team_tokens
         input_tokens = sum(step.input_tokens for step in self.steps)
         output_tokens = sum(step.output_tokens for step in self.steps)
         cached = sum(step.cached_input_tokens for step in self.steps)
@@ -92,6 +95,7 @@ class Replay:
 def build_replay(trace: TraceRun) -> Replay:
     """Reconstruct every step of a run from its trace records."""
     run_id = trace.records[0].run_id if trace.records else ""
+    final = trace.final()
     return Replay(
         run_id=run_id,
         status=trace.status(),
@@ -99,6 +103,9 @@ def build_replay(trace: TraceRun) -> Replay:
         steps=tuple(_replay_step(step) for step in trace.steps()),
         latency=latency_from_trace(trace),
         cost_usd=trace.cost_usd(),
+        team_tokens=(
+            trace.total_tokens() if final is not None and "team_steps" in final.data else None
+        ),
     )
 
 

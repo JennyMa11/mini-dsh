@@ -1,0 +1,43 @@
+# Copy to <workspace>/minidsh.toml or select with --config examples/profiles.toml.
+[minidsh]
+allow_write = false
+allow_shell = false
+max_steps = 30
+max_tokens = 50000
+max_tool_calls = 60
+max_seconds = 300
+
+[profiles.review]
+context_strategy = "summary"
+recent_messages = 8
+enabled_tools = ["read_file", "search", "git"]
+reflection_enabled = true
+
+[profiles.edit]
+context_strategy = "retrieval_summary"
+allow_write = true
+enabled_tools = ["read_file", "search", "git", "patch_file", "write_file"]
+tool_output_limit = 12000
+
+[profiles.test]
+context_strategy = "full"
+allow_shell = true
+allowed_commands = ["git", "python"]
+test_command = ["python", "-m", "pytest", "-q"]
+enabled_tools = ["read_file", "search", "git", "test"]
+
+[profiles.minimal]
+builtin_tools_enabled = false
+artifact_offload = false
+max_steps = 5
+
+[profiles.team]
+multi_agent_enabled = true
+context_strategy = "summary"
+subagent_max_agents = 4
+subagent_max_parallel = 2
+subagent_max_steps = 8
+subagent_max_tokens = 10000
+subagent_max_tool_calls = 16
+subagent_max_seconds = 60
+enabled_tools = ["read_file", "search", "git", "delegate_sub_agents"]

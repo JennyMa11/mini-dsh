@@ -6,11 +6,63 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 - 版本：`0.3.2`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：40 个源码模块、15 个测试模块、231 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）
+- 规模：51 个源码模块、22 个测试模块、331 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）
 
 > `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。`0.3.2` 补上此前所有套件都缺的东西——**判据**：`core` / `stress` / `repo` 都拿 Agent 能读能改的可见测试当判据，所以它们的 100% 测的是顺从而不是正确；`hard` 套件用留出判据（Agent 结束后才落地）第一次给出低于 100% 的成功率（**19/20**）。
 
 ---
+
+## DSH 架构与 Harness 研究
+
+项目同时保留可复现的 Harness 实验能力，并对齐 DSH 的核心设计：Session 消息
+事件先提交、Context 从事件历史生成视图；Loop 通过工厂端口与插件服务替换；MCP
+工具进入同一条 Schema、权限、超时和 Observation 链路。新增事件日志保留原有
+Session 快照和 Trace 读取能力，历史评测报告仍代表当时的实现。
+
+MCP 为可选依赖，当前通过 Python API 接入 Streamable HTTP 服务。Mini-dsh 是独立
+Python Runtime，不直接兼容 Cordis/npm 插件。用法、实验控制与边界见
+[DSH 对齐说明](docs/dsh-alignment.md) 和 [ADR 0012](docs/adr/0012-session-facts-loop-factory-mcp.md)。
+
+## 本地 GUI
+
+```bash
+uv sync --dev
+uv run mini-dsh gui --workspace .
+```
+
+自动打开深色双栏浏览器工作台：连续对话、停止任务、清空对话、按 Run ID 恢复、
+查看 Git Diff、执行事件与本轮用量。对话与轨迹通过标签切换，运行设置和会话恢复
+从侧边栏打开；视觉参考与范围见 [GUI 设计说明](docs/gui-design.md)。
+模型沿用终端的 provider 配置（默认 DeepSeek）；
+可在“运行设置”直接输入 API Key，或沿用服务端环境变量。页面提交的 Key 仅保存在服务进程内存，
+不回显、不写入配置、Session 或 Trace，关闭服务后需重新输入。
+设置中也可启用 Multi-Agent，选择子 Agent 数量和并发上限；协作结果以 Sub Agent 卡片展示。
+运行期间不能修改设置，保存后保留当前对话。默认只读，显式授权写入或命令执行
+使用已有 `--allow-write`、`--allow-shell` 和 `--allow-command` 参数。
+
+无需模型服务的离线示例：
+
+```bash
+uv run mini-dsh gui --workspace . --script examples/gui_responses.json
+```
+
+`--no-open` 只打印地址，`--port 8765` 指定本地端口，`--resume RUN_ID` 启动时恢复。
+请使用终端打印的完整地址打开（含本次服务的会话凭证）；刷新页面可继续连接。
+服务仅监听 `127.0.0.1`，Ctrl+C 停止服务并取消当前任务。执行期间不能清空或恢复。
+Trace 与 Session 存储在工作区 `.minidsh/` 内，GUI 是有界展示视图；事件按步骤更新，
+暂不支持逐 Token 输出。`finished` 表示 Harness 运行结束，正确性仍以测试判据为准。
+GUI 位于独立展示层，核心架构不变，见 [ADR 0008](docs/adr/0008-local-browser-gui.md)。
+
+## Multi-Agent 协作
+
+主 Agent 可通过 `delegate_sub_agents` 并行委派分析、检索和审查任务，Sub Agent 使用独立模型实例、上下文、运行 ID 和 Session，结果返回主 Agent 汇总。团队共用步数、Token、工具调用与墙钟预算，支持并发上限、累计子 Agent 上限和取消清理。
+
+```bash
+uv run mini-dsh chat --model-profile deepseek --multi-agent --subagent-max-parallel 2
+uv run python examples/multi_agent.py  # 无 API Key 的临时工作区演示
+```
+
+子 Agent 首版只读，修改由主 Agent 统一执行。完整参数、Python API、Trace 回放与边界见 [Multi-Agent 文档](docs/multi-agent.md) 和 [ADR 0010](docs/adr/0010-sub-agent-collaboration.md)。
 
 ## Architecture
 
@@ -76,7 +128,7 @@ flowchart TD
 stateDiagram-v2
     [*] --> Running
     Running --> Running: 模型调用 + 工具执行<br/>step_id += 1
-    Running --> Finished: 模型给出最终回答<br/>且验证判据通过
+    Running --> Finished: 模型给出最终回答<br/>正确性由外部判据验证
     Running --> Failed: 不可恢复错误
     Running --> Cancelled: 外部取消
     Running --> BudgetExhausted: 步数 / Token / 工具调用 / 墙钟耗尽
@@ -144,6 +196,66 @@ cost: $0.004110
 ```
 
 ## 运行 Coding Agent
+
+离线运行可显式指定 `--provider scripted`，该 CLI 参数优先于环境变量
+`MINIDSH_MODEL_PROFILE`，不会因此选择真实 provider。若同时指定 `--model-profile`，
+命令会报告配置冲突。
+
+### 交互式终端会话
+
+无参数启动会进入交互模式，默认使用现有 `deepseek` profile。凭据从
+`DEEPSEEK_API_KEY` 读取；请先在终端设置该变量，再运行：
+
+```bash
+uv run --no-editable mini-dsh
+```
+
+可以连续输入任务和追问，模型会保留之前的回答、工具结果与修改记录。
+每轮显示模型调用和工具执行进度、终态、Token 与耗时，自动保存 Session 和 JSONL Trace。
+当前显示的是步骤进度和完整回答，不是逐 Token 流式输出。
+每轮独立使用配置中的 Step / Token / 工具调用 / 墙钟预算。
+未配置费率时交互模式允许调用模型，但成本显示为不可用，不把零费率当成实际成本。
+需要成本核算时使用已有的 `--input-usd-per-million`、`--output-usd-per-million` 等参数。
+
+默认只能读取仓库；需要修改代码、执行测试时显式授权：
+
+```bash
+uv run --no-editable mini-dsh chat \
+  --allow-write --allow-shell --allow-command python \
+  --test-command "python -m pytest"
+```
+
+| 命令 | 行为 |
+| --- | --- |
+| `/help` | 查看快捷命令 |
+| `/status` | 查看模型、工作区、权限和上次 Run ID |
+| `/diff` | 通过 Tool Runtime 查看 Git diff |
+| `/clear` | 清空对话，保留已修改文件 |
+| `/resume RUN_ID` | 恢复当前工作区中保存的对话 |
+| `/exit` 或 Ctrl+D | 退出 |
+
+Ctrl+C 中断当前任务并回到输入提示；在输入时按 Ctrl+C 清空输入。
+行尾输入 `\` 可继续输入多行任务。取消不会回滚已完成的文件修改。
+恢复会话也不会重放工具；没有记录结果的调用会作为“执行结果未知”进入下一轮，
+要求模型先检查实际状态。原始 Trace 保持不变。
+底层 provider 当前使用阻塞 HTTP adapter，取消后已经发出的请求可能继续至超时；
+退出时 Python 会等待该后台请求释放。执行中的本地子进程仍由已有 runner 清理进程组。
+
+也可以用 `--resume RUN_ID` 启动，或者通过 `--workspace`、`--model-profile`、
+`--context` 等参数选择工作区和策略。没有 API Key 时仍可以进入界面查看帮助，
+首次输入任务时会提示缺失的凭据。
+
+`--no-editable` 避免依赖源码路径的 `.pth` 文件，适用于该文件被 macOS 标记为隐藏的环境。
+修改源码后可运行 `uv sync --no-editable --reinstall-package mini-dsh` 重新安装。
+开发和 CI 环境仍可使用原有的 editable 安装方式。
+
+无网络、无 API Key 的可复现交互演示：
+
+```bash
+uv run --no-editable mini-dsh chat --script examples/chat_responses.json
+```
+
+依次输入两个问题即可看到回答与连续对话，再输入 `/exit` 退出。
 
 Scripted provider 用于可复现实验：
 
@@ -476,7 +588,7 @@ billable_input = input_tokens − cached_input_tokens
 
 ## 配置
 
-优先级 `CLI > 环境变量 > minidsh.toml > 默认值`，可打印来源：
+优先级 `CLI > 环境变量 > 已选方案 > minidsh.toml > 默认值`，可打印来源：
 
 ```bash
 uv run mini-dsh config            # 打印生效值与每个字段的来源
@@ -489,9 +601,18 @@ MINIDSH_MAX_STEPS=20 uv run mini-dsh config
 max_steps = 12
 max_tokens = 200000
 max_seconds = 120
-allowed_tools = ["read_file", "search", "write_file"]
+enabled_tools = ["read_file", "search", "git"]
 denied_tools = ["shell"]
 ```
+
+可用 `[profiles.review]`、`[profiles.edit]` 等命名方案保存不同设定，再通过 `--profile` 或 `MINIDSH_PROFILE` 切换。CLI 支持 Context 窗口、系统提示词、反思、反馈详略、工具重试与输出策略，并可用 `--no-allow-write` / `--no-allow-shell` 撤销低优先级配置中的权限。
+
+```bash
+uv run mini-dsh config --config examples/profiles.toml --profile review
+uv run python examples/custom_runtime.py
+```
+
+Python API 支持 `RuntimeComponents` 替换组件，以及 `plugin_runtime` 按服务名选择插件提供的模型、Context、Session、Journal、Loop 工厂、Permission、Event、执行器和工具。可关闭内置工具后使用自己的工具集；所有工具共享校验、授权和 Observation 链。详见 [自定义运行时与配置方案](docs/extensibility.md) 与 [DSH 对齐说明](docs/dsh-alignment.md)。
 
 ## 工程命令
 
@@ -502,7 +623,7 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 55 个文件上无错误、231 个测试通过（覆盖率 86%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 73 个文件上无错误、331 个测试通过（覆盖率 90%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 

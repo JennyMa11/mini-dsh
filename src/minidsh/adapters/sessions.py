@@ -6,18 +6,22 @@ import asyncio
 import json
 import os
 import tempfile
+from dataclasses import asdict
 from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from minidsh.adapters.session_codec import StoredMessage, message_to_json
+from minidsh.adapters.session_journal import read_session_log
 from minidsh.domain import (
-    JsonValue,
+    LatencyBreakdown,
     Message,
     Role,
     RunResult,
     RunStatus,
     TokenUsage,
     ToolCall,
+    redact_value,
 )
 
 
@@ -46,7 +50,7 @@ class JsonSessionStore:
         self._directory.mkdir(parents=True, exist_ok=True)
         destination = self._directory / f"{result.run_id}.json"
         payload = {
-            "schema_version": "1.0",
+            "schema_version": "1.1",
             "run_id": result.run_id,
             "status": result.status.value,
             "answer": result.answer,
@@ -54,16 +58,18 @@ class JsonSessionStore:
             "input_tokens": result.token_usage.input_tokens,
             "output_tokens": result.token_usage.output_tokens,
             "cost_usd": result.token_usage.cost_usd,
+            "cached_input_tokens": result.token_usage.cached_input_tokens,
+            "latency": asdict(result.latency),
             "tool_calls": result.tool_calls,
             "duration_ms": result.duration_ms,
             "failure_reason": result.failure_reason,
-            "history": [self._message_to_json(message) for message in result.history],
+            "history": [message_to_json(message) for message in result.history],
         }
         descriptor, temporary_name = tempfile.mkstemp(prefix=".session-", dir=self._directory)
         temporary = Path(temporary_name)
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8", closefd=True) as handle:
-                json.dump(payload, handle, ensure_ascii=False, sort_keys=True)
+                json.dump(redact_value(payload), handle, ensure_ascii=False, sort_keys=True)
                 handle.write("\n")
             temporary.replace(destination)
         except BaseException:
@@ -84,6 +90,7 @@ class JsonSessionStore:
                 Role(message.role),
                 message.content,
                 name=message.name,
+                reasoning_content=message.reasoning_content,
                 tool_call_id=message.tool_call_id,
                 tool_calls=tuple(
                     ToolCall(call.call_id, call.name, call.arguments) for call in message.tool_calls
@@ -91,16 +98,31 @@ class JsonSessionStore:
             )
             for message in parsed.history
         )
+        # Old snapshots remain readable; new transcript views derive from facts.
+        journal_path = self._directory.parent / "session_events" / f"{run_id}.jsonl"
+        if not journal_path.resolve().is_relative_to(self._directory.parent.parent):
+            raise SessionStoreError("session event log escapes workspace")
+        if journal_path.exists():
+            try:
+                history = read_session_log(journal_path, run_id).messages()
+            except (OSError, ValueError) as exc:
+                raise SessionStoreError("invalid stored session event log") from exc
         return RunResult(
             parsed.run_id,
             RunStatus(parsed.status),
             parsed.answer,
             parsed.steps,
-            TokenUsage(parsed.input_tokens, parsed.output_tokens, parsed.cost_usd),
+            TokenUsage(
+                parsed.input_tokens,
+                parsed.output_tokens,
+                parsed.cost_usd,
+                parsed.cached_input_tokens,
+            ),
             parsed.tool_calls,
             parsed.duration_ms,
             parsed.failure_reason,
             history,
+            LatencyBreakdown(**parsed.latency.model_dump()),
         )
 
     @staticmethod
@@ -109,36 +131,18 @@ class JsonSessionStore:
             msg = "run_id contains unsafe characters"
             raise SessionStoreError(msg)
 
-    @staticmethod
-    def _message_to_json(message: Message) -> dict[str, object]:
-        return {
-            "role": message.role.value,
-            "content": message.content,
-            "name": message.name,
-            "tool_call_id": message.tool_call_id,
-            "tool_calls": [
-                {"call_id": call.call_id, "name": call.name, "arguments": call.arguments}
-                for call in message.tool_calls
-            ],
-        }
-
 
 class _StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class _StoredCall(_StrictModel):
-    call_id: str
-    name: str
-    arguments: dict[str, JsonValue]
-
-
-class _StoredMessage(_StrictModel):
-    role: str
-    content: str
-    name: str | None
-    tool_call_id: str | None
-    tool_calls: list[_StoredCall] = Field(default_factory=list)
+class _StoredLatency(_StrictModel):
+    model_ms: float = 0.0
+    tool_ms: float = 0.0
+    harness_ms: float = 0.0
+    total_ms: float = 0.0
+    model_calls: int = 0
+    tool_calls: int = 0
 
 
 class _StoredRun(_StrictModel):
@@ -150,7 +154,9 @@ class _StoredRun(_StrictModel):
     input_tokens: int
     output_tokens: int
     cost_usd: float = 0.0
+    cached_input_tokens: int = 0
+    latency: _StoredLatency = Field(default_factory=_StoredLatency)
     tool_calls: int
     duration_ms: float
     failure_reason: str | None
-    history: list[_StoredMessage]
+    history: list[StoredMessage]

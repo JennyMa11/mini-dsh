@@ -1,0 +1,17 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "delegate_review",
+        "name": "delegate_sub_agents",
+        "arguments": {
+          "tasks": [
+            {"name": "analyst", "role": "code analyst", "task": "Read hello.py and explain its behavior."},
+            {"name": "reviewer", "role": "code reviewer", "task": "Read hello.py and review its implementation."}
+          ]
+        }
+      }
+    ]
+  },
+  {"content": "Both Sub Agents inspected hello.py. The main Agent collected their findings."}
+]

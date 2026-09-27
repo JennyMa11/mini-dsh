@@ -3,11 +3,104 @@
 from __future__ import annotations
 
 import json
+import os
+from collections.abc import Mapping
 from pathlib import Path
 
 import pytest
 
+from minidsh.adapters import ModelProfile, ScriptedModel
 from minidsh.cli import main
+from minidsh.domain import ModelRequest, ModelResponse, ToolCall
+from minidsh.gui import GuiSession
+
+
+@pytest.mark.parametrize("command", ["run", "benchmark", "ablation"])
+@pytest.mark.integration
+def test_explicit_scripted_provider_overrides_environment_model_profile(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    monkeypatch: pytest.MonkeyPatch,
+    command: str,
+) -> None:
+    for key in tuple(os.environ):
+        if key.startswith("MINIDSH_"):
+            monkeypatch.delenv(key)
+    monkeypatch.setenv("MINIDSH_MODEL_PROFILE", "deepseek")
+
+    def forbid_provider(*args: object, **kwargs: object) -> None:
+        del args, kwargs
+        pytest.fail("explicit scripted mode must never construct a real provider")
+
+    monkeypatch.setattr("minidsh.cli.build_provider_model", forbid_provider)
+    script = tmp_path / "responses.json"
+    script.write_text('[{"content": "offline answer"}]', encoding="utf-8")
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "name": "offline",
+                "schema_version": "1.0",
+                "tasks": [
+                    {
+                        "id": "task",
+                        "goal": "answer",
+                        "workspace": ".",
+                        "response_script": "responses.json",
+                        "success_argv": ["python", "-c", "pass"],
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    argv = [command]
+    if command == "run":
+        argv += ["answer", "--workspace", str(tmp_path), "--script", str(script)]
+    else:
+        argv += [
+            str(manifest),
+            "--output",
+            str(tmp_path / "report.json"),
+            "--verify-command",
+            "python",
+        ]
+        if command == "ablation":
+            argv += ["--suite", "tool_output"]
+    argv += [
+        "--provider",
+        "scripted",
+        "--input-usd-per-million",
+        "3",
+        "--output-usd-per-million",
+        "15",
+    ]
+    with pytest.raises(SystemExit) as exit_info:
+        main(argv)
+    assert exit_info.value.code == 0
+    if command == "run":
+        assert "offline answer" in capsys.readouterr().out
+
+
+def test_scripted_provider_rejects_conflicting_explicit_profile(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    with pytest.raises(SystemExit) as exit_info:
+        main(
+            [
+                "run",
+                "task",
+                "--workspace",
+                str(tmp_path),
+                "--provider",
+                "scripted",
+                "--model-profile",
+                "deepseek",
+            ]
+        )
+    assert exit_info.value.code == 2
+    assert "cannot be combined" in capsys.readouterr().err
 
 
 def test_doctor_reports_healthy_environment(capsys: pytest.CaptureFixture[str]) -> None:
@@ -216,3 +309,209 @@ def test_api_key_env_names_the_credential_for_an_ad_hoc_endpoint(
 
     assert exit_info.value.code == 2
     assert "MY_PROVIDER_TOKEN" in capsys.readouterr().err
+
+
+def test_config_profile_and_cli_can_revoke_file_permissions(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for key in tuple(os.environ):
+        if key.startswith("MINIDSH_"):
+            monkeypatch.delenv(key)
+    (tmp_path / "minidsh.toml").write_text(
+        "[minidsh]\nallow_write = true\nallow_shell = true\n"
+        '[profiles.review]\ncontext_strategy = "summary"\nrecent_messages = 3\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(SystemExit) as exit_info:
+        main(
+            [
+                "config",
+                "--workspace",
+                str(tmp_path),
+                "--profile",
+                "review",
+                "--no-allow-write",
+                "--no-allow-shell",
+                "--no-artifact-offload",
+                "--enabled-tools",
+                "read_file",
+                "search",
+            ]
+        )
+    assert exit_info.value.code == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["profile"] == "review"
+    assert output["available_profiles"] == ["review"]
+    assert output["options"]["context_strategy"] == "summary"
+    assert output["options"]["recent_messages"] == 3
+    assert output["options"]["allow_write"] is False
+    assert output["options"]["allow_shell"] is False
+    assert output["options"]["artifact_offload"] is False
+    assert output["options"]["enabled_tools"] == ["read_file", "search"]
+    assert output["sources"]["allow_write"] == "cli"
+
+
+@pytest.mark.e2e
+def test_cli_runs_an_offline_team_and_can_replay_a_child(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for key in tuple(os.environ):
+        if key.startswith("MINIDSH_"):
+            monkeypatch.delenv(key)
+    parent = tmp_path / "parent.json"
+    child = tmp_path / "child.json"
+    trace = tmp_path / "team.jsonl"
+    parent.write_text(
+        json.dumps(
+            [
+                {
+                    "tool_calls": [
+                        {
+                            "call_id": "delegate",
+                            "name": "delegate_sub_agents",
+                            "arguments": {
+                                "tasks": [
+                                    {"name": "reviewer", "task": "inspect", "role": "reviewer"}
+                                ],
+                            },
+                        }
+                    ]
+                },
+                {"content": "combined answer"},
+            ]
+        ),
+        encoding="utf-8",
+    )
+    child.write_text('[{"content":"child answer"}]', encoding="utf-8")
+    with pytest.raises(SystemExit) as exit_info:
+        main(
+            [
+                "run",
+                "inspect with a Sub Agent",
+                "--workspace",
+                str(tmp_path),
+                "--script",
+                str(parent),
+                "--subagent-script",
+                str(child),
+                "--multi-agent",
+                "--trace",
+                str(trace),
+            ]
+        )
+    assert exit_info.value.code == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["answer"] == "combined answer"
+    records = [json.loads(line) for line in trace.read_text(encoding="utf-8").splitlines()]
+    child_id = next(
+        record["data"]["child_run_id"]
+        for record in records
+        if record["name"] == "sub_agent_started"
+    )
+    with pytest.raises(SystemExit) as replay:
+        main(["trace", "replay", str(trace), "--run-id", child_id, "--json"])
+    assert replay.value.code == 0
+    replayed = json.loads(capsys.readouterr().out)
+    assert replayed["run_id"] == child_id
+    assert replayed["status"] == "finished"
+
+
+@pytest.mark.e2e
+def test_disabling_team_profile_keeps_single_agent_runnable(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for key in tuple(os.environ):
+        if key.startswith("MINIDSH_"):
+            monkeypatch.delenv(key)
+    (tmp_path / "minidsh.toml").write_text(
+        "[profiles.team]\nmulti_agent_enabled = true\n"
+        'enabled_tools = ["read_file", "delegate_sub_agents"]\n',
+        encoding="utf-8",
+    )
+    script = tmp_path / "single.json"
+    script.write_text('[{"content":"single agent"}]', encoding="utf-8")
+    with pytest.raises(SystemExit) as exit_info:
+        main(
+            [
+                "run",
+                "task",
+                "--workspace",
+                str(tmp_path),
+                "--script",
+                str(script),
+                "--profile",
+                "team",
+                "--no-multi-agent",
+            ]
+        )
+    assert exit_info.value.code == 0
+    assert json.loads(capsys.readouterr().out)["answer"] == "single agent"
+
+
+def test_gui_key_is_forwarded_to_parent_and_subagents_without_changing_environment(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for key in tuple(os.environ):
+        if key.startswith("MINIDSH_"):
+            monkeypatch.delenv(key)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    received: list[str] = []
+    key = "synthetic_gui_credential"
+
+    class FakeModel:
+        def __init__(self, *, parent: bool) -> None:
+            responses = [ModelResponse(f"child result {key}")]
+            if parent:
+                responses = [
+                    ModelResponse(
+                        tool_calls=(
+                            ToolCall(
+                                "delegate",
+                                "delegate_sub_agents",
+                                {
+                                    "tasks": [{"name": "reviewer", "task": "inspect"}],
+                                },
+                            ),
+                        )
+                    ),
+                    ModelResponse("done"),
+                ]
+            self.script = ScriptedModel(responses)
+
+        async def complete(self, request: ModelRequest) -> ModelResponse:
+            return await self.script.complete(request)
+
+    def provider(
+        profile: ModelProfile, *, environ: Mapping[str, str], temperature: float, max_attempts: int
+    ) -> FakeModel:
+        del temperature, max_attempts
+        received.append(profile.api_key(environ))
+        return FakeModel(parent=len(received) == 1)
+
+    async def serve(session: GuiSession, *, port: int, open_browser: bool) -> None:
+        del port, open_browser
+        await session.action(
+            "settings",
+            {
+                "multi_agent_enabled": True,
+                "subagent_max_agents": 4,
+                "subagent_max_parallel": 2,
+                "api_key": key,
+            },
+        )
+        await session.action("run", {"task": "inspect"})
+        await session.wait()
+        assert session.snapshot()["status"] == "finished"
+        assert session.snapshot()["sub_agents"][0]["answer"] == "child result [REDACTED]"
+        assert key not in str(session.snapshot())
+        for artifact in (tmp_path / ".minidsh").rglob("*"):
+            if artifact.is_file():
+                assert key not in artifact.read_text(encoding="utf-8")
+
+    monkeypatch.setattr("minidsh.cli.build_provider_model", provider)
+    monkeypatch.setattr("minidsh.cli.serve_gui", serve)
+    with pytest.raises(SystemExit) as exit_info:
+        main(["gui", "--workspace", str(tmp_path), "--model-profile", "deepseek", "--no-open"])
+    assert exit_info.value.code == 0
+    assert received == [key, key]
+    assert "DEEPSEEK_API_KEY" not in os.environ

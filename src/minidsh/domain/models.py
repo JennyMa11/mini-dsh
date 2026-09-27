@@ -86,6 +86,23 @@ class Message:
 
 
 @dataclass(frozen=True, slots=True)
+class SessionMessageEvent:
+    """An ordered model-history fact, independent of context strategy."""
+
+    run_id: str
+    sequence: int
+    step_id: int
+    message: Message
+    occurred_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    schema_version: str = "1.0"
+
+    @property
+    def name(self) -> str:
+        """Return the factual event name for this message role."""
+        return f"{self.message.role.value}_message"
+
+
+@dataclass(frozen=True, slots=True)
 class ToolDefinition:
     """Model-visible tool metadata and policy requirements."""
 

@@ -8,6 +8,7 @@ import time
 import uuid
 from dataclasses import dataclass
 
+from minidsh.application.session_journal import MemorySessionJournal
 from minidsh.domain import (
     AgentBudget,
     Event,
@@ -22,7 +23,17 @@ from minidsh.domain import (
     TokenUsage,
     ToolObservation,
 )
-from minidsh.ports import ContextManager, EventSink, Model, SessionStore, ToolExecutor
+from minidsh.ports import (
+    AgentDependencies,
+    AgentRunner,
+    ContextManager,
+    EventSink,
+    Model,
+    SessionJournal,
+    SessionLog,
+    SessionStore,
+    ToolExecutor,
+)
 
 
 def _failure_reason(exc: BaseException) -> str:
@@ -93,6 +104,7 @@ class AgentLoop:
         reflection_enabled: bool = False,
         detailed_tool_feedback: bool = True,
         sessions: SessionStore | None = None,
+        journal: SessionJournal | None = None,
     ) -> None:
         self._model = model
         self._context = context_manager
@@ -104,26 +116,36 @@ class AgentLoop:
         self._reflection_enabled = reflection_enabled
         self._detailed_tool_feedback = detailed_tool_feedback
         self._sessions = sessions
+        self._journal = journal if journal is not None else MemorySessionJournal()
 
-    async def run(self, task: str, *, run_id: str | None = None) -> RunResult:
-        """Run until the model finishes, a failure occurs, or a budget is exhausted."""
+    async def run(
+        self, task: str, *, run_id: str | None = None, prior_history: tuple[Message, ...] = ()
+    ) -> RunResult:
+        """Run a new budgeted turn, optionally continuing an earlier immutable history."""
         actual_run_id = run_id or uuid.uuid4().hex
         started = time.monotonic()
         counters = _RunCounters()
-        history: list[Message] = [
-            Message(Role.SYSTEM, self._system_prompt),
-            Message(Role.USER, task),
-        ]
+        seed, repaired = self._continue_history(prior_history)
+        log = await self._journal.create(actual_run_id)
         await self._emit("run_started", actual_run_id, 0, {"task_length": len(task)})
+        if prior_history:
+            await self._emit(
+                "conversation_restored",
+                actual_run_id,
+                0,
+                {"message_count": len(prior_history), "interrupted_calls": repaired},
+            )
 
         try:
+            for message in (*seed, Message(Role.USER, task)):
+                await self._append(log, actual_run_id, 0, message)
             while True:
                 exhausted = self._budget_reason(counters, started)
                 if exhausted is not None:
                     return await self._finish(
                         actual_run_id,
                         RunStatus.BUDGET_EXHAUSTED,
-                        history,
+                        log,
                         counters,
                         started,
                         failure_reason=exhausted,
@@ -131,7 +153,7 @@ class AgentLoop:
 
                 counters.steps += 1
                 step_id = counters.steps
-                context = self._context.build(tuple(history), task)
+                context = self._context.build(log.messages(), task)
                 await self._emit(
                     "context_built",
                     actual_run_id,
@@ -162,7 +184,10 @@ class AgentLoop:
                 counters.output_tokens += call_usage.output_tokens
                 counters.cached_input_tokens += call_usage.cached_input_tokens
                 counters.cost_usd += call_cost
-                history.append(
+                await self._append(
+                    log,
+                    actual_run_id,
+                    step_id,
                     Message(
                         Role.ASSISTANT,
                         response.content,
@@ -171,7 +196,7 @@ class AgentLoop:
                         # rejects a tool-carrying request with a 400 if the reasoning
                         # from earlier turns is missing.
                         reasoning_content=response.reasoning_content or None,
-                    )
+                    ),
                 )
                 await self._emit(
                     "model_call_completed",
@@ -204,7 +229,7 @@ class AgentLoop:
                     return await self._finish(
                         actual_run_id,
                         RunStatus.FINISHED,
-                        history,
+                        log,
                         counters,
                         started,
                         answer=response.content,
@@ -216,15 +241,20 @@ class AgentLoop:
                     counters.tool_calls += 1
                     observation = await self._tools.execute(call, actual_run_id, step_id)
                     counters.tool_ms += observation.duration_ms
-                    history.append(self._observation_message(observation))
+                    await self._append(
+                        log, actual_run_id, step_id, self._observation_message(observation)
+                    )
                 if self._reflection_enabled:
-                    history.append(
+                    await self._append(
+                        log,
+                        actual_run_id,
+                        step_id,
                         Message(
                             Role.SYSTEM,
                             "Reflection checkpoint: review the latest tool observations, "
                             "update the plan, and avoid repeating failed actions.",
                             name="reflection",
-                        )
+                        ),
                     )
                     await self._emit("reflection_prompt_added", actual_run_id, step_id)
 
@@ -232,7 +262,7 @@ class AgentLoop:
             await self._finish(
                 actual_run_id,
                 RunStatus.CANCELLED,
-                history,
+                log,
                 counters,
                 started,
                 failure_reason="run cancelled",
@@ -242,11 +272,56 @@ class AgentLoop:
             return await self._finish(
                 actual_run_id,
                 RunStatus.FAILED,
-                history,
+                log,
                 counters,
                 started,
                 failure_reason=_failure_reason(exc),
             )
+
+    def _continue_history(self, prior: tuple[Message, ...]) -> tuple[list[Message], int]:
+        """Close interrupted tool rounds in the new view; never rewrite the old run."""
+        history = [Message(Role.SYSTEM, self._system_prompt)]
+        pending: dict[str, str] = {}
+        repaired = 0
+
+        def close_pending() -> None:
+            nonlocal repaired
+            for call_id, name in pending.items():
+                history.append(
+                    Message(
+                        Role.TOOL,
+                        json.dumps(
+                            {
+                                "status": "failed",
+                                "error": {
+                                    "code": "interrupted",
+                                    "message": "The prior run ended before an observation "
+                                    "was recorded. "
+                                    "Execution outcome is unknown; inspect state before retrying.",
+                                },
+                            }
+                        ),
+                        name=name,
+                        tool_call_id=call_id,
+                    )
+                )
+                repaired += 1
+            pending.clear()
+
+        for index, message in enumerate(prior):
+            if index == 0 and message.role is Role.SYSTEM:
+                continue
+            if message.role is Role.TOOL:
+                if message.tool_call_id not in pending:
+                    raise ValueError("prior history contains an orphan tool observation")
+                pending.pop(message.tool_call_id)
+            else:
+                close_pending()
+            history.append(message)
+            if message.tool_calls:
+                pending.update((call.call_id, call.name) for call in message.tool_calls)
+        close_pending()
+        return history, repaired
 
     async def _call_model(
         self,
@@ -319,6 +394,7 @@ class AgentLoop:
             "content": message.content,
             "name": message.name,
             "tool_call_id": message.tool_call_id,
+            "reasoning_content": message.reasoning_content,
             "tool_calls": [
                 {"call_id": call.call_id, "name": call.name, "arguments": call.arguments}
                 for call in message.tool_calls
@@ -329,7 +405,7 @@ class AgentLoop:
         self,
         run_id: str,
         status: RunStatus,
-        history: list[Message],
+        log: SessionLog,
         counters: _RunCounters,
         started: float,
         *,
@@ -363,7 +439,7 @@ class AgentLoop:
             tool_calls=counters.tool_calls,
             duration_ms=duration_ms,
             failure_reason=failure_reason,
-            history=tuple(history),
+            history=log.messages(),
             latency=latency,
         )
         if self._sessions is not None:
@@ -372,6 +448,19 @@ class AgentLoop:
             except Exception:
                 await self._emit("session_save_failed", run_id, counters.steps)
         return result
+
+    async def _append(self, log: SessionLog, run_id: str, step_id: int, message: Message) -> None:
+        event = await log.append(step_id, message)
+        await self._emit(
+            "session_message_committed",
+            run_id,
+            step_id,
+            {
+                "sequence": event.sequence,
+                "event_name": event.name,
+                "message": self._message_json(event.message),
+            },
+        )
 
     async def _emit(
         self,
@@ -388,4 +477,24 @@ class AgentLoop:
                 step_id=step_id,
                 data=safe_data,  # type: ignore[arg-type]
             )
+        )
+
+
+class AgentLoopFactory:
+    """Default driver factory, replaceable through the plugin service contract."""
+
+    def create(self, dependencies: AgentDependencies) -> AgentRunner:
+        """Build the loop from supplied ports without looking up global services."""
+        return AgentLoop(
+            model=dependencies.model,
+            context_manager=dependencies.context_manager,
+            tools=dependencies.tools,
+            events=dependencies.events,
+            budget=dependencies.budget,
+            pricing=dependencies.pricing,
+            system_prompt=dependencies.system_prompt,
+            reflection_enabled=dependencies.reflection_enabled,
+            detailed_tool_feedback=dependencies.detailed_tool_feedback,
+            sessions=dependencies.sessions,
+            journal=dependencies.journal,
         )

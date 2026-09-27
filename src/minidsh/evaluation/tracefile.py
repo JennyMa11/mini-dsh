@@ -55,8 +55,8 @@ class TraceRun:
     records: tuple[TraceRecord, ...]
 
     @classmethod
-    def from_file(cls, path: Path) -> TraceRun:
-        """Read and validate one JSONL trace file."""
+    def from_file(cls, path: Path, *, run_id: str | None = None) -> TraceRun:
+        """Validate the trace and select its primary run or an explicit child run."""
         try:
             text = path.read_text(encoding="utf-8")
         except OSError as exc:
@@ -82,7 +82,25 @@ class TraceRun:
                     schema_version=parsed.schema_version,
                 )
             )
-        return cls(path, tuple(records))
+        trace = cls(path, tuple(records))
+        if not records:
+            return trace
+        selected = run_id or next(
+            (
+                record.run_id
+                for record in records
+                if record.name == "run_started" and "parent_run_id" not in record.data
+            ),
+            records[0].run_id,
+        )
+        return trace.for_run(selected)
+
+    def for_run(self, run_id: str) -> TraceRun:
+        """Derive a run-specific view without mixing steps or terminal states."""
+        selected = tuple(record for record in self.records if record.run_id == run_id)
+        if not selected:
+            raise TraceError(f"run not found in trace: {run_id}")
+        return type(self)(self.path, selected)
 
     @classmethod
     def from_records(
@@ -151,6 +169,13 @@ class TraceRun:
 
     def total_tokens(self) -> tuple[int, int, int]:
         """Return summed input, output, and cached-input tokens over model calls."""
+        final = self.final()
+        if final is not None and "team_steps" in final.data:
+            return (
+                _as_int(final.data.get("input_tokens")),
+                _as_int(final.data.get("output_tokens")),
+                _as_int(final.data.get("cached_input_tokens")),
+            )
         input_tokens = output_tokens = cached = 0
         for record in self.by_name("model_call_completed"):
             input_tokens += _as_int(record.data.get("input_tokens"))
@@ -160,6 +185,9 @@ class TraceRun:
 
     def cost_usd(self) -> float:
         """Return the summed model spend recorded in the trace."""
+        final = self.final()
+        if final is not None and "team_steps" in final.data:
+            return _as_float(final.data.get("cost_usd"))
         return sum(
             _as_float(record.data.get("cost_usd"))
             for record in self.by_name("model_call_completed")
@@ -167,6 +195,9 @@ class TraceRun:
 
     def tool_call_count(self) -> int:
         """Return the number of completed tool calls."""
+        final = self.final()
+        if final is not None and "team_steps" in final.data:
+            return _as_int(final.data.get("tool_calls"))
         return len(self.by_name("tool_call_completed"))
 
     def tool_names(self) -> tuple[str, ...]:

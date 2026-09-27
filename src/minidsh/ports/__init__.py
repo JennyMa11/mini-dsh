@@ -1,5 +1,29 @@
 """Dependency-inversion ports consumed by the application layer."""
 
-from minidsh.ports.protocols import ContextManager, EventSink, Model, SessionStore, ToolExecutor
+from minidsh.ports.protocols import (
+    AgentDependencies,
+    AgentFactory,
+    AgentRunner,
+    ContextManager,
+    EventSink,
+    EventStream,
+    Model,
+    SessionJournal,
+    SessionLog,
+    SessionStore,
+    ToolExecutor,
+)
 
-__all__ = ["ContextManager", "EventSink", "Model", "SessionStore", "ToolExecutor"]
+__all__ = [
+    "AgentDependencies",
+    "AgentFactory",
+    "AgentRunner",
+    "ContextManager",
+    "EventSink",
+    "EventStream",
+    "Model",
+    "SessionJournal",
+    "SessionLog",
+    "SessionStore",
+    "ToolExecutor",
+]

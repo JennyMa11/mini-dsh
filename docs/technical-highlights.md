@@ -24,7 +24,7 @@
 
 ### 5. 工程门禁全绿
 
-`ruff format --check`、`ruff check`、`mypy --strict`（55 个文件，`src` + `tests`）、`pytest`（231 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
+`ruff format --check`、`ruff check`、`mypy --strict`（73 个文件，`src` + `tests`）、`pytest`（331 个测试）四项全绿，CI 覆盖。测试分 `unit` / `integration` / `e2e` 三层，unit 层不碰网络与真实 Shell。`runtime/`（插件依赖校验、生命周期回滚、Service DI、Event Bus）覆盖率为 100%。
 
 ### 6. 真实模型实测，而且报告自带实验条件
 
@@ -148,7 +148,7 @@
 2. **长周期任务**：需要跨会话的 Session 恢复与上下文续接（`JsonSessionStore` 已是起点）。
 3. **多文件重构**：引入跨文件一致性判据，而不只是单点测试通过。
 4. **成本感知策略**：把"预算内最优策略选择"作为一个可研究的 Harness 变量，而不是固定配置。
-5. **多 Agent / 并行**：当前明确排除在核心层外；若要引入，应作为端口之上的编排层，保持核心 Loop 单 Agent 的简洁性。
+5. **多 Agent / 并行**：已提供端口之上的可选 Sub Agent 编排层，支持只读协作、共享团队预算和有界并发；后续写入协作需增加工作区隔离与合并契约，保持核心 Loop 单 Agent 的简洁性。
 
 ### 3.3 已知风险
 

@@ -10,6 +10,13 @@
 | [0004](0004-bounded-tool-output.md) | 工具输出有界化，大结果落盘为 artifact | Accepted |
 | [0005](0005-ablation-methodology.md) | 消融实验以单变量、可执行判据和脚本化模型为约束 | Accepted |
 | [0006](0006-configuration-precedence.md) | 分层配置与来源可追溯 | Accepted |
+| [0007](0007-interactive-terminal.md) | 交互式终端复用 Harness、跨轮历史与独立预算 | Accepted with limitations |
+| [0008](0008-local-browser-gui.md) | 本地浏览器 GUI 复用 Harness 与权限系统 | Accepted with limitations |
+| [0009](0009-explicit-runtime-extensions.md) | 显式组件扩展与命名运行配置 | Accepted |
+| [0010](0010-sub-agent-collaboration.md) | 单进程 Sub Agent 协作、共享预算与只读子工作流 | Accepted |
+
+| [0011](0011-gui-runtime-settings.md) | GUI 协作设置与内存凭证的边界 | Accepted |
+| [0012](0012-session-facts-loop-factory-mcp.md) | Session 事实源、Loop 工厂插件与 MCP 工具接入 | Accepted with limitations |
 
 ## 状态含义
 

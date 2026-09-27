@@ -190,6 +190,10 @@ uv run mini-dsh benchmark benchmarks/core/manifest.json \
 
 ## 7. 结果解读
 
+当前工作区的免费回归、重复性检查与 Session 日志对照见
+[2026-09-27 离线验证报告](results/offline-regression-2026-09-27.md)。该记录与下方历史
+归档分别保留，脚本模型的 USD 为模拟折算值，实际没有模型 API 费用。
+
 环境：`scripted` 模型、seed `0`、定价 $3 / $15 per million tokens。完整报告见 [`docs/results/`](results/)，汇总见 [`summary.json`](results/summary.json)。
 
 | 实验 | 关键读数 | 结论 |

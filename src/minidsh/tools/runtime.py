@@ -8,7 +8,7 @@ import time
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Protocol, cast
+from typing import Protocol, cast, runtime_checkable
 
 from pydantic import BaseModel, ValidationError
 
@@ -47,6 +47,13 @@ class Tool(Protocol):
 
 
 @dataclass(frozen=True, slots=True)
+class ToolBundle:
+    """Plugin service holding tools for the standard execution pipeline."""
+
+    tools: tuple[Tool, ...]
+
+
+@dataclass(frozen=True, slots=True)
 class PermissionDecision:
     """Auditable allow/deny result."""
 
@@ -54,6 +61,7 @@ class PermissionDecision:
     reason: str
 
 
+@runtime_checkable
 class PermissionAuthorizer(Protocol):
     """Replaceable permission decision service."""
 

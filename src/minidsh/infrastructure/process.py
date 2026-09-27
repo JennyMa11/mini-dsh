@@ -7,7 +7,7 @@ import os
 import signal
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from minidsh.infrastructure.sandbox import WorkspaceSandbox
 
@@ -112,6 +112,7 @@ class ProcessResult:
     timed_out: bool = False
 
 
+@runtime_checkable
 class ProcessRunner(Protocol):
     """Replaceable local or hardened argv execution adapter."""
 
