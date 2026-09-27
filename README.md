@@ -19,6 +19,10 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 工具进入同一条 Schema、权限、超时和 Observation 链路。新增事件日志保留原有
 Session 快照和 Trace 读取能力，历史评测报告仍代表当时的实现。
 
+当前版本已完成 DeepSeek 小规模接入回归：repo 6/6、hard 4/4，累计计价约 $0.01714，
+10 份 Trace 回放均通过。每任务仅一次样本；条件、逐任务结果与边界见
+[2026-09-27 真实模型回归](docs/results/real-regression-2026-09-27.md)。
+
 MCP 为可选依赖，当前通过 Python API 接入 Streamable HTTP 服务。Mini-dsh 是独立
 Python Runtime，不直接兼容 Cordis/npm 插件。用法、实验控制与边界见
 [DSH 对齐说明](docs/dsh-alignment.md) 和 [ADR 0012](docs/adr/0012-session-facts-loop-factory-mcp.md)。

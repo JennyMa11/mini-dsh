@@ -1,5 +1,11 @@
 # Real-model evaluation
 
+The current Session journal and runtime composition were checked on the clean implementation
+commit `2e7d351` with one DeepSeek sample per task: repo 6/6 and hard 4/4, at a computed
+total cost of $0.01713647. This is an integration regression, not a stable success-rate
+estimate; conditions and per-task results are in the
+[2026-09-27 regression report](results/real-regression-2026-09-27.md).
+
 The scripted suites answer one question: **does the harness do what it promises?**
 They cannot answer the other question: **is the agent any good?** A deterministic
 response script makes the step sequence predictable, which is exactly what you want
