@@ -321,6 +321,7 @@ uv run python scripts/offline_regression.py
 
 每次创建新的结果目录，记录实际提交号、工作区状态、源码及输入摘要；判据失败或
 确定性指标漂移会非零退出。版本固定与审计口径见[可复现基线](docs/reproducible-baseline.md)。
+固定提交上的 1010 次执行与审计结果见[离线基线报告](docs/results/offline-baseline-2026-09-27.md)。
 
 方法要点（完整协议见 [`docs/benchmark.md`](docs/benchmark.md)）：
 
