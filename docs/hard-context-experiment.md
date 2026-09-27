@@ -54,3 +54,12 @@ uv run python scripts/hard_context_experiment.py \
 成本可能受缓存命中左右，Token 减少不一定带来相同比例的费用下降。
 
 核心 Loop 与 BenchmarkRunner 均未改动；该入口只负责有序安排独立单 Agent 运行。
+
+2026-09-27 的 24 次实测与计价缺口说明见[两策略结果](results/hard-real-context-ablation-2026-09-27.md)。
+原始数据仍在本机时可重新生成归档：
+
+```bash
+uv run python scripts/archive_hard_context.py \
+  --source benchmark-results/hard-context-20260927 \
+  --output docs/results/hard-real-context-ablation-2026-09-27.md
+```

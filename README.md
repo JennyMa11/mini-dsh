@@ -328,6 +328,9 @@ uv run python scripts/offline_regression.py
 固定提交上的 1010 次执行与审计结果见[离线基线报告](docs/results/offline-baseline-2026-09-27.md)。
 hard 的两策略重复采样入口见[Context 对照协议](docs/hard-context-experiment.md)，
 按任务交替 Full History 与 Summary Compaction 的执行顺序。
+首次 hard 两策略对照得到 11/12 与 12/12：摘要的平均记录 Token 降低 7.7%，但记录费用
+增加 64.1%，并暴露一个失败模型调用的用量记录缺口。条件与解释见
+[实测报告](docs/results/hard-real-context-ablation-2026-09-27.md)，不能据此断言摘要提高稳定成功率。
 
 方法要点（完整协议见 [`docs/benchmark.md`](docs/benchmark.md)）：
 
