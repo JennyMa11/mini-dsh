@@ -8,6 +8,9 @@
 - 新增可选只读 Sub Agent 协作、团队预算与有界并发；核心 Loop 保持单 Agent。
 - 新增显式 Runtime 扩展、Session 消息事实日志、Loop 工厂端口和可选 MCP HTTP adapter；
   取舍与兼容边界记录在 ADR 0007–0012。
+- 将离线回归、Journal 对照和 Trace 审计整理为 `scripts/offline_regression.py`，记录实际
+  提交号、工作区状态、源码与输入摘要；新结果使用独立目录，不覆盖历史报告。
+- 修正文档门禁：当前说明跟随测试规模，历史测量报告保留当时的数字。
 
 ## [0.3.2] - 2026-09-22
 

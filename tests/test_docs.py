@@ -181,9 +181,23 @@ _MYPY_FILE_COUNT_CLAIM = re.compile(r"mypy --strict`[^。\n]*?(\d+)\s*个文件"
 # different claim about a different scope.
 _COVERAGE_CLAIM = re.compile(r"覆盖率[\s*]*(\d+)\s*%")
 
-# CHANGELOG is excluded on purpose: it records what was true at each release,
-# and rewriting history to match today would destroy its value as an audit trail.
-_COUNT_GATED_DOCS = (README, *(REPO_ROOT / "docs").rglob("*.md"))
+# CHANGELOG and results/ record what was true for a particular release or run.
+# Rewriting measured history to match today's tree would destroy the audit trail.
+_COUNT_GATED_DOCS = (
+    README,
+    *(
+        path
+        for path in (REPO_ROOT / "docs").rglob("*.md")
+        if not path.is_relative_to(REPO_ROOT / "docs/results")
+    ),
+)
+
+
+def test_historical_results_are_not_gated_against_current_tree() -> None:
+    historical = REPO_ROOT / "docs/results/offline-regression-2026-09-27.md"
+    assert historical.is_file()
+    assert historical not in _COUNT_GATED_DOCS
+    assert REPO_ROOT / "docs/resume.md" in _COUNT_GATED_DOCS
 
 
 def test_every_document_quotes_the_same_test_count(

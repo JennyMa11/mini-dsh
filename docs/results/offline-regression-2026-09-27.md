@@ -2,6 +2,10 @@
 
 > 生成来源：`benchmark-results/offline-20260927T110938Z/emit_report.py`；输入为同目录的 JSON 报告、`audit-summary.json` 和 `metadata.json`。
 
+上述路径记录本次历史报告的原始来源。仓库现已提供统一复现入口
+`uv run python scripts/offline_regression.py`，无需该本地目录；安装、版本固定与审计
+口径见[可复现基线](../reproducible-baseline.md)。新运行写入新目录，不覆盖本报告。
+
 本轮没有调用真实模型 API，实际 API 费用为 $0。脚本模型只验证 Runtime 行为、确定性与指标口径，不能证明真实模型任务能力。
 
 ## 代码与功能门禁

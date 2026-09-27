@@ -6,7 +6,7 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 - 版本：`0.3.2`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：51 个源码模块、22 个测试模块、331 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）
+- 规模：51 个源码模块、23 个测试模块、337 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）
 
 > `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。`0.3.2` 补上此前所有套件都缺的东西——**判据**：`core` / `stress` / `repo` 都拿 Agent 能读能改的可见测试当判据，所以它们的 100% 测的是顺从而不是正确；`hard` 套件用留出判据（Agent 结束后才落地）第一次给出低于 100% 的成功率（**19/20**）。
 
@@ -311,6 +311,16 @@ uv run mini-dsh run "Fix the failing tests" \
 ./scripts/run-benchmark.sh core           # 单套基线
 ./scripts/run-ablation.sh stress context  # 单组消融
 ```
+
+复现包含重复运行、Session 日志对照和 Trace 审计的完整离线基线：
+
+```bash
+uv sync --locked --all-groups
+uv run python scripts/offline_regression.py
+```
+
+每次创建新的结果目录，记录实际提交号、工作区状态、源码及输入摘要；判据失败或
+确定性指标漂移会非零退出。版本固定与审计口径见[可复现基线](docs/reproducible-baseline.md)。
 
 方法要点（完整协议见 [`docs/benchmark.md`](docs/benchmark.md)）：
 
@@ -623,7 +633,8 @@ uv run mypy src tests
 uv run pytest --cov=minidsh --cov-report=term-missing
 ```
 
-四项全部为绿：`ruff format --check` 无需重排、`ruff check` 无告警、`mypy --strict` 在 73 个文件上无错误、331 个测试通过（覆盖率 90%，`runtime/` 为 100%）。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+质量门禁为 `ruff format --check`、`ruff check`、`mypy --strict` 和完整 pytest；复现脚本另用
+`uv run mypy src tests scripts/offline_regression.py` 检查类型。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ## 文档
 

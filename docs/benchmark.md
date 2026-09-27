@@ -227,3 +227,9 @@ uv run mini-dsh benchmark benchmarks/core/manifest.json \
 3. 在 `benchmarks/<suite>/solutions/<task-id>/` 放参考解，并用一个离线门禁双向验证：出厂 fixture 必须失败、参考解必须通过。
 4. manifest 里补 `verification_overlay`、`verification_commit`，`success_argv` 指向 overlay 里的脚本。
 5. **不要**把 Agent 本该产出的文件放进 overlay——它会被静默覆盖。
+
+## 完整离线复现入口
+
+`uv run python scripts/offline_regression.py` 执行 baseline、消融、Session 配对和
+Trace 审计。固定提交、锁文件安装、运行条件与报告归档见
+[可复现基线](reproducible-baseline.md)。
