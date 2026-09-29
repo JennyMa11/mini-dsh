@@ -1,0 +1,1 @@
+The two public functions in registry/worker.py and registry/admin.py duplicate the same operation. Extract it into registry/shared.py as lookup; both public entry points must call that shared helper. Preserve outputs and exceptions.

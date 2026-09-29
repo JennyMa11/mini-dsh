@@ -150,6 +150,16 @@ class TokenUsage:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class InferenceMetrics:
+    """Optional local inference telemetry; unavailable readings stay absent."""
+
+    ttft_ms: float | None = None
+    prefill_tokens_per_second: float | None = None
+    decode_tokens_per_second: float | None = None
+    peak_memory_gb: float | None = None
+
+
 class ModelCallError(RuntimeError):
     """Safe model failure carrying reported usage, or None when usage is unknown."""
 
@@ -269,6 +279,9 @@ class ModelResponse:
     finish_reason: str = "stop"
     usage: TokenUsage = field(default_factory=TokenUsage)
     reasoning_content: str = ""
+    inference: InferenceMetrics | None = None
+    recoverable_error: ErrorInfo | None = None
+    format_retries: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -293,6 +306,7 @@ class ToolObservation:
     truncated: bool = False
     retryable: bool = False
     artifacts: tuple[str, ...] = ()
+    summary: str = ""
 
 
 @dataclass(frozen=True, slots=True)

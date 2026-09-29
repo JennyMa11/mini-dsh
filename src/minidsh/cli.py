@@ -4,16 +4,20 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import hashlib
 import json
 import os
 import platform
+import re
 import shlex
 import shutil
+import statistics
 import sys
 import uuid
 from collections.abc import Callable, Mapping, Sequence
 from contextlib import suppress
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
+from itertools import pairwise
 from pathlib import Path
 from typing import Any, Final
 
@@ -22,6 +26,7 @@ from minidsh.adapters import (
     BUILTIN_PROFILES,
     CredentialRedactingModel,
     JsonlTraceWriter,
+    MLXAdapter,
     ModelAdapterError,
     ModelProfile,
     ScriptedModel,
@@ -36,7 +41,16 @@ from minidsh.benchmark import (
     BenchmarkRunner,
     BenchmarkTask,
     HarnessVariant,
+    TaskMetrics,
     VariantRegistry,
+)
+from minidsh.benchmark.formal import (
+    FORMAL_VARIANTS,
+    Checkpoint,
+    StudyKey,
+    frozen_tree_digest,
+    paired_summary,
+    schedule,
 )
 from minidsh.collaboration import build_multi_agent_runtime
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
@@ -50,6 +64,7 @@ from minidsh.evaluation import (
     pareto,
 )
 from minidsh.evaluation.diff import to_markdown as diff_markdown
+from minidsh.evaluation.inference import inference_from_trace
 from minidsh.evaluation.replay import to_markdown as replay_markdown
 from minidsh.gui import GuiSession, serve_gui
 from minidsh.interactive import InteractiveChat
@@ -57,6 +72,7 @@ from minidsh.ports import Model
 
 _MINIMUM_PYTHON: Final = (3, 12)
 _CONTEXT_STRATEGIES: Final = (
+    "budget",
     "full",
     "sliding",
     "summary",
@@ -64,7 +80,9 @@ _CONTEXT_STRATEGIES: Final = (
     "retrieval_summary",
     "symbol",
 )
-_PROVIDERS: Final = ("scripted", "openai-compatible")
+_PROVIDERS: Final = ("scripted", "openai-compatible", "mlx")
+_FORMAL_TASKS: Final = 26
+_FORMAL_REPEATS: Final = 3
 
 
 def _build_parser() -> argparse.ArgumentParser:  # noqa: PLR0915 - CLI command declarations
@@ -121,10 +139,33 @@ def _build_parser() -> argparse.ArgumentParser:  # noqa: PLR0915 - CLI command d
     ablation.add_argument(
         "--suite",
         default="standard",
-        help="variant suite: standard, context, tool_output, permission",
+        help="variant suite: standard, context, tool_output, permission, local_first",
     )
     ablation.add_argument("--repeat", type=int, default=1)
     _add_verification_option(ablation)
+
+    matrix = subparsers.add_parser(
+        "matrix", help="compare 4B/8B across baseline and local-first harness"
+    )
+    _add_common_options(matrix)
+    matrix.add_argument("manifest", type=Path)
+    matrix.add_argument("--model-4b", type=Path, required=True, help="pinned local MLX snapshot")
+    matrix.add_argument("--model-8b", type=Path, required=True, help="pinned local MLX snapshot")
+    matrix.add_argument("--output", type=Path, default=Path("benchmark-results/local-matrix.json"))
+    matrix.add_argument("--repeat", type=int, default=3)
+    _add_verification_option(matrix)
+
+    formal = subparsers.add_parser(
+        "formal-study", help="resume the frozen 26-task local MLX matrix and ablation"
+    )
+    formal.add_argument("manifest", type=Path)
+    formal.add_argument("--model-4b", type=Path, required=True)
+    formal.add_argument("--model-8b", type=Path, required=True)
+    formal.add_argument(
+        "--output-dir", type=Path, default=Path("benchmark-results/local-formal-v1")
+    )
+    formal.add_argument("--phase", choices=("matrix", "ablation", "all"), default="all")
+    formal.add_argument("--repeat", type=int, default=3)
 
     report = subparsers.add_parser("report", help="render a saved report with trade-off analysis")
     report.add_argument("path", type=Path, help="a benchmark or ablation JSON report")
@@ -166,6 +207,13 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
         help=f"configuration file; defaults to ./{DEFAULT_CONFIG_NAME} when present",
     )
     parser.add_argument("--context", choices=_CONTEXT_STRATEGIES)
+    parser.add_argument("--context-input-budget", type=int)
+    parser.add_argument("--local-first", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--progressive-tools", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument(
+        "--normalize-tool-results", action=argparse.BooleanOptionalAction, default=None
+    )
+    parser.add_argument("--error-recovery", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--profile", help="named runtime profile from [profiles.NAME]")
     parser.add_argument("--multi-agent", action=argparse.BooleanOptionalAction, default=None)
     for limit in ("agents", "parallel", "steps", "tokens", "tool-calls"):
@@ -265,6 +313,7 @@ def _add_model_options(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument("--endpoint", help="Chat Completions endpoint; overrides the profile")
     parser.add_argument("--model", help="model name; overrides the profile")
+    parser.add_argument("--mlx-max-output-tokens", type=int, default=1_024)
     parser.add_argument(
         "--api-key-env",
         default=None,
@@ -317,6 +366,11 @@ def _network_rules(hosts: Sequence[str] | None) -> list[dict[str, Any]] | None:
 def _cli_overrides(args: argparse.Namespace) -> dict[str, Any]:
     overrides: dict[str, Any] = {
         "context_strategy": getattr(args, "context", None),
+        "context_input_budget": getattr(args, "context_input_budget", None),
+        "local_first_enabled": getattr(args, "local_first", None),
+        "progressive_tools_enabled": getattr(args, "progressive_tools", None),
+        "normalize_tool_results": getattr(args, "normalize_tool_results", None),
+        "error_recovery_enabled": getattr(args, "error_recovery", None),
         "multi_agent_enabled": getattr(args, "multi_agent", None),
         "subagent_max_agents": getattr(args, "subagent_max_agents", None),
         "subagent_max_parallel": getattr(args, "subagent_max_parallel", None),
@@ -373,6 +427,15 @@ def _resolve(args: argparse.Namespace, workspace: Path) -> ResolvedConfig:
         config_path=config_path,
         profile=getattr(args, "profile", None),
     )
+    if getattr(args, "provider", None) == "mlx":
+        defaults: dict[str, Any] = {
+            "context_strategy": "budget",
+            "local_first_enabled": True,
+            "progressive_tools_enabled": True,
+            "normalize_tool_results": True,
+        }
+        selected = {key: value for key, value in defaults.items() if key not in resolved.sources}
+        resolved = replace(resolved, options=replace(resolved.options, **selected))
     if resolved.options.multi_agent_enabled and args.command in {"benchmark", "ablation"}:
         raise ValueError(
             "Multi-Agent is supported by run/chat/gui; "
@@ -465,6 +528,13 @@ class _ModelSelection:
         }
         if self.profile is not None:
             payload["profile"] = self.profile.describe()
+        if isinstance(self.model, MLXAdapter):
+            payload["backend"] = "mlx"
+            payload["revision"] = Path(self.model.model_path).name
+            payload["context_input_budget"] = self.model.input_budget
+            payload["max_output_tokens"] = self.model.max_output_tokens
+            payload["sampling"] = "greedy"
+            payload["thinking"] = False
         return payload
 
 
@@ -498,6 +568,10 @@ def _profile_for(
     if getattr(args, "provider", None) == "scripted" and getattr(args, "provider_explicit", False):
         if name:
             raise ValueError("--provider scripted cannot be combined with --model-profile")
+        return None
+    if getattr(args, "provider", None) == "mlx":
+        if name:
+            raise ValueError("--provider mlx cannot be combined with --model-profile")
         return None
     name = name or environment.get("MINIDSH_MODEL_PROFILE")
     if name:
@@ -533,6 +607,23 @@ def _select_model(
     environment = os.environ if environ is None else environ
     profile = _profile_for(args, environ=environment)
     if profile is None:
+        if getattr(args, "provider", None) == "mlx":
+            raw_path = getattr(args, "model", None) or environment.get("MINIDSH_MODEL")
+            if not raw_path:
+                raise ValueError("mlx requires --model or MINIDSH_MODEL pointing to local weights")
+            model_path = Path(str(raw_path)).expanduser().resolve(strict=True)
+            if not model_path.is_dir():
+                raise ValueError("mlx model path must be a local directory")
+            adapter = MLXAdapter(
+                str(model_path),
+                max_output_tokens=int(getattr(args, "mlx_max_output_tokens", 1_024)),
+                input_budget=resolved.options.context_input_budget,
+            )
+            repository = model_path.parent.parent.name
+            label = repository.removeprefix("models--").replace("--", "/")
+            if not repository.startswith("models--"):
+                label = model_path.name
+            return _ModelSelection(adapter, label, None, ModelPricing.free(), None)
         script = getattr(args, "script", None)
         return _ModelSelection(
             None,
@@ -612,6 +703,7 @@ async def _run(args: argparse.Namespace) -> int:
             msg = "--script is required for the scripted provider"
             raise ValueError(msg)
         model = ScriptedModel.from_file(selection.script)
+    model_load_ms = await model.prepare() if isinstance(model, MLXAdapter) else None
     run_id = uuid.uuid4().hex
     trace_path = (
         Path(args.trace)
@@ -636,6 +728,7 @@ async def _run(args: argparse.Namespace) -> int:
         raw_stdout = diff.result.get("stdout")
         if isinstance(raw_stdout, str):
             diff_text = raw_stdout
+    inference = inference_from_trace(TraceRun.from_file(trace_path))
     output = {
         "answer": result.answer,
         "cost_usd": result.cost_usd,
@@ -643,7 +736,9 @@ async def _run(args: argparse.Namespace) -> int:
         "duration_ms": round(result.duration_ms, 3),
         "failure_reason": result.failure_reason,
         "latency": result.latency.to_json(),
+        "inference": inference,
         "model": selection.describe(),
+        "model_load_ms": model_load_ms,
         "run_id": result.run_id,
         "status": result.status.value,
         "steps": result.steps,
@@ -697,6 +792,8 @@ async def _benchmark(args: argparse.Namespace) -> int:
     manifest = await asyncio.to_thread(BenchmarkManifest.from_file, Path(args.manifest))
     resolved = await asyncio.to_thread(_resolve, args, Path.cwd())
     selection = await asyncio.to_thread(_select_model, args, resolved)
+    if isinstance(selection.model, MLXAdapter):
+        await selection.model.prepare()
     verification_allowlist = _require_verification(args)
     output = await asyncio.to_thread(Path(args.output).resolve)
     runner = BenchmarkRunner(
@@ -722,6 +819,10 @@ def _variant_options(base: RuntimeOptions, variant: HarnessVariant) -> RuntimeOp
         tool_output_limit=variant.tool_output_limit,
         artifact_offload=variant.artifact_offload,
         tool_max_retries=variant.max_retries,
+        local_first_enabled=variant.local_first_enabled,
+        progressive_tools_enabled=variant.progressive_tools_enabled,
+        normalize_tool_results=variant.normalize_tool_results,
+        error_recovery_enabled=variant.error_recovery_enabled,
     )
 
 
@@ -729,6 +830,8 @@ async def _ablation(args: argparse.Namespace) -> int:
     manifest = await asyncio.to_thread(BenchmarkManifest.from_file, Path(args.manifest))
     resolved = await asyncio.to_thread(_resolve, args, Path.cwd())
     selection = await asyncio.to_thread(_select_model, args, resolved)
+    if isinstance(selection.model, MLXAdapter):
+        await selection.model.prepare()
     verification_allowlist = _require_verification(args)
     variants = VariantRegistry().get(str(args.suite))
     output = await asyncio.to_thread(Path(args.output).resolve)
@@ -762,6 +865,383 @@ async def _ablation(args: argparse.Namespace) -> int:
     return (
         0 if all(item.report.aggregate()["success_rate"] == 1.0 for item in report.variants) else 1
     )
+
+
+async def _matrix(args: argparse.Namespace) -> int:
+    """Run four local model and harness cells sequentially on fixed fixtures."""
+    manifest = await asyncio.to_thread(BenchmarkManifest.from_file, Path(args.manifest))
+    resolved = await asyncio.to_thread(_resolve, args, Path.cwd())
+    allowlist = _require_verification(args)
+    output = await asyncio.to_thread(Path(args.output).resolve)
+    cells: list[dict[str, object]] = []
+    for size, raw_path in (("4b", args.model_4b), ("8b", args.model_8b)):
+        path = await asyncio.to_thread(
+            lambda value: Path(value).expanduser().resolve(strict=True), raw_path
+        )
+        if (
+            not await asyncio.to_thread(path.is_dir)
+            or re.fullmatch(r"[0-9a-f]{40}", path.name) is None
+        ):
+            raise ValueError(
+                "matrix models must be local pinned snapshot directories (40-char revision)"
+            )
+        model = MLXAdapter(str(path), input_budget=resolved.options.context_input_budget)
+        load_ms = await model.prepare()
+        selection = _ModelSelection(model, f"qwen3-{size}-4bit", None, ModelPricing.free(), None)
+        for variant in ("baseline", "optimized"):
+            options = replace(
+                resolved.options,
+                context_strategy="full" if variant == "baseline" else "budget",
+                local_first_enabled=variant == "optimized",
+                progressive_tools_enabled=variant == "optimized",
+                normalize_tool_results=variant == "optimized",
+            )
+            runner = BenchmarkRunner(
+                _benchmark_factory(options, selection),
+                output.parent / f"{output.stem}-{size}-{variant}",
+                verification_allowlist=allowlist,
+                repeats=int(args.repeat),
+                model={**selection.describe(), "load_ms": load_ms},
+            )
+            report = await runner.run(manifest)
+            cells.append(
+                {"model": size, "harness": variant, "report": json.loads(report.to_json())}
+            )
+        await model.release()
+    await asyncio.to_thread(output.parent.mkdir, parents=True, exist_ok=True)
+    await asyncio.to_thread(
+        output.write_text,
+        json.dumps(
+            {"schema_version": "1.0", "manifest": manifest.name, "cells": cells},
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    lines = [
+        "| Model | Harness | Success | Tokens | Steps | Time (ms) |",
+        "| --- | --- | --- | ---: | ---: | ---: |",
+    ]
+    for cell in cells:
+        report_data = cell["report"]
+        assert isinstance(report_data, dict)
+        aggregate = report_data["aggregate"]
+        assert isinstance(aggregate, dict)
+        lines.append(
+            f"| {cell['model']} | {cell['harness']} | {aggregate['success_rate']:.0%} | "
+            f"{aggregate['average_tokens']:.0f} | {aggregate['average_steps']:.1f} | "
+            f"{aggregate['average_latency_ms']:.0f} |"
+        )
+    sys.stdout.write("\n".join(lines) + "\n")
+    return 0
+
+
+def _formal_options(variant: HarnessVariant) -> RuntimeOptions:
+    """Apply the frozen policy without ambient config or environment overrides."""
+    tools = {"read_file", "search", "patch_file", "write_file", "test"}
+    if variant.progressive_tools_enabled:
+        tools.update({"list_files", "search_code", "find_symbol"})
+    return RuntimeOptions(
+        context_strategy=variant.context_strategy,
+        context_input_budget=8_192,
+        local_first_enabled=variant.local_first_enabled,
+        error_recovery_enabled=variant.error_recovery_enabled,
+        progressive_tools_enabled=variant.progressive_tools_enabled,
+        normalize_tool_results=True,
+        allow_write=True,
+        allow_shell=True,
+        allowed_commands=frozenset({"python"}),
+        enabled_tools=frozenset(tools),
+        tool_output_limit=variant.tool_output_limit,
+        artifact_offload=True,
+        tool_max_retries=1,
+    )
+
+
+def _formal_protocol_hash(
+    manifest_path: Path,
+    model_paths: dict[str, Path],
+    repeats: int,
+) -> str:
+    source = Path(__file__).resolve().parent
+    payload = {
+        "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "code": frozen_tree_digest(source),
+        "uv_lock_sha256": _formal_lock_hash(),
+        "generator_sha256": hashlib.sha256(
+            (source.parent.parent / "benchmarks" / "build_formal.py").read_bytes()
+        ).hexdigest(),
+        "models": {name: str(path) for name, path in model_paths.items()},
+        "repeats": repeats,
+        "variants": [asdict(item) for item in FORMAL_VARIANTS],
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+    }
+    return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
+
+
+def _formal_lock_hash() -> str:
+    root = Path(__file__).resolve().parent.parent.parent
+    return hashlib.sha256((root / "uv.lock").read_bytes()).hexdigest()
+
+
+async def _formal_study(args: argparse.Namespace) -> int:  # noqa: PLR0912, PLR0915
+    """Run and checkpoint each measured local task, then write complete reports."""
+    manifest_path = await asyncio.to_thread(Path(args.manifest).resolve, strict=True)
+    manifest = await asyncio.to_thread(BenchmarkManifest.from_file, manifest_path)
+    if manifest.name != "mini-dsh-local-formal-v1" or len(manifest.tasks) != _FORMAL_TASKS:
+        raise ValueError("formal-study requires the frozen 26-task local formal manifest")
+    repeats = int(args.repeat)
+    if repeats != _FORMAL_REPEATS:
+        raise ValueError("formal-study v1 requires exactly three repeats")
+    model_paths: dict[str, Path] = {}
+    for name, raw in (("4b", args.model_4b), ("8b", args.model_8b)):
+        model_paths[name] = await asyncio.to_thread(
+            lambda value: Path(value).expanduser().resolve(strict=True), raw
+        )
+    for path in model_paths.values():
+        if not path.is_dir() or re.fullmatch(r"[0-9a-f]{40}", path.name) is None:
+            raise ValueError("formal-study models must be pinned 40-character MLX snapshots")
+    BenchmarkRunner._validate_manifest(manifest)
+    output = await asyncio.to_thread(Path(args.output_dir).resolve)
+    protocol_hash = _formal_protocol_hash(manifest_path, model_paths, repeats)
+    checkpoint = Checkpoint(output / "results.jsonl", protocol_hash)
+    protocol_path = output / "protocol.json"
+    protocol = {
+        "schema_version": "formal-study-1.0",
+        "protocol_hash": protocol_hash,
+        "manifest": str(manifest_path),
+        "manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+        "uv_lock_sha256": await asyncio.to_thread(_formal_lock_hash),
+        "code_digest": await asyncio.to_thread(
+            lambda: frozen_tree_digest(Path(__file__).resolve().parent)
+        ),
+        "model_snapshots": {name: str(path) for name, path in model_paths.items()},
+        "variants": [asdict(item) for item in FORMAL_VARIANTS],
+        "repeats": repeats,
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "sampling": "greedy; thinking disabled; output cap 1024",
+    }
+    if protocol_path.is_file():
+        if json.loads(protocol_path.read_text(encoding="utf-8")) != protocol:
+            raise ValueError("existing formal protocol metadata differs")
+    else:
+        output.mkdir(parents=True, exist_ok=True)
+        protocol_path.write_text(json.dumps(protocol, indent=2, sort_keys=True) + "\n")
+    variants = {item.name: item for item in FORMAL_VARIANTS}
+    tasks = {task.task_id: task for task in manifest.tasks}
+    all_runs: list[StudyKey] = []
+    if args.phase in {"matrix", "all"}:
+        all_runs.extend(
+            schedule(
+                tuple(tasks),
+                repeats=3,
+                models=("4b", "8b"),
+                variants=("bounded_20k", "loop_guard_recovery"),
+                study="matrix",
+            )
+        )
+    if args.phase in {"ablation", "all"}:
+        all_runs.extend(
+            schedule(
+                tuple(tasks),
+                repeats=3,
+                models=("8b",),
+                variants=tuple(variants),
+                study="ablation",
+            )
+        )
+    active_model: MLXAdapter | None = None
+    active_label: str | None = None
+    active_repeat: int | None = None
+    active_study: str | None = None
+    completed = 0
+    try:
+        for key in all_runs:
+            if checkpoint.get(key) is not None:
+                completed += 1
+                continue
+            if (
+                active_label != key.model
+                or active_repeat != key.repeat
+                or active_study != key.study
+            ):
+                if active_model is not None:
+                    await active_model.release()
+                active_model = MLXAdapter(str(model_paths[key.model]), input_budget=8_192)
+                load_ms = await active_model.prepare()
+                active_label = key.model
+                active_repeat = key.repeat
+                active_study = key.study
+                sys.stdout.write(f"loaded {key.model} in {load_ms:.0f} ms\n")
+                sys.stdout.flush()
+            assert active_model is not None
+            variant = variants[key.variant]
+            selection = _ModelSelection(
+                active_model, f"qwen3-{key.model}-4bit", None, ModelPricing.free(), None
+            )
+            runner = BenchmarkRunner(
+                _benchmark_factory(_formal_options(variant), selection),
+                output / "runs" / key.study / key.model / key.variant,
+                verification_allowlist=frozenset({"python"}),
+                model=selection.describe(),
+            )
+            result = await runner.run_one(tasks[key.task_id], key.repeat)
+            checkpoint.append(key, result)
+            completed += 1
+            sys.stdout.write(
+                f"[{completed}/{len(all_runs)}] {key.slug()} "
+                f"success={result.success} tokens={result.tokens} "
+                f"wall_ms={result.latency_ms:.0f}\n"
+            )
+            sys.stdout.flush()
+    finally:
+        if active_model is not None:
+            await active_model.release()
+    _write_formal_report(output, checkpoint, all_runs, manifest, protocol_hash, model_paths)
+    return 0
+
+
+def _write_formal_report(  # noqa: PLR0913, PLR0917 - fixed study report inputs
+    output: Path,
+    checkpoint: Checkpoint,
+    runs: list[StudyKey],
+    manifest: BenchmarkManifest,
+    protocol_hash: str,
+    model_paths: dict[str, Path],
+) -> None:
+    """Publish aggregates only for complete cells; retain every raw attempt."""
+    grouped: dict[tuple[str, str, str], list[TaskMetrics]] = {}
+    for key in runs:
+        if checkpoint.get(key) is None:
+            raise ValueError("formal report requested before all runs completed")
+    for key, result in checkpoint.items():
+        grouped.setdefault((key.study, key.model, key.variant), []).append(result)
+    cells = []
+    for (study, model, variant), results in sorted(grouped.items()):
+        if len(results) != len(manifest.tasks) * _FORMAL_REPEATS:
+            continue
+        report = BenchmarkReport(manifest.name, manifest.schema_version, tuple(results))
+        by_category: dict[str, dict[str, float | int]] = {}
+        for category in sorted({item.category for item in results}):
+            subset = [item for item in results if item.category == category]
+            by_category[category] = {
+                "runs": len(subset),
+                "success_rate": sum(item.success for item in subset) / len(subset),
+                "mean_tokens": statistics.fmean(item.tokens for item in subset),
+            }
+        successful = [item for item in results if item.success]
+        cells.append(
+            {
+                "study": study,
+                "model": model,
+                "variant": variant,
+                "aggregate": report.aggregate(),
+                "median_tokens": statistics.median(item.tokens for item in results),
+                "median_wall_ms": statistics.median(item.latency_ms for item in results),
+                "median_steps": statistics.median(item.steps for item in results),
+                "median_tool_calls": statistics.median(item.tool_calls for item in results),
+                "mean_prompt_tokens": statistics.fmean(item.input_tokens for item in results),
+                "mean_output_tokens": statistics.fmean(item.output_tokens for item in results),
+                "mean_ttft_ms": statistics.fmean(
+                    item.ttft_ms for item in results if item.ttft_ms is not None
+                )
+                if any(item.ttft_ms is not None for item in results)
+                else None,
+                "mean_prefill_tokens_per_second": statistics.fmean(
+                    item.prefill_tokens_per_second
+                    for item in results
+                    if item.prefill_tokens_per_second is not None
+                )
+                if any(item.prefill_tokens_per_second is not None for item in results)
+                else None,
+                "mean_decode_tokens_per_second": statistics.fmean(
+                    item.decode_tokens_per_second
+                    for item in results
+                    if item.decode_tokens_per_second is not None
+                )
+                if any(item.decode_tokens_per_second is not None for item in results)
+                else None,
+                "loop_guard_triggers": sum(item.loop_guard_triggers for item in results),
+                "tool_retry_count": sum(item.retries for item in results),
+                "model_format_retry_count": sum(item.model_format_retries for item in results),
+                "peak_process_gb": max(
+                    (item.process_peak_gb for item in results if item.process_peak_gb is not None),
+                    default=None,
+                ),
+                "failure_types": report.failure_type_counts(),
+                "by_category": by_category,
+                "success_only": {
+                    "runs": len(successful),
+                    "mean_tokens": statistics.fmean(item.tokens for item in successful)
+                    if successful
+                    else None,
+                    "mean_wall_ms": statistics.fmean(item.latency_ms for item in successful)
+                    if successful
+                    else None,
+                },
+            }
+        )
+
+    def compare(
+        left_cell: tuple[str, str, str], right_cell: tuple[str, str, str]
+    ) -> dict[str, Any] | None:
+        pairs: dict[str, list[tuple[TaskMetrics, TaskMetrics]]] = {}
+        for task in manifest.tasks:
+            pairs[task.task_id] = []
+            for repeat in range(_FORMAL_REPEATS):
+                left = checkpoint.get(StudyKey(*left_cell, task.task_id, repeat))
+                right = checkpoint.get(StudyKey(*right_cell, task.task_id, repeat))
+                if left is not None and right is not None:
+                    pairs[task.task_id].append((left, right))
+        return (
+            paired_summary(pairs)
+            if all(len(items) == _FORMAL_REPEATS for items in pairs.values())
+            else None
+        )
+
+    comparisons = {
+        "8b_optimized_vs_baseline": compare(
+            ("matrix", "8b", "bounded_20k"),
+            ("matrix", "8b", "loop_guard_recovery"),
+        ),
+        "4b_optimized_vs_baseline": compare(
+            ("matrix", "4b", "bounded_20k"),
+            ("matrix", "4b", "loop_guard_recovery"),
+        ),
+        "4b_optimized_vs_8b_baseline": compare(
+            ("matrix", "8b", "bounded_20k"),
+            ("matrix", "4b", "loop_guard_recovery"),
+        ),
+    }
+    comparisons.update(
+        {
+            f"ablation_{before.name}_to_{after.name}": compare(
+                ("ablation", "8b", before.name), ("ablation", "8b", after.name)
+            )
+            for before, after in pairwise(FORMAL_VARIANTS)
+        }
+    )
+    payload = {
+        "schema_version": "formal-study-1.0",
+        "protocol_hash": protocol_hash,
+        "manifest": manifest.name,
+        "model_snapshots": {name: str(path) for name, path in model_paths.items()},
+        "tasks": len(manifest.tasks),
+        "repeats": 3,
+        "cells": cells,
+        "paired_comparisons": comparisons,
+        "limitations": [
+            "Three greedy repeats measure stability; task is the bootstrap unit.",
+            "The local workspace sandbox is not an OS isolation boundary.",
+        ],
+    }
+    output.mkdir(parents=True, exist_ok=True)
+    temporary = output / "report.json.tmp"
+    temporary.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.replace(output / "report.json")
 
 
 def _report(args: argparse.Namespace) -> int:
@@ -938,7 +1418,7 @@ def _chat(args: argparse.Namespace) -> int:
         # An explicit offline script must also win over environment profiles.
         args.model_profile = None
     elif (
-        args.provider != "scripted"
+        args.provider == "openai-compatible"
         and not args.model_profile
         and not os.environ.get("MINIDSH_MODEL_PROFILE")
         and not args.endpoint
@@ -1037,6 +1517,8 @@ def main(argv: Sequence[str] | None = None) -> None:
         "run": _run,
         "benchmark": _benchmark,
         "ablation": _ablation,
+        "matrix": _matrix,
+        "formal-study": _formal_study,
         "report": _report,
         "config": _config,
     }

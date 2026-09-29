@@ -12,6 +12,7 @@ from minidsh.adapters import JsonSessionStore
 from minidsh.adapters.session_journal import JsonlSessionJournal
 from minidsh.application.agent_loop import AgentLoopFactory
 from minidsh.context import (
+    BudgetContext,
     FullHistoryContext,
     PythonSymbolRetriever,
     RepositoryRetriever,
@@ -19,7 +20,7 @@ from minidsh.context import (
     SlidingWindowContext,
     SummaryCompactionContext,
 )
-from minidsh.domain import AgentBudget, ModelPricing, ToolDefinition
+from minidsh.domain import AgentBudget, ModelPricing, ToolDefinition, estimate_tokens
 from minidsh.infrastructure import (
     CommandPolicy,
     DockerCommandRunner,
@@ -41,7 +42,9 @@ from minidsh.ports import (
 )
 from minidsh.runtime import EventBus, Plugin, PluginManager, PluginManifest, ServiceRegistry
 from minidsh.tools import (
+    FindSymbolTool,
     GitTool,
+    ListFilesTool,
     LocalArtifactStore,
     PatchFileTool,
     PermissionAuthorizer,
@@ -49,6 +52,7 @@ from minidsh.tools import (
     PermissionPolicy,
     ReadFileTool,
     RunCommandTool,
+    SearchCodeTool,
     SearchTool,
     ShellTool,
     Tool,
@@ -67,6 +71,11 @@ class RuntimeOptions:
     """Safe local runtime options selected per run."""
 
     context_strategy: str = "full"
+    context_input_budget: int = 8_192
+    local_first_enabled: bool = False
+    error_recovery_enabled: bool = True
+    progressive_tools_enabled: bool = False
+    normalize_tool_results: bool = False
     allow_write: bool = False
     allow_shell: bool = False
     allowed_commands: frozenset[str] = frozenset({"git"})
@@ -207,12 +216,19 @@ def build_local_runtime(  # noqa: PLR0913 - explicit composition dependencies
         artifacts=LocalArtifactStore(sandbox.root) if options.artifact_offload else None,
         max_output_chars=options.tool_output_limit,
         max_retries=options.tool_max_retries,
+        normalize_results=options.normalize_tool_results,
     )
     if adapters.tool_wrapper is not None:
         tool_runtime = adapters.tool_wrapper(tool_runtime)
     context = adapters.context
     if context is None:
-        context = _build_context(options.context_strategy, sandbox.root, options)
+        context = _build_context(
+            options.context_strategy,
+            sandbox.root,
+            options,
+            model=model,
+            tools=tool_runtime.definitions(),
+        )
     sessions = (
         adapters.sessions if adapters.sessions is not None else JsonSessionStore(sandbox.root)
     )
@@ -231,6 +247,8 @@ def build_local_runtime(  # noqa: PLR0913 - explicit composition dependencies
             detailed_tool_feedback=options.detailed_tool_feedback,
             sessions=sessions,
             journal=journal,
+            local_first_enabled=options.local_first_enabled,
+            error_recovery_enabled=options.error_recovery_enabled,
         )
     )
     return LocalRuntime(agent, tool_runtime, bus, sessions, journal)
@@ -269,6 +287,10 @@ def _build_tools(
     extra_tools: tuple[Tool, ...],
 ) -> ToolRegistry:
     builtin_tools: list[Tool] = [ReadFileTool(sandbox), SearchTool(sandbox), GitTool(runner)]
+    if options.progressive_tools_enabled:
+        builtin_tools.extend(
+            (ListFilesTool(sandbox), SearchCodeTool(sandbox), FindSymbolTool(sandbox))
+        )
     if options.allow_write:
         builtin_tools.extend((PatchFileTool(sandbox), WriteFileTool(sandbox)))
     if options.allow_shell:
@@ -390,7 +412,20 @@ class AgentLoopPlugin:
         """The factory owns no running tasks; callers own their run lifecycle."""
 
 
-def _build_context(strategy: str, workspace: Path, options: RuntimeOptions) -> ContextManager:
+def _build_context(  # noqa: PLR0911 - explicit strategy selection remains readable
+    strategy: str,
+    workspace: Path,
+    options: RuntimeOptions,
+    *,
+    model: Model | None = None,
+    tools: tuple[ToolDefinition, ...] = (),
+) -> ContextManager:
+    if strategy == "budget":
+        counter = getattr(model, "count_tokens", None)
+        count = (
+            (lambda messages: counter(messages, tools)) if callable(counter) else estimate_tokens
+        )
+        return BudgetContext(options.context_input_budget, count)
     if strategy == "full":
         return FullHistoryContext()
     if strategy == "sliding":

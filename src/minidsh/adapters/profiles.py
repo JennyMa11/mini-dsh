@@ -145,6 +145,17 @@ BUILTIN_PROFILES: dict[str, ModelProfile] = {
         ),
         notes="Local endpoint; set MINIDSH_MODEL to the pulled tag, for example qwen2.5-coder:7b.",
     ),
+    "llama_cpp": ModelProfile(
+        name="llama_cpp",
+        endpoint="http://127.0.0.1:8080/v1/chat/completions",
+        model="",
+        api_key_env="MINIDSH_API_KEY",
+        context_window=8_192,
+        requires_api_key=False,
+        pricing=ModelPricing.free(),
+        pricing_source="Local weights: no per-token provider charge; machine time is separate.",
+        notes="Start llama.cpp's OpenAI-compatible server and set MINIDSH_MODEL.",
+    ),
 }
 
 

@@ -1,5 +1,6 @@
 """Replaceable model and persistence adapters."""
 
+from minidsh.adapters.mlx import MLXAdapter
 from minidsh.adapters.models import (
     CredentialRedactingModel,
     ModelAdapterError,
@@ -20,6 +21,7 @@ __all__ = [
     "CredentialRedactingModel",
     "JsonSessionStore",
     "JsonlTraceWriter",
+    "MLXAdapter",
     "ModelAdapterError",
     "ModelProfile",
     "OpenAICompatibleModel",

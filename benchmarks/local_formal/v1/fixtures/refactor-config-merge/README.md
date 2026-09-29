@@ -1,0 +1,1 @@
+The two public functions in configuration/dev.py and configuration/prod.py duplicate the same operation. Extract it into configuration/shared.py as merge; both public entry points must call that shared helper. Preserve outputs and exceptions.

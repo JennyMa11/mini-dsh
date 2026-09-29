@@ -6,10 +6,15 @@ Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Ag
 
 - 版本：`0.3.2`（Apache-2.0）
 - 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：51 个源码模块、24 个测试模块、352 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）
+- 规模：58 个源码模块、27 个测试模块、405 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4；另有 26 个冻结的 `local_formal` 正式实验任务和 2 个本地试验任务）
+- 当前测试覆盖率 88%（`uv run pytest --cov=src/minidsh`）；核心 `runtime/` 模块为 100%。
 
 失败模型调用现会保留已报告的 Token、缓存命中与计算费用，并写入可回放的失败事件；
 未知用量单独标记。契约与历史数据边界见 [模型失败用量记录](docs/model-failure-accounting.md)。
+
+新增可选的 **Local-first** 路径：原生 MLX-LM 接入 Qwen3 4B/8B 4bit，使用 Token 预算 Context、逐级仓库读取、结构化错误反馈、轻量 Plan State 与 Loop Guard。`mini-dsh matrix` 可顺序运行 4B/8B 与基线/优化 Harness 的四格对照；模型权重版本、留出判据和原始 Trace 随报告记录。安装、运行及指标边界见 [本地小模型实验](docs/local-first.md) 与 [ADR 0013](docs/adr/0013-local-first-small-model-harness.md)。
+
+`mini-dsh formal-study` 使用冻结的 26 个编码任务、每格三次运行、逐次 checkpoint 与五阶段消融。语料、留出判据、离线参考解门禁、复现命令和统计口径见 [正式本地实验协议](docs/local-formal-study.md)；既有 2 次重复结果仍只作为 pilot 记录。
 
 > `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。`0.3.2` 补上此前所有套件都缺的东西——**判据**：`core` / `stress` / `repo` 都拿 Agent 能读能改的可见测试当判据，所以它们的 100% 测的是顺从而不是正确；`hard` 套件用留出判据（Agent 结束后才落地）第一次给出低于 100% 的成功率（**19/20**）。
 

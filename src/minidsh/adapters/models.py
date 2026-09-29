@@ -98,6 +98,19 @@ class CredentialRedactingModel:
             content=self._text(response.content),
             reasoning_content=self._text(response.reasoning_content),
             finish_reason=self._text(response.finish_reason),
+            recoverable_error=(
+                replace(
+                    response.recoverable_error,
+                    code=self._text(response.recoverable_error.code),
+                    message=self._text(response.recoverable_error.message),
+                    details={
+                        self._text(key): self._value(value)
+                        for key, value in response.recoverable_error.details.items()
+                    },
+                )
+                if response.recoverable_error is not None
+                else None
+            ),
             tool_calls=tuple(
                 replace(
                     call,

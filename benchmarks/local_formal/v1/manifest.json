@@ -1,0 +1,1124 @@
+{
+  "name": "mini-dsh-local-formal-v1",
+  "schema_version": "3.0",
+  "tasks": [
+    {
+      "id": "repo-cross-file-bug",
+      "goal": "Running `python -m unittest discover -s .` fails. Find the defect, fix it, and re-run the suite until every test passes. Held-out checks will run after completion.",
+      "workspace": "fixtures/repo-cross-file-bug",
+      "verification_overlay": "verification/repo-cross-file-bug",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:f6fca9e380a21430c60ec6479489e6854caa4ea7fdf73d3faba3d419028dfae0",
+      "verification_commit": "sha256:27c903f15463000a77207756d9d9483c62fc86acfba5e02364ac393252a85e44",
+      "solution_commit": "sha256:7253e589c859a0f01929fb066dccf78d174f80d054d4d47ea284bef4765c8729",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "repo-callsite-contract",
+      "goal": "`python -m unittest discover -s .` fails. One helper does not honour the contract its callers rely on. Fix the helper so the whole suite passes, and check the call sites before changing anything. Held-out checks will run after completion.",
+      "workspace": "fixtures/repo-callsite-contract",
+      "verification_overlay": "verification/repo-callsite-contract",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:f805f76e2598a0b14463c2f4a65585a41090885ed0f4403928d1cbb65ccefff5",
+      "verification_commit": "sha256:23684aec272f42d67d64dcf422d1361741177d6840f0d18591ded2ecc20588a2",
+      "solution_commit": "sha256:6dc303af7e1811b59023ff124b535454050a9d6238a5550a0998d89d1c878590",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "repo-failing-test-localization",
+      "goal": "Some tests in this project fail. Locate the module responsible, fix it, and confirm the entire suite passes with `python -m unittest discover -s .`. Held-out checks will run after completion.",
+      "workspace": "fixtures/repo-failing-test-localization",
+      "verification_overlay": "verification/repo-failing-test-localization",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:97e1e2c0941b1d2e4ed6e1fca443b0e5a809daf1606f9a1522ff1799570655f7",
+      "verification_commit": "sha256:c7aeff64cab3e6f8220943dbb74e985f817b3ab17de6f4ab2c6501cc67ce5021",
+      "solution_commit": "sha256:ac3dd0b5bc7c647195700cfaee85812c0db83544303cef95fb9712802e5c7cc3",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "repo-feature-with-tests",
+      "goal": "Implement the two unimplemented functions so that `python -m unittest discover -s .` passes, including the round-trip test. Held-out checks will run after completion.",
+      "workspace": "fixtures/repo-feature-with-tests",
+      "verification_overlay": "verification/repo-feature-with-tests",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "small_feature",
+      "tags": [
+        "formal",
+        "small_feature"
+      ],
+      "repo_commit": "sha256:88114e7caa293ccb8c01ac87408f24082a5392a1853d574a73d04b508e75ea2d",
+      "verification_commit": "sha256:8fe0a47d2228208888705596e843f4d8d1873198227921ec9ca9199e63ce7fb1",
+      "solution_commit": "sha256:1b6fed8fc50c69a87e250cb870c4eaf992e09ba9af48d3ef10ecd3643692e0c6",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "repo-config-change",
+      "goal": "The suite expects a `prod` configuration profile that does not exist yet. Add it with the values the tests require and make the suite pass. Held-out checks will run after completion.",
+      "workspace": "fixtures/repo-config-change",
+      "verification_overlay": "verification/repo-config-change",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "small_feature",
+      "tags": [
+        "formal",
+        "small_feature"
+      ],
+      "repo_commit": "sha256:02b2c45b0674564f781a0b5f61a49e29b9390d8331d455e5192fa633788aebae",
+      "verification_commit": "sha256:3d9d0d5ceb7aaf3c8e8bae1bbf9f5eb33298f70af02d5d94e977e28f13ff1bb9",
+      "solution_commit": "sha256:e3eb29be6a2123b60404249a71bcd2380df706d29ec59eee396fadff386719d8",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "repo-error-recovery",
+      "goal": "`python -m unittest discover -s .` fails. The obvious one-line fix breaks a different test, so work out the intended contract of each module and satisfy the full suite. Held-out checks will run after completion.",
+      "workspace": "fixtures/repo-error-recovery",
+      "verification_overlay": "verification/repo-error-recovery",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:bb6993e6df3ecf17575291383a22c95235796c54ca72bc82d60c23b1c3ecb3d1",
+      "verification_commit": "sha256:cf633b91c0f384859ba5002fed3f89b6990e0f5482f90e1d95b5a033f9bdd869",
+      "solution_commit": "sha256:5ec82a58a020b66c4f861947e271aff655fd002c22d08959a2b227d9a318c56f",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "hard-interval-merge",
+      "goal": "Implement `merge_intervals` in `intervals/merge.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for the touching-interval rule, the zero-length case, the rejected pair, and what kind of input the function must accept. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-interval-merge",
+      "verification_overlay": "verification/hard-interval-merge",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "small_feature",
+      "tags": [
+        "formal",
+        "small_feature"
+      ],
+      "repo_commit": "sha256:f280cd8ea14e1bbe27fdaf77be314b2a359c51c8b1684bf23570aeee42d30a30",
+      "verification_commit": "sha256:9ed65b7d55e61fcb1a3b8b5c9151c618ac77b712c4b273ccbf94555f5d12aef3",
+      "solution_commit": "sha256:a0796a3b0c3fe3e7cd46ab6ab6fe8285a29f5cc83658e9e9ce3a4e9ee9c9704c",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "hard-token-bucket",
+      "goal": "Implement `TokenBucket` in `ratelimit/bucket.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for the refill cap, the over-sized and non-positive requests, and what a backwards clock must do. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-token-bucket",
+      "verification_overlay": "verification/hard-token-bucket",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "small_feature",
+      "tags": [
+        "formal",
+        "small_feature"
+      ],
+      "repo_commit": "sha256:1d7544a78fc94887353fc95cd1d14dee6c18b06a0ec548c22ecac0fb42e52e6d",
+      "verification_commit": "sha256:621168c396653fcc2509ba890961db2e205da74122639b65847386aa055360e5",
+      "solution_commit": "sha256:8b25e5404773d3bd18f1420c49477691d3648ee5badae41df851cedc07c610e5",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "hard-config-precedence",
+      "goal": "Implement `resolve` in `config/resolve.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for how an override of `None` behaves, how each value is coerced, and what happens to a key that `defaults` does not declare. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-config-precedence",
+      "verification_overlay": "verification/hard-config-precedence",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "small_feature",
+      "tags": [
+        "formal",
+        "small_feature"
+      ],
+      "repo_commit": "sha256:a6498bf33914ae7a34a5e19b6b33cfb878ffb85c4486dbbfab1a9026bb4a05e3",
+      "verification_commit": "sha256:b1c4a240386c6ef9dd0d66d505e7769056f9d594acf8dfd1b393365c7bba19bf",
+      "solution_commit": "sha256:d22e79ff7cd7fb0d9634c8a8ae9e22ebe3431d2bf4d7363281f446f66eef52a2",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "hard-csv-records",
+      "goal": "Implement `parse_records` in `csvkit/reader.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for both record terminators, the doubled quote, quoted fields that span a newline, the blank-line and empty-document cases, and the unterminated quote. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "fixtures/hard-csv-records",
+      "verification_overlay": "verification/hard-csv-records",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "small_feature",
+      "tags": [
+        "formal",
+        "small_feature"
+      ],
+      "repo_commit": "sha256:6305e76fa5e520ff5c2cfc7885a0a66909e1ec0156397d64951ccb5e39510aa0",
+      "verification_commit": "sha256:9d46898c1e3d58f547b812ce23dfa68e8cb4d061505820b6dcdb13aeae5161be",
+      "solution_commit": "sha256:7b44905a324f0bbe389f04a0b9ef9fe02b1c3c40357f48a05e1d7a2fcdc9c81a",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "bug-cache-invalidation",
+      "goal": "Fix cache invalidation after a product update. Read README.md; run the visible suite.",
+      "workspace": "fixtures/bug-cache-invalidation",
+      "verification_overlay": "verification/bug-cache-invalidation",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:6f012ebef73e22586db1143f8044c04e8d1e7102c50960b8fdb1a1b9da4d1c7f",
+      "verification_commit": "sha256:78dc4e889730ea309922fc67e8ece3321a7447e833e6894b3cdf70266b5c0216",
+      "solution_commit": "sha256:6d468d2347da8f1a5537f05a642c993d2c690d009178a226f21f2d2cdfb0d167",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "bug-pagination-boundary",
+      "goal": "Fix page slicing at exact boundaries. Read README.md; run the visible suite.",
+      "workspace": "fixtures/bug-pagination-boundary",
+      "verification_overlay": "verification/bug-pagination-boundary",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:1e199f706dd48bdf94a36dc1ec14f7b07e8daf455d4c31acab2ec324fa9d190a",
+      "verification_commit": "sha256:91d6919d287871347a3e872b42f4dad0560682e703d950f67eecd846c765c3f2",
+      "solution_commit": "sha256:d3766737b9f821a19173f440c1922d41ab73a525c88f6d19f9aca9aa42940e60",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "bug-retry-idempotency",
+      "goal": "Fix duplicate charges after a retry. Read README.md; run the visible suite.",
+      "workspace": "fixtures/bug-retry-idempotency",
+      "verification_overlay": "verification/bug-retry-idempotency",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:69631dbb8b6ca1c01eb3adbeb9df9fabb134038a30321b4370889007a39a5918",
+      "verification_commit": "sha256:47a80384aae66cd922a95a42ef84b79f7f0283f67d81390fed1205b4aa97ef16",
+      "solution_commit": "sha256:8dc807ee1686206fbc08e6c7b4a2d0528c98d5db46ff112ee0eacdae55c20107",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "bug-date-range",
+      "goal": "Fix the inclusive date range filter. Read README.md; run the visible suite.",
+      "workspace": "fixtures/bug-date-range",
+      "verification_overlay": "verification/bug-date-range",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "bug_fix",
+      "tags": [
+        "formal",
+        "bug_fix"
+      ],
+      "repo_commit": "sha256:39aaf5af3f83e4add95ae98074795b86d6f582d9a1d10b67bd56c8a003a233b4",
+      "verification_commit": "sha256:aead65dcf3cb0af12e739c1d8a818b950a90725ba88661138836ef683937d976",
+      "solution_commit": "sha256:e456145c3df9a0da9b9ef7c5eea48340c5ec50d7a16455ba76851ce48cf4da10",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "refactor-price-rules",
+      "goal": "Complete the extraction in README.md; preserve behavior and run tests.",
+      "workspace": "fixtures/refactor-price-rules",
+      "verification_overlay": "verification/refactor-price-rules",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "refactor",
+      "tags": [
+        "formal",
+        "refactor"
+      ],
+      "repo_commit": "sha256:b310d922d3cda51b5922650233563240105c9839ae03454debecc13a91bb4da6",
+      "verification_commit": "sha256:f6bfd1ec3e4e31993243b9580a7f45bf2cc210e28f4651750b36a2f21b342649",
+      "solution_commit": "sha256:177db7db771900a9ad8fc482b59db12fa5b8bbfe68b8330494986903ba9d40a7",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "refactor-config-merge",
+      "goal": "Complete the extraction in README.md; preserve behavior and run tests.",
+      "workspace": "fixtures/refactor-config-merge",
+      "verification_overlay": "verification/refactor-config-merge",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "refactor",
+      "tags": [
+        "formal",
+        "refactor"
+      ],
+      "repo_commit": "sha256:4a53a83fb17ad14cf368d852872dbef195d2d8656651b34829aec614ad53aa5f",
+      "verification_commit": "sha256:dfdfb9e9618a92aa2feff31bafc1492f4b8e51cc3f29e6f1563a9eaf425dc3de",
+      "solution_commit": "sha256:d737a346d94dbe058a132d18396801e0d14c6cdcf085f99099ea7c9fffa59f35",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "refactor-parser-phases",
+      "goal": "Complete the extraction in README.md; preserve behavior and run tests.",
+      "workspace": "fixtures/refactor-parser-phases",
+      "verification_overlay": "verification/refactor-parser-phases",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "refactor",
+      "tags": [
+        "formal",
+        "refactor"
+      ],
+      "repo_commit": "sha256:8d9522a1abeec50f5086531d4a8d851a5e4f3204673a51488f730b73b17abe5d",
+      "verification_commit": "sha256:97a1849cd83370480221570881760fabdbc171b9c60525012f3cc77b49998b45",
+      "solution_commit": "sha256:7ced5ce07811d4cbe8d023028f0228186b71cb471391b7c0a9224a04f1c63562",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "refactor-registry-dispatch",
+      "goal": "Complete the extraction in README.md; preserve behavior and run tests.",
+      "workspace": "fixtures/refactor-registry-dispatch",
+      "verification_overlay": "verification/refactor-registry-dispatch",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "refactor",
+      "tags": [
+        "formal",
+        "refactor"
+      ],
+      "repo_commit": "sha256:a87cc3a2e4eeca0306b1c62cd2e053cff71505d339c4a2f1068314a07f80a343",
+      "verification_commit": "sha256:9523fbe435bb2d97e6fce57160e3a3d9bb8873d162a152b215aa5c76899c9323",
+      "solution_commit": "sha256:b12dfcff6f5d54a5536f54c7fa9419bc9e627afd42b0c9f30c0e39ded6612755",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "test-rounding-boundaries",
+      "goal": "Repair the incorrect test expectation in tests/test_core.py. The implementation is correct and must remain unchanged. The repaired suite must fail against a faulty implementation. Read README.md.",
+      "workspace": "fixtures/test-rounding-boundaries",
+      "verification_overlay": "verification/test-rounding-boundaries",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "test_repair",
+      "tags": [
+        "formal",
+        "test_repair"
+      ],
+      "repo_commit": "sha256:705df74f5b6ba6d82f309cc2a7074b04ce267da876a76e435cbb3e33e5a327c1",
+      "verification_commit": "sha256:ac5c802b9b3a959cf889e01508d1e9aed2f3e760fd0a3cd443fd1efa0ed3e287",
+      "solution_commit": "sha256:b69eef7df6ae46e81aeaabf887258c3dcc97c56bb7009f2db4ebbac1dfae3357",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "test-retry-backoff",
+      "goal": "Repair the incorrect test expectation in tests/test_core.py. The implementation is correct and must remain unchanged. The repaired suite must fail against a faulty implementation. Read README.md.",
+      "workspace": "fixtures/test-retry-backoff",
+      "verification_overlay": "verification/test-retry-backoff",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "test_repair",
+      "tags": [
+        "formal",
+        "test_repair"
+      ],
+      "repo_commit": "sha256:4dd8c43569c1e0b15a27efdfdf4a415e809804708116f68e7041e81ec965f8fd",
+      "verification_commit": "sha256:ba7f1a7d8f14c26fbc523e0b9bffb61f712d613a6c45ac12afc22bbe2a11d742",
+      "solution_commit": "sha256:faf61b1651b2d615a04476d48bc4354e3fb872d739bc0f8ffc29dff70b17924e",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "test-parser-escapes",
+      "goal": "Repair the incorrect test expectation in tests/test_core.py. The implementation is correct and must remain unchanged. The repaired suite must fail against a faulty implementation. Read README.md.",
+      "workspace": "fixtures/test-parser-escapes",
+      "verification_overlay": "verification/test-parser-escapes",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "test_repair",
+      "tags": [
+        "formal",
+        "test_repair"
+      ],
+      "repo_commit": "sha256:ae27afe436e79279eeac24fa3a1dbfc8022d62c41a31b816d3d8ef464e572f4f",
+      "verification_commit": "sha256:57da4dab885ebbc2e4ea4fe446326b4eb788e99db155d4456c77cc0dda9f7d73",
+      "solution_commit": "sha256:80664092d669791fb7c2a7aab50a9e646b266784916fd6b91bf75c9bb9848853",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "test-timeout-cleanup",
+      "goal": "Repair the incorrect test expectation in tests/test_core.py. The implementation is correct and must remain unchanged. The repaired suite must fail against a faulty implementation. Read README.md.",
+      "workspace": "fixtures/test-timeout-cleanup",
+      "verification_overlay": "verification/test-timeout-cleanup",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "test_repair",
+      "tags": [
+        "formal",
+        "test_repair"
+      ],
+      "repo_commit": "sha256:99ed5d379c1521d2a2cf078a7188318e923d4a9f6cc507776366e71ffa44e05e",
+      "verification_commit": "sha256:3362b89afca5150546025e643d7fdcd0d822cdb22b9b3eba975c8d037f78f015",
+      "solution_commit": "sha256:aa8fc0e1734b343c35d11d30cb0e4775cdab7f8bb84b76d6900c702803b85b4f",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "nav-config-origin",
+      "goal": "Trace the symbol in README.md through the repository. Write answer.json with the required keys and exact paths; leave source unchanged.",
+      "workspace": "fixtures/nav-config-origin",
+      "verification_overlay": "verification/nav-config-origin",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "repo_navigation",
+      "tags": [
+        "formal",
+        "repo_navigation"
+      ],
+      "repo_commit": "sha256:24664a1cc5191cf94aa48904f9e9098107ee50e3c5ad75c0ab9d7eb0c3746e82",
+      "verification_commit": "sha256:8ccf752ec40d0fd5239e39642e6bad0657d1aa2192f64a68b76b060f70f157b0",
+      "solution_commit": "sha256:c85ffa503a4db5efb75f19af5ebcad2e65ef04dc1578c8ecbbc7b265711ee172",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "nav-order-callgraph",
+      "goal": "Trace the symbol in README.md through the repository. Write answer.json with the required keys and exact paths; leave source unchanged.",
+      "workspace": "fixtures/nav-order-callgraph",
+      "verification_overlay": "verification/nav-order-callgraph",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "repo_navigation",
+      "tags": [
+        "formal",
+        "repo_navigation"
+      ],
+      "repo_commit": "sha256:189e102f4d0f510a4efdd9d74906f527dd8a09d4275139a768296b5916e059c6",
+      "verification_commit": "sha256:29db39bf6b8b1dbeae0ab5578eaa9cc0081d8360a372c758eb4521ace108e847",
+      "solution_commit": "sha256:b43a9c245f88626216bfe638f58ff971842db32494f1b739687c8530180f836a",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "nav-plugin-dependency",
+      "goal": "Trace the symbol in README.md through the repository. Write answer.json with the required keys and exact paths; leave source unchanged.",
+      "workspace": "fixtures/nav-plugin-dependency",
+      "verification_overlay": "verification/nav-plugin-dependency",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "repo_navigation",
+      "tags": [
+        "formal",
+        "repo_navigation"
+      ],
+      "repo_commit": "sha256:b8d655659ecb1578eb5738db3c75cd1d5d6317463de063a8cc8544f0b4e96a0d",
+      "verification_commit": "sha256:3fdbe0d74e48a39385eb46fc7bb7c633aaca67a2fd5ee222b29d2552d603c5a1",
+      "solution_commit": "sha256:b48f0b5efd120fe098c4041f840d354d94cd7babbb6dc8959661c865cbebfc41",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    },
+    {
+      "id": "nav-event-lineage",
+      "goal": "Trace the symbol in README.md through the repository. Write answer.json with the required keys and exact paths; leave source unchanged.",
+      "workspace": "fixtures/nav-event-lineage",
+      "verification_overlay": "verification/nav-event-lineage",
+      "success_argv": [
+        "python",
+        "run_verification.py"
+      ],
+      "test_argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "category": "repo_navigation",
+      "tags": [
+        "formal",
+        "repo_navigation"
+      ],
+      "repo_commit": "sha256:bedfd4a7ef3fc6520fdd2fc719ec9826a96dd996921c4775a81f9ec541743f65",
+      "verification_commit": "sha256:241fa42bdc81bd1280d162b0b3f1668ebae8cf195b6736fe529b3a65e04e8d6a",
+      "solution_commit": "sha256:a91c6172e3310d99f867d38d60a17d925bf2809ec36e968f63959cd5e5c0eada",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 24,
+        "max_tokens": 150000,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 420
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      },
+      "timeout_seconds": 120
+    }
+  ]
+}

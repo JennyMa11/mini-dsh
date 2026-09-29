@@ -22,6 +22,7 @@ from minidsh.domain import (
     ToolStatus,
 )
 from minidsh.ports import EventSink
+from minidsh.tools.results import diagnostics, summarize
 
 
 class ToolError(RuntimeError):
@@ -139,6 +140,7 @@ class ToolRuntime:
         artifacts: LocalArtifactStore | None = None,
         max_output_chars: int = 20_000,
         max_retries: int = 1,
+        normalize_results: bool = True,
     ) -> None:
         self._registry = registry
         self._permissions = permissions
@@ -146,6 +148,7 @@ class ToolRuntime:
         self._artifacts = artifacts
         self._max_output_chars = max_output_chars
         self._max_retries = max_retries
+        self._normalize_results = normalize_results
 
     def definitions(self) -> tuple[ToolDefinition, ...]:
         """Return registered model-visible definitions."""
@@ -248,6 +251,7 @@ class ToolRuntime:
         self, call: ToolCall, run_id: str, result: JsonValue, started: float
     ) -> ToolObservation:
         serialized = json.dumps(result, ensure_ascii=False, sort_keys=True)
+        summary = summarize(call.name, result) if self._normalize_results else ""
         if len(serialized) <= self._max_output_chars:
             return ToolObservation(
                 call.call_id,
@@ -255,22 +259,44 @@ class ToolRuntime:
                 ToolStatus.SUCCEEDED,
                 result,
                 duration_ms=(time.monotonic() - started) * 1_000,
+                summary=summary,
             )
         artifacts: tuple[str, ...] = ()
         if self._artifacts is not None:
             artifacts = (self._artifacts.write(run_id, serialized),)
-        truncated: JsonValue = {
-            "preview": serialized[: self._max_output_chars],
-            "original_characters": len(serialized),
-        }
+        preview = serialized[: max(0, self._max_output_chars - 1_500)]
+        extracted = diagnostics(result) if self._normalize_results else []
+        truncated: dict[str, JsonValue] = {}
+        while True:
+            truncated = {
+                "summary": summary,
+                "diagnostics": cast("list[JsonValue]", extracted),
+                "preview": preview,
+                "original_characters": len(serialized),
+            }
+            if (
+                len(json.dumps(truncated, ensure_ascii=False, sort_keys=True))
+                <= self._max_output_chars
+            ):
+                break
+            if preview:
+                preview = preview[:-100]
+            elif extracted:
+                extracted.pop()
+            else:
+                break
+        bounded_result: JsonValue = truncated
+        if len(json.dumps(truncated, ensure_ascii=False, sort_keys=True)) > self._max_output_chars:
+            bounded_result = 0
         return ToolObservation(
             call.call_id,
             call.name,
             ToolStatus.SUCCEEDED,
-            truncated,
+            bounded_result,
             duration_ms=(time.monotonic() - started) * 1_000,
             truncated=True,
             artifacts=artifacts,
+            summary=summary,
         )
 
     @staticmethod

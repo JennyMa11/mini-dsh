@@ -1,0 +1,1 @@
+The two public functions in parser/command.py and parser/query.py duplicate the same operation. Extract it into parser/shared.py as normalize; both public entry points must call that shared helper. Preserve outputs and exceptions.

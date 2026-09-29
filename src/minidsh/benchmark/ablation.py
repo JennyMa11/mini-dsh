@@ -24,6 +24,10 @@ class HarnessVariant:
     tool_output_limit: int = 20_000
     artifact_offload: bool = True
     max_retries: int = 1
+    local_first_enabled: bool = False
+    progressive_tools_enabled: bool = False
+    normalize_tool_results: bool = False
+    error_recovery_enabled: bool = True
 
 
 @dataclass(frozen=True, slots=True)
@@ -187,6 +191,64 @@ PERMISSION_VARIANTS = (
     HarnessVariant("detailed_feedback", detailed_tool_feedback=True),
 )
 
+LOCAL_FIRST_VARIANTS = (
+    HarnessVariant(
+        "local_baseline",
+        tool_output_limit=200_000,
+        artifact_offload=False,
+        progressive_tools_enabled=False,
+        normalize_tool_results=False,
+        error_recovery_enabled=False,
+    ),
+    HarnessVariant(
+        "bounded_output",
+        artifact_offload=False,
+        progressive_tools_enabled=False,
+        normalize_tool_results=False,
+        error_recovery_enabled=False,
+    ),
+    HarnessVariant(
+        "normalized_output",
+        artifact_offload=False,
+        progressive_tools_enabled=False,
+        normalize_tool_results=True,
+        error_recovery_enabled=False,
+    ),
+    HarnessVariant(
+        "budget_context",
+        context_strategy="budget",
+        artifact_offload=False,
+        progressive_tools_enabled=False,
+        normalize_tool_results=True,
+        error_recovery_enabled=False,
+    ),
+    HarnessVariant(
+        "progressive_loading",
+        context_strategy="budget",
+        artifact_offload=False,
+        progressive_tools_enabled=True,
+        normalize_tool_results=True,
+        error_recovery_enabled=False,
+    ),
+    HarnessVariant(
+        "loop_guard",
+        context_strategy="budget",
+        artifact_offload=False,
+        local_first_enabled=True,
+        progressive_tools_enabled=True,
+        normalize_tool_results=True,
+        error_recovery_enabled=False,
+    ),
+    HarnessVariant(
+        "error_recovery",
+        context_strategy="budget",
+        artifact_offload=False,
+        local_first_enabled=True,
+        progressive_tools_enabled=True,
+        normalize_tool_results=True,
+    ),
+)
+
 
 @dataclass(frozen=True, slots=True)
 class VariantRegistry:
@@ -198,6 +260,7 @@ class VariantRegistry:
             "context": CONTEXT_VARIANTS,
             "tool_output": TOOL_OUTPUT_VARIANTS,
             "permission": PERMISSION_VARIANTS,
+            "local_first": LOCAL_FIRST_VARIANTS,
         }
     )
 

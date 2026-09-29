@@ -17,6 +17,8 @@
 
 | [0011](0011-gui-runtime-settings.md) | GUI 协作设置与内存凭证的边界 | Accepted |
 | [0012](0012-session-facts-loop-factory-mcp.md) | Session 事实源、Loop 工厂插件与 MCP 工具接入 | Accepted with limitations |
+| [0013](0013-local-first-small-model-harness.md) | 本地小模型执行路径与双维对照 | Accepted |
+| [0014](0014-frozen-local-study.md) | 冻结任务集、断点恢复与配对统计 | Accepted |
 
 ## 状态含义
 

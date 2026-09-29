@@ -26,6 +26,11 @@ _FILE_ALIASES: dict[str, str] = {"max_seconds": "max_duration_seconds"}
 
 _ENV_FIELDS: dict[str, str] = {
     "CONTEXT_STRATEGY": "context_strategy",
+    "CONTEXT_INPUT_BUDGET": "context_input_budget",
+    "LOCAL_FIRST_ENABLED": "local_first_enabled",
+    "PROGRESSIVE_TOOLS_ENABLED": "progressive_tools_enabled",
+    "NORMALIZE_TOOL_RESULTS": "normalize_tool_results",
+    "ERROR_RECOVERY_ENABLED": "error_recovery_enabled",
     "ALLOW_WRITE": "allow_write",
     "ALLOW_SHELL": "allow_shell",
     "DENIED_TOOLS": "denied_tools",
@@ -82,6 +87,10 @@ _BOOL_FIELDS = frozenset(
         "detailed_tool_feedback",
         "builtin_tools_enabled",
         "multi_agent_enabled",
+        "local_first_enabled",
+        "progressive_tools_enabled",
+        "normalize_tool_results",
+        "error_recovery_enabled",
     }
 )
 _INT_FIELDS = frozenset(
@@ -90,6 +99,7 @@ _INT_FIELDS = frozenset(
         "tool_max_retries",
         "max_steps",
         "max_tokens",
+        "context_input_budget",
         "max_tool_calls",
         "sliding_window",
         "recent_messages",
@@ -129,6 +139,11 @@ class _ConfigModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     context_strategy: str = "full"
+    context_input_budget: int = Field(default=8_192, ge=1)
+    local_first_enabled: bool = False
+    progressive_tools_enabled: bool = False
+    normalize_tool_results: bool = False
+    error_recovery_enabled: bool = True
     system_prompt: str = Field(
         default="You are a coding agent. Use tools to complete the task.", min_length=1
     )
@@ -319,6 +334,11 @@ def resolve_config(
     )
     options = RuntimeOptions(
         context_strategy=config.context_strategy,
+        context_input_budget=config.context_input_budget,
+        local_first_enabled=config.local_first_enabled,
+        progressive_tools_enabled=config.progressive_tools_enabled,
+        normalize_tool_results=config.normalize_tool_results,
+        error_recovery_enabled=config.error_recovery_enabled,
         multi_agent_enabled=config.multi_agent_enabled,
         subagent_max_agents=config.subagent_max_agents,
         subagent_max_parallel=config.subagent_max_parallel,

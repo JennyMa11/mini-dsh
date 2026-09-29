@@ -1,0 +1,1 @@
+Pages are zero indexed; size must be positive; negative page is invalid. A final page with exactly size items is valid; the next page is empty. Metadata must report total pages using ceiling division.

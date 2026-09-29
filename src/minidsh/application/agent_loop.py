@@ -8,6 +8,7 @@ import time
 import uuid
 from dataclasses import dataclass
 
+from minidsh.application.local_policy import LocalPlanState, RepetitionGuard
 from minidsh.application.session_journal import MemorySessionJournal
 from minidsh.domain import (
     AgentBudget,
@@ -35,6 +36,9 @@ from minidsh.ports import (
     SessionStore,
     ToolExecutor,
 )
+
+_MAX_FORMAT_FAILURES = 3
+_MAX_REJECTED_FINISHES = 3
 
 
 def _failure_reason(exc: BaseException) -> str:
@@ -66,6 +70,8 @@ class _RunCounters:
     model_ms: float = 0.0
     tool_ms: float = 0.0
     model_calls: int = 0
+    format_failures: int = 0
+    rejected_finishes: int = 0
 
     @property
     def token_usage(self) -> TokenUsage:
@@ -106,6 +112,8 @@ class AgentLoop:
         detailed_tool_feedback: bool = True,
         sessions: SessionStore | None = None,
         journal: SessionJournal | None = None,
+        local_first_enabled: bool = False,
+        error_recovery_enabled: bool = True,
     ) -> None:
         self._model = model
         self._context = context_manager
@@ -118,8 +126,10 @@ class AgentLoop:
         self._detailed_tool_feedback = detailed_tool_feedback
         self._sessions = sessions
         self._journal = journal if journal is not None else MemorySessionJournal()
+        self._local_first_enabled = local_first_enabled
+        self._error_recovery_enabled = error_recovery_enabled
 
-    async def run(
+    async def run(  # noqa: PLR0912, PLR0915 - explicit state transitions remain visible
         self, task: str, *, run_id: str | None = None, prior_history: tuple[Message, ...] = ()
     ) -> RunResult:
         """Run a new budgeted turn, optionally continuing an earlier immutable history."""
@@ -128,6 +138,12 @@ class AgentLoop:
         counters = _RunCounters()
         seed, repaired = self._continue_history(prior_history)
         log = await self._journal.create(actual_run_id)
+        plan = (
+            LocalPlanState(task, self._error_recovery_enabled)
+            if self._local_first_enabled
+            else None
+        )
+        guard = RepetitionGuard(self._error_recovery_enabled) if self._local_first_enabled else None
         await self._emit("run_started", actual_run_id, 0, {"task_length": len(task)})
         if prior_history:
             await self._emit(
@@ -140,6 +156,10 @@ class AgentLoop:
         try:
             for message in (*seed, Message(Role.USER, task)):
                 await self._append(log, actual_run_id, 0, message)
+            if plan is not None:
+                await self._append(
+                    log, actual_run_id, 0, Message(Role.SYSTEM, plan.render(), name="plan_state")
+                )
             while True:
                 exhausted = self._budget_reason(counters, started)
                 if exhausted is not None:
@@ -219,16 +239,97 @@ class AgentLoop:
                         "tool_call_count": len(response.tool_calls),
                         "input_tokens": response.usage.input_tokens,
                         "output_tokens": response.usage.output_tokens,
+                        "format_retries": response.format_retries,
                         "cached_input_tokens": response.usage.cached_input_tokens,
                         "cost_usd": call_cost,
                         "duration_ms": model_duration_ms,
+                        "inference": (
+                            {
+                                "ttft_ms": response.inference.ttft_ms,
+                                "prefill_tokens_per_second": (
+                                    response.inference.prefill_tokens_per_second
+                                ),
+                                "decode_tokens_per_second": (
+                                    response.inference.decode_tokens_per_second
+                                ),
+                                "peak_memory_gb": response.inference.peak_memory_gb,
+                            }
+                            if response.inference is not None
+                            else None
+                        ),
                     },
                 )
 
                 if counters.token_usage.total_tokens >= self._budget.max_tokens:
                     continue
 
+                if response.recoverable_error is not None:
+                    counters.format_failures += 1
+                    error = response.recoverable_error
+                    await self._emit(
+                        "model_output_rejected",
+                        actual_run_id,
+                        step_id,
+                        {"code": error.code, "message": error.message},
+                    )
+                    if counters.format_failures >= _MAX_FORMAT_FAILURES:
+                        return await self._finish(
+                            actual_run_id,
+                            RunStatus.FAILED,
+                            log,
+                            counters,
+                            started,
+                            failure_reason=f"{error.code}: {error.message}",
+                        )
+                    await self._append(
+                        log,
+                        actual_run_id,
+                        step_id,
+                        Message(
+                            Role.SYSTEM,
+                            f"Your previous action was rejected ({error.code}). "
+                            "Choose one available tool and use its exact input schema, "
+                            "or finish with an answer. Return one JSON action.",
+                            name="model_feedback",
+                        ),
+                    )
+                    continue
+                counters.format_failures = 0
+
                 if not response.tool_calls:
+                    if plan is not None and plan.unresolved_edit:
+                        counters.rejected_finishes += 1
+                        await self._emit(
+                            "premature_finish_rejected",
+                            actual_run_id,
+                            step_id,
+                            {"reason": "unresolved_edit"},
+                        )
+                        if counters.rejected_finishes >= _MAX_REJECTED_FINISHES:
+                            return await self._finish(
+                                actual_run_id,
+                                RunStatus.FAILED,
+                                log,
+                                counters,
+                                started,
+                                failure_reason=(
+                                    "unresolved_edit: no successful edit after patch failure"
+                                ),
+                            )
+                        await self._append(
+                            log,
+                            actual_run_id,
+                            step_id,
+                            Message(
+                                Role.SYSTEM,
+                                "The last workspace edit failed; the file is not fixed. "
+                                "Use the exact text in the latest read_file result as "
+                                "patch_file.expected, then supply the corrected replacement "
+                                "and run the test. Do not finish before the edit succeeds.",
+                                name="model_feedback",
+                            ),
+                        )
+                        continue
                     return await self._finish(
                         actual_run_id,
                         RunStatus.FINISHED,
@@ -246,6 +347,58 @@ class AgentLoop:
                     counters.tool_ms += observation.duration_ms
                     await self._append(
                         log, actual_run_id, step_id, self._observation_message(observation)
+                    )
+                    if plan is not None and guard is not None:
+                        plan.observe(call, observation)
+                        if not plan.unresolved_edit:
+                            counters.rejected_finishes = 0
+                        decision = guard.observe(call, observation)
+                        if decision == "recover":
+                            await self._emit(
+                                "loop_guard_triggered",
+                                actual_run_id,
+                                step_id,
+                                {
+                                    "count": max(guard.count, guard.error_count),
+                                    "tool": call.name,
+                                    "error": guard.error_signature,
+                                },
+                            )
+                            await self._append(
+                                log,
+                                actual_run_id,
+                                step_id,
+                                Message(
+                                    Role.SYSTEM,
+                                    "The same action or error has repeated three times. "
+                                    "Change strategy; inspect the exact failing lines or "
+                                    "explain the blocker.",
+                                    name="recovery_hint",
+                                ),
+                            )
+                        if decision == "stop":
+                            return await self._finish(
+                                actual_run_id,
+                                RunStatus.FAILED,
+                                log,
+                                counters,
+                                started,
+                                failure_reason=(
+                                    "loop_stuck: six repeated actions or equivalent errors"
+                                ),
+                            )
+                if plan is not None:
+                    await self._append(
+                        log,
+                        actual_run_id,
+                        step_id,
+                        Message(Role.SYSTEM, plan.render(), name="plan_state"),
+                    )
+                    await self._emit(
+                        "plan_state_updated",
+                        actual_run_id,
+                        step_id,
+                        {"state": json.loads(plan.render())},
                     )
                 if self._reflection_enabled:
                     await self._append(
@@ -390,6 +543,8 @@ class AgentLoop:
             "status": observation.status.value,
             "result": observation.result,
         }
+        if observation.summary:
+            payload["summary"] = observation.summary
         if self._detailed_tool_feedback:
             # ``duration_ms`` is deliberately excluded: it is wall-clock telemetry that
             # belongs to the event stream, and its variable-precision float would make
@@ -524,4 +679,6 @@ class AgentLoopFactory:
             detailed_tool_feedback=dependencies.detailed_tool_feedback,
             sessions=dependencies.sessions,
             journal=dependencies.journal,
+            local_first_enabled=dependencies.local_first_enabled,
+            error_recovery_enabled=dependencies.error_recovery_enabled,
         )

@@ -1,0 +1,33 @@
+{
+  "name": "mini-dsh-local-smoke",
+  "schema_version": "2.1",
+  "tasks": [
+    {
+      "id": "fix-addition-held-out",
+      "goal": "Fix calc.add so it adds two integers. Inspect the file, make the smallest change, and run the included test.",
+      "workspace": "../smoke/fixtures/addition",
+      "success_argv": ["python", "run_verification.py"],
+      "verification_overlay": "verification/addition",
+      "verification_commit": "sha256:03ccece810cd4394",
+      "timeout_seconds": 60,
+      "tags": ["local", "smoke", "held-out"],
+      "category": "single-file-bug",
+      "repo_commit": "sha256:7025336069f8b803",
+      "seed": 0,
+      "model": "provider",
+      "test_argv": ["python", "-m", "unittest", "discover", "-s", "."],
+      "budget": {
+        "max_steps": 12,
+        "max_tokens": 30000,
+        "max_tool_calls": 24,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": ["python"]
+      }
+    }
+  ]
+}

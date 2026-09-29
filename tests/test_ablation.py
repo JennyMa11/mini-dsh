@@ -96,7 +96,7 @@ def test_harness_variant_defaults_describe_the_baseline_harness() -> None:
 def test_registry_exposes_the_documented_suites() -> None:
     registry = VariantRegistry()
 
-    assert registry.names == ("context", "permission", "standard", "tool_output")
+    assert registry.names == ("context", "local_first", "permission", "standard", "tool_output")
     assert registry.get("standard") == STANDARD_VARIANTS
 
 

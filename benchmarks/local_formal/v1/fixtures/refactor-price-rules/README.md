@@ -1,0 +1,1 @@
+The two public functions in pricing/cart.py and pricing/quote.py duplicate the same operation. Extract it into pricing/shared.py as discount; both public entry points must call that shared helper. Preserve outputs and exceptions.

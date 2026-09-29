@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -39,6 +40,81 @@ class FullHistoryContext:
     def build(self, history: tuple[Message, ...], task: str) -> ContextView:
         del task
         return ContextView(history, self.name, self.version, estimate_tokens(history))
+
+
+@dataclass(frozen=True, slots=True)
+class BudgetContext:
+    """Keep pinned facts and newest complete turns inside a measured input budget."""
+
+    input_budget: int = 8_192
+    count_tokens: Callable[[tuple[Message, ...]], int] = estimate_tokens
+    name: str = "budget"
+    version: str = "1.0"
+
+    def __post_init__(self) -> None:
+        if self.input_budget < 1:
+            raise ValueError("input_budget must be positive")
+
+    def build(  # noqa: PLR0912 - selection rules keep pinned state and tool rounds intact
+        self, history: tuple[Message, ...], task: str
+    ) -> ContextView:
+        del task
+        if len(history) < len({0, 1}):
+            raise ValueError("budget context requires system and task messages")
+        pinned_indices = {0, 1}
+        latest: dict[str, int] = {}
+        for index, message in enumerate(history[2:], 2):
+            if message.name == "critical_decision":
+                pinned_indices.add(index)
+            elif message.name in {"plan_state", "modified_files", "open_error"} or (
+                message.name == "model_feedback" and index == len(history) - 1
+            ):
+                latest[message.name] = index
+        pinned_indices.update(latest.values())
+        # A tool reply and its declaring assistant message are one indivisible unit.
+        groups: list[tuple[int, ...]] = []
+        index = 2
+        while index < len(history):
+            name = history[index].name
+            if name == "model_feedback" and index != len(history) - 1:
+                index += 1
+                continue
+            if name is not None and name in latest and index != latest[name]:
+                index += 1
+                continue
+            end = index + 1
+            if history[index].tool_calls:
+                call_ids = {call.call_id for call in history[index].tool_calls}
+                while end < len(history) and history[end].role is Role.TOOL:
+                    call_ids.discard(history[end].tool_call_id)
+                    end += 1
+                if call_ids:
+                    raise ValueError("history contains an incomplete tool round")
+            groups.append(tuple(range(index, end)))
+            index = end
+        selected = set(pinned_indices)
+        pinned = tuple(history[index] for index in sorted(selected))
+        if self.count_tokens(pinned) > self.input_budget:
+            raise ValueError("pinned context exceeds input budget")
+        for group in reversed(groups):
+            candidate = selected | set(group)
+            messages = tuple(history[index] for index in sorted(candidate))
+            if self.count_tokens(messages) <= self.input_budget:
+                selected = candidate
+        messages = tuple(history[index] for index in sorted(selected))
+        omitted = tuple(index for index in range(len(history)) if index not in selected)
+        return ContextView(
+            messages,
+            self.name,
+            self.version,
+            self.count_tokens(messages),
+            omitted_messages=len(omitted),
+            metadata={
+                "input_budget": self.input_budget,
+                "omitted_indices": list(omitted),
+                "omission_reason": "budget_or_superseded_state" if omitted else "none",
+            },
+        )
 
 
 @dataclass(frozen=True, slots=True)

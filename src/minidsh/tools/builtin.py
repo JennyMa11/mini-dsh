@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import fnmatch
 from typing import Literal, cast
 
@@ -15,6 +16,8 @@ from minidsh.infrastructure import (
     WorkspaceSandbox,
 )
 from minidsh.tools.runtime import ToolError, schema_for
+
+_MAX_INDEXED_FILE_BYTES = 256_000
 
 
 class StrictInput(BaseModel):
@@ -201,6 +204,172 @@ class SearchTool:
             except (OSError, UnicodeError, SandboxViolationError):
                 continue
         return {"matches": results, "truncated": len(results) >= args.max_results}
+
+
+class ListFilesInput(StrictInput):
+    path: str = "."
+    glob: str = "*"
+    max_results: int = Field(default=200, ge=1, le=1_000)
+
+
+class ListFilesTool:
+    """Give the agent a bounded repository map before it requests file contents."""
+
+    input_model = ListFilesInput
+
+    def __init__(self, sandbox: WorkspaceSandbox) -> None:
+        self._sandbox = sandbox
+        self.definition = ToolDefinition(
+            "list_files",
+            "List workspace-relative file paths without contents.",
+            schema_for(self.input_model),
+            permissions=("fs.read",),
+        )
+
+    async def execute(self, arguments: BaseModel) -> JsonValue:
+        args = cast("ListFilesInput", arguments)
+        try:
+            root = self._sandbox.resolve(args.path, must_exist=True)
+        except SandboxViolationError as exc:
+            raise ToolError("sandbox_violation", str(exc)) from exc
+        candidates = (root,) if root.is_file() else root.rglob("*")
+        files: list[str] = []
+        truncated = False
+        for path in candidates:
+            if not path.is_file() or not fnmatch.fnmatch(path.name, args.glob):
+                continue
+            try:
+                resolved = self._sandbox.resolve(path.relative_to(self._sandbox.root).as_posix())
+                relative = resolved.relative_to(self._sandbox.root)
+                if any(
+                    part in {".git", ".minidsh", ".venv", "node_modules", "dist"}
+                    for part in relative.parts
+                ):
+                    continue
+                self._sandbox.ensure_not_sensitive(resolved)
+            except (SandboxViolationError, ValueError):
+                continue
+            if len(files) >= args.max_results:
+                truncated = True
+                break
+            files.append(relative.as_posix())
+        return {"files": cast("list[JsonValue]", sorted(files)), "truncated": truncated}
+
+
+class SearchCodeInput(StrictInput):
+    query: str = Field(min_length=1)
+    path: str = "."
+    glob: str = "*"
+    max_files: int = Field(default=30, ge=1, le=200)
+
+
+class SearchCodeTool:
+    """Return matching file counts so the agent can inspect selected ranges."""
+
+    input_model = SearchCodeInput
+
+    def __init__(self, sandbox: WorkspaceSandbox) -> None:
+        self._sandbox = sandbox
+        self.definition = ToolDefinition(
+            "search_code",
+            "Search code and return candidate paths with match counts only.",
+            schema_for(self.input_model),
+            permissions=("fs.read",),
+        )
+
+    async def execute(self, arguments: BaseModel) -> JsonValue:
+        args = cast("SearchCodeInput", arguments)
+        try:
+            root = self._sandbox.resolve(args.path, must_exist=True)
+        except SandboxViolationError as exc:
+            raise ToolError("sandbox_violation", str(exc)) from exc
+        candidates = (root,) if root.is_file() else root.rglob("*")
+        matches: list[dict[str, JsonValue]] = []
+        truncated = False
+        for path in candidates:
+            if not path.is_file() or not fnmatch.fnmatch(path.name, args.glob):
+                continue
+            relative = path.relative_to(self._sandbox.root)
+            if any(
+                part in {".git", ".minidsh", ".venv", "node_modules", "dist"}
+                for part in relative.parts
+            ):
+                continue
+            try:
+                if path.stat().st_size > _MAX_INDEXED_FILE_BYTES:
+                    continue
+                content = self._sandbox.read_text(relative.as_posix())
+            except (OSError, UnicodeError, SandboxViolationError):
+                continue
+            count = content.count(args.query)
+            if count:
+                if len(matches) >= args.max_files:
+                    truncated = True
+                    break
+                matches.append({"path": relative.as_posix(), "matches": count})
+        matches.sort(key=lambda item: (-int(cast("int", item["matches"])), str(item["path"])))
+        return {"candidates": cast("list[JsonValue]", matches), "truncated": truncated}
+
+
+class FindSymbolInput(StrictInput):
+    name: str = Field(min_length=1)
+    path: str = "."
+    max_results: int = Field(default=30, ge=1, le=200)
+
+
+class FindSymbolTool:
+    """Locate Python definitions and return their ranges without source bodies."""
+
+    input_model = FindSymbolInput
+
+    def __init__(self, sandbox: WorkspaceSandbox) -> None:
+        self._sandbox = sandbox
+        self.definition = ToolDefinition(
+            "find_symbol",
+            "Find Python class/function definitions by name.",
+            schema_for(self.input_model),
+            permissions=("fs.read",),
+        )
+
+    async def execute(self, arguments: BaseModel) -> JsonValue:
+        args = cast("FindSymbolInput", arguments)
+        needle = args.name.rsplit(".", 1)[-1].lower()
+        try:
+            root = self._sandbox.resolve(args.path, must_exist=True)
+        except SandboxViolationError as exc:
+            raise ToolError("sandbox_violation", str(exc)) from exc
+        candidates = (root,) if root.is_file() else root.rglob("*.py")
+        symbols: list[JsonValue] = []
+        truncated = False
+        for path in candidates:
+            if not path.is_file() or path.suffix != ".py":
+                continue
+            relative = path.relative_to(self._sandbox.root)
+            if any(part in {".git", ".minidsh", ".venv"} for part in relative.parts):
+                continue
+            try:
+                tree = ast.parse(self._sandbox.read_text(relative.as_posix()))
+            except (OSError, UnicodeError, SyntaxError, SandboxViolationError):
+                continue
+            for node in ast.walk(tree):
+                if (
+                    isinstance(node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+                    and needle in node.name.lower()
+                ):
+                    if len(symbols) >= args.max_results:
+                        truncated = True
+                        break
+                    symbols.append(
+                        {
+                            "path": relative.as_posix(),
+                            "name": node.name,
+                            "start_line": node.lineno,
+                            "end_line": node.end_lineno,
+                        }
+                    )
+            if truncated:
+                break
+        return {"symbols": symbols, "truncated": truncated}
 
 
 class ShellInput(StrictInput):

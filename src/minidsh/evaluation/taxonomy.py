@@ -37,7 +37,9 @@ _LOOP_STUCK_REPEATS = 3
 # wrong and blamed on the provider.  Telling those apart needs the response body,
 # which is why it is now carried into `failure_reason`; until something reads it, a
 # request-construction bug and a provider fault still look identical here.
-_MODEL_OUTPUT_ERROR_CODES = frozenset({"bad_response", "invalid_tool_arguments"})
+_MODEL_OUTPUT_ERROR_CODES = frozenset(
+    {"bad_response", "invalid_tool_arguments", "invalid_action_json"}
+)
 
 # The loop records an exception as `ClassName[code]: message` when it carries a code.
 _CODED_ADAPTER_ERROR = re.compile(r"(?:ModelAdapterError|ModelCallError)\[([a-z_]+)\]")
@@ -86,7 +88,7 @@ class FailureDiagnosis:
         }
 
 
-def classify_failure(  # noqa: PLR0911 - a decision table reads better than a nested if-tree
+def classify_failure(  # noqa: PLR0911, PLR0912 - a decision table reads better here
     *,
     status: str,
     verified: bool | None,
@@ -104,6 +106,11 @@ def classify_failure(  # noqa: PLR0911 - a decision table reads better than a ne
         return FailureDiagnosis(FailureCategory.NONE, "verified success")
     if status == "cancelled":
         return FailureDiagnosis(FailureCategory.NONE, "run cancelled by the caller")
+
+    if status == "failed" and failure_reason and failure_reason.startswith("loop_stuck:"):
+        return FailureDiagnosis(
+            FailureCategory.LOOP_STUCK, failure_reason, ("loop_guard_triggered",)
+        )
 
     if status == "budget_exhausted":
         return FailureDiagnosis(

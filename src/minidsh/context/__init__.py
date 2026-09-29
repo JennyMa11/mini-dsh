@@ -2,6 +2,7 @@
 
 from minidsh.context.retrieval import PythonSymbolRetriever, RepositoryRetriever, RetrievedChunk
 from minidsh.context.strategies import (
+    BudgetContext,
     FullHistoryContext,
     RetrievalContext,
     SlidingWindowContext,
@@ -10,6 +11,7 @@ from minidsh.context.strategies import (
 from minidsh.domain import estimate_tokens
 
 __all__ = [
+    "BudgetContext",
     "FullHistoryContext",
     "PythonSymbolRetriever",
     "RepositoryRetriever",

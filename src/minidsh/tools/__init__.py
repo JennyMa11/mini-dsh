@@ -1,10 +1,13 @@
 """Validated tool registry, execution runtime, and built-in tools."""
 
 from minidsh.tools.builtin import (
+    FindSymbolTool,
     GitTool,
+    ListFilesTool,
     PatchFileTool,
     ReadFileTool,
     RunCommandTool,
+    SearchCodeTool,
     SearchTool,
     ShellTool,
     WriteFileTool,
@@ -22,7 +25,9 @@ from minidsh.tools.runtime import (
 )
 
 __all__ = [
+    "FindSymbolTool",
     "GitTool",
+    "ListFilesTool",
     "LocalArtifactStore",
     "PatchFileTool",
     "PermissionAuthorizer",
@@ -30,6 +35,7 @@ __all__ = [
     "PermissionPolicy",
     "ReadFileTool",
     "RunCommandTool",
+    "SearchCodeTool",
     "SearchTool",
     "ShellTool",
     "Tool",

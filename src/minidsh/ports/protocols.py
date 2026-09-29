@@ -125,6 +125,8 @@ class AgentDependencies:
     detailed_tool_feedback: bool
     sessions: SessionStore
     journal: SessionJournal
+    local_first_enabled: bool = False
+    error_recovery_enabled: bool = True
 
 
 @runtime_checkable

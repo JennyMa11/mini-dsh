@@ -14,9 +14,12 @@ from typing import cast
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from minidsh.adapters import JsonlTraceWriter
+from minidsh.benchmark.hashes import frozen_tree_digest
+from minidsh.benchmark.memory import MemorySample
 from minidsh.composition import LocalRuntime
 from minidsh.domain import AgentBudget, Event, RunStatus
 from minidsh.evaluation import TraceError, TraceRun, classify_failure, latency_from_trace
+from minidsh.evaluation.inference import inference_from_trace
 from minidsh.infrastructure import (
     CommandDeniedError,
     CommandPolicy,
@@ -27,6 +30,7 @@ from minidsh.infrastructure import (
 )
 
 _BLOCKED_CODES = frozenset({"command_denied", "sandbox_violation"})
+_FULL_SHA256_LENGTH = len("sha256:") + 64
 
 
 class BenchmarkError(RuntimeError):
@@ -89,6 +93,7 @@ class BenchmarkTask:
     category: str = "general"
     repo_commit: str | None = None
     verification_commit: str | None = None
+    solution_commit: str | None = None
     seed: int = 0
     model: str = "scripted"
     budget: AgentBudget = field(default_factory=AgentBudget)
@@ -132,6 +137,7 @@ class BenchmarkManifest:
                 category=item.category,
                 repo_commit=item.repo_commit,
                 verification_commit=item.verification_commit,
+                solution_commit=item.solution_commit,
                 seed=item.seed,
                 model=item.model,
                 budget=AgentBudget(
@@ -198,6 +204,16 @@ class TaskMetrics:
     model_ms: float = 0.0
     tool_ms: float = 0.0
     harness_ms: float = 0.0
+    ttft_ms: float | None = None
+    prefill_tokens_per_second: float | None = None
+    decode_tokens_per_second: float | None = None
+    peak_memory_gb: float | None = None
+    loop_guard_triggers: int = 0
+    model_format_retries: int = 0
+    process_peak_gb: float | None = None
+    process_memory_source: str | None = None
+    system_free_before_percent: float | None = None
+    system_free_after_percent: float | None = None
 
 
 @dataclass(slots=True)
@@ -208,9 +224,19 @@ class _TaskStats:
     retry_successes: int = 0
     permission_denied: int = 0
     unsafe_blocked: int = 0
+    loop_guard_triggers: int = 0
+    model_format_retries: int = 0
 
     async def __call__(self, event: Event) -> None:
         """Count retry, permission, and unsafe-action facts."""
+        if event.name == "loop_guard_triggered":
+            self.loop_guard_triggers += 1
+            return
+        if event.name == "model_call_completed":
+            retries = event.data.get("format_retries")
+            if isinstance(retries, int):
+                self.model_format_retries += retries
+            return
         if event.name != "tool_call_completed":
             return
         data = event.data
@@ -509,6 +535,11 @@ class BenchmarkRunner:
         await asyncio.to_thread(self._persist_jsonl, report)
         return report
 
+    async def run_one(self, task: BenchmarkTask, run_index: int = 0) -> TaskMetrics:
+        """Execute one validated task for a durable external study scheduler."""
+        self._validate_manifest(BenchmarkManifest("single", "1.0", (task,)))
+        return await self._run_task(task, run_index)
+
     def _persist_jsonl(self, report: BenchmarkReport) -> None:
         """Write the append-only per-task results file next to the traces."""
         destination = self._output / "results.jsonl"
@@ -528,7 +559,14 @@ class BenchmarkRunner:
             stats = _TaskStats()
             runtime.events.subscribe("*", JsonlTraceWriter(trace_path, truncate_on_start=True))
             runtime.events.subscribe("*", stats)
-            result = await runtime.agent.run(task.goal)
+            memory = MemorySample()
+            stop_sampling = asyncio.Event()
+            memory_task = asyncio.create_task(memory.watch(stop_sampling))
+            try:
+                result = await runtime.agent.run(task.goal)
+            finally:
+                stop_sampling.set()
+                await memory_task
             verifier_exit_code: int | None = None
             failure_type: str | None = None
             verified: bool | None = None
@@ -573,6 +611,7 @@ class BenchmarkRunner:
                 failure_reason=result.failure_reason,
             )
             latency = latency_from_trace(trace) if trace is not None else result.latency
+            inference = inference_from_trace(trace)
             return TaskMetrics(
                 task_id=task.task_id,
                 success=result.status is RunStatus.FINISHED and verified is True,
@@ -603,6 +642,20 @@ class BenchmarkRunner:
                 model_ms=latency.model_ms,
                 tool_ms=latency.tool_ms,
                 harness_ms=latency.harness_ms,
+                ttft_ms=inference["ttft_ms"],
+                prefill_tokens_per_second=inference["prefill_tokens_per_second"],
+                decode_tokens_per_second=inference["decode_tokens_per_second"],
+                peak_memory_gb=inference["peak_memory_gb"],
+                loop_guard_triggers=stats.loop_guard_triggers,
+                model_format_retries=stats.model_format_retries,
+                process_peak_gb=(memory.peak_bytes / 1_000_000_000)
+                if memory.peak_bytes is not None
+                else None,
+                process_memory_source="macos_phys_footprint_v2"
+                if memory.peak_bytes is not None
+                else None,
+                system_free_before_percent=memory.before_percent,
+                system_free_after_percent=memory.after_percent,
             )
 
     @staticmethod
@@ -624,6 +677,30 @@ class BenchmarkRunner:
             if task.verification_overlay is not None and not task.verification_overlay.is_dir():
                 msg = f"benchmark verification overlay does not exist: {task.verification_overlay}"
                 raise BenchmarkError(msg)
+            # Full SHA-256 pins are used by the formal study.  Older pilot suites
+            # retain their short content IDs and are not silently reinterpreted.
+            if (
+                task.repo_commit is not None
+                and len(task.repo_commit) == _FULL_SHA256_LENGTH
+                and frozen_tree_digest(task.workspace) != task.repo_commit
+            ):
+                raise BenchmarkError(f"fixture hash mismatch: {task.task_id}")
+            if (
+                task.verification_commit is not None
+                and len(task.verification_commit) == _FULL_SHA256_LENGTH
+                and (
+                    task.verification_overlay is None
+                    or (frozen_tree_digest(task.verification_overlay) != task.verification_commit)
+                )
+            ):
+                raise BenchmarkError(f"verifier hash mismatch: {task.task_id}")
+            if (
+                task.solution_commit is not None
+                and len(task.solution_commit) == _FULL_SHA256_LENGTH
+            ):
+                solution_path = task.workspace.parent.parent / "solutions" / task.task_id
+                if frozen_tree_digest(solution_path) != task.solution_commit:
+                    raise BenchmarkError(f"solution hash mismatch: {task.task_id}")
 
 
 def _apply_overlay(overlay: Path, workspace: Path) -> None:
@@ -691,6 +768,7 @@ class _TaskInput(_StrictInput):
     category: str = Field(default="general", pattern=r"^[a-z0-9][a-z0-9_-]*$")
     repo_commit: str | None = None
     verification_commit: str | None = None
+    solution_commit: str | None = None
     seed: int = 0
     model: str = "scripted"
     budget: _TaskBudgetInput = Field(default_factory=_TaskBudgetInput)

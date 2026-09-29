@@ -1,0 +1,32 @@
+{
+  "name": "mini-dsh-local-pilot",
+  "schema_version": "2.1",
+  "tasks": [
+    {
+      "id": "hard-interval-merge",
+      "goal": "Implement `merge_intervals` in `intervals/merge.py`. The module docstring is the full contract and is what you are judged against; the tests in `tests/` are only a smoke subset of it and passing them is not sufficient. Read the contract for the touching-interval rule, the zero-length case, the rejected pair, and what kind of input the function must accept. `python -m unittest discover -s .` runs the smoke subset.",
+      "workspace": "../hard/fixtures/hard-interval-merge",
+      "success_argv": ["python", "run_verification.py", "12"],
+      "verification_overlay": "../hard/verification/hard-interval-merge",
+      "verification_commit": "sha256:b2b82006a1461efe",
+      "timeout_seconds": 120,
+      "tags": ["hard", "spec", "boundaries"],
+      "category": "hard-spec",
+      "repo_commit": "sha256:279e28db7f8eb87a",
+      "seed": 0,
+      "model": "provider",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 50000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 240
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": ["python"]
+      }
+    }
+  ]
+}
