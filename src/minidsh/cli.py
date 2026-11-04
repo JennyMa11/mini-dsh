@@ -92,6 +92,9 @@ _CONTEXT_STRATEGIES: Final = (
 _PROVIDERS: Final = ("scripted", "openai-compatible", "mlx")
 _FORMAL_TASKS: Final = 26
 _FORMAL_REPEATS: Final = 3
+_WORK_ALLOWED_COMMANDS: Final = frozenset(
+    {"git", "uv", "python", "python3", "pytest", "ruff", "mypy"}
+)
 
 
 def _build_parser() -> argparse.ArgumentParser:  # noqa: PLR0915 - CLI command declarations
@@ -1657,14 +1660,15 @@ def _chat(args: argparse.Namespace) -> int:  # noqa: PLR0915 - explicit interact
     return chat_ui.run()
 
 
-def _work_config(args: argparse.Namespace, resolved: ResolvedConfig) -> ResolvedConfig:
+def _work_config(_args: argparse.Namespace, resolved: ResolvedConfig) -> ResolvedConfig:
     """Apply an explicitly selected editing preset without exposing arbitrary shell by default."""
     defaults: dict[str, Any] = {
         "streaming_enabled": True,
         "approval_mode": "ask",
         "workspace_instructions_enabled": True,
         "allow_write": True,
-        "allow_shell": resolved.options.test_command is not None,
+        "allow_shell": True,
+        "allowed_commands": _WORK_ALLOWED_COMMANDS,
         "context_strategy": "budget",
         "context_input_budget": 16_384,
         "progressive_tools_enabled": True,
@@ -1721,16 +1725,18 @@ def _work_config(args: argparse.Namespace, resolved: ResolvedConfig) -> Resolved
             allowed_commands=options.allowed_commands | {Path(options.test_command[0]).name},
         )
     # A fixed test capability does not also expose the model-facing argv shell tool.
-    if options.enabled_tools is None and getattr(args, "allow_shell", None) is not True:
+    if options.enabled_tools is None:
         tools = {"read_file", "search", "git"}
         if options.progressive_tools_enabled:
             tools.update({"list_files", "search_code", "find_symbol"})
         if options.allow_write:
             tools.update({"patch_file", "write_file"})
-        if options.allow_shell and options.test_command:
-            tools.add("test")
-        if options.allow_shell and options.build_command:
-            tools.add("build")
+        if options.allow_shell:
+            tools.add("shell")
+            if options.test_command:
+                tools.add("test")
+            if options.build_command:
+                tools.add("build")
         if options.multi_agent_enabled:
             tools.add("delegate_sub_agents")
         options = replace(options, enabled_tools=frozenset(tools))

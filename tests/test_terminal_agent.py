@@ -84,7 +84,7 @@ async def test_explicit_extension_tool_is_resolved_after_plugin_start(tmp_path: 
 
 
 @pytest.mark.asyncio
-async def test_work_auto_filter_includes_plugin_tools_without_adding_shell(tmp_path: Path) -> None:
+async def test_work_auto_filter_includes_plugin_tools_and_default_shell(tmp_path: Path) -> None:
     catalog = PluginCatalog()
     tool = ReadFileTool(WorkspaceSandbox(tmp_path))
     tool.definition = replace(tool.definition, name="extension_read")
@@ -106,7 +106,7 @@ async def test_work_auto_filter_includes_plugin_tools_without_adding_shell(tmp_p
         await runtime.agent.run("hello")
         names = {tool.name for tool in runtime.tools.definitions()}
         assert "extension_read" in names
-        assert "shell" not in names
+        assert "shell" in names
     finally:
         assert runtime.close is not None
         await runtime.close()

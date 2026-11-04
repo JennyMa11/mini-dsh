@@ -2,6 +2,7 @@
 
 - 状态：Accepted with limitations
 - 日期：2026-10-03
+- 补充：work 的默认 shell 策略已由 [ADR 0028](0028-work-default-shell.md) 取代。
 
 ## 背景
 

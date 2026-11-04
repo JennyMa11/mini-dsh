@@ -327,15 +327,73 @@ def test_work_loads_project_instructions_and_keeps_latest_task(
     assert any("Keep public function signatures unchanged." in m.content for m in request.messages)
     assert any(m.content == "now explain" for m in request.messages)
     names = {t.name for t in request.tools}
-    assert {"list_files", "patch_file", "read_file"} <= names
-    assert "shell" not in names
+    assert {"list_files", "patch_file", "read_file", "shell"} <= names
     assert "test" not in names
     assert "Execution backend: local" in request.messages[0].content
     assert "same host machine" in request.messages[0].content
     output = capsys.readouterr().out
     assert "Registered tools:" in output
     assert "patch_file" in output
-    assert "shell" not in output.split("Registered tools:", 1)[1].splitlines()[0]
+    assert "shell" in output.split("Registered tools:", 1)[1].splitlines()[0]
+
+
+@pytest.mark.integration
+def test_work_default_shell_runs_an_allowlisted_command(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    model = _model(
+        monkeypatch,
+        [
+            ModelResponse(
+                tool_calls=(
+                    ToolCall("command", "shell", {"argv": ["python3", "-c", "print(888)"]}),
+                )
+            ),
+            ModelResponse(content="command completed"),
+        ],
+    )
+    _input(monkeypatch, ["run the command", "/exit"])
+    with pytest.raises(SystemExit) as exc:
+        main(
+            [
+                "work",
+                "--workspace",
+                str(tmp_path),
+                "--script",
+                "offline.json",
+                "--approval-mode",
+                "configured",
+            ]
+        )
+    assert exc.value.code == 0
+    assert "shell" in {t.name for t in model.requests[0].tools}
+    assert any(m.role is Role.TOOL and "888" in m.content for m in model.requests[-1].messages)
+    assert "shell: succeeded" in capsys.readouterr().out
+
+
+def test_work_can_disable_the_default_shell(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _model(monkeypatch, [ModelResponse(content="ok")])
+    _input(monkeypatch, ["/tools", "/exit"])
+    with pytest.raises(SystemExit) as exc:
+        main(
+            [
+                "work",
+                "--workspace",
+                str(tmp_path),
+                "--script",
+                "offline.json",
+                "--no-allow-shell",
+            ]
+        )
+    assert exc.value.code == 0
+    tools_line = capsys.readouterr().out.split("Registered tools:", 1)[1].splitlines()[0]
+    assert "shell" not in tools_line
 
 
 @pytest.mark.integration

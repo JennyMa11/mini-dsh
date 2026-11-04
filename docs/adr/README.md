@@ -36,6 +36,8 @@
 
 | [0027](0027-full-work-startup.md) | 编码工具、Skills、Verification 与 Memory 的显式完整开发入口 | Accepted with limitations |
 
+| [0028](0028-work-default-shell.md) | work 默认注册 shell、常用命令白名单与逐次审批 | Accepted with limitations |
+
 ## 状态含义
 
 - **Proposed**：规划中的决策；尚未完成实现与验收。
