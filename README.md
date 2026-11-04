@@ -79,6 +79,17 @@ uv run mini-dsh work --test-command "uv run pytest"
 uv run mini-dsh --test-command "uv run pytest"
 ```
 
+如果希望在任何目录直接输入 `mini-dsh` 启动，把本仓库安装为全局工具：
+
+```bash
+uv tool install --editable /absolute/path/to/mini-dsh
+cd /absolute/path/to/any/project
+mini-dsh
+```
+
+全局命令按当前目录解析工作区并读取该目录的配置；依赖或入口变更后重新执行
+安装命令。`mini-dsh-work` 仅用于 Mini-dsh 自身开发，不替代普通项目的 `mini-dsh`。
+
 `work` 默认使用 DeepSeek profile。启动时读取 API Key，优先级为：显式环境变量 >
 工作区 `.minidsh/credentials.toml` > 全局 `~/.config/minidsh/credentials.toml`。
 工作区可按 provider 覆盖全局 Key；没有工作区配置时直接使用全局默认值，不复制 Key。
