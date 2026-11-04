@@ -463,6 +463,58 @@ class ShellTool:
         }
 
 
+class OpenFileInput(StrictInput):
+    path: str = Field(min_length=1)
+
+
+class OpenFileTool:
+    input_model = OpenFileInput
+
+    def __init__(self, sandbox: WorkspaceSandbox, runner: ProcessRunner, opener: str) -> None:
+        self._sandbox = sandbox
+        self._runner = runner
+        self._opener = opener
+        self.definition = ToolDefinition(
+            "open_file",
+            "Open a workspace file or directory in the system's default application.",
+            schema_for(self.input_model),
+            side_effects=True,
+            permissions=("process.exec",),
+            timeout_seconds=15,
+        )
+
+    async def execute(self, arguments: BaseModel) -> JsonValue:
+        args = cast("OpenFileInput", arguments)
+        try:
+            resolved = self._sandbox.resolve(args.path, must_exist=True)
+        except SandboxViolationError as exc:
+            if isinstance(exc.__cause__, FileNotFoundError):
+                try:
+                    self._sandbox.resolve(args.path)
+                except SandboxViolationError as denied:
+                    raise ToolError("sandbox_violation", str(denied)) from denied
+                raise ToolError("file_not_found", f"file not found: {args.path}") from exc
+            raise ToolError("sandbox_violation", str(exc)) from exc
+        try:
+            self._sandbox.ensure_not_sensitive(resolved)
+        except SandboxViolationError as exc:
+            raise ToolError("sandbox_violation", str(exc)) from exc
+        if not resolved.is_file() and not resolved.is_dir():
+            raise ToolError("not_openable", f"not a file or directory: {args.path}")
+        try:
+            result = await self._runner.run((self._opener, str(resolved)), timeout_seconds=10)
+        except CommandDeniedError as exc:
+            raise ToolError("command_denied", str(exc)) from exc
+        except OSError as exc:
+            raise ToolError("open_failed", str(exc)) from exc
+        if result.timed_out:
+            raise ToolError("open_timeout", f"opening {args.path} timed out")
+        if result.exit_code != 0:
+            detail = result.stderr.strip() or result.stdout.strip() or "opener exited non-zero"
+            raise ToolError("open_failed", detail[:1_000])
+        return {"path": args.path, "opened": True}
+
+
 class GitInput(StrictInput):
     action: Literal["status", "diff"]
     paths: list[str] = Field(default_factory=list)

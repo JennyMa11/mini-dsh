@@ -18,14 +18,17 @@ from minidsh.infrastructure import (
 )
 from minidsh.runtime import EventBus
 from minidsh.tools import (
+    OpenFileTool,
     PatchFileTool,
     PermissionPolicy,
     ReadFileTool,
     ShellTool,
+    ToolError,
     ToolRegistry,
     ToolRuntime,
     WriteFileTool,
 )
+from minidsh.tools.builtin import OpenFileInput
 
 
 def test_sandbox_rejects_parent_traversal_and_absolute_paths(tmp_path: Path) -> None:
@@ -148,6 +151,79 @@ async def test_shell_uses_argv_and_allowlist(tmp_path: Path) -> None:
     assert result.status is ToolStatus.FAILED
     assert result.error is not None
     assert result.error.code == "command_denied"
+
+
+class RecordingOpener:
+    argv: tuple[str, ...] | None = None
+
+    async def run(
+        self,
+        argv: tuple[str, ...],
+        *,
+        cwd: str = ".",
+        timeout_seconds: float = 30.0,
+    ) -> ProcessResult:
+        del cwd, timeout_seconds
+        self.argv = argv
+        return ProcessResult(argv, 0, "", "")
+
+
+@pytest.mark.asyncio
+async def test_open_file_opens_a_confined_workspace_path(tmp_path: Path) -> None:
+    (tmp_path / "index.html").write_text("<html></html>")
+    runner = RecordingOpener()
+    tool = OpenFileTool(WorkspaceSandbox(tmp_path), runner, "open")
+
+    result = await tool.execute(OpenFileInput(path="index.html"))
+
+    assert result == {"path": "index.html", "opened": True}
+    assert runner.argv == ("open", str((tmp_path / "index.html").resolve()))
+
+
+@pytest.mark.asyncio
+async def test_open_file_rejects_escapes_missing_files_and_sensitive_paths(
+    tmp_path: Path,
+) -> None:
+    outside = tmp_path.parent / "outside.html"
+    outside.write_text("secret")
+    (tmp_path / ".env").write_text("TOKEN=secret")
+    tool = OpenFileTool(WorkspaceSandbox(tmp_path), RecordingOpener(), "open")
+
+    with pytest.raises(ToolError, match="escapes workspace"):
+        await tool.execute(OpenFileInput(path="../outside.html"))
+    with pytest.raises(ToolError, match="file not found"):
+        await tool.execute(OpenFileInput(path="missing.html"))
+    with pytest.raises(ToolError, match="sensitive file"):
+        await tool.execute(OpenFileInput(path=".env"))
+
+
+@pytest.mark.asyncio
+async def test_a_timed_out_process_is_not_reported_as_success(tmp_path: Path) -> None:
+    runner = LocalCommandRunner(
+        WorkspaceSandbox(tmp_path),
+        CommandPolicy(allowed_commands=frozenset({"python3"})),
+    )
+    registry = ToolRegistry()
+    registry.register(ShellTool(runner))
+    runtime = ToolRuntime(
+        registry,
+        PermissionPolicy(frozenset({"process.exec"})),
+        EventBus(),
+    )
+
+    observation = await runtime.execute(
+        ToolCall(
+            "1",
+            "shell",
+            {"argv": ["python3", "-c", "import time; time.sleep(5)"], "timeout_seconds": 0.1},
+        ),
+        "run",
+        1,
+    )
+
+    assert observation.status is ToolStatus.TIMED_OUT
+    assert isinstance(observation.result, dict)
+    assert observation.result["timed_out"] is True
 
 
 @pytest.mark.asyncio

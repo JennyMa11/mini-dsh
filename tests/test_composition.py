@@ -18,7 +18,7 @@ from minidsh.composition import (
 )
 from minidsh.context import FullHistoryContext
 from minidsh.domain import ModelResponse, RunResult, RunStatus, ToolCall, ToolStatus
-from minidsh.infrastructure import ProcessResult, WorkspaceSandbox
+from minidsh.infrastructure import ProcessResult, WorkspaceSandbox, default_opener
 from minidsh.ports import AgentDependencies, AgentRunner
 from minidsh.runtime import EventBus, PluginManifest, ServiceError, ServiceRegistry
 from minidsh.tools import PermissionDecision, PermissionPolicy, ReadFileTool, WriteFileTool
@@ -43,6 +43,22 @@ class ServicePlugin:
 
     async def stop(self) -> None:
         self.order.append("stop")
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(default_opener() is None, reason="no host file opener on this platform")
+async def test_local_runtime_registers_open_file_with_shell(tmp_path: Path) -> None:
+    runtime = build_local_runtime(
+        workspace=tmp_path,
+        model=ScriptedModel([]),
+        options=RuntimeOptions(allow_shell=True),
+    )
+    try:
+        names = {tool.name for tool in runtime.tools.definitions()}
+    finally:
+        assert runtime.close is not None
+        await runtime.close()
+    assert "open_file" in names
 
 
 @pytest.mark.asyncio

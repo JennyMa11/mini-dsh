@@ -431,11 +431,16 @@ class ToolRuntime:
     ) -> ToolObservation:
         serialized = json.dumps(result, ensure_ascii=False, sort_keys=True)
         summary = summarize(call.name, result) if self._normalize_results else ""
+        status = (
+            ToolStatus.TIMED_OUT
+            if isinstance(result, dict) and result.get("timed_out") is True
+            else ToolStatus.SUCCEEDED
+        )
         if len(serialized) <= self._max_output_chars:
             return ToolObservation(
                 call.call_id,
                 call.name,
-                ToolStatus.SUCCEEDED,
+                status,
                 result,
                 duration_ms=(time.monotonic() - started) * 1_000,
                 summary=summary,
@@ -481,7 +486,7 @@ class ToolRuntime:
         return ToolObservation(
             call.call_id,
             call.name,
-            ToolStatus.SUCCEEDED,
+            status,
             bounded_result,
             duration_ms=(time.monotonic() - started) * 1_000,
             truncated=True,

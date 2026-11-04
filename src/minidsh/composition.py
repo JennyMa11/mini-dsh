@@ -37,6 +37,7 @@ from minidsh.infrastructure import (
     NetworkPolicy,
     ProcessRunner,
     WorkspaceSandbox,
+    default_opener,
 )
 from minidsh.ports import (
     AgentDependencies,
@@ -67,6 +68,7 @@ from minidsh.tools import (
     GitTool,
     ListFilesTool,
     LocalArtifactStore,
+    OpenFileTool,
     PatchFileTool,
     PermissionAuthorizer,
     PermissionDecision,
@@ -577,6 +579,12 @@ def _build_tools(
         builtin_tools.extend((PatchFileTool(sandbox), WriteFileTool(sandbox)))
     if options.allow_shell:
         builtin_tools.append(ShellTool(runner))
+        opener = default_opener()
+        if options.sandbox_backend == "local" and opener is not None:
+            opener_runner = LocalCommandRunner(
+                sandbox, CommandPolicy(allowed_commands=frozenset({opener}))
+            )
+            builtin_tools.append(OpenFileTool(sandbox, opener_runner, opener))
         if options.test_command is not None and options.verification is None:
             builtin_tools.append(RunCommandTool("test", runner, options.test_command))
         if options.build_command is not None:

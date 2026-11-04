@@ -45,7 +45,11 @@ class VerificationExtension:
         observed = await proposal.caller.invoke("test", {})
         result = observed.result
         verdict, reason, feedback = "error", "verification_tool_error", ""
-        if observed.status is not ToolStatus.SUCCEEDED:
+        if observed.status is ToolStatus.TIMED_OUT or (
+            isinstance(result, dict) and result.get("timed_out") is True
+        ):
+            reason = "verification_timeout"
+        elif observed.status is not ToolStatus.SUCCEEDED:
             reason = "verification_" + (
                 observed.error.code if observed.error else observed.status.value
             )

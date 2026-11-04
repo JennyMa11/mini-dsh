@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import platform
 import signal
 import uuid
 from dataclasses import dataclass, field
@@ -24,6 +25,16 @@ _NETWORK_COMMANDS = frozenset({"curl", "ftp", "nc", "netcat", "telnet", "wget"})
 _DEFAULT_ENV_KEYS = frozenset({"HOME", "LANG", "LC_ALL", "PATH", "TMPDIR", "TZ"})
 _ALLOWED_PROTOCOLS = frozenset({"tcp", "udp"})
 _MAX_PORT = 65_535
+
+
+def default_opener() -> str | None:
+    """Return the host command that opens a path in its default application."""
+    system = platform.system()
+    if system == "Darwin":
+        return "open"
+    if system == "Linux":
+        return "xdg-open"
+    return None
 
 
 class CommandDeniedError(PermissionError):

@@ -38,6 +38,8 @@
 
 | [0028](0028-work-default-shell.md) | work 默认注册全部可用工具、shell 白名单与逐次审批 | Accepted with limitations |
 
+| [0029](0029-open-workspace-file.md) | 工作区文件打开工具与超时状态修正 | Accepted with limitations |
+
 ## 状态含义
 
 - **Proposed**：规划中的决策；尚未完成实现与验收。

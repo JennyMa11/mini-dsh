@@ -9,6 +9,7 @@ from minidsh.infrastructure.process import (
     NetworkRule,
     ProcessResult,
     ProcessRunner,
+    default_opener,
 )
 from minidsh.infrastructure.sandbox import SandboxViolationError, WorkspaceSandbox
 
@@ -23,4 +24,5 @@ __all__ = [
     "ProcessRunner",
     "SandboxViolationError",
     "WorkspaceSandbox",
+    "default_opener",
 ]

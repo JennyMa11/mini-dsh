@@ -575,8 +575,11 @@ class InteractiveChat:
             return
         if tool == "test" and isinstance(result, dict) and type(result.get("exit_code")) is int:
             code = result["exit_code"]
-            passed = status == "succeeded" and code == 0 and not result.get("timed_out")
-            self._verification = "passed" if passed else f"failed (exit {code})"
+            if result.get("timed_out") is True:
+                self._verification = "timed out"
+            else:
+                passed = status == "succeeded" and code == 0
+                self._verification = "passed" if passed else f"failed (exit {code})"
             _write(f"  ← test: {self._verification}{timing}")
             for stream in ("stdout", "stderr"):
                 value = result.get(stream)
