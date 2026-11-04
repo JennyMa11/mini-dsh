@@ -11,7 +11,7 @@ Mini-dsh 是一个供自己在终端使用的 **Coding Agent Harness / Runtime**
 
 - 版本：`0.3.2`（Apache-2.0）；本页能力与评测说明更新至 2026-10-28。
 - 技术基线：Python `>=3.12`、`uv`、`src/` 布局；运行依赖包括 `pydantic`、流式 HTTP 的 `httpx` 和终端输入的 `prompt_toolkit`，MLX 与 MCP 为可选依赖。
-- 规模：105 个源码模块、59 个测试模块、994 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
+- 规模：105 个源码模块、59 个测试模块、999 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
 
 轻量 DSH 扩展现已提供可取消的 OpenAI-compatible 流式输出、逐次审批、稳定会话及历史分叉、
 配置驱动的 Python 插件组合、受控执行钩子和统一 local/Docker 文件与进程后端。
@@ -71,6 +71,12 @@ uv run mini-dsh-work
 ```bash
 uv sync --locked --all-groups
 uv run mini-dsh work --test-command "uv run pytest"
+```
+
+也可以直接裸启动，效果等价于 `work`：
+
+```bash
+uv run mini-dsh --test-command "uv run pytest"
 ```
 
 `work` 默认使用 DeepSeek profile。启动时读取 API Key，优先级为：显式环境变量 >
@@ -138,7 +144,8 @@ uv run mini-dsh work --workspace /absolute/path/to/website \
 真实终端使用可编辑输入框：Enter 发送，Alt+Enter 换行（也可先按 Escape 再按 Enter），
 左右键移动光标、上下键浏览历史，Tab 补全命令；多行粘贴保留为一份草稿，按 Enter 后发送。
 输入历史仅保存在进程内存；`/key` 与首次配置的隐藏输入不进入该历史。
-终端显示工具进度与回答，省略每次模型调用的 `Thinking…` 提示；模型调用事件继续记录在 Trace 中。
+终端显示工具进度与回答，工具完成行附带工具 Observation 的真实耗时，省略每次模型调用的 `Thinking…` 提示；模型调用事件继续记录在 Trace 中。
+输入框底部状态栏显示模型、工作区、权限和上一轮结果；Tab 补全会列出匹配命令及说明。
 重定向/管道或 `TERM=dumb` 保留普通行输入与反斜杠续行，并用 `Request:` 回显核对收到的文本。
 终端输入设计与验收见 [输入编辑器 ADR](docs/adr/0020-terminal-input-editor.md)。
 默认 BudgetContext 保留最新用户任务、根说明和最近的运行状态；嵌套说明由模型按提示继续读取。
@@ -665,7 +672,7 @@ uv run mini-dsh chat --workspace /path/to/repo --model-profile deepseek \
 uv run mini-dsh gui --workspace /path/to/repo --model-profile deepseek
 ```
 
-无参数启动也可进入只读交互模式；日常编辑使用上面的 `work` 入口。终端命令见 `/help`。
+无参数启动等价于 `work`，进入可写交互模式；只读交互使用 `chat`。终端命令见 `/help`。
 每轮独立计预算，保存 Session 与 Trace。取消不回滚已完成的修改，恢复不重放工具；
 中断且没有结果的调用以“执行结果未知”进入历史，下一轮需先观察真实状态。
 交互模式允许未配置费率，历史费用字段不能因此解释为实际零费用。
@@ -811,7 +818,7 @@ uv run mini-dsh chat --model-profile deepseek --multi-agent --subagent-max-paral
 ## 工程门禁与文档
 
 工程检查使用 Ruff、mypy strict、pytest，测试包含 unit、integration、e2e。
-994 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
+999 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
 
 提高预算并扩大真实模型样本的实验见 [Harness v2 冻结设计](docs/harness-study-v2.md)。
 2026-10-28 新增 36 次公开函数任务回归及 72 次机制配对运行，全部 108 行保留，

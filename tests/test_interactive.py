@@ -6,6 +6,7 @@ import asyncio
 import getpass
 import json
 import os
+import re
 import warnings
 from collections.abc import Mapping
 from pathlib import Path
@@ -117,6 +118,42 @@ def test_chat_displays_progress_and_does_not_grant_write(
         for line in path.read_text().splitlines()
     ]
     assert any(event["name"] == "model_call_started" for event in events)
+
+
+def test_tool_progress_reports_the_observed_duration(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    (tmp_path / "code.py").write_text("value = 1")
+    _model(
+        monkeypatch,
+        [
+            ModelResponse(tool_calls=(ToolCall("read", "read_file", {"path": "code.py"}),)),
+            ModelResponse(content="read it"),
+        ],
+    )
+    _input(monkeypatch, ["inspect", "/exit"])
+    _chat(tmp_path)
+    assert re.search(r"← read_file: succeeded · \d+ms", capsys.readouterr().out)
+
+
+def test_status_bar_line_reports_permissions_and_last_turn(tmp_path: Path) -> None:
+    options = RuntimeOptions(allow_write=True, allow_shell=True)
+    chat = InteractiveChat(
+        workspace=tmp_path,
+        runtime_factory=lambda: build_local_runtime(
+            workspace=tmp_path, model=ScriptedModel([]), options=options
+        ),
+        model_label="deepseek",
+        options=options,
+        cost_reportable=False,
+    )
+    line = chat._status_line()
+    assert "deepseek" in line
+    assert tmp_path.name in line
+    assert "write+shell" in line
+    assert "no turns yet" in line
 
 
 def test_chat_resume_restores_history(

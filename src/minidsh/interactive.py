@@ -53,6 +53,15 @@ def _write(value: str) -> None:
     sys.stdout.flush()
 
 
+_MILLISECONDS_PER_SECOND = 1000.0
+
+
+def _format_duration(milliseconds: float) -> str:
+    if milliseconds < _MILLISECONDS_PER_SECOND:
+        return f"{milliseconds:.0f}ms"
+    return f"{milliseconds / _MILLISECONDS_PER_SECOND:.1f}s"
+
+
 class InteractiveChat:
     """A synchronous prompt over a persistent, cancellable asyncio runtime."""
 
@@ -85,9 +94,10 @@ class InteractiveChat:
         self._last_run: str | None = None
         self._changed: set[str] = set()
         self._verification = "not run this turn"
+        self._last_summary = "no turns yet"
         self._sessions = JsonSessionStore(workspace)
         self._runner = asyncio.Runner()
-        self._terminal = TerminalInput()
+        self._terminal = TerminalInput(status_provider=self._status_line)
         self._approvals = CallbackApproval(self._approve)
         self._streamed = False
         self._session_id: str | None = None
@@ -156,11 +166,22 @@ class InteractiveChat:
                 permissions += ", configured commands only"
         _write(f"  Model: {self._model_label}\n  Workspace: {self._workspace}")
         if self._credential_source is not None:
-            _write(f"  API Key: {self._credential_source}")
+            source = self._credential_source
+            if self._credential_required and source == "not configured":
+                source += f" (first task asks for {self._credential_required})"
+            _write(f"  API Key: {source}")
         _write(f"  Permissions: {permissions}\n  Context: {self._options.context_strategy}")
         _write(f"  Last run: {self._last_run or '(none)'}")
         command = self._options.test_command
         _write(f"  Tests: {shlex.join(command) if command else '(not configured)'}")
+
+    def _status_line(self) -> str:
+        """One-line prompt toolbar: model, workspace, permissions and last turn."""
+        permissions = "write" if self._options.allow_write else "read-only"
+        if self._options.allow_shell:
+            permissions += "+shell"
+        workspace = self._workspace.name or str(self._workspace)
+        return f" {self._model_label} · {workspace} · {permissions} · {self._last_summary}"
 
     def _command(self, task: str) -> bool:  # noqa: PLR0912 - explicit user command dispatch
         command, _, argument = task.partition(" ")
@@ -442,6 +463,7 @@ class InteractiveChat:
         self._changed = set()
         self._verification = "not run this turn"
         self._streamed = False
+        self._last_summary = "running turn"
         run_id = uuid.uuid4().hex
         trace = self._workspace / ".minidsh" / "traces" / f"{run_id}.jsonl"
         unsubscribe = runtime.events.subscribe("*", JsonlTraceWriter(trace))
@@ -463,10 +485,12 @@ class InteractiveChat:
             self._show_result(result)
         except (KeyboardInterrupt, asyncio.CancelledError):
             _write("\nTask cancelled. Returning to the prompt.")
+            self._last_summary = "cancelled"
             # AgentLoop persists its cancelled state before propagating cancellation.
             self._restore(run_id)
         except (OSError, ValueError, RuntimeError) as exc:
             _write(f"Task failed: {exc}")
+            self._last_summary = "failed"
         finally:
             self._approvals.release(run_id)
             unsubscribe()
@@ -484,6 +508,10 @@ class InteractiveChat:
         if self._options.test_command is not None or self._changed:
             _write(f"  Verification: {self._verification}")
         cost = f"${result.cost_usd:.6f}" if self._cost_reportable else "unavailable (no rate card)"
+        self._last_summary = (
+            f"{result.status.value} · {result.steps} steps · "
+            f"{result.token_usage.total_tokens} tokens"
+        )
         _write(
             f"  {result.status.value} · {result.steps} steps · {result.tool_calls} tools · "
             f"{result.token_usage.total_tokens} tokens · {result.duration_ms / 1000:.1f}s · "
@@ -524,6 +552,14 @@ class InteractiveChat:
         result = event.data.get("result")
         status = event.data.get("status")
         error = event.data.get("error")
+        duration = event.data.get("duration_ms")
+        timing = (
+            f" · {_format_duration(float(duration))}"
+            if isinstance(duration, (int, float))
+            and not isinstance(duration, bool)
+            and duration >= 0
+            else ""
+        )
         error_details = error.get("details") if isinstance(error, dict) else None
         executed = status == "succeeded" or (
             isinstance(error_details, dict) and error_details.get("execution_succeeded") is True
@@ -540,13 +576,13 @@ class InteractiveChat:
             code = result["exit_code"]
             passed = status == "succeeded" and code == 0 and not result.get("timed_out")
             self._verification = "passed" if passed else f"failed (exit {code})"
-            _write(f"  ← test: {self._verification}")
+            _write(f"  ← test: {self._verification}{timing}")
             for stream in ("stdout", "stderr"):
                 value = result.get(stream)
                 if isinstance(value, str) and value:
                     _write(value[-4000:])
         else:
-            _write(f"  ← {tool}: {status}")
+            _write(f"  ← {tool}: {status}{timing}")
             if tool == "test":
                 self._verification = f"not verified ({status})"
         if executed and tool in {"patch_file", "write_file"}:

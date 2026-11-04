@@ -12,6 +12,8 @@ import time
 
 import pytest
 from prompt_toolkit.application.current import set_app
+from prompt_toolkit.completion import CompleteEvent
+from prompt_toolkit.document import Document
 from prompt_toolkit.input import create_pipe_input
 from prompt_toolkit.layout.mouse_handlers import MouseHandlers
 from prompt_toolkit.layout.screen import Screen, WritePosition
@@ -19,7 +21,7 @@ from prompt_toolkit.output import DummyOutput
 
 from minidsh.domain import ToolCall
 from minidsh.domain.harness import ApprovalChoice, ApprovalRequest
-from minidsh.terminal import TerminalInput, create_prompt_session
+from minidsh.terminal import _COMMANDS, TerminalInput, _status_text, create_prompt_session
 
 
 @pytest.mark.parametrize(
@@ -38,6 +40,43 @@ def test_terminal_edits_unicode_and_submits_paste_as_one_task(keys: str, expecte
         terminal = TerminalInput(create_prompt_session(input_stream=pipe, output=DummyOutput()))
         pipe.send_text(keys)
         assert terminal.read_task() == expected
+
+
+def test_slash_completion_lists_matching_commands_with_descriptions() -> None:
+    with create_pipe_input() as pipe:
+        session = create_prompt_session(input_stream=pipe, output=DummyOutput())
+        completer = session.completer
+        assert completer is not None
+        completions = list(
+            completer.get_completions(Document("/s", cursor_position=2), CompleteEvent())
+        )
+        assert {completion.text for completion in completions} == {
+            "/status",
+            "/sessions",
+            "/session",
+        }
+        assert all(completion.display_meta for completion in completions)
+        assert len(list(completer.get_completions(Document(), CompleteEvent()))) == len(_COMMANDS)
+
+
+def test_status_bar_stays_on_one_safe_line_and_fits_the_terminal(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("COLUMNS", "20")
+    assert _status_text("model\x1b[31m\nworkspace\twrite") == "model[31m workspac"
+    assert _status_text("\x07\x1b") == ""
+
+
+def test_prompt_uses_the_status_provider_as_bottom_toolbar() -> None:
+    with create_pipe_input() as pipe:
+        session = create_prompt_session(
+            input_stream=pipe,
+            output=DummyOutput(),
+            status_provider=lambda: "deepseek · repo · write · finished",
+        )
+        toolbar = session.bottom_toolbar
+        assert callable(toolbar)
+        assert toolbar() == [("class:status", "deepseek · repo · write · finished")]
 
 
 def test_terminal_history_stays_in_memory_and_can_be_edited() -> None:

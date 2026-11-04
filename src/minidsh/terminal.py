@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 import os
+import shutil
 import sys
+from collections.abc import Callable, Iterable
 from typing import override
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.buffer import Buffer
-from prompt_toolkit.completion import WordCompleter
+from prompt_toolkit.completion import CompleteEvent, Completer, Completion
+from prompt_toolkit.document import Document
 from prompt_toolkit.filters import Always
+from prompt_toolkit.formatted_text import StyleAndTextTuples
 from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.input import Input
 from prompt_toolkit.key_binding import KeyBindings
@@ -24,20 +28,48 @@ from prompt_toolkit.styles import Style
 
 from minidsh.domain.harness import ApprovalChoice, ApprovalRequest
 
-_COMMANDS = (
-    "/help",
-    "/status",
-    "/tools",
-    "/diff",
-    "/test",
-    "/key",
-    "/clear",
-    "/resume",
-    "/sessions",
-    "/session",
-    "/fork",
-    "/exit",
-)
+_COMMANDS: dict[str, str] = {
+    "/help": "show commands",
+    "/status": "show model, workspace, permissions and last run",
+    "/tools": "show registered tools and command permissions",
+    "/diff": "show the workspace Git diff",
+    "/test": "run the configured tests",
+    "/key": "enter or update the provider API key privately",
+    "/clear": "start a fresh conversation",
+    "/resume": "continue a saved run ID",
+    "/sessions": "list saved conversations and runs",
+    "/session": "continue a stable conversation ID",
+    "/fork": "fork history through an ended turn",
+    "/exit": "exit (also Ctrl+D)",
+}
+
+
+class _CommandCompleter(Completer):
+    """Complete slash commands from the first draft line, with descriptions."""
+
+    def get_completions(
+        self, document: Document, complete_event: CompleteEvent
+    ) -> Iterable[Completion]:
+        del complete_event
+        prefix = document.text_before_cursor
+        if document.text != prefix or (prefix and not prefix.startswith("/")):
+            return
+        for command, description in _COMMANDS.items():
+            if command.startswith(prefix):
+                yield Completion(
+                    command,
+                    start_position=-len(prefix),
+                    display=command,
+                    display_meta=description,
+                )
+
+
+def _status_text(value: str) -> str:
+    """Collapse untrusted text to one safe line that fits the terminal width."""
+    flattened = value.replace("\r", " ").replace("\n", " ").replace("\t", " ")
+    text = " ".join("".join(c for c in flattened if c.isprintable()).split())
+    width = shutil.get_terminal_size((80, 24)).columns
+    return text[: max(0, width - 2)]
 
 
 class _CompactInputLayout(HSplit):
@@ -71,7 +103,10 @@ class _CompactInputLayout(HSplit):
 
 
 def create_prompt_session(
-    *, input_stream: Input | None = None, output: Output | None = None
+    *,
+    input_stream: Input | None = None,
+    output: Output | None = None,
+    status_provider: Callable[[], str] | None = None,
 ) -> PromptSession[str]:
     """Build a Unicode editor with explicit send/newline keys and memory-only history."""
     bindings = KeyBindings()
@@ -100,18 +135,32 @@ def create_prompt_session(
         else:
             buffer.start_completion(select_first=False)
 
+    def toolbar() -> StyleAndTextTuples:
+        if status_provider is None:
+            return []
+        text = _status_text(status_provider())
+        return [("class:status", text)] if text else []
+
     session = PromptSession[str](
         message=[("class:prompt", "you > ")],
         multiline=True,
         prompt_continuation="... > ",
         history=InMemoryHistory(),
         enable_history_search=True,
-        completer=WordCompleter(list(_COMMANDS)),
+        completer=_CommandCompleter(),
         complete_while_typing=False,
         key_bindings=bindings,
         reserve_space_for_menu=0,
         rprompt=[("class:hint", "Enter: send | Alt+Enter: newline")],
-        style=Style.from_dict({"prompt": "ansicyan bold", "hint": "ansibrightblack"}),
+        bottom_toolbar=toolbar if status_provider is not None else None,
+        style=Style.from_dict(
+            {
+                "prompt": "ansicyan bold",
+                "hint": "ansibrightblack",
+                "status": "bg:#303030 #d0d0d0",
+                "bottom-toolbar": "bg:#303030 #d0d0d0",
+            }
+        ),
         input=input_stream,
         output=output,
     )
@@ -135,7 +184,12 @@ def create_prompt_session(
 class TerminalInput:
     """Use the editor on a real terminal and ordinary line input for pipes/tests."""
 
-    def __init__(self, session: PromptSession[str] | None = None) -> None:
+    def __init__(
+        self,
+        session: PromptSession[str] | None = None,
+        *,
+        status_provider: Callable[[], str] | None = None,
+    ) -> None:
         self._session = session
         if (
             session is None
@@ -143,7 +197,7 @@ class TerminalInput:
             and sys.stdout.isatty()
             and os.environ.get("TERM") != "dumb"
         ):
-            self._session = create_prompt_session()
+            self._session = create_prompt_session(status_provider=status_provider)
 
     @property
     def enhanced(self) -> bool:
