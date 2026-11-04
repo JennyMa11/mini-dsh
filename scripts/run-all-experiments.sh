@@ -34,6 +34,6 @@ for suite in context tool_output permission; do
 done
 
 echo "== archiving =="
-python3 scripts/archive-results.py
+uv run python scripts/archive_results.py
 
 echo "done: $(find docs/results -maxdepth 1 -name '*.md' | wc -l | tr -d ' ') Markdown reports in docs/results"

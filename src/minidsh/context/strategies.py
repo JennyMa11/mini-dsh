@@ -3,13 +3,39 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Protocol
 
 from minidsh.context.retrieval import RetrievedChunk
+from minidsh.context.snapshots import SnapshotRetriever
 from minidsh.domain import ContextView, Message, Role, estimate_tokens
+from minidsh.domain.harness import PreparedContext
+from minidsh.ports.protocols import ContextManager
 
 _MIN_SUMMARY_CHARS = 100
+
+
+def _pinned_indices(history: tuple[Message, ...]) -> set[int]:
+    pinned = set(range(min(2, len(history))))
+    latest: dict[str, int] = {}
+    for index, message in enumerate(history):
+        if message.role is Role.SYSTEM and message.name is None:
+            pinned.add(index)
+        if message.role is Role.USER:
+            latest["current_task"] = index
+        if message.role is Role.SYSTEM and message.name == "critical_decision":
+            pinned.add(index)
+        if message.role is Role.SYSTEM and message.name in {
+            "plan_state",
+            "modified_files",
+            "open_error",
+            "workspace_instructions",
+            "repository_map",
+            "verification_status",
+        }:
+            latest[message.name] = index
+    pinned.update(latest.values())
+    return pinned
 
 
 def _window_start(history: tuple[Message, ...], start: int, floor: int) -> int:
@@ -49,11 +75,14 @@ class BudgetContext:
     input_budget: int = 8_192
     count_tokens: Callable[[tuple[Message, ...]], int] = estimate_tokens
     name: str = "budget"
-    version: str = "1.0"
+    version: str = "1.1"
 
     def __post_init__(self) -> None:
         if self.input_budget < 1:
             raise ValueError("input_budget must be positive")
+
+    def with_counter(self, counter: Callable[[tuple[Message, ...]], int]) -> ContextManager:
+        return replace(self, count_tokens=counter)
 
     def build(  # noqa: PLR0912 - selection rules keep pinned state and tool rounds intact
         self, history: tuple[Message, ...], task: str
@@ -61,21 +90,37 @@ class BudgetContext:
         del task
         if len(history) < len({0, 1}):
             raise ValueError("budget context requires system and task messages")
-        pinned_indices = {0, 1}
+        first_task = next(
+            (index for index, message in enumerate(history) if message.role is Role.USER), 1
+        )
+        pinned_indices = {0, first_task}
         latest: dict[str, int] = {}
-        for index, message in enumerate(history[2:], 2):
-            if message.name == "critical_decision":
+        for index, message in enumerate(history[1:], 1):
+            if message.role is Role.SYSTEM and message.name is None:
                 pinned_indices.add(index)
-            elif message.name in {"plan_state", "modified_files", "open_error"} or (
-                message.name == "model_feedback" and index == len(history) - 1
-            ):
+            if message.role is Role.USER:
+                latest["current_task"] = index
+            if message.role is Role.SYSTEM and message.name == "critical_decision":
+                pinned_indices.add(index)
+            elif (
+                message.role is Role.SYSTEM
+                and message.name
+                in {
+                    "plan_state",
+                    "modified_files",
+                    "open_error",
+                    "workspace_instructions",
+                    "repository_map",
+                    "verification_status",
+                }
+            ) or (message.name == "model_feedback" and index == len(history) - 1):
                 latest[message.name] = index
         pinned_indices.update(latest.values())
         # A tool reply and its declaring assistant message are one indivisible unit.
         groups: list[tuple[int, ...]] = []
-        index = 2
+        index = 1
         while index < len(history):
-            name = history[index].name
+            name = history[index].name if history[index].role is Role.SYSTEM else None
             if name == "model_feedback" and index != len(history) - 1:
                 index += 1
                 continue
@@ -138,7 +183,8 @@ class SlidingWindowContext:
         else:
             pinned = history[:2]
             start = _window_start(history, len(history) - self.window_size, floor=len(pinned))
-            selected = (*pinned, *history[start:])
+            indices = _pinned_indices(history) | set(range(start, len(history)))
+            selected = tuple(history[index] for index in sorted(indices))
         omitted = len(history) - len(selected)
         return ContextView(
             selected,
@@ -175,7 +221,10 @@ class SummaryCompactionContext:
             return ContextView(history, self.name, self.version, estimate_tokens(history))
 
         start = _window_start(history, len(history) - self.recent_messages, floor=2)
-        omitted = history[2:start]
+        pinned_indices = _pinned_indices(history)
+        omitted = tuple(
+            message for index, message in enumerate(history[:start]) if index not in pinned_indices
+        )
         fragments: list[str] = []
         remaining = self.summary_max_chars
         for message in omitted:
@@ -194,7 +243,8 @@ class SummaryCompactionContext:
         )
         # Nothing safely compactable means no summary message at all, rather than
         # an empty one the model has to spend a turn reading.
-        head = (*history[:2], summary) if omitted else history[:2]
+        prefix = tuple(history[index] for index in sorted(pinned_indices) if index < start)
+        head = (*prefix, summary) if omitted else prefix
         selected = (*head, *history[start:])
         return ContextView(
             selected,
@@ -226,6 +276,22 @@ class RetrievalContext:
     limit: int = 5
     name: str = "repo_retrieval"
     version: str = "1.0"
+
+    async def prepare(  # noqa: PLR0913, PLR0917 - explicit preparation and accounting inputs
+        self,
+        history: tuple[Message, ...],
+        task: str,
+        run_id: str,
+        step_id: int,
+        max_calls: int,
+        account: Callable[[int, float], None] | None = None,
+    ) -> PreparedContext:
+        if isinstance(self.retriever, SnapshotRetriever):
+            calls, duration = await self.retriever.prepare(
+                task, run_id, step_id, max_calls, account
+            )
+            return PreparedContext(self.build(history, task), calls, duration)
+        return PreparedContext(self.build(history, task))
 
     def build(self, history: tuple[Message, ...], task: str) -> ContextView:
         base_view = self.base.build(history, task)

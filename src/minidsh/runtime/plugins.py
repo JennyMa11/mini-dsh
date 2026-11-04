@@ -51,6 +51,8 @@ class PluginManager:
         self.services = services or ServiceRegistry()
         self._plugins: dict[str, Plugin] = {}
         self._started: list[Plugin] = []
+        self._cleanup_offsets: list[int] = []
+        self._service_offsets: list[frozenset[str]] = []
 
     def register(self, plugin: Plugin) -> None:
         """Register plugin metadata without running plugin code."""
@@ -69,7 +71,14 @@ class PluginManager:
         try:
             for plugin in ordered:
                 self._started.append(plugin)
+                self._cleanup_offsets.append(self.services.cleanup_count)
+                self._service_offsets.append(self.services.keys)
                 await plugin.start(self.services)
+                unexpected = (self.services.keys - self._service_offsets[-1]) - set(
+                    plugin.manifest.provides
+                )
+                if unexpected:
+                    raise PluginError("plugin registered undeclared services")
                 missing = [
                     key for key in plugin.manifest.provides if not self.services.contains(key)
                 ]
@@ -89,12 +98,18 @@ class PluginManager:
         errors: list[Exception] = []
         while self._started:
             plugin = self._started.pop()
+            cleanup_offset = self._cleanup_offsets.pop()
+            service_offset = self._service_offsets.pop()
             try:
                 await plugin.stop()
             except Exception as exc:
                 errors.append(exc)
             finally:
-                for key in plugin.manifest.provides:
+                try:
+                    self.services.cleanup_from(cleanup_offset)
+                except Exception as exc:
+                    errors.append(exc)
+                for key in self.services.keys - service_offset:
                     self.services.unregister(key)
         if errors:
             msg = f"{len(errors)} plugin(s) failed during shutdown"

@@ -1,0 +1,30 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "patch",
+        "name": "patch_file",
+        "arguments": {
+          "path": "solution.js",
+          "expected": "/* From a list of integers, remove all elements that occur more than once.\n  Keep order of elements left the same as in the input.\n  >>> removeDuplicates([1, 2, 3, 2, 4])\n  [1, 3, 4]\n  */\nconst removeDuplicates = (numbers) => {\n  var dict = new Object();\n  for (const num of numbers) {\n    if (num in dict) {\n      dict[num] += 1;\n    } else {\n      dict[num] = 1;\n    }\n  }\n  return numbers.filter(x > dict[x] < 1);\n}\n\n",
+          "replacement": "/* From a list of integers, remove all elements that occur more than once.\n  Keep order of elements left the same as in the input.\n  >>> removeDuplicates([1, 2, 3, 2, 4])\n  [1, 3, 4]\n  */\nconst removeDuplicates = (numbers) => {\n  var dict = new Object();\n  for (const num of numbers) {\n    if (num in dict) {\n      dict[num] += 1;\n    } else {\n      dict[num] = 1;\n    }\n  }\n  return numbers.filter(x => dict[x] <= 1);\n}\n\n"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "test",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Repair complete.",
+    "output_tokens": 5
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "stage": "PR1",
+  "status": "passed",
+  "source_sha256": "fc97ade3829332219763a64f002e25dcf409d8f1e806ca0c84a3f502be1943f7",
+  "snapshot": "benchmark-results/extension-v1/pr1-fc97ade382933221",
+  "git_head": "a49569d15bcb87d160d2bf9f638e838b410d8179",
+  "dirty_workspace": true,
+  "quality": {
+    "format": "pass",
+    "ruff": "pass",
+    "mypy_files": 129,
+    "pytest_passed": 665
+  },
+  "reproduction": "all four gates pass from extracted controlled archive, offline dependencies",
+  "targeted_tests": 183,
+  "extension_tests": 75,
+  "retained_contract_loop_runs": 82,
+  "offline_runs": 12,
+  "offline_passed": 12,
+  "paired_frozen_tasks": 6,
+  "m0_compatibility": "stable metrics, normalized traces and artifacts equal for all six; old source not rerun",
+  "fixture_reference_broken_checks": 12,
+  "stage_matrix_passed": 11,
+  "stage_matrix_declared": 11,
+  "full_matrix_checked": 11,
+  "full_matrix_declared": 28,
+  "overhead_median_p95_delta_ms": 0.5792090087197721,
+  "overhead_threshold_ms": 5,
+  "real_model_runs": 0,
+  "real_model_declared": 90,
+  "unrun_real_model_rows": 90,
+  "mechanism_benefit": null,
+  "next_stage": "PR2 not started; stop at PR1 per instruction",
+  "limitations": [
+    "Python hooks are trusted cooperative code, not OS isolation",
+    "local adapter is not OS isolation; separate Docker probes verify native container boundary",
+    "no Skills, real Verification or Memory implementation",
+    "public scripted tasks establish regression only; no model ability/benefit claim",
+    "original M0 archive lacked full-gate docs/fixtures; repaired in this current-source archive without overwriting or remeasuring old evidence"
+  ],
+  "criterion_sha256": "c9949fe3b5d83e9a609eddf12bcd6c20aee6b22f220f07966eaa7ee06a5c2706",
+  "scorer_sha256": "05062a39e8a5699f3c4e4faded48be5aa40ccbcd8eb450c224a414ec56283677",
+  "acceptance_counts": {
+    "passed": 11,
+    "checked": 11,
+    "declared_stage": 11,
+    "declared_plan": 28,
+    "plan_evidence_coverage": 0.39285714285714285
+  },
+  "stop_instruction": "PR1验收通过后停止；PR2–4/M5保留待续"
+}

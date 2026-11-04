@@ -15,6 +15,41 @@ from minidsh.domain import ModelRequest, ModelResponse, ToolCall
 from minidsh.gui import GuiSession
 
 
+def test_noninteractive_run_loads_workspace_key_and_redacts_provider_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    credential_file = tmp_path / ".minidsh" / "credentials.toml"
+    credential_file.parent.mkdir()
+    credential_file.write_text('[credentials]\nDEEPSEEK_API_KEY = "saved-provider-key"\n')
+    received: list[str] = []
+
+    def provider(
+        profile: ModelProfile, *, environ: Mapping[str, str], temperature: float, max_attempts: int
+    ) -> ScriptedModel:
+        del temperature, max_attempts
+        received.append(profile.api_key(environ))
+        return ScriptedModel([ModelResponse(content="completed saved-provider-key")])
+
+    monkeypatch.setattr("minidsh.cli.build_provider_model", provider)
+    with pytest.raises(SystemExit) as exc:
+        main(
+            [
+                "run",
+                "hello",
+                "--workspace",
+                str(tmp_path),
+                "--model-profile",
+                "deepseek",
+                "--allow-unpriced",
+            ]
+        )
+    assert exc.value.code == 0
+    assert received == ["saved-provider-key"]
+    assert "saved-provider-key" not in capsys.readouterr().out
+    assert "DEEPSEEK_API_KEY" not in os.environ
+
+
 @pytest.mark.parametrize("command", ["run", "benchmark", "ablation"])
 @pytest.mark.integration
 def test_explicit_scripted_provider_overrides_environment_model_profile(

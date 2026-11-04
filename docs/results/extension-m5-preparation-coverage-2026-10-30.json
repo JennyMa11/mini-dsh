@@ -1,0 +1,149 @@
+{
+  "source_sha256": "e7232accf73225fdbb0637aecc3736b344d00e58d5f49d80b0428dc024baf1e5",
+  "rows": [
+    {
+      "case_id": "H01",
+      "status": "pass",
+      "evidence": "H01/0/check.json"
+    },
+    {
+      "case_id": "H02",
+      "status": "pass",
+      "evidence": "H02/0/check.json"
+    },
+    {
+      "case_id": "H03",
+      "status": "pass",
+      "evidence": "H03/0/check.json"
+    },
+    {
+      "case_id": "H04",
+      "status": "pass",
+      "evidence": "H04/0/check.json"
+    },
+    {
+      "case_id": "H05",
+      "status": "pass",
+      "evidence": "H05/0/check.json"
+    },
+    {
+      "case_id": "H06",
+      "status": "pass",
+      "evidence": "H06/0/check.json"
+    },
+    {
+      "case_id": "H07",
+      "status": "pass",
+      "evidence": "H07/0/check.json"
+    },
+    {
+      "case_id": "H08",
+      "status": "pass",
+      "evidence": "H08/0/check.json"
+    },
+    {
+      "case_id": "C01",
+      "status": "pass",
+      "evidence": "C01/0/check.json"
+    },
+    {
+      "case_id": "S01",
+      "status": "pass",
+      "evidence": "S01/0/check.json"
+    },
+    {
+      "case_id": "S02",
+      "status": "pass",
+      "evidence": "S02/0/check.json"
+    },
+    {
+      "case_id": "S03",
+      "status": "pass",
+      "evidence": "S03/0/check.json"
+    },
+    {
+      "case_id": "S04",
+      "status": "pass",
+      "evidence": "S04/0/check.json"
+    },
+    {
+      "case_id": "C02",
+      "status": "pass",
+      "evidence": "C02/0/check.json"
+    },
+    {
+      "case_id": "C03",
+      "status": "pass",
+      "evidence": "C03/0/check.json"
+    },
+    {
+      "case_id": "C04",
+      "status": "pass",
+      "evidence": "C04/0/check.json"
+    },
+    {
+      "case_id": "V01",
+      "status": "pass",
+      "evidence": "V01/0/check.json"
+    },
+    {
+      "case_id": "V02",
+      "status": "pass",
+      "evidence": "V02/0/check.json"
+    },
+    {
+      "case_id": "V03",
+      "status": "pass",
+      "evidence": "V03/0/check.json"
+    },
+    {
+      "case_id": "V04",
+      "status": "pass",
+      "evidence": "V04/0/check.json"
+    },
+    {
+      "case_id": "V05",
+      "status": "pass",
+      "evidence": "V05/0/check.json"
+    },
+    {
+      "case_id": "M01",
+      "status": "pass",
+      "evidence": "M01/0/check.json"
+    },
+    {
+      "case_id": "M02",
+      "status": "pass",
+      "evidence": "M02/0/check.json"
+    },
+    {
+      "case_id": "M03",
+      "status": "pass",
+      "evidence": "M03/0/check.json"
+    },
+    {
+      "case_id": "M04",
+      "status": "pass",
+      "evidence": "M04/0/check.json"
+    },
+    {
+      "case_id": "E03",
+      "status": "pass",
+      "evidence": "E03/0/check.json"
+    },
+    {
+      "case_id": "E01",
+      "status": "pass",
+      "evidence": "E01/0/check.json"
+    },
+    {
+      "case_id": "E02",
+      "status": "pass",
+      "evidence": "E02/0/check.json"
+    }
+  ],
+  "functional_preflight_passed": 28,
+  "declared": 28,
+  "m5_complete": false,
+  "real_model_rows": 0
+}

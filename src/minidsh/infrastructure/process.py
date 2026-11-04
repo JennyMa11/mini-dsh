@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import os
 import signal
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol, runtime_checkable
@@ -140,6 +141,13 @@ class LocalCommandRunner:
         self._policy = policy
         self._environment_keys = environment_keys
 
+    def validate(self, argv: tuple[str, ...], *, cwd: str = ".") -> None:
+        """Preflight before displaying an approval; execution checks again."""
+        self._policy.validate(argv)
+        directory = self._sandbox.resolve(cwd, must_exist=True)
+        if not directory.is_dir():
+            raise CommandDeniedError("cwd is not a directory")
+
     async def run(
         self,
         argv: tuple[str, ...],
@@ -169,10 +177,7 @@ class LocalCommandRunner:
                 process.communicate(), timeout=timeout_seconds
             )
         except TimeoutError:
-            if os.name == "posix":
-                os.killpg(process.pid, signal.SIGKILL)
-            else:
-                process.kill()
+            _kill_process_group(process)
             stdout_bytes, stderr_bytes = await process.communicate()
             return ProcessResult(
                 argv,
@@ -181,12 +186,27 @@ class LocalCommandRunner:
                 stderr_bytes.decode(errors="replace"),
                 timed_out=True,
             )
+        except asyncio.CancelledError:
+            _kill_process_group(process)
+            await process.communicate()
+            raise
         return ProcessResult(
             argv,
             process.returncode if process.returncode is not None else -1,
             stdout_bytes.decode(errors="replace"),
             stderr_bytes.decode(errors="replace"),
         )
+
+
+def _kill_process_group(process: asyncio.subprocess.Process) -> None:
+    """Release a cancelled or timed-out child and its POSIX descendants."""
+    try:
+        if os.name == "posix":
+            os.killpg(process.pid, signal.SIGKILL)
+        elif process.returncode is None:
+            process.kill()
+    except ProcessLookupError:
+        pass
 
 
 class DockerCommandRunner:
@@ -210,6 +230,12 @@ class DockerCommandRunner:
         self._image = image
         self._network = network or policy.network
 
+    def validate(self, argv: tuple[str, ...], *, cwd: str = ".") -> None:
+        """Preflight the actual container command, not just the docker launcher."""
+        self._policy.validate(argv)
+        if not self._sandbox.resolve(cwd, must_exist=True).is_dir():
+            raise CommandDeniedError("cwd is not a directory")
+
     async def run(
         self,
         argv: tuple[str, ...],
@@ -223,10 +249,13 @@ class DockerCommandRunner:
         relative_cwd = resolved_cwd.relative_to(self._sandbox.root).as_posix()
         container_cwd = "/workspace" if relative_cwd == "." else f"/workspace/{relative_cwd}"
         network = "bridge" if self._network.enabled else "none"
+        container_name = f"minidsh-{uuid.uuid4().hex}"
         docker_argv = (
             "docker",
             "run",
             "--rm",
+            "--name",
+            container_name,
             "--network",
             network,
             "--read-only",
@@ -237,20 +266,56 @@ class DockerCommandRunner:
             "--pids-limit",
             "256",
             "--memory",
-            "2g",
+            "1g",
             "--cpus",
-            "2",
+            "1",
             "--tmpfs",
             "/tmp:rw,noexec,nosuid,size=256m",
             "--volume",
             f"{self._sandbox.root}:/workspace:rw",
+            "--tmpfs",
+            "/workspace/.minidsh:rw,noexec,nosuid,size=16m",
             "--workdir",
             container_cwd,
             self._image,
             *argv,
         )
-        outer = await self._host_runner.run(
-            docker_argv,
-            timeout_seconds=timeout_seconds + 10,
-        )
+        # Keep host credentials outside the subprocess execution world even when
+        # the user authorizes a general interpreter. No model-supplied mount options.
+        masks: list[str] = []
+        for directory, subdirectories, names in os.walk(self._sandbox.root):
+            subdirectories[:] = [
+                name
+                for name in subdirectories
+                if name.lower()
+                not in {".minidsh", ".git", ".venv", "node_modules", "dist", "build"}
+            ]
+            for name in names:
+                candidate = Path(directory) / name
+                if not candidate.is_file() or candidate.is_symlink():
+                    continue
+                try:
+                    self._sandbox.ensure_not_sensitive(candidate)
+                except PermissionError:
+                    destination = candidate.relative_to(self._sandbox.root).as_posix()
+                    masks.extend(("--volume", f"/dev/null:/workspace/{destination}:ro"))
+        if masks:
+            split = docker_argv.index(self._image)
+            docker_argv = (*docker_argv[:split], *masks, *docker_argv[split:])
+        try:
+            outer = await self._host_runner.run(
+                docker_argv,
+                timeout_seconds=timeout_seconds + 10,
+            )
+        except BaseException:
+            cleanup = asyncio.create_task(
+                self._host_runner.run(("docker", "rm", "-f", container_name), timeout_seconds=10)
+            )
+            try:
+                await asyncio.shield(cleanup)
+            except asyncio.CancelledError:
+                await cleanup
+            raise
+        if outer.timed_out:
+            await self._host_runner.run(("docker", "rm", "-f", container_name), timeout_seconds=10)
         return ProcessResult(argv, outer.exit_code, outer.stdout, outer.stderr, outer.timed_out)

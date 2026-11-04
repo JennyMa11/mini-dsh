@@ -152,12 +152,13 @@ HarnessVariant(
 ## 5. 复现实验
 
 ```bash
-./scripts/run-all-experiments.sh              # 全部基线与消融
-./scripts/run-benchmark.sh core               # 单套基线
-./scripts/run-ablation.sh stress context      # 单组消融
+./scripts/run-all-experiments.sh              # 全部基线与消融，最后归档到 docs/results/
+./scripts/run-benchmark.sh                    # 单套基线，默认 core
+./scripts/run-ablation.sh context benchmarks/stress/manifest.json benchmark-results/stress-context-ablation.json  # stress / context 消融
 ```
 
-脚本固定了定价与验证命令，产出 Markdown 报告到 `docs/results/`。等价的手工调用：
+脚本固定了定价与验证命令；单次运行写到 `benchmark-results/`，`run-all-experiments.sh`
+最后再调用归档脚本把整理后的 Markdown 与 `summary.json` 写入 `docs/results/`。等价的手工调用：
 
 ```bash
 uv run mini-dsh benchmark benchmarks/core/manifest.json \

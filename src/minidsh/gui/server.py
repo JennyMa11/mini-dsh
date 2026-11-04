@@ -62,7 +62,7 @@ async def _response(
     await writer.drain()
 
 
-async def _route(
+async def _route(  # noqa: PLR0911 - explicit authenticated endpoint dispatch
     reader: asyncio.StreamReader,
     writer: asyncio.StreamWriter,
     session: GuiSession,
@@ -99,7 +99,33 @@ async def _route(
             writer, HTTPStatus.OK, json.dumps(session.snapshot(), ensure_ascii=False).encode()
         )
         return
-    actions = {"/api/run", "/api/cancel", "/api/clear", "/api/resume", "/api/diff", "/api/settings"}
+    if method == "GET" and path == "/api/sessions":
+        await _response(writer, HTTPStatus.OK, json.dumps(await session.sessions()).encode())
+        return
+    if method == "GET" and path == "/api/events":
+        writer.write(
+            b"HTTP/1.1 200 OK\r\nContent-Type: text/event-stream\r\n"
+            b"Cache-Control: no-store\r\nConnection: close\r\n\r\n"
+        )
+        await writer.drain()
+        async with asyncio.timeout(8):
+            async for snapshot in session.follow():
+                writer.write(
+                    ("data: " + json.dumps(snapshot, ensure_ascii=False) + "\n\n").encode()
+                )
+                await writer.drain()
+        return
+    actions = {
+        "/api/run",
+        "/api/cancel",
+        "/api/clear",
+        "/api/resume",
+        "/api/diff",
+        "/api/settings",
+        "/api/approval",
+        "/api/session",
+        "/api/fork",
+    }
     if method != "POST" or path not in actions:
         await _response(writer, HTTPStatus.NOT_FOUND, b'{"error":"Unknown API endpoint"}')
         return

@@ -94,8 +94,11 @@ result = await runtime.agent.run("Complete the task")
 | `model` | `ports.Model` |
 | `context` | `ports.ContextManager` |
 | `sessions` | `ports.SessionStore` |
+| `journal` | `ports.SessionJournal` |
+| `agent_factory` | `ports.AgentFactory` |
 | `permissions` | `tools.PermissionAuthorizer` |
 | `runner` | `infrastructure.ProcessRunner` |
+| `environment` | `composition.RuntimeEnvironment`（文件与进程后端成对替换） |
 | `events` | `ports.EventStream` |
 | `tools` | `composition.ToolBundle`，包含一组 `tools.Tool` |
 
@@ -113,7 +116,7 @@ async with plugin_runtime(
     result = await runtime.agent.run("Complete the task")
 ```
 
-上下文退出时逆序停止插件，包括组装失败、调用方异常和取消。运行期间不暴露热替换入口，避免在工具调用或事务进行中换掉服务。插件目前通过 Python API 显式传入；CLI 不从仓库配置自动导入或执行插件代码。
+上下文退出时逆序停止插件，包括组装失败、调用方异常和取消。运行期间不暴露热替换入口，避免在工具调用或事务进行中换掉服务。插件通过 Python API 或 `--plugin` 显式选择；仓库配置只能选择插件 ID，不能授予信任。外部插件须由 `--trust-plugin`、`MINIDSH_TRUSTED_PLUGINS` 或用户全局 `plugins.toml` 显式信任，不自动安装，也不接受任意 Python 文件路径。
 
 无需模型服务的完整例子：
 

@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "plan_version": "v1",
+  "stage": "PR1",
+  "criterion_version": "pr1-contracts-v1",
+  "cases": {
+    "H01": [
+      "tests/test_extension_hooks.py::test_no_hooks_and_empty_registry_preserve_requests_actions_and_trace"
+    ],
+    "H02": [
+      "tests/test_runtime.py",
+      "tests/test_extension_hooks.py::test_failed_plugin_start_removes_registered_v2_hooks_once",
+      "tests/test_composition.py"
+    ],
+    "H03": [
+      "tests/test_extension_hooks.py::test_mixed_order_manifest_and_unload_are_repeatable",
+      "tests/test_extension_hooks.py::test_new_order_uses_registration_and_first_decision_stops_chain",
+      "tests/test_extension_hooks.py::test_legacy_sort_and_observer_error_remain_explicit_compatibility"
+    ],
+    "H04": [
+      "tests/test_extension_hooks.py::test_new_observer_receives_copies_for_all_statuses_and_failure_is_isolated",
+      "tests/test_extension_hooks.py::test_v2_model_preserves_protected_messages_and_tool_capabilities",
+      "tests/test_extension_hooks.py::test_v2_tool_identity_and_deep_copy",
+      "tests/test_extension_hooks.py::test_hook_service_selection_and_cleanup_in_both_composition_paths",
+      "tests/test_harness_extensions.py::test_request_hook_cannot_add_tools",
+      "tests/test_extension_hooks.py::test_legacy_callbacks_have_versioned_run_bound_audit",
+      "tests/test_extension_hooks.py::test_legacy_request_cannot_remove_system_or_current_task",
+      "tests/test_extension_hooks.py::test_rewritten_tool_updates_local_first_using_effective_call"
+    ],
+    "H05": [
+      "tests/test_extension_hooks.py::test_tool_rewrite_rechecks_schema_permissions_and_real_paths",
+      "tests/test_extension_hooks.py::test_loop_tool_hooks_revalidate_and_observer_cannot_turn_success_into_failure",
+      "tests/test_harness_extensions.py::test_tool_hook_is_revalidated"
+    ],
+    "H06": [
+      "tests/test_extension_hooks.py::test_lifecycle_faults_close_once_without_repeating_side_effects",
+      "tests/test_extension_hooks.py::test_start_failure_calls_end_once_without_model_call",
+      "tests/test_extension_hooks.py::test_token_or_unknown_usage_stops_before_completion_checks",
+      "tests/test_extension_hooks.py::test_real_tool_failure_observed_once_without_retrying_write",
+      "tests/test_extension_hooks.py::test_cancellation_during_legacy_finish_does_not_repeat_callback",
+      "tests/test_extension_hooks.py::test_legacy_and_modern_end_share_one_cleanup_deadline",
+      "tests/test_extension_hooks.py::test_legacy_tool_callbacks_cannot_invoke_an_unaccounted_nested_tool",
+      "tests/test_extension_hooks.py::test_invalid_transform_is_audited_as_failure",
+      "tests/test_extension_hooks.py::test_v2_identity_is_bounded_before_audit_registration",
+      "tests/test_extension_hooks.py::test_end_notifications_cannot_start_tools",
+      "tests/test_extension_hooks.py::test_legacy_policy_exception_text_stays_out_of_loop_result_and_trace",
+      "tests/test_extension_hooks.py::test_final_step_observer_timeout_takes_budget_precedence"
+    ],
+    "H07": [
+      "tests/test_extension_hooks.py::test_finish_feedback_is_bounded_and_required",
+      "tests/test_extension_hooks.py::test_finish_continue_uses_same_run_and_original_step_budget",
+      "tests/test_extension_hooks.py::test_finish_chain_short_circuits_and_restarts_at_next_proposal",
+      "tests/test_extension_hooks.py::test_controlled_finish_read_is_accounted_paired_and_expires",
+      "tests/test_extension_hooks.py::test_controlled_calls_cannot_reset_or_exceed_tool_budget",
+      "tests/test_extension_hooks.py::test_controlled_capability_rejects_child_tasks_and_tool_recursion",
+      "tests/test_extension_hooks.py::test_extension_failed_edit_keeps_local_first_finish_protection",
+      "tests/test_extension_hooks.py::test_extension_calls_keep_shared_repetition_guard"
+    ],
+    "H08": [
+      "tests/test_extension_hooks.py::test_hook_service_selection_and_cleanup_in_both_composition_paths"
+    ],
+    "C01": [
+      "tests/test_extension_hooks.py::test_no_hooks_and_empty_registry_preserve_requests_actions_and_trace",
+      "tests/test_context.py",
+      "tests/test_context_retention.py"
+    ]
+  },
+  "command_modules": [
+    "tests/test_extension_hooks.py",
+    "tests/test_runtime.py",
+    "tests/test_composition.py",
+    "tests/test_harness_extensions.py",
+    "tests/test_harness_safety.py",
+    "tests/test_context.py",
+    "tests/test_context_retention.py",
+    "tests/test_security.py"
+  ],
+  "safety_cases": [
+    "E01",
+    "E02"
+  ],
+  "offline_groups": [
+    "Baseline",
+    "A"
+  ],
+  "offline_manifest": "benchmarks/extension_v1/offline.json",
+  "overhead_protocol": {
+    "warmup": 20,
+    "samples": 200,
+    "batches": 3,
+    "threshold_ms": 5,
+    "relative_threshold": 0.1,
+    "quantile": "nearest_rank",
+    "aggregate": "median_p95_delta"
+  },
+  "exclusions": [
+    "S01-S04/C02-C04/V01-V05/M01-M04/E03",
+    "real_model_queue",
+    "mechanism_benefit_claims"
+  ]
+}

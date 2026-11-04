@@ -28,7 +28,7 @@ from minidsh.benchmark.runner import (
     BenchmarkRunner,
     BenchmarkTask,
 )
-from minidsh.cli import _task_options
+from minidsh.cli import task_options
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
 from minidsh.domain import ModelPricing
 from minidsh.evaluation import TraceRun, build_replay
@@ -250,7 +250,7 @@ async def main() -> None:
             return build_local_runtime(
                 workspace=workspace,
                 model=model,
-                options=_task_options(options, selected),
+                options=task_options(options, selected),
                 budget=selected.budget,
             )
 

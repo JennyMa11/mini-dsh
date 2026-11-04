@@ -45,6 +45,17 @@ class JsonSessionStore:
         self._validate_run_id(run_id)
         return await asyncio.to_thread(self._load_sync, run_id)
 
+    async def list(self) -> tuple[RunResult, ...]:
+        """List validated snapshots in stable ID order without accessing other workspaces."""
+        if not self._directory.exists():
+            return ()
+        results = []
+        for path in sorted(self._directory.glob("*.json")):
+            result = await self.load(path.stem)
+            if result is not None:
+                results.append(result)
+        return tuple(results)
+
     def _save_sync(self, result: RunResult) -> None:
         self._validate_run_id(result.run_id)
         self._directory.mkdir(parents=True, exist_ok=True)
@@ -64,6 +75,8 @@ class JsonSessionStore:
             "duration_ms": result.duration_ms,
             "failure_reason": result.failure_reason,
             "history": [message_to_json(message) for message in result.history],
+            "unknown_usage_calls": result.unknown_usage_calls,
+            "session_id": result.session_id,
         }
         descriptor, temporary_name = tempfile.mkstemp(prefix=".session-", dir=self._directory)
         temporary = Path(temporary_name)
@@ -123,6 +136,8 @@ class JsonSessionStore:
             parsed.failure_reason,
             history,
             LatencyBreakdown(**parsed.latency.model_dump()),
+            parsed.unknown_usage_calls,
+            parsed.session_id,
         )
 
     @staticmethod
@@ -146,6 +161,8 @@ class _StoredLatency(_StrictModel):
 
 
 class _StoredRun(_StrictModel):
+    session_id: str = ""
+    unknown_usage_calls: int = Field(default=0, ge=0)
     schema_version: str
     run_id: str
     status: str

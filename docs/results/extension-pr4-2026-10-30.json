@@ -1,0 +1,43 @@
+{
+  "status": "accepted_pr4_only",
+  "source_sha256": "7249c0eae026ca0626883329d347cbaaceb01f0c408344d17a5b36a09765250b",
+  "component_checks": 542,
+  "component_loop_traces": 175,
+  "full_gate_tests": 975,
+  "reproduced_gate_tests": 975,
+  "native_queue_scripted_successes": 90,
+  "native_containers_in_queue": 180,
+  "baseline_a_equal_request_pairs": 18,
+  "d_seed_copies_unchanged": 18,
+  "known_scripted_tokens": 132030,
+  "real_api_calls": 0,
+  "real_seed_approvals": 0,
+  "real_seed_commits": 0,
+  "functional_rows_checked": 28,
+  "phase_accepted": true,
+  "limitations": [
+    "synthetic scripted regression does not establish model ability or mechanism benefit",
+    "SQLite adapter requires POSIX dir_fd/O_NOFOLLOW/directory flock and serialize/deserialize; other platforms fail closed",
+    "database max 8MiB; external/old SQLite writers must stop and unfinished journal/WAL/SHM be resolved before use",
+    "no claim against arbitrary malicious same-UID host-process tampering; actor OS isolation remains mandatory",
+    "power-loss/process-crash durability and natural-language cross-topic contradiction detection are outside the declared deterministic cases"
+  ],
+  "schema_version": "1.0",
+  "stage": "PR4",
+  "recorded_date": "2026-10-30",
+  "snapshot": "benchmark-results/extension-v1/pr4-release-7249c0eae026ca06",
+  "source_inputs": 802,
+  "mypy_files": 161,
+  "formatted_files_current": 279,
+  "native_safety_drivers_passed": 7,
+  "current_source_and_extracted_gates": "passed",
+  "memory_default": "off",
+  "next_stage": "M5 preparation, real seeds require explicit user approval",
+  "review_source": "implementation agent source review and executable evidence audit; no external human signoff",
+  "mechanism_benefit": null,
+  "real_model_queue": {
+    "completed": 0,
+    "declared": 90,
+    "nominal_total_token_budget": 720000
+  }
+}

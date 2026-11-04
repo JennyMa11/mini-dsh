@@ -377,6 +377,32 @@ async def test_timeout_is_reported_without_hanging(tmp_path: Path) -> None:
     assert result.argv == (sys.executable, "-c", "import time; time.sleep(30)")
 
 
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_cancellation_cleans_up_the_entire_process_group(tmp_path: Path) -> None:
+    sandbox = _sandbox(tmp_path)
+    ready = sandbox.root / "ready.txt"
+    orphan = sandbox.root / "orphan.txt"
+    child = "import pathlib,time; time.sleep(1); pathlib.Path('orphan.txt').write_text('alive')"
+    parent = (
+        "import pathlib,subprocess,sys,time; "
+        f"subprocess.Popen([sys.executable, '-c', {child!r}]); "
+        "pathlib.Path('ready.txt').write_text('ready'); time.sleep(30)"
+    )
+    runner = LocalCommandRunner(sandbox, CommandPolicy(allowed_commands=frozenset({_PYTHON})))
+    task = asyncio.create_task(runner.run((sys.executable, "-c", parent)))
+    for _ in range(100):
+        if ready.exists():
+            break
+        await asyncio.sleep(0.01)
+    assert ready.exists()
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await task
+    await asyncio.sleep(1.2)
+    assert not orphan.exists(), "cancelled command left a descendant running"
+
+
 # --- command policy hardening -------------------------------------------------
 
 

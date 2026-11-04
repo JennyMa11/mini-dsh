@@ -1,0 +1,151 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "fc97ade3829332219763a64f002e25dcf409d8f1e806ca0c84a3f502be1943f7",
+  "stage_checked": 11,
+  "stage_declared": 11,
+  "full_plan_checked": 11,
+  "full_plan_declared": 28,
+  "full_plan_evidence_coverage": 0.39285714285714285,
+  "rows": [
+    {
+      "case_id": "H01",
+      "status": "pass",
+      "evidence": "H01/0/check.json"
+    },
+    {
+      "case_id": "H02",
+      "status": "pass",
+      "evidence": "H02/0/check.json"
+    },
+    {
+      "case_id": "H03",
+      "status": "pass",
+      "evidence": "H03/0/check.json"
+    },
+    {
+      "case_id": "H04",
+      "status": "pass",
+      "evidence": "H04/0/check.json"
+    },
+    {
+      "case_id": "H05",
+      "status": "pass",
+      "evidence": "H05/0/check.json"
+    },
+    {
+      "case_id": "H06",
+      "status": "pass",
+      "evidence": "H06/0/check.json"
+    },
+    {
+      "case_id": "H07",
+      "status": "pass",
+      "evidence": "H07/0/check.json"
+    },
+    {
+      "case_id": "H08",
+      "status": "pass",
+      "evidence": "H08/0/check.json"
+    },
+    {
+      "case_id": "C01",
+      "status": "pass",
+      "evidence": "C01/0/check.json"
+    },
+    {
+      "case_id": "E01",
+      "status": "pass",
+      "evidence": "E01/0/check.json"
+    },
+    {
+      "case_id": "E02",
+      "status": "pass",
+      "evidence": "E02/0/check.json"
+    },
+    {
+      "case_id": "S01",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "S02",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "S03",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "S04",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "C02",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "C03",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "C04",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "V01",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "V02",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "V03",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "V04",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "V05",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "M01",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "M02",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "M03",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "M04",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    },
+    {
+      "case_id": "E03",
+      "status": "not_run",
+      "reason": "PR2/PR3/PR4/M5; outside current authorized stage"
+    }
+  ]
+}

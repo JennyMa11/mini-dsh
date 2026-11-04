@@ -1,0 +1,1252 @@
+{
+  "plan_version": "v1",
+  "criterion_version": "extension-v1",
+  "cases": [
+    {
+      "case_id": "H01",
+      "category": "PR 1",
+      "task_input": "无 Hook 与空 Hook 执行相同脚本；结果、模型输入、工具动作、Token/调用数相同",
+      "expected": "无 Hook 与空 Hook 执行相同脚本；结果、模型输入、工具动作、Token/调用数相同",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "契约 + 规范化 Trace 对比；忽略 ID/时间和新增审计事件",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H02",
+      "category": "PR 1",
+      "task_input": "插件依赖、重复服务、启动中途失败；逆序释放一次，不残留 Hook",
+      "expected": "插件依赖、重复服务、启动中途失败；逆序释放一次，不残留 Hook",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "生命周期故障注入；参考 test_runtime/test_composition",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H03",
+      "category": "PR 1",
+      "task_input": "三个扩展组合、相同优先级及卸载；新顺序固定，旧顺序兼容",
+      "expected": "三个扩展组合、相同优先级及卸载；新顺序固定，旧顺序兼容",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "记录调用序列，重复运行及卸载后复查",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H04",
+      "category": "PR 1",
+      "task_input": "只修改 Hook 副本；Session、工具能力、call_id 和原始结果不变",
+      "expected": "只修改 Hook 副本；Session、工具能力、call_id 和原始结果不变",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "深层可变数据回归；读取日志逐项比较",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H05",
+      "category": "PR 1",
+      "task_input": "before_tool 改为非法参数/越权路径；不执行；合法改写可执行",
+      "expected": "before_tool 改为非法参数/越权路径；不执行；合法改写可执行",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "Schema/授权事件 + 外部哨兵文件 hash",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H06",
+      "category": "PR 1",
+      "task_input": "注入各生命周期异常/超时/取消；收束一次，不重试副作用",
+      "expected": "注入各生命周期异常/超时/取消；收束一次，不重试副作用",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "参数化故障测试 + 终态/调用计数；after_tool 全状态覆盖",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H07",
+      "category": "PR 1",
+      "task_input": "fake 完成检查 allow/continue/fail/冲突；先拒绝者生效，原预算不重置",
+      "expected": "fake 完成检查 allow/continue/fail/冲突；先拒绝者生效，原预算不重置",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "脚本模型轨迹；验证两次 step 和唯一终态",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "H08",
+      "category": "PR 1",
+      "task_input": "审计与请求注入扩展走两种组装入口；不改 Loop 即可接入",
+      "expected": "审计与请求注入扩展走两种组装入口；不改 Loop 即可接入",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "可执行第三方示例；配置/嵌入输出对照",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "C01",
+      "category": "PR 1",
+      "task_input": "无扩展的六种基础 Context 策略及已有 budget 分支仍保留原行为",
+      "expected": "无扩展的六种基础 Context 策略及已有 budget 分支仍保留原行为",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "参数化原回归与事实快照",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "S01",
+      "category": "PR 2",
+      "task_input": "启用 Skills 初始只含元数据，load_skill 后才有正文",
+      "expected": "启用 Skills 初始只含元数据，load_skill 后才有正文",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "检查每轮实际 ModelRequest、受控读取计账",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "S02",
+      "category": "PR 2",
+      "task_input": "重名/非法名/畸形头/超量/超长/缺失文件",
+      "expected": "重名/非法名/畸形头/超量/超长/缺失文件",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "固定边界输入，明确拒绝，不静默使用部分目录",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "S03",
+      "category": "PR 2",
+      "task_input": "`..`、符号链接逃逸、敏感文件及运行中替换",
+      "expected": "`..`、符号链接逃逸、敏感文件及运行中替换",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "真实临时文件 + 受控后端；无越界读取/泄漏",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "S04",
+      "category": "PR 2",
+      "task_input": "Skill 要求执行未授权命令或引用脚本",
+      "expected": "Skill 要求执行未授权命令或引用脚本",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "无自动执行；工具显式调用仍被拒；副作用检查",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "C02",
+      "category": "PR 2",
+      "task_input": "各策略走其适用的裁剪/摘要/检索路径；约束与关键事实仍在",
+      "expected": "各策略走其适用的裁剪/摘要/检索路径；约束与关键事实仍在",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "六策略及 budget 分支参数化保留检查；Session 字节不改",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "C03",
+      "category": "PR 2",
+      "task_input": "来源冲突、重复段、assistant/tool 配对及上下文注入",
+      "expected": "来源冲突、重复段、assistant/tool 配对及上下文注入",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "检查角色/顺序/来源、无权限提升、不重复计 Token",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "C04",
+      "category": "PR 2",
+      "task_input": "保护段或 Hook 注入超限；检索被拒/取消",
+      "expected": "保护段或 Hook 注入超限；检索被拒/取消",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "不发超限请求；读取消耗保留；未知不记零",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "V01",
+      "category": "PR 3",
+      "task_input": "可见验证失败一次，脚本修复后再次完成",
+      "expected": "可见验证失败一次，脚本修复后再次完成",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "真实命令 + Trace 检查同 run、递增 step、最终文件",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "V02",
+      "category": "PR 3",
+      "task_input": "连续失败/无修改重复结束；最多 3 次检查",
+      "expected": "连续失败/无修改重复结束；最多 3 次检查",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "统计验证次数与反馈次数；最终 failed",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "V03",
+      "category": "PR 3",
+      "task_input": "检查期间取消、超时、权限拒绝或四种总预算耗尽",
+      "expected": "检查期间取消、超时、权限拒绝或四种总预算耗尽",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "真子进程清理 + 终态/无后续调用；错误分类",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "V04",
+      "category": "PR 3",
+      "task_input": "曾通过后再次修改；必须重验，测试命令来源不能被模型替换",
+      "expected": "曾通过后再次修改；必须重验，测试命令来源不能被模型替换",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "固定 argv、修改/验证顺序及旧结果不可复用",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "V05",
+      "category": "PR 3",
+      "task_input": "Agent 改坏可见测试或提前退出测试命令",
+      "expected": "Agent 改坏可见测试或提前退出测试命令",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "可见结论与独立判据分开；隐藏测试/完成标记捕获假成功",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "M01",
+      "category": "PR 4",
+      "task_input": "提议→校验→批准→提交；越级/改内容/旧批准",
+      "expected": "提议→校验→批准→提交；越级/改内容/旧批准",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "状态机契约 + SQLite 实际读回，批准身份/hash 可追溯",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "M02",
+      "category": "PR 4",
+      "task_input": "跨项目、陈旧、冲突、未批准项和超额数据",
+      "expected": "跨项目、陈旧、冲突、未批准项和超额数据",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "检索排除与显式拒绝；只返回限定数量及来源",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "M03",
+      "category": "PR 4",
+      "task_input": "取消、事务失败、重复提交、重复打开",
+      "expected": "取消、事务失败、重复提交、重复打开",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "故障注入 + 重开数据库；原子且幂等，无半条记录",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "M04",
+      "category": "PR 4",
+      "task_input": "Secret/隐藏标签/未经验证经验写入和直接文件改写",
+      "expected": "Secret/隐藏标签/未经验证经验写入和直接文件改写",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "假密钥探针 + 数据库/输出/Trace 检测；模型无批准权限",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "E01",
+      "category": "M0 / 各 PR / M5",
+      "task_input": "越界写、未授权网络、危险命令及合法对照",
+      "expected": "越界写、未授权网络、危险命令及合法对照",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "实际容器/OS 副作用观察；禁止全拦截冒充安全",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "E02",
+      "category": "M0 / 各 PR / M5",
+      "task_input": "工具/验证进程超时和取消、插件收束",
+      "expected": "工具/验证进程超时和取消、插件收束",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "PID/进程组与文件快照；退出后无残留子进程",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    },
+    {
+      "case_id": "E03",
+      "category": "PR 4 / M5",
+      "task_input": "case 未运行、Trace 中断、未知用量、预算超量",
+      "expected": "case 未运行、Trace 中断、未知用量、预算超量",
+      "forbidden": "Any violation of the frozen expected behavior",
+      "checker": "独立报告检查分母、null、证据覆盖率与总消耗",
+      "criterion_version": "extension-v1",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "required": "real OS/container for E01/E02; deterministic component fixture otherwise"
+      },
+      "repeats": 1,
+      "status": "untested"
+    }
+  ],
+  "model": {
+    "adapter": "existing OpenAICompatibleModel",
+    "id": "deepseek-flash",
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "temperature": 0,
+    "thinking": false,
+    "max_output_tokens": 1024,
+    "response_version": "record if supplied; unavailable before request"
+  },
+  "budget": {
+    "max_steps": 16,
+    "max_tokens": 8000,
+    "max_tool_calls": 32,
+    "max_duration_seconds": 180
+  },
+  "total_token_budget": 720000,
+  "real_model_runs": 90,
+  "groups": {
+    "Baseline": [],
+    "A": [
+      "audit"
+    ],
+    "B": [
+      "audit",
+      "skills"
+    ],
+    "C": [
+      "audit",
+      "skills",
+      "verification"
+    ],
+    "D": [
+      "audit",
+      "skills",
+      "verification",
+      "memory"
+    ]
+  },
+  "isolation": {
+    "platform": "linux/arm64",
+    "cpus": 1,
+    "memory_mb": 1024,
+    "network": "none",
+    "pids_limit": 128,
+    "verification_timeout_seconds": 30,
+    "independent_timeout_seconds": 10,
+    "images": {
+      "platform": "linux/arm64",
+      "images": {
+        "python": "docker.1ms.run/library/python@sha256:e0b3f8d16a5ccfbe602d5c94297e5dbcda2ec256edca2b80fcd44e39e1ff6feb",
+        "js": "docker.1ms.run/library/node@sha256:9a422d62743ffb1e6eb282549f4eae7ab89f7b926db1f136f4cba8be60e4ecbc"
+      },
+      "size_bytes": {
+        "python": 149400590,
+        "js": 246810680
+      }
+    }
+  },
+  "public_tasks": [
+    {
+      "id": "python_000_has_close_elements",
+      "language": "python",
+      "upstream_id": "Python/0",
+      "entry_point": "has_close_elements",
+      "bug_type": "missing logic",
+      "coverage_tags": [
+        "float_threshold",
+        "pair_search",
+        "missing_logic"
+      ],
+      "record_sha256": "13866290dd7d51892228d3346a2aabdfa1956f11d5da6843403f680bf21263c5",
+      "initial_file_sha256": "a9b6a056b7ba15ba3d059af0f5833695f0089d465e03df7569a5091152c85a21"
+    },
+    {
+      "id": "python_001_separate_paren_groups",
+      "language": "python",
+      "upstream_id": "Python/1",
+      "entry_point": "separate_paren_groups",
+      "bug_type": "operator misuse",
+      "coverage_tags": [
+        "nested_parsing",
+        "whitespace",
+        "operator_misuse"
+      ],
+      "record_sha256": "ccf6d4aaf18b3af538a9dfd17990fe0e529b6563dbb2620f47be3d9bc85f4cfb",
+      "initial_file_sha256": "29d613b0c029127cbab57809e5dd56b213f32179ce5dcc039bc3687906a9c3b2"
+    },
+    {
+      "id": "js_026_removeduplicates",
+      "language": "js",
+      "upstream_id": "JavaScript/26",
+      "entry_point": "removeDuplicates",
+      "bug_type": "operator misuse",
+      "coverage_tags": [
+        "duplicates",
+        "stable_order",
+        "operator_misuse"
+      ],
+      "record_sha256": "91ce9878129e01baea4c02a7c5d285205929cbbdcb075310cbcb5942b90af406",
+      "initial_file_sha256": "326cb577887588e9eafd0a7211de502441a1358d6b0b6c738f9b0ca359c20aff"
+    },
+    {
+      "id": "js_151_doublethedifference",
+      "language": "js",
+      "upstream_id": "JavaScript/151",
+      "entry_point": "doubleTheDifference",
+      "bug_type": "missing logic",
+      "coverage_tags": [
+        "mixed_types",
+        "negative_values",
+        "missing_logic"
+      ],
+      "record_sha256": "a8a017286589d79d968f49f0407c78736d1dc3da47b0bedd8d5653586bafac99",
+      "initial_file_sha256": "6157dd40cca2cc74de60c24cc3dc508e2ff2b44455f6434040759f2a552ccf7f"
+    }
+  ],
+  "project_tasks": [
+    {
+      "id": "test_failure",
+      "goal": "Fix total(values) to sum numeric values, including empty and negative inputs. Run the visible tests.",
+      "workspace": "test_failure/workspace",
+      "response_script": "test_failure/responses.json",
+      "test_argv": [
+        "python",
+        "visible.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "verification_overlay": "test_failure/verifier",
+      "timeout_seconds": 10,
+      "category": "extension_regression",
+      "repo_commit": "sha256:11bdda4d2218d382ceb97fb9740e7235885acb6a793fc3655a1dca73adc15bee",
+      "verification_commit": "sha256:ea3d4277dce8dbc188e82daa9ebdf9a04ce56945f9f82dd95261cf88e8a930e5",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "project_constraint",
+      "goal": "Repair labels(values) according to the project constraints in AGENTS.md. Run the visible tests.",
+      "workspace": "project_constraint/workspace",
+      "response_script": "project_constraint/responses.json",
+      "test_argv": [
+        "python",
+        "visible.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "verification_overlay": "project_constraint/verifier",
+      "timeout_seconds": 10,
+      "category": "extension_regression",
+      "repo_commit": "sha256:555c5191ff60c344ec4d4b09cda00566f1a8c53d1ca9fd195393981672b8eb8f",
+      "verification_commit": "sha256:36f607ae9a4d3d7e334000c41f81e0f36e6901005801d27621a07c78e83f758c",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    }
+  ],
+  "seed": 20261029,
+  "queue": [
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 0,
+      "group": "B"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 0,
+      "group": "A"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 0,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 0,
+      "group": "C"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 0,
+      "group": "D"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 1,
+      "group": "D"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 1,
+      "group": "A"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 1,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 1,
+      "group": "B"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 1,
+      "group": "C"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 2,
+      "group": "D"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 2,
+      "group": "B"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 2,
+      "group": "A"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 2,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "python_000_has_close_elements",
+      "repeat": 2,
+      "group": "C"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 0,
+      "group": "D"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 0,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 0,
+      "group": "B"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 0,
+      "group": "C"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 0,
+      "group": "A"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 1,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 1,
+      "group": "B"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 1,
+      "group": "C"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 1,
+      "group": "A"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 1,
+      "group": "D"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 2,
+      "group": "A"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 2,
+      "group": "B"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 2,
+      "group": "C"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 2,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "python_001_separate_paren_groups",
+      "repeat": 2,
+      "group": "D"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 0,
+      "group": "C"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 0,
+      "group": "A"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 0,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 0,
+      "group": "D"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 0,
+      "group": "B"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 1,
+      "group": "D"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 1,
+      "group": "B"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 1,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 1,
+      "group": "A"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 1,
+      "group": "C"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 2,
+      "group": "B"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 2,
+      "group": "D"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 2,
+      "group": "C"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 2,
+      "group": "A"
+    },
+    {
+      "case_id": "js_026_removeduplicates",
+      "repeat": 2,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 0,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 0,
+      "group": "B"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 0,
+      "group": "D"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 0,
+      "group": "C"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 0,
+      "group": "A"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 1,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 1,
+      "group": "C"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 1,
+      "group": "B"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 1,
+      "group": "D"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 1,
+      "group": "A"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 2,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 2,
+      "group": "A"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 2,
+      "group": "B"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 2,
+      "group": "C"
+    },
+    {
+      "case_id": "js_151_doublethedifference",
+      "repeat": 2,
+      "group": "D"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 0,
+      "group": "B"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 0,
+      "group": "A"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 0,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 0,
+      "group": "D"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 0,
+      "group": "C"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 1,
+      "group": "C"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 1,
+      "group": "A"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 1,
+      "group": "B"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 1,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 1,
+      "group": "D"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 2,
+      "group": "B"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 2,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 2,
+      "group": "A"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 2,
+      "group": "D"
+    },
+    {
+      "case_id": "test_failure",
+      "repeat": 2,
+      "group": "C"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 0,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 0,
+      "group": "A"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 0,
+      "group": "B"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 0,
+      "group": "D"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 0,
+      "group": "C"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 1,
+      "group": "D"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 1,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 1,
+      "group": "C"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 1,
+      "group": "B"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 1,
+      "group": "A"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 2,
+      "group": "Baseline"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 2,
+      "group": "C"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 2,
+      "group": "A"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 2,
+      "group": "D"
+    },
+    {
+      "case_id": "project_constraint",
+      "repeat": 2,
+      "group": "B"
+    }
+  ],
+  "input_hashes": {
+    "fixtures/js_026_removeduplicates/README.md": "f89b9ae22581d4e4ebf5c21445b80c0326f9c029c193a6b2094e878d375deaeb",
+    "fixtures/js_026_removeduplicates/smoke.js": "e45235e44bb6505452e8f8a95b917229e90fb23ad96ac46f0c6735e00e6eab0f",
+    "fixtures/js_026_removeduplicates/solution.js": "326cb577887588e9eafd0a7211de502441a1358d6b0b6c738f9b0ca359c20aff",
+    "fixtures/js_151_doublethedifference/README.md": "2ec5d94deddfa35ee9e7c2bb3ba2aab4dc8b4d4384cb04ceb6d535d546d8c7a0",
+    "fixtures/js_151_doublethedifference/smoke.js": "4a6649e27cdbfbd9979e8921831e95f2326b69ec34d31cbb6f9935cb69bb9165",
+    "fixtures/js_151_doublethedifference/solution.js": "6157dd40cca2cc74de60c24cc3dc508e2ff2b44455f6434040759f2a552ccf7f",
+    "fixtures/python_000_has_close_elements/README.md": "f8db7625c79bd36478bd00295e5462d55657813fd0f41248d2f03ebd9daf7888",
+    "fixtures/python_000_has_close_elements/smoke.py": "d1b41dff4d85b45d725f657a83e1a5187d2b6adfe5b0fca3a775325debbea224",
+    "fixtures/python_000_has_close_elements/solution.py": "a9b6a056b7ba15ba3d059af0f5833695f0089d465e03df7569a5091152c85a21",
+    "fixtures/python_001_separate_paren_groups/README.md": "8106bff83d37dc928e3ce3111a7361fcda7da4a77aeb870e78579c09c9031ae0",
+    "fixtures/python_001_separate_paren_groups/smoke.py": "d23127fa55114afe1318a31d8f11784917936099ea820954013580217e785bec",
+    "fixtures/python_001_separate_paren_groups/solution.py": "29d613b0c029127cbab57809e5dd56b213f32179ce5dcc039bc3687906a9c3b2",
+    "js_026_removeduplicates.json": "7fbe173b1713b72b26e3a6a1f63a5a3624c7d3d876531ce6168b6b2b31fbf99f",
+    "js_151_doublethedifference.json": "387b896b88362ea74077058a3902f92b8ab3fbb5e816de33317b8e976344470f",
+    "offline.json": "3cf1c511e63f4fad19ad066e46e2e8a38a0b258d047a927c3b11053cbdab761f",
+    "project_constraint/reference/AGENTS.md": "114fba01fa9089d78ed4f7a49f31268883e3e131ca79accd4432fb8c093ceca2",
+    "project_constraint/reference/solution.py": "247514c5d69f279d65d40780c6890095ce1eab80cc0cdb46b7ec29413da93f35",
+    "project_constraint/reference/visible.py": "352c0dc1fdedc14daf387b67fbe798144b2d916f8d2b1dfc3c3516a09266ecd7",
+    "project_constraint/responses.json": "69fc0e2d6df165c2f4b38ea9b234d4b3a76fbb5ee8b2d0fe5aab9f798e8a711f",
+    "project_constraint/verifier/verify.py": "5e22652f706e9b343e0e183a6bef851e6dfd216c39f2a3295e06cb9b3242d9f4",
+    "project_constraint/workspace/AGENTS.md": "114fba01fa9089d78ed4f7a49f31268883e3e131ca79accd4432fb8c093ceca2",
+    "project_constraint/workspace/solution.py": "210ac5eef450e5e6d7122350d4fb28fecee5f8408b0f67303ad656022c041009",
+    "project_constraint/workspace/visible.py": "352c0dc1fdedc14daf387b67fbe798144b2d916f8d2b1dfc3c3516a09266ecd7",
+    "python_000_has_close_elements.json": "5bc659054b7e77209595aac8a7a98350b0075d8f07a72aa23dfe0fc9b88a20d5",
+    "python_001_separate_paren_groups.json": "5406022fd088d6205134aff48686cdd7abaaa2f676e97531cefd7ad80748d7bc",
+    "solutions/js_026_removeduplicates/README.md": "f89b9ae22581d4e4ebf5c21445b80c0326f9c029c193a6b2094e878d375deaeb",
+    "solutions/js_026_removeduplicates/smoke.js": "e45235e44bb6505452e8f8a95b917229e90fb23ad96ac46f0c6735e00e6eab0f",
+    "solutions/js_026_removeduplicates/solution.js": "9cd1a7b353b5868ae6cf2a7d95b26326e515dc151a13bfc9f7be4407a7d87b71",
+    "solutions/js_151_doublethedifference/README.md": "2ec5d94deddfa35ee9e7c2bb3ba2aab4dc8b4d4384cb04ceb6d535d546d8c7a0",
+    "solutions/js_151_doublethedifference/smoke.js": "4a6649e27cdbfbd9979e8921831e95f2326b69ec34d31cbb6f9935cb69bb9165",
+    "solutions/js_151_doublethedifference/solution.js": "c7eb64c0f23075220f2fd204c7322650093a7eeed4dc03a5e278e003ef0c70e9",
+    "solutions/python_000_has_close_elements/README.md": "f8db7625c79bd36478bd00295e5462d55657813fd0f41248d2f03ebd9daf7888",
+    "solutions/python_000_has_close_elements/smoke.py": "d1b41dff4d85b45d725f657a83e1a5187d2b6adfe5b0fca3a775325debbea224",
+    "solutions/python_000_has_close_elements/solution.py": "40560c20a6f56877abd19fa87e39aa5d43f3bff6b7417c68e11fc772c096a6c9",
+    "solutions/python_001_separate_paren_groups/README.md": "8106bff83d37dc928e3ce3111a7361fcda7da4a77aeb870e78579c09c9031ae0",
+    "solutions/python_001_separate_paren_groups/smoke.py": "d23127fa55114afe1318a31d8f11784917936099ea820954013580217e785bec",
+    "solutions/python_001_separate_paren_groups/solution.py": "464c1465d5dbdf81777dab90f452cf22371867ee1349fed5d983ef0492c1f621",
+    "test_failure/reference/solution.py": "3251dbf18617cd67c47707cb9bd1611dbac212ff0ee9814a75b8ce1f34b85aad",
+    "test_failure/reference/visible.py": "fec083af7df7eedc45217252fea9e7d97628c744a1272a2ba36a2bf66c79288a",
+    "test_failure/responses.json": "08ec714f0cd11e7eff706f2f527b39e3de8f9846882dde678d0ac097ad6d7dc3",
+    "test_failure/verifier/verify.py": "a43358561b1b7002b03f144b2283b9f1e8644740d8ef9a5cf4317f75d40a1514",
+    "test_failure/workspace/solution.py": "d3410e41e520be190c95bd5d8b61a74983b4b559301e52d96d1ac0164fae96da",
+    "test_failure/workspace/visible.py": "fec083af7df7eedc45217252fea9e7d97628c744a1272a2ba36a2bf66c79288a",
+    "verification/js_026_removeduplicates/verify.js": "9e28ab6d2d19cb1997116b46c17fdbcccbe7364dffb9ec586fe52f7ce6560044",
+    "verification/js_151_doublethedifference/verify.js": "d8d6903a7aa2cdb48c62ba6b2f5f5a2879d5e51ca4754e5ea226795228718236",
+    "verification/python_000_has_close_elements/verify.py": "82ec1702b2fcc3e04a71ba96592125d63388ffd9a8b12135a91b32e32fae01f8",
+    "verification/python_001_separate_paren_groups/verify.py": "811fbfb75907882d5e543e8f1397f1d0d1fc66aca09eb3c70f0cfbc8d6e95237"
+  }
+}

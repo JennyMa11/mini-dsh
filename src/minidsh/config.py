@@ -7,13 +7,22 @@ import tomllib
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, cast
+from typing import Annotated, Any, Self, cast
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
 from minidsh.composition import MAX_SUBAGENT_PARALLEL, MAX_SUBAGENTS, RuntimeOptions
-from minidsh.domain import AgentBudget, ModelPricing
+from minidsh.domain import AgentBudget, JsonValue, ModelPricing
+from minidsh.domain.memory import (
+    MAX_FORBIDDEN_MEMORY_SOURCES,
+    MAX_PROJECT_ENTRIES,
+    MemoryConfig,
+    MemoryEvidenceFile,
+    MemoryEvidenceGrant,
+)
+from minidsh.domain.verification import MAX_VERIFICATION_SECONDS, VerificationConfig
 from minidsh.infrastructure import NetworkPolicy, NetworkRule
+from minidsh.runtime.catalog import PluginSpec
 
 DEFAULT_CONFIG_NAME = "minidsh.toml"
 ENV_PREFIX = "MINIDSH_"
@@ -25,6 +34,13 @@ _FALSE = frozenset({"0", "false", "no", "off"})
 _FILE_ALIASES: dict[str, str] = {"max_seconds": "max_duration_seconds"}
 
 _ENV_FIELDS: dict[str, str] = {
+    "MODEL_PROFILE": "model_profile",
+    "MODEL": "model",
+    "MODEL_ENDPOINT": "endpoint",
+    "API_KEY_ENV": "api_key_env",
+    "PLUGINS": "plugins",
+    "STREAMING_ENABLED": "streaming_enabled",
+    "APPROVAL_MODE": "approval_mode",
     "CONTEXT_STRATEGY": "context_strategy",
     "CONTEXT_INPUT_BUDGET": "context_input_budget",
     "LOCAL_FIRST_ENABLED": "local_first_enabled",
@@ -65,10 +81,12 @@ _ENV_FIELDS: dict[str, str] = {
     "SUBAGENT_MAX_TOKENS": "subagent_max_tokens",
     "SUBAGENT_MAX_TOOL_CALLS": "subagent_max_tool_calls",
     "SUBAGENT_MAX_SECONDS": "subagent_max_seconds",
+    "MEMORY": "memory",
 }
 
 _LIST_FIELDS = frozenset(
     {
+        "plugins",
         "allowed_commands",
         "denied_tools",
         "enabled_tools",
@@ -80,6 +98,7 @@ _LIST_FIELDS = frozenset(
 )
 _BOOL_FIELDS = frozenset(
     {
+        "streaming_enabled",
         "allow_write",
         "allow_shell",
         "artifact_offload",
@@ -125,6 +144,12 @@ class ConfigError(RuntimeError):
     """Invalid configuration file or override value."""
 
 
+class _PluginConfig(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    id: str = Field(min_length=1)
+    config: dict[str, JsonValue] = Field(default_factory=dict)
+
+
 class _NetworkRuleConfig(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -133,13 +158,94 @@ class _NetworkRuleConfig(BaseModel):
     ports: list[int] = Field(default_factory=list)
 
 
+class _VerificationSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    argv: list[str] = Field(min_length=1)
+    criterion_version: str
+    cwd: str = "."
+    timeout_seconds: float = Field(
+        default=30.0, gt=0, le=MAX_VERIFICATION_SECONDS, allow_inf_nan=False
+    )
+
+    def as_domain(self) -> VerificationConfig:
+        return VerificationConfig(
+            tuple(self.argv), self.criterion_version, self.cwd, self.timeout_seconds
+        )
+
+    @model_validator(mode="after")
+    def _validate_domain(self) -> Self:
+        self.as_domain()
+        return self
+
+
+class _MemoryFileSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, hide_input_in_errors=True)
+    path: str = Field(min_length=1, max_length=512)
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+    def as_domain(self) -> MemoryEvidenceFile:
+        return MemoryEvidenceFile(self.path, self.sha256)
+
+
+class _MemoryGrantSettings(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, hide_input_in_errors=True)
+    evidence_id: str = Field(pattern=r"^[a-z][a-z0-9_]{0,127}$")
+    document: _MemoryFileSettings
+
+    def as_domain(self) -> MemoryEvidenceGrant:
+        return MemoryEvidenceGrant(self.evidence_id, self.document.as_domain())
+
+
+class _MemorySettings(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, hide_input_in_errors=True)
+    project_id: str
+    applicable_version: str
+    database: str
+    storage_root: str
+    evidence_root: str | None = None
+    evidence_grants: list[_MemoryGrantSettings] = Field(
+        default_factory=list, max_length=MAX_PROJECT_ENTRIES
+    )
+    forbidden_content_sha256: list[Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]] = Field(
+        default_factory=list, max_length=MAX_FORBIDDEN_MEMORY_SOURCES
+    )
+
+    def as_domain(self) -> MemoryConfig:
+        return MemoryConfig(
+            self.project_id,
+            self.applicable_version,
+            self.database,
+            self.storage_root,
+            self.evidence_root,
+            tuple(grant.as_domain() for grant in self.evidence_grants),
+            tuple(self.forbidden_content_sha256),
+        )
+
+    @model_validator(mode="after")
+    def _validate_domain(self) -> Self:
+        self.as_domain()
+        return self
+
+
 class _ConfigModel(BaseModel):
     """Validated configuration values from any single layer."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True)
+
+    model_profile: str | None = Field(default=None, min_length=1)
+    model: str | None = Field(default=None, min_length=1)
+    endpoint: str | None = Field(default=None, min_length=1)
+    api_key_env: str | None = Field(default=None, pattern=r"^[A-Z][A-Z0-9_]*$")
 
     context_strategy: str = "full"
+    plugins: list[_PluginConfig] = Field(default_factory=list)
+    services: dict[str, str] = Field(default_factory=dict)
+    streaming_enabled: bool = False
+    approval_mode: str = Field(default="configured", pattern=r"^(configured|ask)$")
     context_input_budget: int = Field(default=8_192, ge=1)
+    skill_roots: list[str] = Field(default_factory=list)
+    verification: _VerificationSettings | None = None
+    memory: _MemorySettings | None = None
     local_first_enabled: bool = False
     progressive_tools_enabled: bool = False
     normalize_tool_results: bool = False
@@ -181,6 +287,11 @@ class _ConfigModel(BaseModel):
     subagent_max_tool_calls: int = Field(default=16, ge=1)
     subagent_max_seconds: float = Field(default=60.0, gt=0, allow_inf_nan=False)
 
+    @field_validator("memory", mode="before")
+    @classmethod
+    def _disable_memory(cls, value: object) -> object:
+        return None if value is False else value
+
     @field_validator("extra_permissions")
     @classmethod
     def _validate_extra_permissions(cls, values: list[str]) -> list[str]:
@@ -198,6 +309,7 @@ class ResolvedConfig:
     sources: dict[str, str] = field(default_factory=dict)
     profile: str | None = None
     available_profiles: tuple[str, ...] = ()
+    model_options: dict[str, str] = field(default_factory=dict)
 
 
 def load_config_file(path: Path | None) -> dict[str, Any]:
@@ -251,8 +363,20 @@ def environment_overrides(environ: Mapping[str, str]) -> dict[str, Any]:
         raw = environ.get(f"{ENV_PREFIX}{env_key}")
         if raw is None:
             continue
-        overrides[field_name] = _coerce(field_name, raw)
+        overrides[field_name] = (
+            _memory_environment(raw) if field_name == "memory" else _coerce(field_name, raw)
+        )
     return overrides
+
+
+def _memory_environment(raw: str) -> object:
+    try:
+        memory: object = json.loads(raw)
+    except json.JSONDecodeError:
+        raise ConfigError("MINIDSH_MEMORY must be a JSON object or false") from None
+    if memory is not None and memory is not False and not isinstance(memory, dict):
+        raise ConfigError("MINIDSH_MEMORY must be a JSON object or false")
+    return memory
 
 
 def _coerce(field_name: str, raw: str) -> Any:
@@ -333,8 +457,15 @@ def resolve_config(
         )
     )
     options = RuntimeOptions(
+        plugin_specs=tuple(PluginSpec(spec.id, spec.config) for spec in config.plugins),
+        service_selection=config.services,
+        streaming_enabled=config.streaming_enabled,
+        approval_mode=config.approval_mode,
         context_strategy=config.context_strategy,
         context_input_budget=config.context_input_budget,
+        skill_roots=tuple(config.skill_roots),
+        verification=config.verification.as_domain() if config.verification else None,
+        memory=config.memory.as_domain() if config.memory else None,
         local_first_enabled=config.local_first_enabled,
         progressive_tools_enabled=config.progressive_tools_enabled,
         normalize_tool_results=config.normalize_tool_results,
@@ -378,7 +509,14 @@ def resolve_config(
         max_tool_calls=config.max_tool_calls,
         max_duration_seconds=config.max_duration_seconds,
     )
-    return ResolvedConfig(options, budget, sources, selected, tuple(sorted(profiles)))
+    model_options = {
+        name: value
+        for name in ("model_profile", "model", "endpoint", "api_key_env")
+        if isinstance(value := getattr(config, name), str)
+    }
+    return ResolvedConfig(
+        options, budget, sources, selected, tuple(sorted(profiles)), model_options
+    )
 
 
 __all__ = [

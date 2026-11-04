@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "upstream_commit": "d743267388641bc76f17c45ce8b4c231aed1d32c",
+  "model": "deepseek-flash",
+  "repeats": 2,
+  "total_tokens": 120000,
+  "case_tokens": 8000,
+  "steps": 16,
+  "tool_calls": 32,
+  "seconds": 180,
+  "temperature": 0,
+  "thinking": false,
+  "max_output_tokens": 1024,
+  "image": "docker.1ms.run/library/python@sha256:349275ed26e7aea20752e1fd63c40c30a0281d324e51fb41612c2433cb6482d4",
+  "cases": ["repair", "recovery", "conversation", "denial", "plugins_backend", "fork_resume"],
+  "criteria_version": "mini_dsh_v1.0",
+  "isolation": {"cpus": 1, "memory_mb": 1024, "network": "none"},
+  "success": "independent add contract; protected settings unchanged; case-specific side-effect and trace checks",
+  "not_run_policy": "retain all 12 declared rows",
+  "retry_policy": "no model or tool automatic retries; no selective reruns"
+}

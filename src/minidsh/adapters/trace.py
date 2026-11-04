@@ -44,7 +44,12 @@ class JsonlTraceWriter:
         async with self._lock:
             mode = "w" if self.truncate_on_start and not self._started else "a"
             self._started = True
-            await asyncio.to_thread(self._append_sync, line, mode)
+            write = asyncio.create_task(asyncio.to_thread(self._append_sync, line, mode))
+            try:
+                await asyncio.shield(write)
+            except asyncio.CancelledError:
+                await write
+                raise
 
     def _append_sync(self, line: str, mode: str = "a") -> None:
         self.path.parent.mkdir(parents=True, exist_ok=True)

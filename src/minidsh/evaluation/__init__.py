@@ -6,6 +6,13 @@ time. That is what keeps the raw JSONL trace the single fact source.
 """
 
 from minidsh.evaluation.diff import StepComparison, TraceDiff, diff_traces
+from minidsh.evaluation.harness_metrics import (
+    HarnessMetrics,
+    MetricRate,
+    ScoringEvidence,
+    aggregate_harness_metrics,
+    score_harness,
+)
 from minidsh.evaluation.latency import (
     ToolLatency,
     latency_from_trace,
@@ -28,11 +35,14 @@ __all__ = [
     "X_METRICS",
     "Dominance",
     "FailureDiagnosis",
+    "HarnessMetrics",
     "MetricPoint",
+    "MetricRate",
     "ParetoAnalysis",
     "Replay",
     "ReplayStep",
     "ReplayToolCall",
+    "ScoringEvidence",
     "StepComparison",
     "ToolLatency",
     "TraceDiff",
@@ -40,6 +50,7 @@ __all__ = [
     "TraceRecord",
     "TraceRun",
     "TraceStep",
+    "aggregate_harness_metrics",
     "analyze",
     "build_replay",
     "classify_failure",
@@ -47,6 +58,7 @@ __all__ = [
     "latency_from_trace",
     "pareto_analysis",
     "retried_tool_calls",
+    "score_harness",
     "summarize_layers",
     "tool_latencies",
 ]

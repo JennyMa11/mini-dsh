@@ -1,0 +1,7 @@
+# Only dependency metadata is needed; never send source, credentials or traces.
+**
+!pyproject.toml
+!uv.lock
+!docker/
+!docker/work.Dockerfile
+!docker/work.Dockerfile.dockerignore

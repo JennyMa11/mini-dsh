@@ -63,7 +63,13 @@ def estimate_tokens(messages: tuple[Message, ...]) -> int:
     return max(1, (characters + tool_characters + 3) // 4)
 ```
 
-## 2. 六种内置策略
+## 2. 内置策略与历史六变体对照
+
+当前 CLI 还提供 `budget`（BudgetContext）：保留明确标记的关键事实，再按输入额度选取
+完整消息组；`work` 默认使用它。Sliding/Summary 也保留最新任务与明确标记状态。
+Runtime 检索改为通过授权工具准备有界快照，读取计入预算；下表的直接检索器构造方式
+是保留的 Python 辅助 API。具体边界见[轻量 Runtime](mini-dsh-runtime.md)。以下实验是
+历史冻结版本的结果，没有用新实现重新采样，不能补认当前版本的效果。
 
 | 策略 | 类 | 机制 | 保留什么 | 代价 |
 | --- | --- | --- | --- | --- |

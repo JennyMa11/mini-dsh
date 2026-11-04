@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "project_id": "extension_v1_project",
+  "applicable_version": "extension_v1",
+  "policy": "Use the existing local runtime and the task's visible test command. Preserve exported function names and signatures unless the task explicitly requests an API change. Do not install network dependencies.",
+  "confirmation_status": "pending_user_review"
+}

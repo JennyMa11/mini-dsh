@@ -7,6 +7,8 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+from minidsh.infrastructure import WorkspaceSandbox
+
 _WORD = re.compile(r"[A-Za-z_][A-Za-z0-9_]{2,}")
 _DEFAULT_SUFFIXES = frozenset(
     {".c", ".cpp", ".go", ".java", ".js", ".json", ".md", ".py", ".rs", ".toml", ".ts"}
@@ -36,6 +38,7 @@ class RepositoryRetriever:
         max_chunk_chars: int = 4_000,
     ) -> None:
         self._workspace = workspace.resolve(strict=True)
+        self._sandbox = WorkspaceSandbox(self._workspace)
         self._suffixes = suffixes
         self._max_file_bytes = max_file_bytes
         self._max_chunk_chars = max_chunk_chars
@@ -49,7 +52,7 @@ class RepositoryRetriever:
             try:
                 if path.stat().st_size > self._max_file_bytes:
                     continue
-                text = path.read_text(encoding="utf-8")
+                text = self._sandbox.read_text(path.relative_to(self._workspace).as_posix())
             except (OSError, UnicodeError):
                 continue
             lowered = text.lower()
@@ -83,6 +86,7 @@ class PythonSymbolRetriever:
 
     def __init__(self, workspace: Path, *, max_chunk_chars: int = 4_000) -> None:
         self._workspace = workspace.resolve(strict=True)
+        self._sandbox = WorkspaceSandbox(self._workspace)
         self._max_chunk_chars = max_chunk_chars
 
     def search(self, query: str, *, limit: int) -> tuple[RetrievedChunk, ...]:
@@ -95,7 +99,7 @@ class PythonSymbolRetriever:
             if any(part in _SKIPPED_PARTS for part in relative.parts):
                 continue
             try:
-                text = path.read_text(encoding="utf-8")
+                text = self._sandbox.read_text(relative.as_posix())
                 tree = ast.parse(text)
             except (OSError, UnicodeError, SyntaxError):
                 continue

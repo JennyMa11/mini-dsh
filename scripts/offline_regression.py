@@ -30,7 +30,7 @@ from minidsh.adapters import ScriptedModel
 from minidsh.adapters.session_journal import JsonlSessionJournal
 from minidsh.application.session_journal import MemorySessionJournal
 from minidsh.benchmark.runner import BenchmarkManifest, BenchmarkRunner, BenchmarkTask
-from minidsh.cli import _task_options
+from minidsh.cli import task_options
 from minidsh.composition import (
     LocalRuntime,
     RuntimeComponents,
@@ -233,7 +233,7 @@ def journal_factory(backend: str, workspace: Path, task: BenchmarkTask) -> Local
     return build_local_runtime(
         workspace=workspace,
         model=ScriptedModel.from_file(task.response_script),
-        options=_task_options(options, task),
+        options=task_options(options, task),
         budget=task.budget,
         components=RuntimeComponents(journal=journal),
     )

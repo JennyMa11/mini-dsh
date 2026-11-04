@@ -113,6 +113,7 @@ class ToolDefinition:
     side_effects: bool = False
     permissions: tuple[str, ...] = ()
     timeout_seconds: float = 30.0
+    approval_required: bool = True
 
 
 @dataclass(frozen=True, slots=True)
@@ -282,6 +283,9 @@ class ModelResponse:
     inference: InferenceMetrics | None = None
     recoverable_error: ErrorInfo | None = None
     format_retries: int = 0
+    usage_known: bool = True
+    provider_model: str | None = None
+    system_fingerprint: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -307,6 +311,8 @@ class ToolObservation:
     retryable: bool = False
     artifacts: tuple[str, ...] = ()
     summary: str = ""
+
+    effective_call: ToolCall | None = field(default=None, compare=False)
 
 
 @dataclass(frozen=True, slots=True)
@@ -368,6 +374,8 @@ class RunResult:
     failure_reason: str | None = None
     history: tuple[Message, ...] = ()
     latency: LatencyBreakdown = field(default_factory=LatencyBreakdown)
+    unknown_usage_calls: int = 0
+    session_id: str = ""
 
     @property
     def cost_usd(self) -> float:

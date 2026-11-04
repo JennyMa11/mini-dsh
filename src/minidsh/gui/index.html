@@ -41,6 +41,7 @@
       <span class="connection" id="connection">正在连接本地服务</span>
     </div>
   </aside>
+  <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
   <main id="main" data-view="chat">
     <button id="expand-sidebar" class="icon-button expand-sidebar" aria-label="展开侧边栏" aria-expanded="false" aria-controls="sidebar" hidden><svg class="icon"><use href="#i-sidebar"/></svg></button>
     <header class="topbar">
@@ -52,17 +53,64 @@
       <section class="conversation" id="conversation" role="tabpanel" aria-labelledby="conversation-tab">
         <div class="welcome" id="welcome"><svg class="welcome-mark" aria-hidden="true"><use href="#i-terminal"/></svg><h1>探索代码之境</h1><span class="preview-badge">预览版</span></div>
         <div id="messages" aria-live="polite"></div>
+        <article id="streaming-message" class="message assistant streaming" aria-live="polite" hidden>
+          <div class="message-content">
+            <span class="message-label"><svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg>Mini-dsh<span class="streaming-label">正在生成…</span></span>
+            <div id="streaming-body" class="message-text"></div>
+          </div>
+        </article>
+        <section id="approval-card" class="approval-card" aria-label="动作审批" aria-live="assertive" hidden>
+          <header class="approval-head">
+            <span class="approval-kicker">需要审批</span>
+            <strong id="approval-tool"></strong>
+            <span id="approval-meta" class="approval-meta"></span>
+          </header>
+          <p class="approval-hint">该操作会修改工作区。请检查预览后决定。</p>
+          <pre id="approval-preview"></pre>
+          <div class="approval-actions">
+            <button data-approval="allow" class="approval-allow">允许本次</button>
+            <button data-approval="remember">本轮记住</button>
+            <button data-approval="deny" class="approval-deny">拒绝</button>
+            <span id="approval-queue" class="approval-queue"></span>
+          </div>
+        </section>
         <section id="agent-board" class="agent-board" aria-label="Sub Agent 协作" hidden><h2>Sub Agent 协作 <span id="agent-count"></span></h2><div id="sub-agents" class="agent-grid" aria-live="polite"></div></section>
         <div id="running" class="running" hidden><span class="thinking-dot"></span> Agent 正在执行任务…</div>
       </section>
       <section id="trajectory" class="trajectory" role="tabpanel" aria-labelledby="trace-tab" hidden>
         <div class="trajectory-heading"><h2>执行轨迹</h2><p>每一步模型调用、工具执行与权限判断。</p></div>
+        <div class="trace-controls">
+          <div class="trace-filter" role="group" aria-label="事件筛选">
+            <button data-filter="all" class="active" aria-pressed="true">全部</button>
+            <button data-filter="tool" aria-pressed="false">工具</button>
+            <button data-filter="error" aria-pressed="false">错误</button>
+          </div>
+          <span id="trace-summary" class="trace-summary"></span>
+        </div>
         <p id="event-empty" class="empty-state">开始一个任务后，执行事件会显示在这里。</p>
         <p id="event-truncated" class="truncated" hidden>仅显示最近 100 条事件，完整记录见 Trace。</p>
         <div id="events" class="events"></div>
       </section>
       <div class="composer-wrap">
         <div class="composer-context"><span><svg class="icon"><use href="#i-folder"/></svg><span id="composer-workspace">工作区</span></span><button id="mode-details" class="text-button"><svg class="icon"><use href="#i-mode"/></svg><span id="composer-mode">标准模式</span><svg class="icon chevron"><use href="#i-chevron"/></svg></button></div>
+        <div id="permission-popover" class="popover" hidden>
+          <h3>文件与命令权限</h3>
+          <dl class="popover-list">
+            <div><dt>文件</dt><dd id="popover-write">—</dd></div>
+            <div><dt>命令</dt><dd id="popover-shell">—</dd></div>
+          </dl>
+          <p class="popover-note">权限由启动配置决定，GUI 不会提升权限。需要写入或执行命令时，请停止当前服务后用对应参数重新启动。</p>
+          <div class="popover-actions">
+            <button id="copy-launch" class="primary-button small" type="button">复制启动命令</button>
+            <button id="permission-settings" class="text-button" type="button">其他运行设置</button>
+          </div>
+        </div>
+        <div id="mode-popover" class="popover" hidden>
+          <h3>运行模式</h3>
+          <button type="button" data-mode="standard" class="mode-option"><strong>标准模式</strong><span>单 Agent 顺序执行</span></button>
+          <button type="button" data-mode="multi" class="mode-option"><strong>Multi-Agent 协作</strong><span>只读子 Agent 并行分析，主 Agent 修改</span></button>
+          <p id="mode-note" class="popover-note"></p>
+        </div>
         <form id="task-form" class="composer">
           <label class="sr-only" for="task">任务描述</label><textarea id="task" placeholder="描述你想要构建的内容" maxlength="32000" rows="3"></textarea>
           <div class="composer-bottom"><button type="button" id="prompt-menu" class="add-button" aria-label="任务建议" aria-expanded="false" aria-controls="suggestions">＋</button><button id="permission-details" class="text-button permission-control" type="button"><svg class="icon"><use href="#i-shield"/></svg><span id="permission-pill">只读模式</span><svg class="icon chevron"><use href="#i-chevron"/></svg></button><span class="composer-model" id="composer-model">Model</span><span class="keyboard-hint" title="⌘ / Ctrl + Enter 发送">⌘ ↵</span><button id="cancel" type="button" class="send-button stop-button" aria-label="停止任务" title="停止任务" hidden>■</button><button id="send" type="submit" class="send-button" aria-label="发送任务" title="发送任务 · ⌘ / Ctrl + Enter"><svg class="icon"><use href="#i-arrow"/></svg></button></div>
@@ -72,11 +120,22 @@
         <p class="composer-note">在当前工作区执行 · 正确性以测试结果为准</p>
       </div>
     </div>
-    <section id="diff-panel" class="diff-panel" aria-label="工作区 Diff" hidden><div class="panel-heading"><h2>工作区改动</h2><button id="close-diff" class="icon-button" aria-label="关闭 Diff"><svg class="icon"><use href="#i-close"/></svg></button></div><pre id="diff-content"></pre></section>
+    <section id="diff-panel" class="diff-panel" aria-label="工作区 Diff" hidden>
+      <div class="panel-heading"><h2>工作区改动</h2><div class="panel-actions"><span id="diff-summary" class="diff-summary"></span><button id="copy-diff" class="icon-button" aria-label="复制 Diff" title="复制 Diff"><svg class="icon"><use href="#i-copy"/></svg></button><button id="close-diff" class="icon-button" aria-label="关闭 Diff"><svg class="icon"><use href="#i-close"/></svg></button></div></div>
+      <pre id="diff-content" class="diff-content"></pre>
+    </section>
   </main>
 </div>
-<dialog id="resume-dialog" class="dialog"><div class="dialog-heading"><h2>恢复会话</h2><button class="icon-button" data-close="resume-dialog" aria-label="关闭恢复会话"><svg class="icon"><use href="#i-close"/></svg></button></div><p class="dialog-description">输入当前工作区中已保存的 Run ID，继续之前的对话。</p><form id="resume-form"><label for="resume-id">Run ID</label><input id="resume-id" placeholder="输入已保存的 Run ID" autocomplete="off" maxlength="128" required><button id="resume" class="primary-button" type="submit">恢复会话</button></form><p id="resume-error" class="dialog-error" role="alert" hidden></p></dialog>
-<dialog id="settings-dialog" class="dialog inspector"><div class="dialog-heading"><h2>运行设置</h2><button class="icon-button" data-close="settings-dialog" aria-label="关闭运行设置"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="status-card"><span id="status-dot" class="status-dot"></span><strong id="status">等待任务</strong><span id="status-caption">准备好开始下一次探索</span></div><dl class="config-list"><div><dt>模型</dt><dd id="model">—</dd></div><div><dt>Context 策略</dt><dd id="context">—</dd></div><div><dt>文件权限</dt><dd id="write">—</dd></div><div><dt>命令执行</dt><dd id="shell">—</dd></div></dl><form id="settings-form" class="runtime-settings">
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<dialog id="resume-dialog" class="dialog">
+  <div class="dialog-heading"><h2>恢复会话</h2><button class="icon-button" data-close="resume-dialog" aria-label="关闭恢复会话"><svg class="icon"><use href="#i-close"/></svg></button></div>
+  <div id="session-list" class="session-list"></div>
+  <details id="legacy-runs" class="legacy-runs" hidden><summary>旧版 Run 记录</summary><div id="legacy-list"></div></details>
+  <p class="dialog-description">也可以输入当前工作区中已保存的 Run ID，继续之前的对话。</p>
+  <form id="resume-form"><label for="resume-id">Run ID</label><input id="resume-id" placeholder="输入已保存的 Run ID" autocomplete="off" maxlength="128" required><button id="resume" class="primary-button" type="submit">恢复会话</button></form>
+  <p id="resume-error" class="dialog-error" role="alert" hidden></p>
+</dialog>
+<dialog id="settings-dialog" class="dialog inspector"><div class="dialog-heading"><h2 id="settings-title">运行设置</h2><button class="icon-button" data-close="settings-dialog" aria-label="关闭运行设置"><svg class="icon"><use href="#i-close"/></svg></button></div><div class="status-card"><span id="status-dot" class="status-dot"></span><strong id="status">等待任务</strong><span id="status-caption">准备好开始下一次探索</span></div><dl class="config-list"><div><dt>模型</dt><dd id="model">—</dd></div><div><dt>Context 策略</dt><dd id="context">—</dd></div><div><dt>文件权限</dt><dd id="write">—</dd></div><div><dt>命令执行</dt><dd id="shell">—</dd></div></dl><form id="settings-form" class="runtime-settings">
 <label class="setting-toggle"><span>Multi-Agent 协作</span><input id="multi-agent" type="checkbox"></label>
 <div class="setting-numbers"><label>累计子 Agent 上限<input id="max-agents" type="number" min="1" max="32" required></label><label>最多同时运行<input id="max-parallel" type="number" min="1" max="8" required></label></div>
 <label for="api-key">API Key <span id="credential-status"></span></label><input id="api-key" type="password" autocomplete="off" spellcheck="false" maxlength="4096" placeholder="输入当前模型服务的 API Key">

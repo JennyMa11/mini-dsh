@@ -1,0 +1,204 @@
+{
+  "name": "extension_v1_projects",
+  "schema_version": "2.0",
+  "tasks": [
+    {
+      "id": "test_failure",
+      "goal": "Fix total(values) to sum numeric values, including empty and negative inputs. Run the visible tests.",
+      "workspace": "test_failure/workspace",
+      "response_script": "test_failure/responses.json",
+      "test_argv": [
+        "python",
+        "visible.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "verification_overlay": "test_failure/verifier",
+      "timeout_seconds": 10,
+      "category": "extension_regression",
+      "repo_commit": "sha256:11bdda4d2218d382ceb97fb9740e7235885acb6a793fc3655a1dca73adc15bee",
+      "verification_commit": "sha256:ea3d4277dce8dbc188e82daa9ebdf9a04ce56945f9f82dd95261cf88e8a930e5",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "project_constraint",
+      "goal": "Repair labels(values) according to the project constraints in AGENTS.md. Run the visible tests.",
+      "workspace": "project_constraint/workspace",
+      "response_script": "project_constraint/responses.json",
+      "test_argv": [
+        "python",
+        "visible.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "verification_overlay": "project_constraint/verifier",
+      "timeout_seconds": 10,
+      "category": "extension_regression",
+      "repo_commit": "sha256:555c5191ff60c344ec4d4b09cda00566f1a8c53d1ca9fd195393981672b8eb8f",
+      "verification_commit": "sha256:36f607ae9a4d3d7e334000c41f81e0f36e6901005801d27621a07c78e83f758c",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "python_000_has_close_elements",
+      "goal": "Repair implementation according to README.md and run smoke tests.",
+      "workspace": "fixtures/python_000_has_close_elements",
+      "response_script": "python_000_has_close_elements.json",
+      "test_argv": [
+        "python",
+        "smoke.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "verification_overlay": "verification/python_000_has_close_elements",
+      "timeout_seconds": 10,
+      "category": "public_function_repair",
+      "repo_commit": "sha256:c8561726fa2898cf2feab04754bbc3143e043f5ddb533f33484c0d3a77273bfc",
+      "verification_commit": "sha256:661e41245413df9e24d142c393477fd15be047edc453e8127b02611abb471cd2",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "python_001_separate_paren_groups",
+      "goal": "Repair implementation according to README.md and run smoke tests.",
+      "workspace": "fixtures/python_001_separate_paren_groups",
+      "response_script": "python_001_separate_paren_groups.json",
+      "test_argv": [
+        "python",
+        "smoke.py"
+      ],
+      "success_argv": [
+        "python",
+        "verify.py"
+      ],
+      "verification_overlay": "verification/python_001_separate_paren_groups",
+      "timeout_seconds": 10,
+      "category": "public_function_repair",
+      "repo_commit": "sha256:9a339e051aee98fb9303365d6c3e5b228b7613b00ce0e8aeefae507722203d7f",
+      "verification_commit": "sha256:e7c9f0548e8469cbf632da6e6c38b8698c24b309fcd8d771644cea163089e995",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "python"
+        ]
+      }
+    },
+    {
+      "id": "js_026_removeduplicates",
+      "goal": "Repair implementation according to README.md and run smoke tests.",
+      "workspace": "fixtures/js_026_removeduplicates",
+      "response_script": "js_026_removeduplicates.json",
+      "test_argv": [
+        "node",
+        "smoke.js"
+      ],
+      "success_argv": [
+        "node",
+        "verify.js"
+      ],
+      "verification_overlay": "verification/js_026_removeduplicates",
+      "timeout_seconds": 10,
+      "category": "public_function_repair",
+      "repo_commit": "sha256:6778c79999229aceb87b6df7b50e9206830e45a49e852a5f4ff8a7a621bb5cee",
+      "verification_commit": "sha256:aab668fe25da633347ecba5b37b4bfd173d9bb8f0c51c9747594b5eeb57e2150",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "node"
+        ]
+      }
+    },
+    {
+      "id": "js_151_doublethedifference",
+      "goal": "Repair implementation according to README.md and run smoke tests.",
+      "workspace": "fixtures/js_151_doublethedifference",
+      "response_script": "js_151_doublethedifference.json",
+      "test_argv": [
+        "node",
+        "smoke.js"
+      ],
+      "success_argv": [
+        "node",
+        "verify.js"
+      ],
+      "verification_overlay": "verification/js_151_doublethedifference",
+      "timeout_seconds": 10,
+      "category": "public_function_repair",
+      "repo_commit": "sha256:8a284cb46d7d28bea2a897734f46ca265709721907f8e437431b242270fbc297",
+      "verification_commit": "sha256:b22b44047f94a19da399ab230360ddb6d196683098220c5a4875f80b775037e8",
+      "budget": {
+        "max_steps": 16,
+        "max_tokens": 8000,
+        "max_tool_calls": 32,
+        "max_duration_seconds": 180
+      },
+      "isolation": {
+        "sandbox_backend": "local",
+        "allow_write": true,
+        "allow_shell": true,
+        "allowed_commands": [
+          "node"
+        ]
+      }
+    }
+  ]
+}

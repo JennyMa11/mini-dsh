@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from minidsh.context import (
+    BudgetContext,
     FullHistoryContext,
     RepositoryRetriever,
     RetrievalContext,
@@ -82,6 +83,34 @@ def test_sliding_window_pins_rules_and_task() -> None:
         "message-4",
     ]
     assert view.omitted_messages == expected_omitted
+
+
+def test_budget_context_pins_the_followup_and_latest_workspace_instructions() -> None:
+    history = (
+        Message(Role.SYSTEM, "rules"),
+        Message(Role.USER, "original task"),
+        Message(Role.SYSTEM, "old instructions", name="workspace_instructions"),
+        Message(Role.ASSISTANT, "a" * 500),
+        Message(Role.USER, "current task"),
+        Message(Role.SYSTEM, "current instructions", name="workspace_instructions"),
+        Message(Role.ASSISTANT, "b" * 500),
+    )
+    view = BudgetContext(input_budget=40).build(history, "current task")
+    kept = [message.content for message in view.messages]
+    assert "current task" in kept
+    assert "current instructions" in kept
+    assert "old instructions" not in kept
+
+
+def test_budget_context_replaces_tests_run_before_the_first_task() -> None:
+    history = (
+        Message(Role.SYSTEM, "rules"),
+        Message(Role.SYSTEM, "stale" * 100, name="verification_status"),
+        Message(Role.SYSTEM, "latest result", name="verification_status"),
+        Message(Role.USER, "explain latest result"),
+    )
+    view = BudgetContext(input_budget=40).build(history, "explain latest result")
+    assert view.messages == (history[0], history[2], history[3])
 
 
 def test_summary_compaction_records_omitted_range() -> None:

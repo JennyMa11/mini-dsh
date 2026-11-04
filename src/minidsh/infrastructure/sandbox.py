@@ -7,7 +7,16 @@ import tempfile
 from pathlib import Path
 
 _SENSITIVE_NAMES = frozenset(
-    {".env", ".npmrc", ".pypirc", "credentials", "credentials.json", "id_rsa", "id_ed25519"}
+    {
+        ".env",
+        ".npmrc",
+        ".pypirc",
+        "credentials",
+        "credentials.json",
+        "credentials.toml",
+        "id_rsa",
+        "id_ed25519",
+    }
 )
 _SENSITIVE_SUFFIXES = frozenset({".key", ".p12", ".pem"})
 
@@ -56,9 +65,14 @@ class WorkspaceSandbox:
         """Deny common credential files before their contents can enter model context."""
         relative = path.relative_to(self.root)
         if (
-            any(part == ".ssh" for part in relative.parts)
-            or path.name in _SENSITIVE_NAMES
-            or path.name.startswith(".env.")
+            (
+                ".minidsh" in tuple(part.lower() for part in relative.parts)
+                and "artifacts" not in relative.parts
+            )
+            or any(part.lower() == ".ssh" for part in relative.parts)
+            or path.name.lower() in _SENSITIVE_NAMES
+            or path.name.lower() == "credentials.toml"
+            or path.name.lower().startswith(".env.")
             or path.suffix.lower() in _SENSITIVE_SUFFIXES
         ):
             msg = f"sensitive file access denied: {relative.as_posix()}"
@@ -85,3 +99,9 @@ class WorkspaceSandbox:
             temporary.unlink(missing_ok=True)
             raise
         return resolved
+
+    def ensure_model_writable(self, path: Path) -> None:
+        """Model tools cannot overwrite control-plane facts or original output artifacts."""
+        self.ensure_not_sensitive(path)
+        if any(part.lower() == ".minidsh" for part in path.relative_to(self.root).parts):
+            raise SandboxViolationError("runtime metadata and artifacts are not model-writable")

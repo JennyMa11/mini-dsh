@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "stage": "M0",
+  "status": "passed",
+  "source_sha256": "73c0c787a0330f5a83430dc01490fee18898bf2a5632315a7d65e077568616d6",
+  "snapshot": "benchmark-results/extension-v1/m0-73c0c787a0330f5a",
+  "git_head": "a49569d15bcb87d160d2bf9f638e838b410d8179",
+  "dirty_workspace": true,
+  "quality": {
+    "format": "pass",
+    "ruff": "pass",
+    "mypy": "pass: 127 files",
+    "pytest": "pass: 590"
+  },
+  "offline": {
+    "checked": 6,
+    "declared": 6,
+    "passed": 6,
+    "coverage": 1,
+    "scope": "scripted regression only",
+    "total_tokens": 4821
+  },
+  "fixture_gates": {
+    "checked": 12,
+    "passed": 12,
+    "scope": "six reference pass / six broken fail in pinned native containers"
+  },
+  "safety": {
+    "E01": "pass baseline scope",
+    "E02": "pass baseline scope"
+  },
+  "real_model_runs": 0,
+  "real_model_queue_declared": 90,
+  "unrun_real_model_rows": 90,
+  "mechanism_benefit": null,
+  "next_stage": "PR1",
+  "limitations": [
+    "H01–H08/C01 and all future extension behavior untested",
+    "No real model or mechanism benefit evaluation",
+    "Baseline local adapter is not an OS sandbox; OS evidence is separate Docker probes",
+    "Preparation logs in m0-20261029 are diagnostic, final sealed evidence uses this source snapshot"
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0",
+  "declared_opportunities": 28,
+  "passed_m0_baseline_probes": 2,
+  "new_extension_contracts_passed": 0,
+  "cases": [
+    {
+      "case_id": "H01",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H02",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H03",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H04",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H05",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H06",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H07",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "H08",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "C01",
+      "stage": "PR 1",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "S01",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "S02",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "S03",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "S04",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "C02",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "C03",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "C04",
+      "stage": "PR 2",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "V01",
+      "stage": "PR 3",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "V02",
+      "stage": "PR 3",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "V03",
+      "stage": "PR 3",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "V04",
+      "stage": "PR 3",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "V05",
+      "stage": "PR 3",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "M01",
+      "stage": "PR 4",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "M02",
+      "stage": "PR 4",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "M03",
+      "stage": "PR 4",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "M04",
+      "stage": "PR 4",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    },
+    {
+      "case_id": "E01",
+      "stage": "M0 / 各 PR / M5",
+      "status": "pass_m0_only",
+      "reason": "real OS baseline probes; recheck each PR; no verification extension tested",
+      "evidence": "E01.json"
+    },
+    {
+      "case_id": "E02",
+      "stage": "M0 / 各 PR / M5",
+      "status": "pass_m0_only",
+      "reason": "real OS baseline probes; recheck each PR; no verification extension tested",
+      "evidence": "E02.json"
+    },
+    {
+      "case_id": "E03",
+      "stage": "PR 4 / M5",
+      "status": "untested",
+      "reason": "new extension contract not implemented at M0"
+    }
+  ]
+}

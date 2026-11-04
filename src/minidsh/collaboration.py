@@ -370,6 +370,7 @@ class _DelegateTool:
             _DelegateInput.model_json_schema(),
             side_effects=True,
             permissions=("agent.delegate",),
+            approval_required=False,
             timeout_seconds=coordinator.budget.max_duration_seconds,
         )
 
@@ -549,4 +550,4 @@ def build_multi_agent_runtime(  # noqa: PLR0913 - explicit composition dependenc
             tool_wrapper=lambda tools: _BudgetTools(tools, coordinator, bus),
         ),
     )
-    return replace(runtime, agent=_TeamAgent(runtime.agent, coordinator))
+    return replace(runtime, agent=_TeamAgent(runtime.agent, coordinator), conversations=None)

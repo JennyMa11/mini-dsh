@@ -1,0 +1,222 @@
+{
+  "schema_version": "1.0",
+  "kind": "public_lightweight_selection",
+  "name": "humanevalfix_docs_lite_v1",
+  "source": {
+    "repository": "https://github.com/bigcode-project/octopack",
+    "commit": "e17a8f6470264286bc6a52eb8263582083bf3bf6",
+    "files": {
+      "python": {
+        "filename": "python.jsonl",
+        "upstream_path": "evaluation/create/humaneval-x/data/python/data/humanevalpack.jsonl",
+        "sha256": "b1376d72be4bd016a62ad043d9de3846edb8d63edf1222da802a31330c14c3a7",
+        "git_blob_sha1": "1fabd2633a633804864444ed1b3193755f49f9f4"
+      },
+      "js": {
+        "filename": "js.jsonl",
+        "upstream_path": "evaluation/create/humaneval-x/data/js/data/humanevalpack.jsonl",
+        "sha256": "04c86c1fac5f33818d9187cba278ed1dfc66cc259372dd8342126aa580fb7569",
+        "git_blob_sha1": "2ecfaa2735cf59a46b3b84b2ed6f0dadf773c4bc"
+      }
+    }
+  },
+  "selection_policy": {
+    "basis": "Contract and upstream bug_type, before Mini-dsh model runs; no selection by reference results.",
+    "language_counts": {
+      "python": 6,
+      "js": 6
+    },
+    "scope": "Function repair and tool loop; not large-repository or long-context evaluation."
+  },
+  "run_protocol": {
+    "model": "deepseek-flash",
+    "temperature": 0,
+    "thinking": false,
+    "repeats": 1,
+    "agent_count": 1,
+    "total_run_token_budget": 240000,
+    "max_tokens_per_task": 20000,
+    "max_steps": 16,
+    "max_tool_calls": 32,
+    "max_duration_seconds": 180,
+    "verifier_timeout_seconds": 10,
+    "memory_mb": 1024,
+    "cpus": 1,
+    "pids_limit": 128,
+    "cost_metrics": false
+  },
+  "execution_readiness": {
+    "status": "selected_pending_native_image_gates",
+    "completed_model_runs": 0
+  },
+  "tasks": [
+    {
+      "id": "python_000_has_close_elements",
+      "language": "python",
+      "upstream_id": "Python/0",
+      "entry_point": "has_close_elements",
+      "bug_type": "missing logic",
+      "coverage_tags": [
+        "float_threshold",
+        "pair_search",
+        "missing_logic"
+      ],
+      "record_sha256": "13866290dd7d51892228d3346a2aabdfa1956f11d5da6843403f680bf21263c5",
+      "initial_file_sha256": "a9b6a056b7ba15ba3d059af0f5833695f0089d465e03df7569a5091152c85a21"
+    },
+    {
+      "id": "js_021_rescaletounit",
+      "language": "js",
+      "upstream_id": "JavaScript/21",
+      "entry_point": "rescaleToUnit",
+      "bug_type": "operator misuse",
+      "coverage_tags": [
+        "numeric_transform",
+        "float_arithmetic",
+        "operator_misuse"
+      ],
+      "record_sha256": "150dcf2223494a981865b48e667e3fc3d3e6b555309428e6b188dd9167ef4a75",
+      "initial_file_sha256": "aede2b1c6dd205f9432c90bd4c90972f66d43e4d5fc42bb4be418392d525f270"
+    },
+    {
+      "id": "python_001_separate_paren_groups",
+      "language": "python",
+      "upstream_id": "Python/1",
+      "entry_point": "separate_paren_groups",
+      "bug_type": "operator misuse",
+      "coverage_tags": [
+        "nested_parsing",
+        "whitespace",
+        "operator_misuse"
+      ],
+      "record_sha256": "ccf6d4aaf18b3af538a9dfd17990fe0e529b6563dbb2620f47be3d9bc85f4cfb",
+      "initial_file_sha256": "29d613b0c029127cbab57809e5dd56b213f32179ce5dcc039bc3687906a9c3b2"
+    },
+    {
+      "id": "js_026_removeduplicates",
+      "language": "js",
+      "upstream_id": "JavaScript/26",
+      "entry_point": "removeDuplicates",
+      "bug_type": "operator misuse",
+      "coverage_tags": [
+        "duplicates",
+        "stable_order",
+        "operator_misuse"
+      ],
+      "record_sha256": "91ce9878129e01baea4c02a7c5d285205929cbbdcb075310cbcb5942b90af406",
+      "initial_file_sha256": "326cb577887588e9eafd0a7211de502441a1358d6b0b6c738f9b0ca359c20aff"
+    },
+    {
+      "id": "python_007_filter_by_substring",
+      "language": "python",
+      "upstream_id": "Python/7",
+      "entry_point": "filter_by_substring",
+      "bug_type": "variable misuse",
+      "coverage_tags": [
+        "string_filter",
+        "empty_input",
+        "variable_misuse"
+      ],
+      "record_sha256": "72860ae14067e923446a8d209384bf7152fc4515ff4c3e919c883e034ad28924",
+      "initial_file_sha256": "b9eb7060c488bd92f604447c410ac7e3944f14d799d70f19448ca2ea66d0b419"
+    },
+    {
+      "id": "js_062_derivative",
+      "language": "js",
+      "upstream_id": "JavaScript/62",
+      "entry_point": "derivative",
+      "bug_type": "value misuse",
+      "coverage_tags": [
+        "polynomial",
+        "indexing",
+        "value_misuse"
+      ],
+      "record_sha256": "1a7836e5dc4b70ace2fca5be7fad40fbd8744c62b8086402086b2ee81baef27f",
+      "initial_file_sha256": "970daf13b8547bc31a9da9d932c9aa1be1bfff1d2d751f2454f4a9d94d130b81"
+    },
+    {
+      "id": "python_010_make_palindrome",
+      "language": "python",
+      "upstream_id": "Python/10",
+      "entry_point": "make_palindrome",
+      "bug_type": "missing logic",
+      "coverage_tags": [
+        "palindrome",
+        "recursion",
+        "missing_logic"
+      ],
+      "record_sha256": "80e52fb13848a512cd0f38bc121d6b6470507a1769879531d94fb66a551c5db3",
+      "initial_file_sha256": "3c1684781bf1883b8da180d8da4e3a0787b4207cb8e25d062473db39c84b8c0e"
+    },
+    {
+      "id": "js_089_encrypt",
+      "language": "js",
+      "upstream_id": "JavaScript/89",
+      "entry_point": "encrypt",
+      "bug_type": "value misuse",
+      "coverage_tags": [
+        "character_mapping",
+        "wraparound",
+        "value_misuse"
+      ],
+      "record_sha256": "2eb5ddbc6993c5983d4255c352698b8a422785ec8b1b55e130a802e4720296ec",
+      "initial_file_sha256": "7b9e09e4a3783350a8631ce2149f24acf7b84816b22a48ffc9789b99e148ac5e"
+    },
+    {
+      "id": "python_025_factorize",
+      "language": "python",
+      "upstream_id": "Python/25",
+      "entry_point": "factorize",
+      "bug_type": "value misuse",
+      "coverage_tags": [
+        "prime_factors",
+        "repeated_factors",
+        "value_misuse"
+      ],
+      "record_sha256": "163bf84e5434c42fa4cf334d3f89764b79e873f0e1a5527c75d4033846d73235",
+      "initial_file_sha256": "3b57dfb097ab1cf4670cff9722ab0fc711d0bc5e8c26a00ea5c959545bf03cea"
+    },
+    {
+      "id": "js_118_getclosestvowel",
+      "language": "js",
+      "upstream_id": "JavaScript/118",
+      "entry_point": "getClosestVowel",
+      "bug_type": "excess logic",
+      "coverage_tags": [
+        "reverse_scan",
+        "text_boundaries",
+        "excess_logic"
+      ],
+      "record_sha256": "a231b29d07cf8d5a5da65ac8f9a241588cad850424f4a22998b0975e4bb4c50e",
+      "initial_file_sha256": "288a73211bc2018b7c278f8e82dca872f4beffb01d8a85914dec858daa1b6872"
+    },
+    {
+      "id": "python_090_next_smallest",
+      "language": "python",
+      "upstream_id": "Python/90",
+      "entry_point": "next_smallest",
+      "bug_type": "value misuse",
+      "coverage_tags": [
+        "distinct_order_statistics",
+        "optional_result",
+        "value_misuse"
+      ],
+      "record_sha256": "5dd55fbbd425ef576328508aef0a268ae457cc8d35708d8af1ef991b490e5ade",
+      "initial_file_sha256": "0fee4cb4654f66ccf9219c477ab4818db529bf8e203b0bb8e7e7140f100991ba"
+    },
+    {
+      "id": "js_151_doublethedifference",
+      "language": "js",
+      "upstream_id": "JavaScript/151",
+      "entry_point": "doubleTheDifference",
+      "bug_type": "missing logic",
+      "coverage_tags": [
+        "mixed_types",
+        "negative_values",
+        "missing_logic"
+      ],
+      "record_sha256": "a8a017286589d79d968f49f0407c78736d1dc3da47b0bedd8d5653586bafac99",
+      "initial_file_sha256": "6157dd40cca2cc74de60c24cc3dc508e2ff2b44455f6434040759f2a552ccf7f"
+    }
+  ]
+}

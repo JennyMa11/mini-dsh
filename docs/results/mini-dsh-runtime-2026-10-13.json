@@ -1,0 +1,456 @@
+{
+  "changed_since_real_cohort": [
+    "src/minidsh/gui/session.py",
+    "src/minidsh/gui/style.css",
+    "src/minidsh/infrastructure/file_worker.py",
+    "src/minidsh/tools/builtin.py",
+    "src/minidsh/tools/runtime.py",
+    "tests/test_file_backend.py",
+    "tests/test_harness_safety.py"
+  ],
+  "component_gate": true,
+  "final_version_real_cohort_retested": false,
+  "generated_by": "uv run python scripts/summarize_mini_dsh_acceptance.py",
+  "gui_smoke": {
+    "api_calls": 0,
+    "approval_allow_observed": true,
+    "conversation_directories": 2,
+    "not_checked": [
+      "actual human approval",
+      "long-term use",
+      "full responsive viewport matrix",
+      "GUI stop button through native browser"
+    ],
+    "patched_file_verified": true,
+    "source": "CUA Chrome automation against local offline GUI; not human acceptance",
+    "stream_event_observed": true,
+    "visual_observations": [
+      "incremental text displayed",
+      "approval diff and three buttons visible",
+      "allow completed task",
+      "session list and history fork worked",
+      "fork returned three messages with zero trace events and no false truncation hint"
+    ]
+  },
+  "kernel_gate": true,
+  "postfix_component_gate": true,
+  "postfix_kernel_gate": true,
+  "postfix_recovery_contract": {
+    "agent_duration_ms": 1185.2136668749154,
+    "approval_source": "deterministic test adapter; not human approval",
+    "candidate_verified": true,
+    "case_checks_passed": true,
+    "case_id": "recovery",
+    "constraints_satisfied": true,
+    "criteria_version": "mini_dsh_v1.0",
+    "executed": true,
+    "loop_statuses": [
+      "finished"
+    ],
+    "model_source": "deterministic scripted responses; no API calls",
+    "nominal_token_budget": 8000,
+    "run_ids": [
+      "e94af8b1d5b44d978398e4400efac17f"
+    ],
+    "scenario_duration_ms": 1188.3947080932558,
+    "steps": 5,
+    "task_success": true,
+    "token_overage": 0,
+    "tokens": 0,
+    "tool_calls": 4,
+    "trace": "trace.jsonl",
+    "verification_source": "held-out fresh-container add contract and host side-effect checks"
+  },
+  "real_model_cohort": {
+    "api_calls": 52,
+    "cached_input_tokens": 50432,
+    "constraint_satisfied_successes": 10,
+    "declared_runs": 12,
+    "executed_runs": 12,
+    "input_tokens": 60950,
+    "inputs_unchanged": true,
+    "known_tokens": 64854,
+    "limitations": [
+      "small declared functionality cohort",
+      "no upstream performance comparison",
+      "no human acceptance measurement",
+      "model snapshot and seed unavailable"
+    ],
+    "output_tokens": 3904,
+    "overage": 0,
+    "protocol": {
+      "case_tokens": 8000,
+      "cases": [
+        "repair",
+        "recovery",
+        "conversation",
+        "denial",
+        "plugins_backend",
+        "fork_resume"
+      ],
+      "criteria_version": "mini_dsh_v1.0",
+      "image": "docker.1ms.run/library/python@sha256:349275ed26e7aea20752e1fd63c40c30a0281d324e51fb41612c2433cb6482d4",
+      "isolation": {
+        "cpus": 1,
+        "memory_mb": 1024,
+        "network": "none"
+      },
+      "max_output_tokens": 1024,
+      "model": "deepseek-flash",
+      "not_run_policy": "retain all 12 declared rows",
+      "repeats": 2,
+      "retry_policy": "no model or tool automatic retries; no selective reruns",
+      "schema_version": "1.0",
+      "seconds": 180,
+      "steps": 16,
+      "success": "independent add contract; protected settings unchanged; case-specific side-effect and trace checks",
+      "temperature": 0,
+      "thinking": false,
+      "tool_calls": 32,
+      "total_tokens": 120000,
+      "upstream_commit": "d743267388641bc76f17c45ce8b4c231aed1d32c"
+    },
+    "returned_models": [
+      "deepseek-flash"
+    ],
+    "rows": [
+      {
+        "agent_duration_ms": 4815.797416958958,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "repair",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 0,
+        "run_ids": [
+          "fb23958ec34f4935a02bd0429167e944"
+        ],
+        "scenario_duration_ms": 4819.0333331003785,
+        "steps": 4,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 4730,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 4216.312166070566,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "repair",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 1,
+        "run_ids": [
+          "0133f0f67c98450fb94466ecaf66205a"
+        ],
+        "scenario_duration_ms": 4219.736415892839,
+        "steps": 4,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 4725,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 4246.268999995664,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": false,
+        "case_id": "recovery",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 0,
+        "run_ids": [
+          "328e3b38e10041d5a76aaa07b9c896c4"
+        ],
+        "scenario_duration_ms": 4249.695000005886,
+        "steps": 5,
+        "task_success": false,
+        "token_overage": 0,
+        "tokens": 4844,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 4374.249708140269,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": false,
+        "case_id": "recovery",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 1,
+        "run_ids": [
+          "159513ef80b540aea55d011148eb81d9"
+        ],
+        "scenario_duration_ms": 4378.135167062283,
+        "steps": 5,
+        "task_success": false,
+        "token_overage": 0,
+        "tokens": 5241,
+        "tool_calls": 5,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 6434.666833141819,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "conversation",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished",
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 0,
+        "run_ids": [
+          "9c67ee17d3fc4934988c144d82306cd9",
+          "37a8d0f9e60c4f59a7f364d4732b81a4"
+        ],
+        "scenario_duration_ms": 6441.058499971405,
+        "steps": 5,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 6292,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 5933.621292002499,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "conversation",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished",
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 1,
+        "run_ids": [
+          "08b5d023a5904993984fe30cabdfc5bc",
+          "ebab69f2b4d043ff81bd4e0e631e247e"
+        ],
+        "scenario_duration_ms": 5939.964999910444,
+        "steps": 5,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 6261,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 4815.223790938035,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "denial",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 0,
+        "run_ids": [
+          "2b4915d2f661462e8205c8a606c72a85"
+        ],
+        "scenario_duration_ms": 4818.939250195399,
+        "steps": 5,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 5168,
+        "tool_calls": 5,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 5013.595416909084,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "denial",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 1,
+        "run_ids": [
+          "270f2dc980114097bcb7f0bc5efa6192"
+        ],
+        "scenario_duration_ms": 5017.080291872844,
+        "steps": 5,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 5165,
+        "tool_calls": 5,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 6822.110916953534,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "plugins_backend",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 0,
+        "run_ids": [
+          "197a0db2571e490a88d871c9e0ec5e32"
+        ],
+        "scenario_duration_ms": 6829.554749885574,
+        "steps": 4,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 4960,
+        "tool_calls": 17,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 7344.709750032052,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "plugins_backend",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 1,
+        "run_ids": [
+          "17b4a5a56a454a4e8e66796993b186f0"
+        ],
+        "scenario_duration_ms": 7350.6654591765255,
+        "steps": 4,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 4969,
+        "tool_calls": 17,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 5302.954624872655,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "fork_resume",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished",
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 0,
+        "run_ids": [
+          "89590909a20a4fb6ad70466cbd9d7112",
+          "3f960a8d519a44feb6ff2d5917e2acde"
+        ],
+        "scenario_duration_ms": 5313.19508398883,
+        "steps": 5,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 6227,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      },
+      {
+        "agent_duration_ms": 6333.64654192701,
+        "approval_source": "deterministic test adapter; not human approval",
+        "candidate_verified": true,
+        "case_checks_passed": true,
+        "case_id": "fork_resume",
+        "constraints_satisfied": true,
+        "criteria_version": "mini_dsh_v1.0",
+        "executed": true,
+        "loop_statuses": [
+          "finished",
+          "finished"
+        ],
+        "nominal_token_budget": 8000,
+        "repeat": 1,
+        "run_ids": [
+          "4bb71f190d39400ab179be8a5695f8b9",
+          "f57c7f202d724bb5b1808ec16163cee1"
+        ],
+        "scenario_duration_ms": 6343.541833106428,
+        "steps": 5,
+        "task_success": true,
+        "token_overage": 0,
+        "tokens": 6272,
+        "tool_calls": 4,
+        "trace": "trace.jsonl",
+        "verification_source": "held-out fresh-container add contract and host side-effect checks"
+      }
+    ],
+    "schema_version": "1.0",
+    "secret_scan_matches": 0,
+    "system_fingerprints": [
+      "aeb56401ca74e127821c4f9126dcb669"
+    ],
+    "unknown_usage_calls": 0,
+    "verified_successes": 10
+  },
+  "schema_version": "1.0",
+  "source_hashes": {
+    "benchmark-results/mini-dsh/final-20261013/gates.json": "7e57f319098b6179d7ad687bb83d149d13a11615a03990dedc2ca543bea7e2d2",
+    "benchmark-results/mini-dsh/final-20261013/gui_smoke_verification.json": "be12a31494da6dc24fcc292011d9d1d89c0b8899588da2f9950eeaf961c8ca26",
+    "benchmark-results/mini-dsh/final-20261013/kernel.json": "c26498e5a0242b447b6d03975f52fa6bc0bfab1cd3c3d1576c5c40e2bde313d9",
+    "benchmark-results/mini-dsh/final-20261013/recovery_contract/verification.json": "475f4a6541bec13be486feb6a19207e2299a92d619866c98ff8c2557e1d95671",
+    "benchmark-results/mini-dsh/v1-20261013/gates.json": "c4d344ed51a3fc957dfd3a24667e711a1642da697fd3244aaf62862976734b33",
+    "benchmark-results/mini-dsh/v1-20261013/kernel.json": "c26498e5a0242b447b6d03975f52fa6bc0bfab1cd3c3d1576c5c40e2bde313d9",
+    "benchmark-results/mini-dsh/v1-20261013/report.json": "ffae167e11b787ffb02043199d412a4b6aa30b78646db1084b6778527bf0de57"
+  }
+}

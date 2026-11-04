@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "criterion_version": "memory-teaching-v2",
+  "project_id": "extension_v1_project",
+  "applicable_version": "extension_v1",
+  "task_ids": [
+    "reciprocal",
+    "mapping_fallback"
+  ],
+  "inputs_sha256": {
+    "fixtures/mapping_fallback/README.md": "42f6a7f587b10ae3e695ba20780019910bce568f58b2273834ed4bed72811f40",
+    "fixtures/mapping_fallback/lesson.py": "97ca480f90b0a7dbb754f67a9703d19a96fe042d158b1b30b0a6c5fc12764505",
+    "fixtures/mapping_fallback/visible.py": "fd94d9d6cba8bf2e3ae7579fe5b60c20a80d26e3eb2f4d3d3eb42439574a72ad",
+    "fixtures/reciprocal/README.md": "e014fee44f698b9ed2376049a950e5cf352fd78cd4d01ab1573736c5191636df",
+    "fixtures/reciprocal/lesson.py": "a397affafceb467976501df984237cb20867b79a6acb0a643773abee840f71e8",
+    "fixtures/reciprocal/visible.py": "6af3d1b2ea289a955b76d1b6db7d5e55dfdd3cbfff50ad9257bcd9efe90aeb2b",
+    "mapping_fallback.responses.json": "4942df78adc1c0e7498cf95fab2494cce0ead9aeccc2e7fdda46d6eeb1f4f012",
+    "reciprocal.responses.json": "56dd02f9e40e9a4432c1fe05e717822474f9e22f44532a2254a137033ad3659a",
+    "solutions/mapping_fallback/lesson.py": "ce61f56ad087f126b5b2fca1dd9214c9fa93066e473328159386552553f8e155",
+    "solutions/reciprocal/lesson.py": "d803bf41b04ef9143eedda42e0d8e0feecac6eae9aff0b2bf65937e38293f46b",
+    "verification/mapping_fallback/verify.py": "b049f7aab644629a10618d25560c50e51f3efefefac41834246c8ddb55d4a5de",
+    "verification/reciprocal/verify.py": "45fa69095141a6b427754084267db184748d5ddb422aedc9ed47d1a9264c7d2f"
+  },
+  "memory_contents": {
+    "reciprocal": "A zero-input failure in the teaching reciprocal was fixed by checking the documented precondition before division; retain that exception contract and rerun visible checks after changing the guard.",
+    "mapping_fallback": "A missing-key failure in the teaching lookup was fixed by implementing the documented fallback rather than suppressing every exception; confirm absent-value behavior before changing error handling."
+  },
+  "environment_content": "Use the existing local runtime and the task's visible test command. Preserve exported function names and signatures unless the task explicitly requests an API change. Do not install network dependencies.",
+  "environment_content_sha256": "1e125466a8b4b120abdc107e91580a896faa0e05b10e4fd79de4a343d72d151e",
+  "environment_configuration_sha256": "1df548c0e94a22bff8a59bc0340ce9f03763893bf534d55f52d5ccc858c735f4",
+  "budget": {
+    "max_steps": 16,
+    "max_tokens": 8000,
+    "max_tool_calls": 32,
+    "max_duration_seconds": 180
+  },
+  "isolation": {
+    "platform": "linux/arm64",
+    "cpus": 1,
+    "memory_mb": 1024,
+    "network": "none",
+    "host_mounts": false
+  },
+  "independent_timeout_seconds": 10,
+  "exclusions": "Not part of the six-task evaluation denominator. No evaluation answers, hidden tests or previous evaluation feedback are seed inputs.",
+  "approval_status": "not_approved",
+  "input_revision_note": "Correct two offline response scripts to patch existing files instead of write_file. Teaching tasks, defect/reference source and independent criteria unchanged. Earlier actors and failures remain archived; real evaluation queue remains unrun."
+}

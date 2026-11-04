@@ -11,11 +11,14 @@ requires-python = ">=3.12"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Mini-dsh contributors" }]
 dependencies = [
+  "httpx>=0.28,<1",
+  "prompt-toolkit>=3.0.50,<4",
   "pydantic>=2.11,<3",
 ]
 
 [project.scripts]
 mini-dsh = "minidsh.cli:main"
+mini-dsh-work = "minidsh.work_profile:main"
 
 [project.optional-dependencies]
 mlx = [

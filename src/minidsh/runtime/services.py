@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import TypeVar
 
 T = TypeVar("T")
@@ -16,6 +17,25 @@ class ServiceRegistry:
 
     def __init__(self) -> None:
         self._services: dict[str, object] = {}
+        self._cleanups: list[Callable[[], None]] = []
+
+    def on_cleanup(self, callback: Callable[[], None]) -> None:
+        """Own subscriptions/hook registrations for reverse-order plugin teardown."""
+        self._cleanups.append(callback)
+
+    def cleanup_from(self, offset: int) -> None:
+        errors: list[Exception] = []
+        while len(self._cleanups) > offset:
+            try:
+                self._cleanups.pop()()
+            except Exception as exc:
+                errors.append(exc)
+        if errors:
+            raise ServiceError("plugin cleanup callback failed") from errors[0]
+
+    @property
+    def cleanup_count(self) -> int:
+        return len(self._cleanups)
 
     def register(self, key: str, service: object) -> None:
         """Register exactly one service for a stable key."""

@@ -6,12 +6,14 @@ import asyncio
 import json
 import urllib.error
 import urllib.request
-from collections.abc import Awaitable, Callable, Sequence
+from collections.abc import AsyncIterator, Awaitable, Callable, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
+import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from minidsh.adapters.streaming import IncrementalRedactor, close_stream, stream_completion
 from minidsh.domain import (
     JsonValue,
     Message,
@@ -24,8 +26,9 @@ from minidsh.domain import (
     estimate_tokens,
     redact_text,
 )
+from minidsh.domain.harness import StreamEvent
 from minidsh.domain.redaction import REDACTED
-from minidsh.ports import Model
+from minidsh.ports import Model, StreamingModel
 
 _AUTH_STATUS = frozenset({401, 403})
 _RATE_LIMIT_STATUS = 429
@@ -73,6 +76,10 @@ class CredentialRedactingModel:
     def _text(self, value: str) -> str:
         return value.replace(self._secret, REDACTED)
 
+    @property
+    def native_streaming(self) -> bool:
+        return isinstance(self._model, StreamingModel)
+
     def _value(self, value: JsonValue) -> JsonValue:
         if isinstance(value, str):
             return self._text(value)
@@ -93,11 +100,47 @@ class CredentialRedactingModel:
             raise ModelAdapterError(
                 self._text(str(exc)), code=code, retryable=retryable, usage=usage
             ) from None
+        return self._clean(response)
+
+    async def stream(self, request: ModelRequest) -> AsyncIterator[StreamEvent]:
+        """Sanitize credentials even when a provider splits them across frames."""
+
+        if not isinstance(self._model, StreamingModel):
+            yield StreamEvent(response=await self.complete(request))
+            return
+        sanitizer = IncrementalRedactor(self._secret)
+        stream = self._model.stream(request)
+        try:
+            async for item in stream:
+                if item.text:
+                    text = sanitizer.feed(item.text)
+                    if text:
+                        yield StreamEvent(text=text)
+                if item.response is not None:
+                    tail = sanitizer.feed("", final=True)
+                    if tail:
+                        yield StreamEvent(text=tail)
+                    yield StreamEvent(response=self._clean(item.response))
+        except ModelCallError as exc:
+            raise ModelAdapterError(
+                self._text(str(exc)),
+                code=self._text(exc.code),
+                usage=exc.usage,
+                retryable=exc.retryable,
+            ) from None
+        finally:
+            await close_stream(stream)
+
+    def _clean(self, response: ModelResponse) -> ModelResponse:
         return replace(
             response,
             content=self._text(response.content),
             reasoning_content=self._text(response.reasoning_content),
             finish_reason=self._text(response.finish_reason),
+            provider_model=self._text(response.provider_model) if response.provider_model else None,
+            system_fingerprint=self._text(response.system_fingerprint)
+            if response.system_fingerprint
+            else None,
             recoverable_error=(
                 replace(
                     response.recoverable_error,
@@ -255,6 +298,8 @@ class _ProviderUsage(BaseModel):
 
 
 class _ProviderResponse(BaseModel):
+    model: str | None = None
+    system_fingerprint: str | None = None
     choices: list[_ProviderChoice]
     usage: _ProviderUsage = Field(default_factory=_ProviderUsage)
 
@@ -299,6 +344,9 @@ class OpenAICompatibleModel:
         max_backoff_seconds: float = 8.0,
         sleep: Callable[[float], Awaitable[None]] | None = None,
         thinking: bool | None = None,
+        max_output_tokens: int | None = None,
+        require_usage: bool = False,
+        transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:
         if not endpoint.startswith(("https://", "http://")):
             msg = "model endpoint must be an HTTP(S) URL"
@@ -309,6 +357,8 @@ class OpenAICompatibleModel:
         if max_attempts < 1:
             msg = "max_attempts must be at least 1"
             raise ValueError(msg)
+        if max_output_tokens is not None and max_output_tokens < 1:
+            raise ValueError("max_output_tokens must be positive")
         self._endpoint = endpoint
         self._model = model
         self._api_key = api_key
@@ -319,6 +369,31 @@ class OpenAICompatibleModel:
         self._max_backoff_seconds = max_backoff_seconds
         self._sleep = sleep or asyncio.sleep
         self._thinking = thinking
+        self._max_output_tokens = max_output_tokens
+        self._require_usage = require_usage
+        self._transport = transport
+
+    async def stream(self, request: ModelRequest) -> AsyncIterator[StreamEvent]:
+        """Stream a cancellable request without replaying an already displayed attempt."""
+
+        stream = stream_completion(
+            endpoint=self._endpoint,
+            payload=self._build_payload(request),
+            secret=self._api_key,
+            timeout_seconds=self._timeout,
+            transport=self._transport,
+        )
+        try:
+            async for event in stream:
+                if (
+                    event.response is not None
+                    and self._require_usage
+                    and not event.response.usage_known
+                ):
+                    raise ModelAdapterError("provider omitted usage", code="missing_usage")
+                yield event
+        finally:
+            await close_stream(stream)
 
     @property
     def model(self) -> str:
@@ -348,6 +423,8 @@ class OpenAICompatibleModel:
             "temperature": self._temperature,
             "messages": [self._message_payload(message) for message in request.messages],
         }
+        if self._max_output_tokens is not None:
+            payload["max_tokens"] = self._max_output_tokens
         if self._thinking is not None:
             # DeepSeek-specific.  Sent only for providers that declare it, because
             # an unknown top-level parameter is rejected by stricter gateways.
@@ -400,6 +477,10 @@ class OpenAICompatibleModel:
                 f"model request failed: {type(exc).__name__}", code="network_error", retryable=True
             ) from exc
         usage = _reported_usage(raw)
+        if self._require_usage and usage is None:
+            raise ModelAdapterError(
+                "provider did not report valid token usage", code="missing_usage", usage=None
+            )
         try:
             parsed = _ProviderResponse.model_validate_json(raw)
         except ValidationError as exc:
@@ -439,6 +520,9 @@ class OpenAICompatibleModel:
                 parsed.usage.cached_tokens,
             ),
             reasoning_content=choice.message.reasoning_content or "",
+            usage_known=usage is not None,
+            provider_model=parsed.model,
+            system_fingerprint=parsed.system_fingerprint,
         )
 
     @staticmethod

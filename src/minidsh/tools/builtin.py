@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import ast
+import difflib
 import fnmatch
+import json
 from typing import Literal, cast
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -42,6 +44,7 @@ class ReadFileTool:
             "read_file",
             "Read a bounded UTF-8 file segment from the workspace.",
             schema_for(self.input_model),
+            version="1.1.0",
             permissions=("fs.read",),
         )
 
@@ -50,6 +53,13 @@ class ReadFileTool:
         try:
             lines = self._sandbox.read_text(args.path).splitlines()
         except SandboxViolationError as exc:
+            if isinstance(exc.__cause__, FileNotFoundError):
+                # Check confinement even when strict resolution stopped at a missing path.
+                try:
+                    self._sandbox.resolve(args.path)
+                except SandboxViolationError as denied:
+                    raise ToolError("sandbox_violation", str(denied)) from denied
+                raise ToolError("file_not_found", f"file not found: {args.path}") from exc
             raise ToolError("sandbox_violation", str(exc)) from exc
         except (OSError, UnicodeError) as exc:
             raise ToolError("read_failed", str(exc)) from exc
@@ -85,10 +95,28 @@ class WriteFileTool:
             permissions=("fs.write",),
         )
 
+    async def prepare(self, arguments: BaseModel) -> tuple[str, str]:
+        args = cast("WriteFileInput", arguments)
+        destination = self._sandbox.resolve(args.path)
+        self._sandbox.ensure_model_writable(destination)
+        if destination.exists() and not args.overwrite:
+            raise ToolError("file_exists", "file exists and overwrite is false")
+        old = self._sandbox.read_text(args.path) if destination.exists() else ""
+        preview = "".join(
+            difflib.unified_diff(
+                old.splitlines(keepends=True),
+                args.content.splitlines(keepends=True),
+                fromfile=args.path,
+                tofile=args.path,
+            )
+        )
+        return str(destination), preview or f"Write {args.path}"
+
     async def execute(self, arguments: BaseModel) -> JsonValue:
         args = cast("WriteFileInput", arguments)
         try:
             destination = self._sandbox.resolve(args.path)
+            self._sandbox.ensure_model_writable(destination)
             if destination.exists() and not args.overwrite:
                 raise ToolError("file_exists", "file exists and overwrite is false")
             self._sandbox.atomic_write(args.path, args.content)
@@ -119,33 +147,47 @@ class PatchFileTool:
             permissions=("fs.write",),
         )
 
+    async def prepare(self, arguments: BaseModel) -> tuple[str, str]:
+        args = cast("PatchFileInput", arguments)
+        path = self._sandbox.resolve(args.path, must_exist=True)
+        self._sandbox.ensure_model_writable(path)
+        original = self._sandbox.read_text(args.path)
+        updated, _ = self._updated(original, args)
+        preview = "".join(
+            difflib.unified_diff(
+                original.splitlines(keepends=True),
+                updated.splitlines(keepends=True),
+                fromfile=args.path,
+                tofile=args.path,
+            )
+        )
+        return str(path), preview
+
+    @staticmethod
+    def _updated(original: str, args: PatchFileInput) -> tuple[str, int]:
+        count = original.count(args.expected)
+        if count == 0:
+            raise ToolError("patch_mismatch", "expected text was not found")
+        if args.occurrence is None:
+            if count != 1:
+                raise ToolError(
+                    "patch_ambiguous", f"expected text occurs {count} times; specify occurrence"
+                )
+            return original.replace(args.expected, args.replacement, 1), 1
+        if args.occurrence > count:
+            raise ToolError("patch_mismatch", "requested occurrence does not exist")
+        position = -len(args.expected)
+        for _ in range(args.occurrence):
+            position = original.find(args.expected, position + len(args.expected))
+        updated = original[:position] + args.replacement + original[position + len(args.expected) :]
+        return updated, args.occurrence
+
     async def execute(self, arguments: BaseModel) -> JsonValue:
         args = cast("PatchFileInput", arguments)
         try:
+            self._sandbox.ensure_model_writable(self._sandbox.resolve(args.path))
             original = self._sandbox.read_text(args.path)
-            count = original.count(args.expected)
-            if count == 0:
-                raise ToolError("patch_mismatch", "expected text was not found")
-            if args.occurrence is None:
-                if count != 1:
-                    raise ToolError(
-                        "patch_ambiguous",
-                        f"expected text occurs {count} times; specify occurrence",
-                    )
-                updated = original.replace(args.expected, args.replacement, 1)
-                replaced = 1
-            else:
-                if args.occurrence > count:
-                    raise ToolError("patch_mismatch", "requested occurrence does not exist")
-                position = -len(args.expected)
-                for _ in range(args.occurrence):
-                    position = original.find(args.expected, position + len(args.expected))
-                updated = (
-                    original[:position]
-                    + args.replacement
-                    + original[position + len(args.expected) :]
-                )
-                replaced = args.occurrence
+            updated, replaced = self._updated(original, args)
             self._sandbox.atomic_write(args.path, updated)
         except ToolError:
             raise
@@ -392,6 +434,14 @@ class ShellTool:
             timeout_seconds=305,
         )
 
+    async def prepare(self, arguments: BaseModel) -> tuple[str, str]:
+        args = cast("ShellInput", arguments)
+        validator = getattr(self._runner, "validate", None)
+        if callable(validator):
+            validator(tuple(args.argv), cwd=args.cwd)
+        encoded = json.dumps({"argv": args.argv, "cwd": args.cwd}, sort_keys=True)
+        return encoded, encoded
+
     async def execute(self, arguments: BaseModel) -> JsonValue:
         args = cast("ShellInput", arguments)
         try:
@@ -460,22 +510,37 @@ class RunCommandTool:
         name: Literal["test", "build"],
         runner: ProcessRunner,
         argv: tuple[str, ...],
+        *,
+        cwd: str = ".",
+        timeout_seconds: float = 300,
     ) -> None:
         self._runner = runner
         self._argv = argv
+        self._cwd = cwd
+        self._timeout = timeout_seconds
         self.definition = ToolDefinition(
             name,
             f"Run the configured {name} command.",
             schema_for(self.input_model),
             side_effects=True,
             permissions=("process.exec",),
-            timeout_seconds=305,
+            timeout_seconds=timeout_seconds + 5,
         )
+
+    async def prepare(self, arguments: BaseModel) -> tuple[str, str]:
+        del arguments
+        validator = getattr(self._runner, "validate", None)
+        if callable(validator):
+            validator(self._argv, cwd=self._cwd)
+        encoded = json.dumps({"argv": self._argv, "cwd": self._cwd}, sort_keys=True)
+        return encoded, encoded
 
     async def execute(self, arguments: BaseModel) -> JsonValue:
         del arguments
         try:
-            result = await self._runner.run(self._argv, timeout_seconds=300)
+            result = await self._runner.run(
+                self._argv, cwd=self._cwd, timeout_seconds=self._timeout
+            )
         except CommandDeniedError as exc:
             raise ToolError("command_denied", str(exc)) from exc
         except OSError as exc:

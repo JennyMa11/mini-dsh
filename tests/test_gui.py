@@ -235,6 +235,41 @@ async def test_diff_preserves_truncated_preview(
 
 
 @pytest.mark.asyncio
+async def test_diff_recovers_stdout_from_truncated_json_preview(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def execute(
+        self: ToolRuntime,
+        call: ToolCall,
+        run_id: str,
+        step_id: int,
+    ) -> ToolObservation:
+        del self, run_id, step_id
+        return ToolObservation(
+            call.call_id,
+            "git",
+            ToolStatus.SUCCEEDED,
+            {
+                "preview": '{"exit_code": 0, "stderr": "", "stdout": "diff --git a.py\\n+new\\n',
+                "original_characters": 90_000,
+            },
+            truncated=True,
+            artifacts=(".minidsh/artifacts/diff.json",),
+        )
+
+    monkeypatch.setattr(ToolRuntime, "execute", execute)
+    session = _session(tmp_path, ScriptedModel([]))
+    await session.action("diff", {})
+    await session.wait()
+    diff = str(session.snapshot()["diff"])
+    assert "diff --git" in diff
+    assert "+new" in diff
+    assert '"stdout"' not in diff
+    assert ".minidsh/artifacts/diff.json" in diff
+
+
+@pytest.mark.asyncio
 async def test_gui_settings_enable_collaboration_and_show_child_results(tmp_path: Path) -> None:
     model = ScriptedModel(
         [

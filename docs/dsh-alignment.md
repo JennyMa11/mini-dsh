@@ -18,8 +18,9 @@ Cordis/npm 插件。
 Session 消息日志在 `.minidsh/session_events/`，完整执行 Trace 沿用原有位置。
 终态 JSON 是兼容快照。新运行恢复历史时优先读取消息日志；旧快照继续可用。
 日志重复创建、损坏、序号不连续或不完整尾部都会明确失败。恢复不重放工具；新轮
-补充“执行结果未知”的消息，保留上一轮原始记录。当前每轮有独立 run 日志，导入
-上一轮历史作为初始事实，没有实现官方跨轮 Session ID 和分叉协议。
+补充“执行结果未知”的消息，保留上一轮原始记录。旧 API 的每轮独立 run 日志与历史导入
+保持兼容。交互入口现使用跨轮稳定 Session 和历史分叉，
+见[轻量 Runtime](mini-dsh-runtime.md)；尚未实现官方格式迁移链或 Cordis 格式兼容。
 
 ## 替换 Loop
 
@@ -114,7 +115,7 @@ uv run pytest tests/test_mcp_http.py -q
 
 该测试在临时工作区启动本地 MCP 服务，用脚本模型完成工具发现、授权、调用、反馈、
 下一步、终态和资源释放。完整质量门禁仍使用仓库约定的四条命令；dev 依赖包含 MCP
-协议测试所需包，基础运行依赖仍只有 Pydantic。
+协议测试所需包。基础依赖包含 Pydantic、prompt_toolkit 和用于可取消流式 HTTP 的 httpx。
 
 ## 公平实验
 

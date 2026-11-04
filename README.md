@@ -1,436 +1,547 @@
 # Mini-dsh
 
-Mini-dsh 是一个轻量级、可扩展、可评测的 Coding Agent Harness / Agent Runtime。它实现完整的 `Observe → Plan → Act → Execute → Observe → Continue | Finish`，重点研究在模型不变时，Context、工具反馈、反思、权限和执行隔离如何改变任务成功率与成本。
-
-它不是一个新模型，也不是一个产品级 Coding Agent。它是一台**可替换、可观测、可复现**的 Harness：模型、工具、Context、Session、权限与事件总线全部走端口，核心 Loop 不依赖任何厂商 SDK、Shell 或文件系统细节，因此可以拿来做单变量消融实验。
-
-- 版本：`0.3.2`（Apache-2.0）
-- 运行时：Python `>=3.12`，依赖仅 `pydantic`，用 `uv` 管理
-- 规模：58 个源码模块、27 个测试模块、405 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4；另有 26 个冻结的 `local_formal` 正式实验任务和 2 个本地试验任务）
-- 当前测试覆盖率 88%（`uv run pytest --cov=src/minidsh`）；核心 `runtime/` 模块为 100%。
-
-失败模型调用现会保留已报告的 Token、缓存命中与计算费用，并写入可回放的失败事件；
-未知用量单独标记。契约与历史数据边界见 [模型失败用量记录](docs/model-failure-accounting.md)。
-
-新增可选的 **Local-first** 路径：原生 MLX-LM 接入 Qwen3 4B/8B 4bit，使用 Token 预算 Context、逐级仓库读取、结构化错误反馈、轻量 Plan State 与 Loop Guard。`mini-dsh matrix` 可顺序运行 4B/8B 与基线/优化 Harness 的四格对照；模型权重版本、留出判据和原始 Trace 随报告记录。安装、运行及指标边界见 [本地小模型实验](docs/local-first.md) 与 [ADR 0013](docs/adr/0013-local-first-small-model-harness.md)。
-
-`mini-dsh formal-study` 使用冻结的 26 个编码任务、每格三次运行、逐次 checkpoint 与五阶段消融。语料、留出判据、离线参考解门禁、复现命令和统计口径见 [正式本地实验协议](docs/local-formal-study.md)；既有 2 次重复结果仍只作为 pilot 记录。
-
-> `0.2.0` 是 **Real-model evaluation release**：接入真实 provider profile、重复采样、成本与延迟分解、失败分类、Trace Replay / Diff 与 Pareto 分析。`0.3.0` 交付**第一批真实模型实测结果**：`repo` 套件在 `deepseek-flash` 上 18/18 通过、每次成功 $0.000937、Harness 自身占墙钟 0.26%，并修掉了接入时暴露的三个 provider 缺陷。`0.3.2` 补上此前所有套件都缺的东西——**判据**：`core` / `stress` / `repo` 都拿 Agent 能读能改的可见测试当判据，所以它们的 100% 测的是顺从而不是正确；`hard` 套件用留出判据（Agent 结束后才落地）第一次给出低于 100% 的成功率（**19/20**）。
-
----
-
-## DSH 架构与 Harness 研究
-
-项目同时保留可复现的 Harness 实验能力，并对齐 DSH 的核心设计：Session 消息
-事件先提交、Context 从事件历史生成视图；Loop 通过工厂端口与插件服务替换；MCP
-工具进入同一条 Schema、权限、超时和 Observation 链路。新增事件日志保留原有
-Session 快照和 Trace 读取能力，历史评测报告仍代表当时的实现。
-
-当前版本已完成 DeepSeek 小规模接入回归：repo 6/6、hard 4/4，累计计价约 $0.01714，
-10 份 Trace 回放均通过。每任务仅一次样本；条件、逐任务结果与边界见
-[2026-09-27 真实模型回归](docs/results/real-regression-2026-09-27.md)。
-
-MCP 为可选依赖，当前通过 Python API 接入 Streamable HTTP 服务。Mini-dsh 是独立
-Python Runtime，不直接兼容 Cordis/npm 插件。用法、实验控制与边界见
-[DSH 对齐说明](docs/dsh-alignment.md) 和 [ADR 0012](docs/adr/0012-session-facts-loop-factory-mcp.md)。
-
-## 本地 GUI
-
-```bash
-uv sync --dev
-uv run mini-dsh gui --workspace .
-```
-
-自动打开深色双栏浏览器工作台：连续对话、停止任务、清空对话、按 Run ID 恢复、
-查看 Git Diff、执行事件与本轮用量。对话与轨迹通过标签切换，运行设置和会话恢复
-从侧边栏打开；视觉参考与范围见 [GUI 设计说明](docs/gui-design.md)。
-模型沿用终端的 provider 配置（默认 DeepSeek）；
-可在“运行设置”直接输入 API Key，或沿用服务端环境变量。页面提交的 Key 仅保存在服务进程内存，
-不回显、不写入配置、Session 或 Trace，关闭服务后需重新输入。
-设置中也可启用 Multi-Agent，选择子 Agent 数量和并发上限；协作结果以 Sub Agent 卡片展示。
-运行期间不能修改设置，保存后保留当前对话。默认只读，显式授权写入或命令执行
-使用已有 `--allow-write`、`--allow-shell` 和 `--allow-command` 参数。
-
-无需模型服务的离线示例：
-
-```bash
-uv run mini-dsh gui --workspace . --script examples/gui_responses.json
-```
-
-`--no-open` 只打印地址，`--port 8765` 指定本地端口，`--resume RUN_ID` 启动时恢复。
-请使用终端打印的完整地址打开（含本次服务的会话凭证）；刷新页面可继续连接。
-服务仅监听 `127.0.0.1`，Ctrl+C 停止服务并取消当前任务。执行期间不能清空或恢复。
-Trace 与 Session 存储在工作区 `.minidsh/` 内，GUI 是有界展示视图；事件按步骤更新，
-暂不支持逐 Token 输出。`finished` 表示 Harness 运行结束，正确性仍以测试判据为准。
-GUI 位于独立展示层，核心架构不变，见 [ADR 0008](docs/adr/0008-local-browser-gui.md)。
-
-## Multi-Agent 协作
-
-主 Agent 可通过 `delegate_sub_agents` 并行委派分析、检索和审查任务，Sub Agent 使用独立模型实例、上下文、运行 ID 和 Session，结果返回主 Agent 汇总。团队共用步数、Token、工具调用与墙钟预算，支持并发上限、累计子 Agent 上限和取消清理。
-
-```bash
-uv run mini-dsh chat --model-profile deepseek --multi-agent --subagent-max-parallel 2
-uv run python examples/multi_agent.py  # 无 API Key 的临时工作区演示
-```
-
-子 Agent 首版只读，修改由主 Agent 统一执行。完整参数、Python API、Trace 回放与边界见 [Multi-Agent 文档](docs/multi-agent.md) 和 [ADR 0010](docs/adr/0010-sub-agent-collaboration.md)。
-
-## Architecture
-
-```mermaid
-flowchart TD
-    CLI["cli.py<br/>run / benchmark / ablation<br/>report / trace replay / trace diff"]
-    COMP["composition.py<br/>Composition Root · RuntimeOptions"]
-    LOOP["application/agent_loop.py<br/>Observe → Plan → Act → Execute"]
-
-    subgraph PORTS["ports/ · domain/（纯契约，无第三方依赖）"]
-        P1["ModelPort"]
-        P2["ContextPort"]
-        P3["ToolExecutorPort"]
-        P4["SessionPort"]
-        P5["EventSink"]
-    end
-
-    subgraph RUNTIME["runtime/"]
-        PM["plugins.py<br/>依赖校验 · 生命周期 · 回滚"]
-        SR["services.py<br/>Service DI"]
-        EB["events.py<br/>版本化 Event Bus"]
-    end
-
-    subgraph TOOLS["tools/"]
-        TR["runtime.py<br/>Schema → Validation →<br/>Authorization → Execution → Observation"]
-        BU["builtin.py<br/>Read Write Patch Search Shell Git Test Build"]
-        PP["PermissionPolicy<br/>deny 优先 · 能力授予"]
-    end
-
-    subgraph ADAPTERS["adapters/ · infrastructure/"]
-        AM["models.py<br/>Scripted / OpenAI-compatible"]
-        AP["profiles.py<br/>Provider Profile · 重试 · 缓存计价"]
-        AT["trace.py<br/>脱敏 JSONL"]
-        AS["sessions.py<br/>JSON Session"]
-        SB["sandbox.py<br/>WorkspaceSandbox · NetworkPolicy"]
-        PR["process.py<br/>Local / Docker Runner"]
-    end
-
-    subgraph EVAL["evaluation/（只读派生视图）"]
-        ET["taxonomy.py<br/>失败分类与层归属"]
-        EL["latency.py<br/>model / tool / harness"]
-        EP["pareto.py<br/>trade-off 前沿"]
-        ER["replay.py · diff.py<br/>逐步回放与差分"]
-    end
-
-    CLI --> COMP --> LOOP
-    LOOP -.依赖.-> PORTS
-    COMP --> RUNTIME
-    COMP --> TOOLS
-    PORTS -.实现.-> ADAPTERS
-    TOOLS --> ADAPTERS
-    PM --> SR
-    TR --> PP
-    AT -.读取.-> EVAL
-    CLI --> EVAL
-```
-
-依赖方向单向收敛：`cli → composition → application → domain/ports → runtime/adapters`。`domain` 只有不可变 dataclass、`enum` 和 `Protocol`，不 import 任何 adapter；所有外部副作用（文件、进程、网络、Git）都必须穿过 Tool Runtime，模型与 Loop 不能直接触达。完整取舍见 [`docs/adr/0001-runtime-architecture.md`](docs/adr/0001-runtime-architecture.md)。
-
-## Agent Loop
-
-```mermaid
-stateDiagram-v2
-    [*] --> Running
-    Running --> Running: 模型调用 + 工具执行<br/>step_id += 1
-    Running --> Finished: 模型给出最终回答<br/>正确性由外部判据验证
-    Running --> Failed: 不可恢复错误
-    Running --> Cancelled: 外部取消
-    Running --> BudgetExhausted: 步数 / Token / 工具调用 / 墙钟耗尽
-    Finished --> [*]
-    Failed --> [*]
-    Cancelled --> [*]
-    BudgetExhausted --> [*]
-```
-
-一次迭代的固定顺序：
-
-```text
-Observe  → ContextManager 依据策略构造视图（记录策略名、版本、Token 估算）
-Plan     → ModelPort.complete(view) 返回回答或工具调用
-Act      → 每个 tool_call 先经 Schema 校验，再经权限判断
-Execute  → Tool Runtime 执行，产出结构化 Observation（状态/结果/耗时/截断/可重试）
-Observe  → Observation 回灌 Context，失败以结构化事实返回而非吞异常
-Continue → 未达终态且预算未耗尽则回到 Observe；否则进入唯一终态
-```
-
-不变量：每次运行唯一 `run_id`，每步单调递增 `step_id`；终态只有 `finished` / `failed` / `cancelled` / `budget_exhausted`；模型输出本身不产生副作用；重试只针对显式标记的瞬时错误且默认不重试有副作用的调用。
-
-## 已实现能力
-
-- 带 Step、Token、工具调用和墙钟预算的 Agent Loop，以及明确的终态。
-- Model、Context、Tool、Event、Session 端口；插件依赖校验、生命周期回滚、Service DI 和热替换边界。
-- Full History、Sliding Window、Summary Compaction、Repo Retrieval、Retrieval+Summary、Python Symbol Retrieval 六种 Context 策略，共用同一接口以支持公平消融。
-- Read、Write、Patch、Search、Shell、Git、Test、Build 工具与统一 Schema/授权/超时/重试/Observation 流程。
-- 工具输出大小上限、显式截断标记与 artifact 落盘（大输出不污染 Context）。
-- 工作区路径与符号链接防逃逸、命令 deny/allowlist、环境过滤、敏感文件拒绝、进程组超时清理。
-- 网络策略按 host / protocol / port 显式授权，默认全关。
-- 可选 Docker hardened runner：只读根文件系统、capability drop、资源限制和默认断网。
-- Scripted 与 OpenAI-compatible 模型适配器、JSON Session、脱敏 JSONL Trace。
-- 隔离任务副本、可执行成功判据、指标汇总、成本核算和消融实验 API。
-- 命名 Provider Profile（DeepSeek / OpenAI / Ollama）与带指数退避的瞬时错误重试；prompt cache 命中单独计价。
-- 失败分类法：9 个类别归并成 `success` / `harness` / `agent` / `environment` 四层，每个诊断带证据链。
-- 三层延迟分解（model / tool / harness）、cost per successful run、重复采样与 `pass@k`、Pareto trade-off 分析。
-- Trace Replay（不调用模型，逐步重建 `Context → Model → Tool Call → Observation → State`）与 Trace Diff（定位两条 Trace 的第一个行为分叉点）。
-- 分层配置：CLI > `MINIDSH_*` 环境变量 > `minidsh.toml` > 安全默认值，并可打印每个字段的来源。
-
-## 快速开始
-
-需要 Git 和 [`uv`](https://docs.astral.sh/uv/)，Python 3.12 与依赖由 `uv` 自动管理：
-
-```bash
-uv sync --all-groups
-uv run mini-dsh doctor
-uv run pytest
-```
-
-无需 API Key 的最小端到端示例（临时工作区、脚本化模型、真实 Patch 与测试）：
-
-```bash
-uv run python examples/minimal_demo.py
-```
-
-输出示例：
-
-```text
-status: finished
-steps: 4
-tool calls: 3
-tokens: 986
-cost: $0.004110
-```
-
-## 运行 Coding Agent
-
-离线运行可显式指定 `--provider scripted`，该 CLI 参数优先于环境变量
-`MINIDSH_MODEL_PROFILE`，不会因此选择真实 provider。若同时指定 `--model-profile`，
-命令会报告配置冲突。
-
-### 交互式终端会话
-
-无参数启动会进入交互模式，默认使用现有 `deepseek` profile。凭据从
-`DEEPSEEK_API_KEY` 读取；请先在终端设置该变量，再运行：
-
-```bash
-uv run --no-editable mini-dsh
-```
-
-可以连续输入任务和追问，模型会保留之前的回答、工具结果与修改记录。
-每轮显示模型调用和工具执行进度、终态、Token 与耗时，自动保存 Session 和 JSONL Trace。
-当前显示的是步骤进度和完整回答，不是逐 Token 流式输出。
-每轮独立使用配置中的 Step / Token / 工具调用 / 墙钟预算。
-未配置费率时交互模式允许调用模型，但成本显示为不可用，不把零费率当成实际成本。
-需要成本核算时使用已有的 `--input-usd-per-million`、`--output-usd-per-million` 等参数。
-
-默认只能读取仓库；需要修改代码、执行测试时显式授权：
-
-```bash
-uv run --no-editable mini-dsh chat \
-  --allow-write --allow-shell --allow-command python \
-  --test-command "python -m pytest"
-```
-
-| 命令 | 行为 |
-| --- | --- |
-| `/help` | 查看快捷命令 |
-| `/status` | 查看模型、工作区、权限和上次 Run ID |
-| `/diff` | 通过 Tool Runtime 查看 Git diff |
-| `/clear` | 清空对话，保留已修改文件 |
-| `/resume RUN_ID` | 恢复当前工作区中保存的对话 |
-| `/exit` 或 Ctrl+D | 退出 |
-
-Ctrl+C 中断当前任务并回到输入提示；在输入时按 Ctrl+C 清空输入。
-行尾输入 `\` 可继续输入多行任务。取消不会回滚已完成的文件修改。
-恢复会话也不会重放工具；没有记录结果的调用会作为“执行结果未知”进入下一轮，
-要求模型先检查实际状态。原始 Trace 保持不变。
-底层 provider 当前使用阻塞 HTTP adapter，取消后已经发出的请求可能继续至超时；
-退出时 Python 会等待该后台请求释放。执行中的本地子进程仍由已有 runner 清理进程组。
-
-也可以用 `--resume RUN_ID` 启动，或者通过 `--workspace`、`--model-profile`、
-`--context` 等参数选择工作区和策略。没有 API Key 时仍可以进入界面查看帮助，
-首次输入任务时会提示缺失的凭据。
-
-`--no-editable` 避免依赖源码路径的 `.pth` 文件，适用于该文件被 macOS 标记为隐藏的环境。
-修改源码后可运行 `uv sync --no-editable --reinstall-package mini-dsh` 重新安装。
-开发和 CI 环境仍可使用原有的 editable 安装方式。
-
-无网络、无 API Key 的可复现交互演示：
-
-```bash
-uv run --no-editable mini-dsh chat --script examples/chat_responses.json
-```
-
-依次输入两个问题即可看到回答与连续对话，再输入 `/exit` 退出。
-
-Scripted provider 用于可复现实验：
-
-```bash
-uv run mini-dsh run "Fix the bug and run tests" \
-  --workspace /path/to/repo \
-  --script /path/to/responses.json \
-  --allow-write \
-  --allow-shell \
-  --allow-command python \
-  --test-command "python -m pytest"
-```
-
-OpenAI-compatible provider 通过命名 profile 选择；凭据只从 profile 声明的环境变量读取：
-
-```bash
-export DEEPSEEK_API_KEY=...
-
-uv run mini-dsh run "Implement the requested change" \
-  --provider openai-compatible \
-  --model-profile deepseek \
-  --model deepseek-flash \
-  --workspace /path/to/repo \
-  --context retrieval_summary \
-  --input-usd-per-million 0.0 \
-  --output-usd-per-million 0.0 \
-  --allow-write
-```
-
-真实 provider 未声明价目时会拒绝运行，详见[真实模型评测](#真实模型评测)。
-
-对不可信仓库启用 Docker 后端（需要宿主机已安装 Docker，生产环境应把镜像固定到 digest）：
-
-```bash
-uv run mini-dsh run "Fix the failing tests" \
-  --provider openai-compatible \
-  --workspace /path/to/repo \
-  --allow-write \
-  --allow-shell \
-  --allow-command python \
-  --sandbox-backend docker \
-  --docker-image python:3.12-slim
-```
-
-默认只注册 Read、Search 和只读 Git；Write 与 Shell 必须逐次显式开启。Shell 中每个可执行文件还必须通过 `--allow-command` 或固定 test/build 命令加入 allowlist。运行结果输出最终回答、Git diff、指标及 Trace 路径。
-
-## Benchmark 方法
-
-一条命令跑完全部基线、消融与结果归档：
-
-```bash
-./scripts/run-all-experiments.sh          # 全部
-./scripts/run-benchmark.sh core           # 单套基线
-./scripts/run-ablation.sh stress context  # 单组消融
-```
-
-复现包含重复运行、Session 日志对照和 Trace 审计的完整离线基线：
+Mini-dsh 是一个供自己在终端使用的 **Coding Agent Harness / Runtime**。
+目标是在自己的仓库中持续对话，让模型读取代码、做局部修改、运行测试，并能继续追问、查看 diff 和恢复会话。
+它把任务组织成 `Observe → Plan → Act → Execute → Observe → Continue | Finish`，
+工具、权限、预算与执行记录为这条日常工作链路提供支持。
+
+为了判断它是否值得自己使用，项目检查三个问题：**任务是否真的完成、执行是否满足约束、改变一个 Harness 机制是否有收益**。
+模型、Context、工具、权限、Session 和事件通过显式接口组装，便于在固定条件下做对照。
+项目不训练或微调模型；当前提供初步终端工作流，仍需在真实仓库上积累使用与验收记录。
+
+- 版本：`0.3.2`（Apache-2.0）；本页能力与评测说明更新至 2026-10-28。
+- 技术基线：Python `>=3.12`、`uv`、`src/` 布局；运行依赖包括 `pydantic`、流式 HTTP 的 `httpx` 和终端输入的 `prompt_toolkit`，MLX 与 MCP 为可选依赖。
+- 规模：105 个源码模块、59 个测试模块、994 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
+
+轻量 DSH 扩展现已提供可取消的 OpenAI-compatible 流式输出、逐次审批、稳定会话及历史分叉、
+配置驱动的 Python 插件组合、受控执行钩子和统一 local/Docker 文件与进程后端。
+参照官方固定提交，实施范围、兼容边界和独立验收入口见[轻量 DSH Runtime](docs/mini-dsh-runtime.md)。
+
+- 其他任务集：长历史/大输出 `stress`、26 个冻结的 `local_formal` 任务、12 道公开函数修复题，以及独立的 Harness 功能与机制实验。
+
+**当前最重要的结果与边界**：公开修复子集 12/12 通过独立测试，但预算全部满足只有 10/12；
+既有 Harness 策略实验 20/20 指定功能 case 通过，执行 20/24 次，候选通过 5/24，约束内成功 0/24。
+Context 对照观察到输入 Token 减少约 39.1%，尚未证明任务成功率提升。
+这些是各自冻结版本的历史记录，不补认成当前源码的完整验收。
+本轮[轻量 DSH Runtime 验收](docs/results/mini-dsh-runtime-2026-10-13.md)执行 12 次真实模型场景，
+专项判据通过 10/12，记录 64854 Token；发现的 Patch 预检分类问题已修复并通过离线回归。
+修复后未重跑完整模型队列，GUI 人工使用与通用仓库成功率未测。
+
+## 阅读导航
+
+- [扩展升级执行与验收主计划 v1](docs/extension-roadmap.md)：后续升级的固定范围、四个 PR、验收矩阵与停止条件。
+- [人工 Skills 与 Context](docs/extension-skills.md)：默认关闭、显式配置、按需加载与阶段验收边界。
+- [项目 Memory](docs/extension-memory.md)：私有存储、运行外维护与生产组装，默认关闭；出关结论见 [PR 4 报告](docs/results/extension-pr4-2026-10-30.md)。
+- [配对评测与 M5 门禁](docs/extension-evaluation.md)：固定 bootstrap、完整分母、Memory 机会与真实队列授权。
+- [M5 本轮最终报告](docs/results/extension-m5-2026-10-30.md)：按原预算停止，80/90 行已核验、6 个产物通过；未执行行和预算超量保留，机制收益不可评估。
+- [先在自己的终端里使用](#先在自己的终端里使用)
+- [为什么做这个项目](#为什么做这个项目)
+- [项目由什么组成](#项目由什么组成)
+- [关键机制为什么这样设计](#关键机制为什么这样设计)
+- [如何选择和计算评测指标](#如何选择和计算评测指标)
+- [如何组织可信的评测](#如何组织可信的评测)
+- [已有评测结果与结论边界](#已有评测结果与结论边界)
+- [如何运行与复核](#如何运行与复核)
+- [配置与扩展](#配置与扩展)
+- [当前限制与后续工作](#当前限制与后续工作)
+- [工程门禁与文档](#工程门禁与文档)
+
+## 先在自己的终端里使用
+
+要在本仓库一次启用全部编码工具及 Skills、Verification、Project Memory：
 
 ```bash
 uv sync --locked --all-groups
-uv run python scripts/offline_regression.py
+uv run mini-dsh-work
 ```
 
-每次创建新的结果目录，记录实际提交号、工作区状态、源码及输入摘要；判据失败或
-确定性指标漂移会非零退出。版本固定与审计口径见[可复现基线](docs/reproducible-baseline.md)。
-固定提交上的 1010 次执行与审计结果见[离线基线报告](docs/results/offline-baseline-2026-09-27.md)。
-hard 的两策略重复采样入口见[Context 对照协议](docs/hard-context-experiment.md)，
-按任务交替 Full History 与 Summary Compaction 的执行顺序。
-首次 hard 两策略对照得到 11/12 与 12/12：摘要的平均记录 Token 降低 7.7%，但记录费用
-增加 64.1%，并暴露一个失败模型调用的用量记录缺口。条件与解释见
-[实测报告](docs/results/hard-real-context-ablation-2026-09-27.md)，不能据此断言摘要提高稳定成功率。
+需要运行 Docker Desktop。首次启动自动构建开发镜像（需要下载依赖），随后
+复用镜像；依赖变更后使用 `uv run mini-dsh-work --rebuild-image`。
+`uv run mini-dsh-work --check` 只准备并检查配置，不调用模型。
+启动后 `/tools` 查看 13 项工具，写入和命令仍逐次审批，执行容器禁网。
+固定测试为 `uv run --no-sync pytest -q`，固定构建为 `uv build --no-build-isolation`；
+三个人工 Skills 来自 `examples/skills`。Memory 明确绑定 mini_dsh/work_v1，
+默认在仓库父目录 `.mini-dsh-private/mini_dsh`，可用 `--memory-root /absolute/private/path`
+指定；没有证据与操作者批准时，候选不会进入后续 Context。
+此入口用于 Mini-dsh 自身开发，模型使用原有 Key 配置，支持透传 `--model-profile`
+等 work 参数。范围及限制见 [ADR 0027](docs/adr/0027-full-work-startup.md)。
 
-方法要点（完整协议见 [`docs/benchmark.md`](docs/benchmark.md)）：
+在本项目目录安装依赖并启动：
 
-1. **任务集固定**：每个任务声明 `repo_commit`、`seed`、`model`、`budget`、`isolation` 与成功判据 argv；manifest 与 fixture 全部入库，可离线复现。
-2. **隔离副本**：Runner 为每个任务复制临时工作区，Agent 在副本上操作，互不污染。
-3. **判据可执行**：成功与否由独立 `success_argv` 的退出码决定，从不采信模型自报完成。
-4. **单变量消融**：`AblationRunner` 对同一 manifest 依次运行 `HarnessVariant`，只改一个变量（Context 策略 / 输出上限 / 重试与反馈粒度），模型、任务、预算与环境保持不变。
-5. **事实优先**：每次 Model Call、Tool Call、权限决策、Context 变换与状态转换都发布版本化事件并落 JSONL Trace；原始 Trace 是事实源，摘要是可再生成视图。
-6. **成本口径统一**：`ModelPricing` 显式给定 `input_usd_per_million` / `output_usd_per_million`，Token 由 Harness 侧确定性估算，报告给出每任务与总成本。
+```bash
+uv sync --locked --all-groups
+uv run mini-dsh work --test-command "uv run pytest"
+```
 
-任务集规模：
+`work` 默认使用 DeepSeek profile。启动时读取 API Key，优先级为：显式环境变量 >
+工作区 `.minidsh/credentials.toml` > 全局 `~/.config/minidsh/credentials.toml`。
+工作区可按 provider 覆盖全局 Key；没有工作区配置时直接使用全局默认值，不复制 Key。
+`MINIDSH_CONFIG_HOME` 可指定全局配置目录，必须是绝对路径。
+密钥配置与普通 `minidsh.toml` 运行参数分开，文件格式相同：
 
-| Suite | 任务数 | 模型 | 覆盖 |
+```toml
+[credentials]
+DEEPSEEK_API_KEY = "your-provider-key"
+# 使用其他 profile 时填写其 API Key 环境变量名，例如 OPENAI_API_KEY。
+```
+
+首次提交模型任务时如果没有 Key，会隐藏输入并保存到工作区的密钥文件，随后继续
+执行该任务；下次启动直接复用。`/key` 可主动输入或更新工作区 Key。
+`/status` 显示 Key 来源，不显示内容；`/test`、`/diff`、`/tools` 无需模型凭据。
+取消输入会回到提示符，不能隐藏输入时拒绝明文回退。保存失败会明确提示，Key 仍可
+用于本次会话，但不会宣称下次可复用。手动 `/key` 更新在当前进程优先，下次启动仍
+遵循环境变量优先的规则。
+
+保存使用独立的 Tool Runtime 权限与原子替换，文件权限为 `0600`；保留同文件中其他
+provider 的 Key，并将 `/.minidsh/credentials.toml` 加到项目 `.gitignore`。
+忽略规则不会自动移除已跟踪的文件。Key 以本地明文配置保存，不进入 Prompt、Session、
+Trace 或终端历史；模型文件工具和 Context 检索禁止读取该密钥文件，包括符号链接别名。
+本地模式中显式授权的 Shell/外部程序仍受已有隔离边界限制，不能据此宣称操作系统级
+Secret 隔离。GUI 读取相同的配置，但页面临时提交的 Key 仍只用于会话内存。
+配置与验收细节见 [分层密钥配置 ADR](docs/adr/0021-layered-credentials.md)。
+
+```text
+you > 修复失败测试，保持公共接口不变，说明修改和验证结果。
+you > 这个修改对边界情况有什么影响？
+you > /diff
+you > /test
+you > /exit
+```
+
+`work` 明确选择一个允许工作区编辑的配置：提供文件定位、局部读取、Patch 和新文件写入，
+仅在配置测试命令后授予执行该固定命令的能力。模型不能修改 `test` 工具的命令参数；
+默认不提供通用 `shell` 工具。已有 CLI、环境变量或配置中的显式权限限制继续优先，例如 `--no-allow-write`。
+通用命令执行需另加 `--allow-shell --allow-command EXECUTABLE`。
+输入 `/tools` 可查看工具列表、执行后端和命令授权，无需模型凭据。
+本地后端的命令运行在启动 Mini-dsh 的同一台机器上；工作区限制不代表远程执行。
+例如需要查找并停止本机开发服务器时，启动时显式授予对应程序：
+
+```bash
+uv run mini-dsh work --workspace /absolute/path/to/website \
+  --allow-shell --allow-command lsof --allow-command ps --allow-command kill
+```
+
+随后可输入“关闭 8001 端口的开发服务器，先确认进程身份，关闭后复查端口”。
+这些授权在整个会话有效；`kill` 白名单允许调用该程序，并非仅限某个端口或 PID。
+模型提示要求行动请求调用可用工具并验证结果；缺少工具时说明具体授权限制，
+不把缺少 `shell` 误说成无法访问本机。真实模型是否按此执行仍需实际使用验收。
+
+同一个入口也可以先讨论方案：默认提示要求大纲、解释和讨论按最新请求直接回答，
+围绕具体产品给出内容，不自动扩展成完整工程脚手架。`work` 默认关闭固定的 Local-first
+编辑计划；需要该机制时显式加 `--local-first`。这些属于模型行为指引，工具权限仍是执行边界。
+`work` 的默认表达按终端使用设计：日常操作用一到三句说明结果、验证和阻碍，
+省略装饰性标题、重复工具日志和泛泛的后续邀请；明确要求大纲或详细解释时按需要展开。
+输出层不裁剪模型正文；自定义系统提示优先，风格是否遵循仍取决于实际模型响应。
+
+每轮开始经 Tool Runtime 读取根 `AGENTS.md` 和有限文件清单，计入工具预算与 Trace。
+根说明可选，缺失会显示正常缺省提示；权限或路径违规仍显示失败并保留原始 Observation。
+真实终端使用可编辑输入框：Enter 发送，Alt+Enter 换行（也可先按 Escape 再按 Enter），
+左右键移动光标、上下键浏览历史，Tab 补全命令；多行粘贴保留为一份草稿，按 Enter 后发送。
+输入历史仅保存在进程内存；`/key` 与首次配置的隐藏输入不进入该历史。
+终端显示工具进度与回答，省略每次模型调用的 `Thinking…` 提示；模型调用事件继续记录在 Trace 中。
+重定向/管道或 `TERM=dumb` 保留普通行输入与反斜杠续行，并用 `Request:` 回显核对收到的文本。
+终端输入设计与验收见 [输入编辑器 ADR](docs/adr/0020-terminal-input-editor.md)。
+默认 BudgetContext 保留最新用户任务、根说明和最近的运行状态；嵌套说明由模型按提示继续读取。
+终端列出修改文件和真实测试状态：非零退出码显示失败，测试后继续改文件会显示需重新验证。
+测试通过只代表配置的命令返回成功，测试充分性与最终任务正确性仍需你审核。
+
+常用命令：`/help`、`/status`、`/tools`、`/diff`、`/test`、`/key`、`/clear`、`/resume RUN_ID`、`/exit`。
+每轮输出 Run ID，重启后可以用：
+
+```bash
+uv run mini-dsh work --test-command "uv run pytest" --resume RUN_ID
+```
+
+用于其他仓库时，指定 `--workspace /absolute/path/to/repo` 并传入那个项目的测试命令。
+`/test` 结果保留在当前对话中，在下一轮任务保存时随历史落盘；立即退出不会创建可恢复的独立测试会话。
+`chat` 继续默认只读。支持流式模型时展示增量文本；根说明超出读取/输出上限会停止，需先缩短说明；
+本地命令执行不是操作系统级隔离，适用于自己信任的项目。
+
+这条路径已用离线模型在临时仓库验证读取、修改、真实测试与连续追问；
+本次代码修改没有重新调用真实模型，尚不能据此给出新版本的真实任务成功率。
+设计与验收范围见 [终端工作配置 ADR](docs/adr/0019-personal-terminal-workflow.md)。
+
+## 为什么做这个项目
+
+首先，我需要一个能自己用的编码工作流：进入仓库、提出任务、检查修改、运行测试、继续追问。
+工具定位、项目约束、测试反馈和会话恢复直接决定这条工作流是否顺手。
+评测用于发现这些环节的缺口，再判断改动是否真的有帮助。
+
+编码 Agent 的最终回答不能说明代码正确；测试变绿也可能只是可见测试被修改。
+一次失败可能来自模型判断、上下文缺失、工具错误、权限拒绝或预算耗尽。
+如果只给一个成功率，就无法判断应该改模型、改运行机制，还是修评测器。
+
+Mini-dsh 把这些问题拆开：
+
+| 要解决的问题 | 为什么单看最终回答不够 | 项目怎么做 |
+| --- | --- | --- |
+| 判断任务正确性 | 模型自报完成与测试输出可能不可靠 | 捕获候选，使用模型不可访问的独立判据验证；保留验证结果 |
+| 解释执行过程 | 最终 diff 看不到模型当时收到什么、为何停下 | 记录 Context、模型响应、工具、权限和终态；支持 Trace Replay / Diff |
+| 检验设计收益 | 换模型、任务和预算后，差异无法归因 | 固定协议，按任务和重复编号配对，每次只改变指定机制 |
+| 控制执行条件 | 模型输出不能直接获得文件或进程权限 | 工具统一校验和授权；默认只读；不可信执行使用隔离环境 |
+| 控制资源消耗 | 长历史、大日志和重复失败会持续消耗预算 | 四类运行预算、工具输出上限、Context 策略及可选 Loop Guard |
+
+可替换接口服务于实验控制；回放服务于诊断；独立验证服务于结果判断。
+证据保存提高可核查性，但不能自行证明机制提高长程推理质量，也不能消除选题偏差。
+
+## 项目由什么组成
+
+### 一次任务的执行路径
+
+```mermaid
+flowchart TD
+    UI[CLI / 连续对话 / 本地 GUI] --> COMP[composition.py 显式组装]
+    COMP --> LOOP[Agent Loop]
+    LOOP --> JOURNAL[Session Journal 提交消息事实]
+    JOURNAL --> CONTEXT[Context 生成模型可见视图]
+    CONTEXT --> MODEL[Model 返回回答或工具调用]
+    MODEL --> DECISION{下一步}
+    DECISION -->|工具调用| TOOL[Schema 校验 → 授权 → 执行]
+    TOOL --> OBS[结构化 Observation]
+    OBS --> JOURNAL
+    DECISION -->|结束或达到限制| RESULT[RunResult 与终态]
+    LOOP -.事件.-> TRACE[脱敏 JSONL Trace]
+    TOOL -.事件.-> TRACE
+    RESULT --> VERIFY[评测侧独立验证]
+    TRACE --> EVAL[回放 / 差分 / 指标]
+    VERIFY --> EVAL
+```
+
+基本 Loop 的 Plan 阶段由模型决策承担，并非独立通用规划器。
+Local-first 模式另有轻量 Plan State。独立验证由 Benchmark 侧执行，普通交互中的 `finished`
+只表示 Loop 正常结束，不保证任务正确。
+
+### 模块、职责与设计理由
+
+| 模块 | 是什么 | 为什么需要 | 怎么做 |
 | --- | --- | --- | --- |
-| `smoke` | 1 | scripted | 端到端链路自检 |
-| `core` | 25 | scripted | Bug Fix / Feature / Test Repair / Refactor / Code Understanding / Multi-file |
-| `stress` | 3 | scripted + **provider** | 长历史（18 步）、大输出（75 KB 日志）、被拒绝动作（越权 + 逃逸 + 密钥读取） |
-| `repo` | 6 | **provider** | 跨文件 Bug Fix、定义+调用点契约、测试失败定位、新功能+测试、配置修改、多轮错误恢复 |
-| `hard` | 4 | **provider** | 模块级规格实现：区间合并、令牌桶、分层配置、RFC 4180 解析 |
+| `domain/`、`ports/` | 共享值对象与能力接口 | 核心流程需要摆脱厂商和平台细节 | dataclass、enum、Protocol 定义请求、响应、Observation、预算、事件和端口 |
+| `application/` | 单 Agent 执行编排 | 状态与预算不能散落在工具或 UI 中 | 显式注入模型、Context、工具、事件和 Session；结构化处理失败与终止 |
+| `composition.py` | 组合根 | 避免隐藏全局依赖，方便替换实验变量 | 根据 RuntimeOptions 与 RuntimeComponents 组装实现，支持 Loop 工厂 |
+| `config.py` | 分层配置解析 | CLI、环境变量和配置文件不能各有一套默认值 | 按 CLI > 环境变量 > 配置文件 > 安全默认值合并，记录生效字段的来源 |
+| `configured_runtime.py` | 配置与插件驱动的组装 | 让入口选择已安装组件，同时保持信任边界 | 稳定插件 ID、显式信任、首次操作时启动、失败与退出时逆序释放 |
+| `context/` | 历史裁剪与仓库信息视图 | 全量历史会增长，裁剪又可能丢信息 | 统一 ContextView，记录策略、版本、估算 Token、遗漏数量和策略元数据 |
+| `tools/` | 工具注册、执行与反馈 | 模型参数需要校验，工具失败需要回灌 | Pydantic 边界校验、权限决策、超时、有限重试、统一 Observation |
+| `infrastructure/` | 文件、进程和容器适配 | 真正的执行与隔离依赖操作系统 | 路径检查、原子写入、argv 子进程、本地/Docker runner；公共评测使用独立容器 |
+| `runtime/` | 插件、服务注册与事件总线 | 扩展需要依赖与资源生命周期管理 | 检查重复服务、缺失依赖与环；按序启动、逆序清理；隔离订阅者异常 |
+| `adapters/` | 模型、Session、Trace、MCP 实现 | 外部协议差异不应进入核心 Loop | Scripted、OpenAI-compatible、可选 MLX；JSON Session、JSONL Journal/Trace |
+| `benchmark/` | 固定任务和实验执行 | 公平比较需要固定输入、环境与判据 | manifest、隔离副本、留出验证、重复采样、冻结实验与逐次结果保存 |
+| `evaluation/` | 只读派生分析 | 汇总分数需要可追溯到原始事实 | Trace Replay/Diff、失败分类、延迟拆解、证据 sidecar 与指标聚合 |
+| `cli.py`、`interactive.py`、`terminal.py`、`gui/` | 使用入口 | 让开发者实际执行、查看和恢复任务 | 复用同一运行时；`terminal.py` 只负责输入编辑与历史，GUI 为本机展示层，提供对话、事件和 diff |
+| `collaboration.py` | 可选子 Agent 编排 | 分析与审查可以并行，但不能扩大权限 | 独立子上下文与模型实例、团队共享预算；子 Agent 只读，主 Agent 统一修改 |
 
-`repo` 套件没有 response script：每个任务至少跨两个模块，且其中几个 fixture 被刻意构造成"第一反应的那个改法会让另一个测试挂掉"，用来逼出多轮错误恢复而不是一次蒙对。生成脚本是 [`benchmarks/build_repo.py`](benchmarks/build_repo.py)。
+核心 Loop 依赖端口，具体实现由组合根选择。GUI 与协作在扩展层；相关边界变更记录在
+[GUI ADR](docs/adr/0008-local-browser-gui.md) 和 [协作 ADR](docs/adr/0010-sub-agent-collaboration.md)。
+这些模块的存在不构成机制收益证据，仍需按任务验收。
 
-`stress` 同时用于 scripted 与真实 provider 的消融：它的任务足够长，长历史与大输出两组变量才有区分度（`core` 上这两组对照被压平）。
+## 关键机制为什么这样设计
 
-### 留出判据（held-out verification）
+### Agent Loop：把终止与失败变成明确状态
 
-`core`、`stress`、`repo` 都用**可见测试**当判据——而可见测试正是 Agent 能读、能改的那份文件。于是它们测的是"是否让可见测试变绿"，不是"是否符合规格"：一个把测试改绿但没实现契约的 Agent 拿满分。这正是它们全部饱和在 100% 的结构性原因。
+每次运行有唯一 `run_id`，每步 `step_id` 单调递增。Loop 构造 Context，调用模型，
+把工具请求交给 Tool Runtime，将 Observation 提交到历史后继续。终态只有
+`finished`、`failed`、`cancelled`、`budget_exhausted`。
 
-`hard` 套件换掉了判据。任务在 manifest 里声明 `verification_overlay`，Runner 在 **Agent 结束之后、`success_argv` 执行之前**把该目录覆盖进工作区。时机是全部关键：
+四类预算分别限制步骤、Token、工具调用和墙钟时间。Token 用量通常在模型返回后才能确定，
+因此可能出现单次在途超量：全部计入实际消耗，达到额度后停止后续调用与动作。
+这是一种可观测的停止策略，不能宣称实际 Token 永远不越过名义额度。
+模型失败携带已报告用量；未知用量单独记录。契约见[失败用量记录](docs/model-failure-accounting.md)。
 
-- 覆盖早了，判据就摆在 Agent 面前，可读可改；
-- 覆盖晚了，判据不参与判定，等于装饰。
+Local-first 可启用轻量 Plan State、错误反馈和 RepetitionGuard：三次等价重复触发恢复提示，
+六次触发停止。它帮助限制重复执行，但提示是否促成有效恢复，要由故障事件与检查点验证。
 
-判据脚本 `run_verification.py` 本身也来自 overlay，所以它同样是 Agent 没见过的文件。它把发现范围钉死在 `verification_tests/`，并**断言收集到的用例数不低于声明值**——`unittest discover` 在空目录上退出码是 0，不设这条下限的话，"删掉测试目录"就是最省事的作弊方式。`verification_commit` 像 `repo_commit` 钉工作区一样钉住 overlay；声明了 overlay 却指不到目录的 manifest 会被直接拒绝，而不是静默退化成弱判据。
+### Context：保留事实，比较不同的信息选择方式
 
-`hard` 的公平性是刻意设计的：**每个被留出检查覆盖的契约点都写在模块 docstring 里**，任务目标也明说"可见测试只是 smoke 子集，docstring 才是判据"。所以失败意味着"没有实现写明的契约"，而不是"被藏了需求"。`tests/test_hard_suite.py` 在离线、不调模型的前提下双向门禁每个任务：出厂 fixture 必须**失败**（否则任务一开始就是解好的），随包参考解必须**通过**（否则低成功率无法与"任务本身做不了"区分）。
+Session Journal 先提交消息事实，Context 再从历史构造模型可见视图；运行事件进入 Trace。
+Session 快照用于恢复，Trace 用于过程审计，摘要和指标都是派生视图。
+压缩不能反向覆盖已保存历史，恢复也不自动重放工具副作用。
 
-## 实验结果
-
-### scripted 基线（Harness 正确性）
-
-环境：`scripted` 模型（确定性，无网络）、seed `0`、定价 $3 / $15 per million tokens（输入 / 输出）。原始报告与 Trace 归档在 [`docs/results/`](docs/results/)，汇总见 [`docs/results/summary.json`](docs/results/summary.json)。
-
-**基线**
-
-| Suite | 任务 | 成功率 | 平均步数 | 平均 Token | 总成本 | 拒绝 | 拦截 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| `smoke` | 1 | 100% | 4.00 | 208.0 | $0.001080 | 0 | 0 |
-| `core` | 25 | 100% | 4.00 | 749.9 | $0.064545 | 0 | 0 |
-| `stress` | 3 | 100% | 10.00 | 9534.0 | $0.095022 | 1 | 4 |
-
-**Context 策略消融**（`stress`，只改 Context 策略）
-
-| 策略 | 平均 Token | 总成本 | 成功率 |
+| CLI 策略 | 方式 | 为什么提供 | 主要代价或边界 |
 | --- | --- | --- | --- |
-| `sliding_window` | 8981.0 | $0.090045 | 100% |
-| `summary_compaction` | 9233.7 | $0.092319 | 100% |
-| `symbol_retrieval` | 9233.7 | $0.092319 | 100% |
-| `full_history` | 9534.0 | $0.095022 | 100% |
-| `retrieval_summary` | 12317.0 | $0.120069 | 100% |
-| `repo_retrieval` | 12617.0 | $0.122769 | 100% |
+| `full` | 保留完整历史 | 提供信息完整的基线 | 历史和输入量随执行增长 |
+| `sliding` | 固定前两条消息与近期完整工具回合 | 控制近期历史长度 | 中段信息可能丢失 |
+| `summary` | 确定性文本压缩与近期历史 | 检验压缩对执行和输入量的影响 | 有损摘要；不是模型生成的语义记忆 |
+| `retrieval` | Full History 加词面仓库检索 | 检验代码注入是否改善定位 | 注入本身增加输入，词面匹配可能遗漏 |
+| `retrieval_summary` | 摘要加仓库检索 | 组合历史压缩与代码补充 | 两种机制的代价同时存在 |
+| `symbol` | 摘要加 Python AST 符号检索 | 注入函数/类片段而非整文件 | 仅覆盖 Python，基于符号名匹配 |
+| `budget` | 按输入预算选择消息和完整工具回合 | 优先保留关键状态，显式控制视图大小 | 关键状态本身超过预算时失败；估算不等于实际 API 用量 |
 
-**工具输出管理消融**（`stress`，只改输出上限与 artifact 落盘）
+窗口不能切开 assistant 工具声明与对应 tool 结果，否则外部模型协议可能拒绝请求。
+BudgetContext 显式固定关键决策及最新 Plan State、未解决错误、修改文件状态。
+其他裁剪策略主要保留固定前缀与近期历史，不能宣称具有同等关键事实保留保证。
+MLX 可使用自身 tokenizer 计数，其他默认路径主要采用字符启发式估算。
+策略及取舍见[Context 文档](docs/context-engineering.md)。
 
-| 变体 | 平均 Token | 总成本 | 成功率 |
+### Tool Runtime：统一检查和反馈，而不是直接执行模型文本
+
+工具调用经过 `Schema → Call → Validation → Authorization → Execution → Observation`。
+工具声明名称、版本、输入 Schema、超时、副作用和权限需求。未知工具、无效参数、权限拒绝、
+执行失败与超时分别产出结构化状态，不能只打印日志。
+
+写入优先支持带 `expected` 文本校验的 Patch，文件修改采用原子替换。
+Shell 用 argv 数组执行，不把模型字符串直接拼入 shell。
+只读、明确可重试的失败允许有上限的重试；有副作用的工具默认不自动重试。
+支持 Patch 不等于已证明修改最小，当前没有统一的改动范围最小化验收。
+
+工具输出默认上限为 20,000 字符；超限 Observation 显式标记截断，可将原始输出保存到
+`.minidsh/artifacts/`，并保留预览与诊断。完整输出不自动重新注入 Context。
+截断既可能减少输入，也可能让模型多走几步，因此收益要同时看任务成功与总消耗。
+
+### 权限与隔离：分别说明策略检查和硬边界
+
+默认只读；写文件和执行命令需显式授权。工具权限 deny 优先，命令需要 allowlist；
+文件工具规范化真实路径，拒绝工作区逃逸与常见敏感文件。子进程环境采用 allowlist。
+网络策略显式描述 host/protocol/port，Trace 与 Session 做脱敏。
+
+本地 Runner 是策略层，允许 Python 等通用解释器后，无法阻止解释器内部自行访问系统或网络。
+Docker Runner 提供默认断网、只读根文件系统、capability drop、禁止提权和资源限制。
+公共评测进一步把候选与验证放进独立、无主机挂载和密钥的容器。
+安全测试要观察真实副作用，模拟 adapter 通过不能代替实际隔离验收。
+详细限制见[安全文档](docs/sandbox-security.md)和[安全 ADR](docs/adr/0002-security-model.md)。
+
+### 评测与回放：保存证据，再判断结论
+
+Trace 使用带 `schema_version` 的 JSONL，包含运行/步骤 ID、UTC 时间和单调时钟耗时。
+Replay 从已记录的事件重建步骤摘要，不调用模型，也不重执行当时的工作区。
+Diff 对齐两条 Trace，定位首次行为分叉；分叉有助于诊断，但本身不能证明因果。
+
+Trace 能告诉我们工具失败、预算和用量；“工具选得对”“确实恢复”“没有泄漏”等语义结论
+还需要独立检查。评分 sidecar 绑定 `run_id`，保存 `case_id`、判据来源和检查结果。
+指标由事实派生，缺少证据保持未知。当前没有自动从任意失败 Trace 提炼可检索专家 Skill 的闭环。
+
+## 如何选择和计算评测指标
+
+### 先声明主张，再确定主指标
+
+Mini-dsh 分别评估最终任务、执行约束与机制收益，不用单个加权总分替代关键正确性或安全验收。
+
+| 主张 | 优先指标 | 为什么选它 | 如何检查 |
 | --- | --- | --- | --- |
-| `unbounded_output` | 32136.0 | $0.298440 | 100% |
-| `bounded_output` | 9511.3 | $0.094818 | 100% |
-| `bounded_output_artifact` | 9534.0 | $0.095022 | 100% |
+| 能完成任务 | `task_success_rate` | 模型自报与 `finished` 不能说明正确 | 独立测试/规格判据；同时报告完整任务清单、已验证量和覆盖率 |
+| 在约束内完成 | 任务通过与全部声明约束的交集 | 正确修复也可能超预算或违反要求 | 独立验证与预算/专项约束证据联合检查；未检查项不能推定满足 |
+| 消耗是否合理 | `total_tokens`、每次成功 Token、延迟 | 少 Token 可能只是更早失败 | 包含失败消耗，和成功率一起比较 |
+| 机制是否有用 | 配对成功差值、Token/步骤差值、恢复率 | 单组成绩不能解释改进来源 | 同任务、同模型、同预算、单变量对照，先验证机制触发 |
+| 安全是否成立 | 拦截率、误拦截率、泄漏与违规检查 | 拒绝次数不等于正确拦截 | 固定禁止/允许探针，检查文件、进程、网络和输出副作用 |
 
-**权限反馈与重试消融**（`stress`，只改重试策略与反馈粒度）
+“约束内成功”是按该实验预声明的任务、预算和其他要求组合判定。
+最新 Harness study 另要求正常完成及组别判据，旧公开题派生指标只覆盖四类预算；
+不同协议的这个交集不能混为同一个通用分数。
 
-| 变体 | 平均 Token | 总成本 | 成功率 |
+### 结果、过程与资源指标的口径
+
+| 指标 | 分子 / 分母或计算方法 | 解释边界 |
+| --- | --- | --- |
+| `task_success_rate` | 独立验证通过 / 已验证运行 | 另报告通过 / 完整预声明集合；失败、取消、预算终止与未运行项保留在清单中 |
+| `goal_completion_rate` / `partial_success_rate` | 预声明子目标完成量 / 已检查量；部分成功按固定子目标判断 | 不能把部分完成推定为完整成功 |
+| `constraint_satisfaction` | 满足的约束条目 / 已检查条目 | 逐条满足比例与全部约束满足的运行比例不同 |
+| `constraint_satisfied_run_rate` | 全部声明约束满足 / 能判定的运行 | 本轮检查预算不等于已检查全部安全与业务约束 |
+| `tool_error_rate` | 执行失败、超时或非零退出 / 已执行完成调用 | 预期的失败测试也在其中；不是 Harness 缺陷率 |
+| `invalid_tool_call_rate` / `permission_denied_rate` | 未知工具/无效参数、权限拒绝分别统计 | 参数有效不等于工具选择正确；拒绝比例不是安全拦截率 |
+| `tool_call_accuracy` | 工具选择和参数符合专项判据 / 已检查选择 | 必须有独立预期标签，不能只看 Schema |
+| `repeated_failed_action_rate` | 相邻同工具、同参数、同失败类型重复 / 可观察调用 | 保守代理指标；成功重复读取和正常复测不计为失败重复 |
+| `recovery_rate` / `retry_recovery_rate` | 故障事件恢复、自动重试恢复分别统计 | 恢复需预定义事件、期限和检查点；不能仅凭后来某次成功 |
+| `avg_steps` / `avg_tool_calls` | 已执行运行的平均步数 / 调用数，附样本数 | 刺激步骤是否计入需声明；提前失败可能降低平均值 |
+| `latency_p50_ms` / `latency_p95_ms` | Loop 总耗时的线性插值分位数，附样本数 | 不含环境准备与独立验证；小样本 P95 不说明稳定尾延迟 |
+| `total_tokens` / `unknown_usage_calls` | 已报告输入 + 输出；未知调用单独计数 | 包含失败与在途超额；未知不能记成零消耗 |
+| `cache_hit_rate` / `cached_input_share` | 命中调用 / 有缓存读数调用；缓存输入 / 对应输入 | 两种比例不同，缓存输入是输入子集，不重复加入总量 |
+| `unsafe_action_block_rate` / `safe_action_false_block_rate` | 禁止探针拦截、合法探针误拦截分别计算 | 必须有实际副作用检查，安全失败不能被任务成功抵消 |
+| `secret_leak_rate` / `policy_violation_rate` | 发现泄漏/违规的检查 / 已完成对应检查 | 检测范围与规则固定；没检测就保持未测 |
+| `user_acceptance_rate` / `human_escalation_rate` | 实际审核接受、人工介入记录 | 权限拒绝不能自动算成人工介入 |
+
+每个比例保存 `numerator`、`denominator`、`eligible` 和 `coverage`：
+
+```text
+value = numerator / denominator
+coverage = denominator / eligible
+每次任务成功 Token = 整轮已完整记录的 Token（包含失败） / 独立验证成功次数
+每次约束内成功 Token = 同一 Token 总量 / 约束内成功次数
+```
+
+分母为零返回 `null`/未测；跨运行聚合先合计分子分母，不平均不同样本量的百分比。
+完整消耗未知时不能将已知部分称为完整效率。当前默认评测只统计 Token，不计算货币费用；
+后面的旧费率表仅保留历史审计记录，不作为新实验默认口径。
+
+一次 Agent 尝试是从固定初始工作区开始的一次预算受限运行，可以包含多轮模型与工具调用。
+每题运行一次可报告一次尝试的经验通过率；多次运行取“至少一次通过”不能叫 `pass@1`。
+旧报告的 `pass@k` 按其重复采样口径读取，不与一次尝试率混用。
+引用准确率、证据召回、幻觉等指标只在任务有对应目标与独立判据时启用。
+完整字段、公式与 sidecar 示例见[Harness 评测指标](docs/harness-evaluation.md)。
+
+## 如何组织可信的评测
+
+### 三层验收分别回答不同问题
+
+| 层次 | 检查什么 | 证据 | 可以支持什么结论 |
 | --- | --- | --- | --- |
-| `basic_feedback` | 8622.7 | $0.086820 | 100% |
-| `no_retry` | 9534.0 | $0.095022 | 100% |
-| `single_retry` | 9534.0 | $0.095022 | 100% |
-| `detailed_feedback` | 9534.0 | $0.095022 | 100% |
+| Component Eval | Schema、权限、路径、插件回滚、Context 保留、清理等契约 | 确定性测试、故障注入、必要的 OS 探针 | 指定触发条件下符合契约 |
+| Trajectory Eval | 重复失败、预算、恢复窗口、权限决策和 Context 变化 | 原始 Trace、独立轨迹检查与 sidecar | 对应执行路径满足预声明规则 |
+| End-to-End Eval | 最终代码或任务输出 | 独立测试、规格判据或有来源的人工审核 | 在该任务集上正确完成 |
 
-**怎么读这些数**
+测试数和覆盖率是工程检查，不能替代功能覆盖矩阵；公开题通过不能替代安全验收。
+每个 case 记录 ID、类别、输入、预期/禁止行为、预算、隔离、判据版本和证据路径。
+未触发或缺少证据的功能保持未测。20 项 case 是当前验收集合的大小，不是充分性的通用阈值。
 
-- **Token 差异是可信的**：Harness 自己测量送入模型的 Context，脚本化响应不预置 Token 数；同一任务换策略即换输入。同一命令重复运行得到逐字节相同的读数。
-- **成本差异直接跟随 Token**：`unbounded_output` 比 `bounded_output` 贵 3.38 倍，说明输出上限是成本杠杆而不是正确性杠杆。
-- **检索类策略在长历史上更贵**：`repo_retrieval` 比 `sliding_window` 多 40% Token，因为它把相关文件重新注入 Context；`symbol_retrieval` 因为只切 AST 符号体，比 `repo_retrieval` 便宜 27%。
-- **成功率恒为 100% 是设计使然**：脚本化模型保证步骤可预测，这一列校验的是 Harness 链路完整性（Patch 生效、判据可执行、状态机不误判），不是模型能力。要测能力必须换成真实 provider 并接受成功率波动——真实 provider 下的实测见下一节。
-- **`denied=1 / blocked=4`** 只在 `stress` 出现，正是 `stress-denied-action` 的设计意图：越权写入、`curl`、`rm -rf`、密钥读取与 `../` 逃逸都被策略层拦下并计入统计。
-- **`core` 上 `tool_output` 消融无差异**（三个变体同为 749.9 Token）：该套件没有大输出任务，这组对照在 `core` 上不可分辨——这正是必须造 `stress` 套件的原因。
-- **`stress-denied-action` 的 `denied=1 / blocked=4` 不会让它被归类为失败**：被拒绝的动作随后被合法工具绕过了，因此分类法把它判为 `success` 层。拒绝是"Harness 按规格工作"的证据，不是病因——这条规则见 [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)。
+### 选题、验证器与基线
 
-### 真实模型基线（`repo` 套件）
+1. **运行前固定输入。** 冻结任务版本/哈希、初始实现、模型设置、预算、环境、成功规则及选题依据。
+   按语言、契约、资源与覆盖条件筛选；不按模型运行成绩删除失败题。
+2. **验证器与 Agent 隔离。** 参考解、隐藏测试和评分标签不进入模型可见 Prompt、Context 或候选工作区。
+   先执行 gold-pass / buggy-fail 门禁，确认验证器能接受正确实现并拒绝缺陷实现。
+3. **把所有声明运行留在报告里。** 失败、取消、预算终止、未知用量和 `not_run` 不从完整分母消失。
+   未运行不虚构为实测失败，同时报告已执行与完整集合结果。
+4. **按主张选择基线。** 机制比较优先使用同模型、同工具/权限、同预算的开/关对照。
+   裸模型缺少仓库访问或执行条件时，差值不能全部归因于某个 Harness 机制。
+5. **验证刺激真的触发。** 检查长历史是否压缩、输出是否截断、恢复提示是否出现。
+   同任务与重复编号配对，交替 A/B 顺序；组合配置收益只支持组合结论。
+6. **报告失败与不确定性。** 展示逐任务、重复次数与差值；足够样本时按任务聚类计算区间。
+   当前 Harness v1 配对少且受预算删失，只报告描述性读数，不给显著性或通用排名。
+7. **改进后用新协议验收。** 开发与调参数据和最终验证分开；不根据结果回改冻结判据。
+   历史 Trace 补算指标另存派生报告，记录输入与评分器哈希，不能称为重测新版本。
 
-上面整张表都是 Harness 正确性的证据，不是模型能力的证据。下表是同一套 Harness 换成真实 provider 后的实测值。原始报告与 Trace 归档在 [`docs/results/repo-real.md`](docs/results/repo-real.md)，机器可读汇总见 [`docs/results/summary.json`](docs/results/summary.json) 的 `real_model` 块。
+### 任务集为什么分开
+
+| 任务集 | 用途与条件 | 主要边界 |
+| --- | --- | --- |
+| smoke / core | 脚本模型、短任务和固定动作，检查执行链与确定性指标 | 可见测试；不能证明模型一般能力 |
+| stress | 三个长历史、大输出、拒绝刺激任务；有 scripted 与真实模型历史实验 | 自建小样本、可见测试，成功率容易饱和 |
+| repo | 六个跨文件任务，真实模型接入与多轮工具循环 | 历史验证使用可见测试，结论有限 |
+| hard | 四个模块规格任务，运行后注入留出判据 | 自建任务，独立验证仍是小样本 |
+| local_formal | 冻结 26 个任务、留出判据、4B/8B 矩阵与阶段消融 | 已有协议与 runner；本页不声称完整正式模型实验已完成 |
+| public-lite | HumanEvalFix-docs，Python/JavaScript 各六道公开函数修复题 | 独立函数修复，不覆盖大型仓库和长程工程 |
+| harness-study v1 | 20 项功能 case；六道公开题上的三组机制对照，共 24 次计划运行 | 人工刺激、小样本 pilot，预算限制收益判断 |
+
+本机优先单 Agent 顺序执行、原生架构小容器；SWE-bench Pro V2 保留为
+[重型可选子集](docs/public-benchmark-subset.md)，不是本机默认评测。
+项目尚未报告与 Codex 或其他商业 Agent 在相同条件下的可比成绩。
+
+## 已有评测结果与结论边界
+
+不同实验有不同源码快照、任务与判据，结果不混合汇总。以下引用已有报告，
+原始 Trace 和工作副本不提交 Git；未持有本机产物的读者可查看入库协议和摘要，
+要独立复核逐次行为仍需获得脱敏产物或按固定协议新建运行。
+
+### 公开修复基线：证明小规模任务可用性
+
+**是什么、为什么测：** HumanEvalPack 的 HumanEvalFix-docs 十二道 Python/JavaScript 修复题，
+用于检查真实模型能否通过工具修复函数并通过独立测试。选题按契约与上游缺陷类型，
+在 Mini-dsh 模型运行前固定，不根据成绩或参考验证结果删题。
+
+**怎么测：** DeepSeek `deepseek-flash`，temperature 0、thinking 关闭，每题一次；
+每题 20,000 Token、16 步、32 次工具调用、180 秒；整轮 240,000 Token。
+容器为原生 arm64/amd64，1 CPU、1 GB、128 PIDs，默认断网，镜像 digest 固定。
+Agent 只有一个 argv `shell` 工具；隐藏测试在新的验证容器中运行。
+JS 断言失败需抛异常，验证还要求完成标记，避免提前退出或仅打印错误造成假通过。
+
+| 指标 | 结果 | 怎么读 |
+| --- | --- | --- |
+| 独立任务成功 | 12/12，100%；验证覆盖 12/12 | 该固定子集全部修复通过，不是官方全量成绩 |
+| 四类预算全部满足 | 10/12，83.33% | 只覆盖预算，不代表全部安全/业务约束 |
+| 逐条预算满足 | 46/48，95.83% | 每题四项，和“全部满足的运行比例”不同 |
+| Loop 终态 | 10 次 finished，2 次 budget_exhausted | 两个超预算候选仍通过独立测试 |
+| 总 Token / 未知用量调用 | 161,351 / 0 | 整轮额度未超；失败与超额保留 |
+| 单题 Token 超额 | 2,544 / 4,338 | 修复正确不能改写成单题预算合规 |
+| 平均 / P50 Token | 13,445.9 / 13,132.5 | 每题一次的描述统计，无重复稳定性结论 |
+| 工具执行错误 | 11/106，10.38% | 包含非零测试退出，不等于运行时缺陷 |
+| 无效调用 / 相邻同参数失败重复 | 0/106 / 0/106 | 本轮未观察到对应代理事件，不代表工具选择全正确 |
+| 平均步骤 / 工具调用 | 6.25 / 8.83，12 个运行 | 描述路径长度 |
+| Loop P50 / P95 | 7.17 / 10.05 秒，12 个样本 | 不含镜像准备与独立验证，无尾延迟稳定性结论 |
+| 缓存命中调用 / 输入占比 | 74/75，98.67% / 78.75% | Provider 缓存，两个分母不同 |
+| 恢复、工具选择正确性、安全拦截、泄漏、人工接受 | 未测 | 缺少本轮专项判据与机会，不填写 0% 或 100% |
+
+全部任务修复通过，且十次满足四类预算；若只求“修复与四类预算同时通过”的交集，结果为 10/12。
+它不包含未测安全要求，也不能扩展成通用的全部约束合规率。
+
+**证据与复核：** [公开评测协议与结果](docs/lightweight-public-benchmark.md)、
+[原 Trace 的派生指标](docs/harness-evaluation.md)。本机原始产物在
+`benchmark-results/public-lite/baseline/`，派生报告在 `benchmark-results/harness-metrics/public-lite-v1/`。
+派生指标没有再次调用模型，也没有把原 Agent 运行升级为新版本实测。
+
+### Harness study v1：功能通过，任务收益尚未证明
+
+**是什么、为什么测：** 独立验收 Schema、预算、故障与安全行为，再检查 Context、输出边界、
+错误恢复是否改变真实任务结果。把功能正确与机制收益分开，避免用公开题高分代替模块验收。
+
+**怎么测：** 二十项功能 case（正常八项、预算四项、故障四项、安全四项），配真实容器探针。
+机制试验每组两道公开题、每题两次重复、每次 A/B，共 24 次计划运行；顺序 AB/BA 交替。
+模型固定 `deepseek-flash`，temperature 0、thinking 关闭、无模型重试、单次输出上限 1024。
+每次 8,000 Token、16 步、32 工具调用、180 秒；整轮停止线 240,000 Token。
+候选/验证容器原生 Linux/arm64，1 CPU、1 GiB、128 PIDs，无网络、主机挂载、密钥和 Docker socket。
+
+| 功能与门禁 | 已有证据 | 结论边界 |
+| --- | --- | --- |
+| 二十项功能 case | 20/20，固定测试节点、JUnit 和预期/禁止行为 | 对应清单与触发条件通过，不等于全部功能覆盖 |
+| 操作系统隔离 | loopback 对照、外部连接拒绝、无默认路由、cgroup、挂载/socket 检查通过 | 支持本轮容器配置；不替代本地 runner 的安全边界 |
+| 独立验证器 | 六对 gold-pass / buggy-fail 全部通过 | 所选题的验证器能识别参考解与原始缺陷 |
+| 刺激与配置 | 三组 A/B 指定字段差异和实际刺激门禁通过 | 机制被触发，不代表任务收益成立 |
+| 凭据保护检查 | 本轮 515 个输出文件实际密钥匹配为零 | 仅支持该检测对象、密钥与扫描范围，无通用零泄漏声明 |
+| 离线重评分 | API 调用 0、评分行变更 0 | 事实与评分一致，不是新的模型实验 |
+
+| 执行结果 | 读数 |
+| --- | --- |
+| 计划 / 已执行 / 未运行 | 24 / 20 / 4；未运行项保留为 not_run |
+| 独立候选通过 | 5/24 个选定运行；5/20 个已执行运行，验证覆盖 20/24 |
+| 约束内成功 | 0/24，要求正常完成、预算合规和对应任务/组别判据 |
+| 已执行终态 | 全部 20 次 budget_exhausted |
+| 总 Token | 243,146：输入 235,701，输出 7,445 |
+| 缓存输入 / 未知用量调用 | 155,392（输入子集）/ 0 |
+| 整轮停止线 / 实际超额 | 240,000 / 3,146；最后一个在途请求越过停止线 |
+| API 调用 / 固定刺激响应 | 48 / 20；固定响应消耗零 API Token |
+| 总步骤 / 工具调用 | 68 / 88，包含刺激；20 个执行运行平均 3.4 / 4.4 |
+
+| 组与变体 | 已执行/选定 | 候选通过/选定 | 输入 Token | 全部 Token | 约束内成功 |
+| --- | --- | --- | --- | --- | --- |
+| Context A：Full History | 4/4 | 0/4 | 66,518 | 68,483 | 0/4 |
+| Context B：BudgetContext | 4/4 | 0/4 | 40,520 | 42,079 | 0/4 |
+| Output A：131072 字符上限 | 4/4 | 0/4 | 43,686 | 44,122 | 0/4 |
+| Output B：8192 字符上限 | 4/4 | 1/4 | 48,442 | 49,821 | 0/4 |
+| Recovery A：关闭 | 2/4 | 2/4 | 18,047 | 19,089 | 0/4 |
+| Recovery B：开启 | 2/4 | 2/4 | 18,488 | 19,552 | 0/4 |
+
+**为什么这样解释结果：**
+
+- Context 四个配对均触发压缩并保留关键事实，输入总量减少约 **39.1%**；两侧都在后续修复前耗尽预算。
+  这支持当前条件下的输入缩减，不支持成功率提升。
+- Output B 确实截断并保留头/尾诊断，但继续执行了更多动作，总 Token 反而增加约 **12.9%**。
+  一个候选修复通过，最终诊断判据全部未通过；不能宣称“节省 Token 且保持质量”。
+- Recovery 两个 Python 配对确实触发提示，两侧各两个候选通过；严格恢复率每侧 **0/2**，
+  因为五次工具调用窗口内没有完成 public smoke。后续成功不能补认窗口内恢复。
+- 剩余四次 JavaScript 恢复运行未执行。每组最多四个配对且受预算删失，不报告显著性、跨语言收益或通用策略排名。
+- 未采集模型版本快照和 seed，温度为零也不保证逐次一致；字符估算没有保证实际 API 输入量。
+
+本轮所有已记录 Token 包含失败与超额。按五个独立候选成功计算，每次候选成功 Token 为 48,629.2；
+按约束内成功计算则无成功样本，效率为未测。两者不能互换。
+下一轮应先校准输入估算和刺激规模，给观察、修复、测试留下可执行预算，再冻结新协议。
+不得为取得好看分数补跑成功样本或修改 v1 事实。
+
+**证据与复核：** [冻结协议](docs/harness-study.md)、[v1 结果与限制](docs/harness-study-results-v1.md)。
+本机 `benchmark-results/harness-study/v1/` 保存功能证据、容器探针、源码快照、Trace、候选、验证收据和审计哈希。
+`rescore` 只读校验事实，在新目录保存评分器和原报告哈希；不访问模型或 Docker，不覆盖基线。
+
+### 其他已有实验：不合并为一张通用成绩表
+
+| 实验 | 已有结果 | 能支持与不能支持的结论 |
+| --- | --- | --- |
+| 2026-09-27 离线基线 | 1010 次执行与审计，393 对重复确定性指标一致，112 对 Session 对照一致 | 检查固定脚本链路和指标一致性；不能代表真实模型质量 |
+| 2026-09-27 真实接入回归 | repo 6/6、hard 4/4，10 份 Trace 回放一致 | 每题一次的接入回归；不能替代机制消融或通用成功率 |
+| hard Context 对照 | Full History 11/12，Summary 12/12；摘要平均记录 Token 少约 7.7% | 小样本且曾暴露失败用量记录缺口，不足以宣称稳定成功率提升 |
+| 2026-09-29 Local-first pilot | 一个任务、每格两次；4B 优化 Token 少约 16.3%，8B 少约 63.5% | 留出任务上的组合配置读数，不能证明小模型一般达到大模型能力 |
+| local_formal | 冻结 26 任务、三次重复、矩阵和阶段协议 | 提供正式实验入口；本页没有完整正式采样结果，不标为已完成 |
+
+来源：[离线基线](docs/results/offline-baseline-2026-09-27.md)、
+[真实接入回归](docs/results/real-regression-2026-09-27.md)、
+[hard Context 对照](docs/results/hard-real-context-ablation-2026-09-27.md)、
+[Local-first pilot](docs/results/local-first-pilot-2026-09-29.md)、
+[正式本地协议](docs/local-formal-study.md)。
+
+### 历史版本结果：保留条件与数字，收紧结论
+
+以下旧报告的费率与成本字段为已有历史记录，继续接受 `tests/test_docs.py` 与
+`docs/results/summary.json` 的一致性检查。它们不表示当前价格，也不改变新评测默认只统计 Token 的口径。
+早期 core/stress/repo 用可见测试作为判据：这降低验证独立性，但不能仅凭成功率高就断定 Agent 改了测试。
+历史 repo 报告另检查过测试文件写入为零；仍不能替代隐藏契约验收。
+
+<details>
+<summary>展开：历史 repo 真实模型基线</summary>
 
 <!-- real-model-results:start -->
 条件：`deepseek-flash` · thinking 关闭（`temperature_effective: true`，即 `temperature=0` 真正生效）· 每任务重复 3 次（逐任务交错采样）· off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens（输入 / 输出 / 缓存命中）
@@ -448,21 +559,15 @@ hard 的两策略重复采样入口见[Context 对照协议](docs/hard-context-e
 | 被拦截的危险动作 | 20 |
 <!-- real-model-results:end -->
 
-失败层分解是 `success 18 / harness 0 / agent 0 / environment 0`；`repeat_variance` 的成功率极差 `0.00`，Token 极差 15%。
+六个自建跨文件任务，每题三次重复，判据是可见测试。表中的“被拦截的危险动作”是旧报告字段名：
+二十次实际为 ls/find 未进入命令 allowlist 的拒绝，不能解释为二十次恶意请求或安全拦截率。
+Harness 延迟残差占比约 0.26% 只适用于这批任务。
+来源：[repo-real](docs/results/repo-real.md)。
 
-**这个 100% 只说明这么多**：
+</details>
 
-- **样本极小，且不是独立评测。** 6 个任务 × 3 次 = 18 次运行；任务由写 Harness 的同一个人构造。它能排除的是"多轮工具循环根本跑不起来"这类整体性失败（见下一条），不能用来论证模型在真实仓库上的能力。
-- **它顺带排除了一个真实的整体性失败**：DeepSeek 上游默认开启 thinking，而 thinking 模式下 API 会忽略 `temperature`、且要求历史 `reasoning_content` 原样回传（否则 400）。这个缺陷是第一次真实运行时才暴露的，修完之后 18 次运行全部通过。
-- **三个与成功率无关、但只有真实 provider 才能测到的数字**：Harness 自身只占墙钟的 **0.26%**（16.4 ms / 6,410.1 ms），其余全是 provider 往返；**86% 的输入 Token 命中 prompt cache**，这是长上下文策略在生产中是否付得起的决定性数字；**每次成功成本 $0.000937**，比"更便宜但更容易失败"的变体更有决策价值。
-- **20 次拦截全部是 `ls` / `find` 未进 allowlist**（本次只放行了 `python`）。按分类法它们落在 `success` 层：Agent 改用 `read_file` / `search` 绕过后仍然全部通过。这既实测了"拒绝可观测"，也说明这次运行里 Agent 少了它本来会伸手去拿的 shell 命令——一个诚实但可控的配置代价。
-- **完整性检查**：18 条 Trace 里每次运行的写入都落在目标源码文件上（`shop/pricing.py`、`textkit/normalize.py` + `textkit/slugify.py` 等），**对任何测试文件的写入为 0**。成功率不是靠改测试拿到的。
-
-### 真实模型消融（`stress` 套件）
-
-scripted 消融能证明"策略之间有成本差异"，但**不能**证明"某个策略更准"——脚本化模型成功率恒为 100%，那一列没有区分度。把同一套消融换到真实 provider 上，第一次就暴露了一个 harness 缺陷（见本节末），修完之后才拿到可解释的对照。
-
-报告归档在 [`docs/results/stress-real-context-ablation.md`](docs/results/stress-real-context-ablation.md) 与 [`docs/results/stress-real-tool_output-ablation.md`](docs/results/stress-real-tool_output-ablation.md)，机器可读汇总见 [`docs/results/summary.json`](docs/results/summary.json) 的 `real_model_ablations` 块。
+<details>
+<summary>展开：历史 stress 真实模型消融</summary>
 
 <!-- real-model-ablation-results:start -->
 条件：`deepseek-flash` · thinking 关闭 · 3 个 `stress` 任务 × 3 次重复 = 每变体 9 次运行 · off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens（输入 / 输出 / 缓存命中）
@@ -487,23 +592,16 @@ scripted 消融能证明"策略之间有成本差异"，但**不能**证明"某�
 | `bounded_output_artifact`（上限 20K + 溢出落盘） | 100% | 30,523 | $0.011148 | $0.001239 |
 <!-- real-model-ablation-results:end -->
 
-**结论与限制**：
+每变体九次运行，任务小且验证为可见测试，成功率全部饱和；只能描述本轮资源与轨迹差异。
+摘要/窗口减少 Token 却增加旧费率下的账单，说明缓存输入比例与总输入量是不同量。
+不据此给出通用策略排名，也不从成功率饱和推断机制质量相同。
+来源：[Context 消融](docs/results/stress-real-context-ablation.md)、
+[输出消融](docs/results/stress-real-tool_output-ablation.md)。
 
-- **成功率仍然是 100%，所以这一列依然没有区分度。** Context 消融 6 变体 × 9 次 = 54 次、工具输出消融 3 × 9 = 27 次，全部通过，失败层分解全部是 `success 9`。`stress` 套件对 `deepseek-flash` 太容易——**这组实验只能得出成本结论，不能得出"某策略更准"的结论**，和 scripted 消融是同一个限制，只是现在发生在真实模型上。
-- **Token 更少 ≠ 更便宜，在缓存计价下会反号。** `sliding_window`（26,096）与 `summary_compaction`（26,073）都比 `full_history`（29,315）省约 11% Token，但**都更贵**（$0.012579 / $0.013322 vs $0.011553）。机制是 prompt cache：命中价 $0.003 与未命中价 $0.15 相差 **50 倍**，而截断策略每一步都在改动前缀、把可复用前缀打断；`full_history` 只追加不修改，因此拿到最高的 92% 命中率。**这是"用 Token 数当成本代理"会系统性出错的地方。**
-- **`repo_retrieval` 是成本赢家**（$0.011184，唯一在成本轴上不被支配的变体），步数也接近最少（6.56）：它在"多注入一点 Token"与"保住缓存前缀"之间取到了最好的平衡。
-- **`retrieval_summary` 在 Token（16,747）、步数（6.33）、延迟（6,826 ms）三项上都是最少**，但成本高于 `repo_retrieval`——它的缓存命中率是六个里最低的 75%，因为摘要消息每步都要重算。
-- **`symbol_retrieval` 最贵**（$0.016193）：Token 数与 `full_history` 几乎相同（29,331 vs 29,315），成本却高 40%，同样是缓存命中率只有 77%。
-- **工具输出消融里真正有效的杠杆是落盘，不是上限。** `bounded_output_artifact` 在 Token、成本、步数三轴都不被支配：相比不设上限省 6.6% Token、5.9% 成本且成功率不变；而单把上限从 200K 压到 20K 只省 2.1%。
-- **harness 自身开销 18.9–27.1 ms，占墙钟 0.2–0.4%**，六个 Context 变体一致，说明上表的差异不是 harness 侧造成的。
+</details>
 
-**这次消融是先修了一个 bug 才成立的。** 第一版跑出来四个变体成功率 0–22%，且全部记成 `provider_error`——而 `provider_error` 落在 `environment` 层，读起来就是"provider 挂了"。实际原因是截断型策略把一次工具调用回合从中间切开：保留了工具结果，却丢掉了声明它的那一轮 assistant 消息，provider 因此返回 400。**脚本模型不校验它收到的请求，所以这个缺陷在 deterministic 阶段结构性不可见**——deterministic 基线跑多少遍都照不出来。修复、回归测试与协议约束见 [`CHANGELOG.md`](CHANGELOG.md) 的 `0.3.1` 与 [`docs/context-engineering.md`](docs/context-engineering.md) §3.1；上表是修复后重跑的结果，修复前那版数字不作为 Context 结论。
-
-### 留出判据套件（`hard`）：第一次测到能力
-
-前面几张表的成功率都是 100%。这不是"模型很强"的证据，而是**判据的问题**：`core` / `stress` / `repo` 的判据都是工作区里的可见测试，也就是 Agent 能读、能改的那份文件。一个把测试改绿、却没实现契约的 Agent 同样拿满分——那些成功率测的是**顺从**，不是**正确**。
-
-`hard` 换掉了判据（`verification_overlay`，见上文"留出判据"）。同一个模型、同一套 harness、同一档费率，**成功率第一次低于 100%**。报告归档在 [`docs/results/hard.md`](docs/results/hard.md)。
+<details>
+<summary>展开：历史 hard 留出判据套件</summary>
 
 <!-- hard-suite-results:start -->
 条件：`deepseek-flash` · thinking 关闭（`temperature_effective: true`）· 4 个 `hard` 任务 × 5 次重复 = 20 次运行 · off-peak 费率 $0.15 / $0.6 / $0.003 per 1M tokens（输入 / 输出 / 缓存命中）· 合计 **19/20**
@@ -516,158 +614,244 @@ scripted 消融能证明"策略之间有成本差异"，但**不能**证明"某�
 | `hard-token-bucket` | 100%（5/5） | 14.00 | 72,819 | $0.003085 |
 <!-- hard-suite-results:end -->
 
-其余指标：`pass@k` 100% · 平均 12.85 次工具调用 · 缓存输入占比 92.7% · 平均延迟 17,099.2 ms（model 16,911.1 / tool 156.2 / harness 32.0）· 总成本 $0.051163 · 每次成功成本 $0.002693 · 危险动作被拦截 34 次 · 权限拒绝 0 次 · 重试 0 次。
+四个自建规格任务，每题五次重复，判据在 Agent 结束后注入。一次 interval-merge 运行累计
+151,854 Token 超过名义 150,000，按当时协议记失败；它支持预算导致未收敛的诊断，
+不能断言给更多预算一定能成功。合计 19/20 不能与每题“至少一次成功”的 pass@k 混用。
+来源：[hard 实验](docs/results/hard.md)。
 
-**结论与限制**：
+</details>
 
-- **唯一的失败是 Token 预算耗尽，不是做不出来。** `hard-interval-merge` 第 2 次重复：17 步（上限 24）、21 次工具调用（上限 48）**全部成功**，累计 151,854 Token 撞上 15 万 Token 上限。Trace 显示它一直在用自写的 `python -c` 探针反复验证（含随机化输入的性质检查），最后一步正要回到 `unittest` 复核时被截断。**绑定约束是 Token 而不是步数**——24 步的上限它只走到 17 步。
-- **这一条落在 `harness` 层，但不能读成"模型没错"。** 失败层分解是 `success 19 / harness 1 / agent 0 / environment 0`。分类法里 `harness` 的含义是"运行时按规格执行了"（它确实按规格执行了预算），回答的是**运行时是否被免责**，而不是"模型是否失败"。按能力读，这就是一次**未收敛**。`agent: 0` 不等于"模型从未失败"——这层计数只说明没有任何一次失败可以归因到"harness 坏了"或"provider 挂了"。
-- **四个任务里三个 5/5，只有 `hard-interval-merge` 有方差**（成功 spread 0.25、Token spread 64%）。也就是说这套任务目前区分的是**同一个任务内的采样波动**，还不足以给四个任务排出难度序。
-- **最贵的任务不失败。** `hard-token-bucket` 是 Token（72,819）与步数（14.00）双料最高，却 5/5 全过——它只是慢。在这套任务上"贵"与"难"不是同一件事，这也再次说明 Token 数不是能力的代理量。
-- **成本比 `repo` 高一个档：每次成功 $0.002693 vs $0.000937（2.9×）**，平均 Token 50,050 vs 19,132（2.6×）。这是应该的——`repo` 是修跨文件小 bug，`hard` 是实现整份模块规格。
-- **34 次拦截里 31 次是 `find` 未进 allowlist**，3 次是绝对路径写入被沙箱拒绝。前者是诚实的配置代价（`hard` 与 `repo` 用同一份 `python` 单命令 allowlist，所以两次运行可比），后者是沙箱在按设计工作。
+离线 scripted 大输出对照还记录过平均 32,136 与 9,511.3 Token 的差异。
+脚本动作固定、输入量由确定性估算得到；它只能说明该执行路径的输入差异，
+不能把约 3.38 倍的比值当作真实模型、省钱或任务质量收益。
+完整历史汇总见 [summary.json](docs/results/summary.json) 与 [results](docs/results/)。
 
-**这组结果不成立什么**：20 次运行只够让一个 5% 的失败率显现出来，不够给四个任务排序，也不够在 `hard` 上比较 Context 策略——`pass@k` 仍是 100%（每个任务至少成功过一次）。但**判据第一次不再饱和**，意味着"某策略更准"这类问题终于有了可以被测的量；在 `hard` 上重跑 Context 消融是自然的下一步。
+## 如何运行与复核
 
-## 真实模型评测
-
-scripted 套件回答的是"Harness 是否按承诺工作"，不是"模型是否够好"。前者可以 100%，后者必须真实 provider 才能测。完整协议见 [`docs/real-model-evaluation.md`](docs/real-model-evaluation.md)。
-
-**命名 Provider Profile**（pricing 故意不内置：官方价目会变，过期价目会静默污染报告里的每一个成本数字）：
-
-| Profile | Endpoint | 凭据变量 | 价目 |
-| --- | --- | --- | --- |
-| `deepseek`（`deepseek-flash`） | `api.deepseek.com/chat/completions` | `DEEPSEEK_API_KEY` | 必须显式声明 |
-| `deepseek-v4-pro` | `api.deepseek.com/chat/completions` | `DEEPSEEK_API_KEY` | 必须显式声明 |
-| `openai` | `api.openai.com/v1/chat/completions` | `OPENAI_API_KEY` | 必须显式声明 |
-| `ollama` | `127.0.0.1:11434/v1/chat/completions` | 无需 | 已声明为免费 |
-
-**DeepSeek 的 thinking 默认被关掉**，这不是省事而是为了可复现：thinking 模式下 API 会**忽略 `temperature`**，所以开着它 `--temperature 0` 就形同虚设。要用 `--thinking` 显式打开，harness 会同时把 `reasoning_content` 在每次带 `tools` 的请求里回传（不回传 API 会直接返回 400）。
+### 安装与无模型服务示例
 
 ```bash
-export DEEPSEEK_API_KEY=...
+uv sync --locked --all-groups
+uv run mini-dsh doctor
+uv run python examples/minimal_demo.py
+```
 
-# 单任务 + 完整 Trace（thinking 关闭，temperature=0 真正生效）
-uv run mini-dsh run "run the tests and fix the failure" \
-  --workspace /path/to/repo --model-profile deepseek \
-  --input-usd-per-million 0.15 --output-usd-per-million 0.6 \
-  --cached-input-usd-per-million 0.003 \
-  --allow-write --allow-shell --allow-command python --trace /tmp/run.jsonl
+最小示例在临时工作区使用 ScriptedModel，执行读取、Patch、测试和结束，输出步骤、工具调用、
+用量与 Trace 信息；其中预置用量和示例费率用于演示，不能当成真实 API 测量。
+离线对话与 GUI 示例：
 
-# 真实模型套件：每个任务重复 3 次（README 上那张表的来源）
-uv run mini-dsh benchmark benchmarks/repo/manifest.json \
-  --model-profile deepseek --repeat 3 \
-  --input-usd-per-million 0.15 --output-usd-per-million 0.6 \
-  --cached-input-usd-per-million 0.003 \
-  --allow-write --allow-shell --verify-command python \
-  --output benchmark-results/repo-real.json
+```bash
+uv run mini-dsh chat --provider scripted --script examples/chat_responses.json
+uv run mini-dsh gui --provider scripted --script examples/gui_responses.json --workspace .
+```
 
-# 留出判据套件：判据来自 overlay，Agent 在运行期间看不到
+显式 scripted provider 优先于环境中的模型 profile；不要同时指定冲突的 `--model-profile`。
+
+### 真实模型执行与交互
+
+先在运行环境设置 `DEEPSEEK_API_KEY`，凭据不要写入任务或提交 Git。
+以下命令显式使用 `--allow-unpriced`，只看 Token，不用零费率冒充真实账单：
+
+```bash
+uv run mini-dsh run "修复失败测试，并说明修改与验证结果" \
+  --workspace /path/to/repo --model-profile deepseek --allow-unpriced \
+  --allow-write --allow-shell --allow-command python \
+  --test-command "python -m pytest" \
+  --max-steps 24 --max-tokens 100000 --max-tool-calls 48 --max-seconds 300
+
+uv run mini-dsh chat --workspace /path/to/repo --model-profile deepseek \
+  --allow-write --allow-shell --allow-command python --test-command "python -m pytest"
+
+uv run mini-dsh gui --workspace /path/to/repo --model-profile deepseek
+```
+
+无参数启动也可进入只读交互模式；日常编辑使用上面的 `work` 入口。终端命令见 `/help`。
+每轮独立计预算，保存 Session 与 Trace。取消不回滚已完成的修改，恢复不重放工具；
+中断且没有结果的调用以“执行结果未知”进入历史，下一轮需先观察真实状态。
+交互模式允许未配置费率，历史费用字段不能因此解释为实际零费用。
+
+GUI 只监听 `127.0.0.1`，使用本次服务的会话凭证，可查看对话、diff、事件和用量，
+支持停止、恢复、分叉、审批与运行设置。运行期间设置受限，默认只读；支持流式模型时通过认证 SSE 更新增量文本。
+页面提交的 Key 仅保存在服务内存，不回显或保存到配置/Session/Trace。
+详见[GUI 设计](docs/gui-design.md)与[设置 ADR](docs/adr/0011-gui-runtime-settings.md)。
+
+不可信代码需要隔离；常规 Docker runner 的命令示例：
+
+```bash
+uv run mini-dsh run "修复失败测试" \
+  --workspace /path/to/repo --model-profile deepseek --allow-unpriced \
+  --allow-write --allow-shell --allow-command python \
+  --sandbox-backend docker --docker-image python:3.12-slim
+```
+
+此处镜像标签仅示例，验收需固定平台 digest；常规 runner 的工作区挂载与公开评测的无挂载容器配置不同。
+
+### 复现公开题与最新受控实验
+
+以下 `prepare/check` 会准备公开输入并检查本地 Docker 环境；`run` 会调用真实模型并消耗 Token。
+凭据文件由用户本机配置，不提交到仓库。先通过门禁，再采样；已有结果不得覆盖或选择性补跑。
+
+```bash
+uv run python -m minidsh.benchmark.public_lite prepare
+uv run python -m minidsh.benchmark.public_lite check
+uv run python -m minidsh.benchmark.public_lite run --credentials-file .env.deepseek
+
+uv run mini-dsh harness-study check
+uv run mini-dsh harness-study run --credentials-file .env.deepseek
+```
+
+在已有结果的机器上复核用新目录，按[公开评测协议](docs/lightweight-public-benchmark.md)配置
+`--sources` 与 `--output`；Harness study 使用 `--image-lock`、`--sources` 和 `--output-dir`
+指定对应的镜像锁、输入与新输出。v1 已完成采样的目录不可续跑或覆盖。
+
+### 离线回放、指标与重评分
+
+```bash
+uv run mini-dsh trace replay /path/to/trace.jsonl
+uv run mini-dsh trace diff /path/to/a.jsonl /path/to/b.jsonl \
+  --left-label baseline --right-label variant
+uv run mini-dsh trace metrics /path/to/trace.jsonl
+uv run mini-dsh trace metrics /path/to/trace.jsonl --evidence /path/to/evidence.json
+
+uv run mini-dsh harness-study rescore \
+  --output-dir benchmark-results/harness-study/v1 \
+  --rescore-output benchmark-results/harness-study/rescored-new
+```
+
+无 sidecar 的指标只包含 Trace 可支持的检查；sidecar 提供独立语义判据，不能只写一个自报标签。
+重评分校验冻结事实与源报告哈希，生成新视图，不产生新模型证据。
+完整离线基线入口：
+
+```bash
+uv run python scripts/offline_regression.py
+```
+
+历史 benchmark/ablation 入口仍可使用，新运行应指定新输出文件；真实 provider 未配置费率时用
+`--allow-unpriced` 显式声明只看用量：
+
+```bash
 uv run mini-dsh benchmark benchmarks/hard/manifest.json \
-  --model-profile deepseek --repeat 3 \
-  --input-usd-per-million 0.15 --output-usd-per-million 0.6 \
-  --cached-input-usd-per-million 0.003 \
+  --model-profile deepseek --allow-unpriced --repeat 3 \
   --allow-write --allow-shell --verify-command python \
-  --output benchmark-results/hard.json
-
-# 离线重渲染报告 + Pareto 分析，不重新调用模型
-uv run mini-dsh report benchmark-results/repo-real.json
-
-# 逐步回放 / 对比两条 Trace
-uv run mini-dsh trace replay benchmark-results/repo-real-artifacts/traces/repo-cross-file-bug.jsonl
-uv run mini-dsh trace diff traces/a.jsonl traces/b.jsonl --left-label full_history --right-label repo_retrieval
+  --output benchmark-results/hard-new.json
+uv run mini-dsh report benchmark-results/hard-new.json
 ```
 
-**报告会把自己的条件写进去。** 费率是 off-peak 的 $0.15 / $0.6 / $0.003 per 1M tokens；换一个时段或换一个模型，同一份报告里就会出现另一组成本数字，所以 `repo-real.json` 的 `model` 块记录 profile、endpoint、thinking 开关、`temperature_effective` 与显式费率，`docs/results/repo-real.md` 的 "Model and rate card" 章节把它们一并呈现。**归档要在重跑之前做**：报告与 Trace 是原地覆盖的，重跑一次就会冲掉上一次的原始产物。
-
-一个真实 provider 如果没有声明价目，会**拒绝运行**而不是报告 `$0`：零价目和未声明价目无法区分，所以"是否已声明"被显式跟踪。本地权重（`ollama`）声明了免费价目因而通过；付费 provider 未声明则报错，`--allow-unpriced` 是显式的逃生口。
-
-**成本模型**按每次 Model Call 计价，区分缓存与未缓存输入：
-
-```text
-cost = (billable_input × input_rate + cached_input × cached_rate + output × output_rate) / 1e6
-billable_input = input_tokens − cached_input_tokens
-```
-
-比总成本更重要的两个派生量是 **cost per successful run**（`总成本 / 成功次数`，便宜但更容易失败的变体不是便宜）和 **cached input share**（决定长上下文策略在生产中是否付得起）。
-
-**延迟模型**拆成三层，因为单一"平均延迟"在真实 provider 下被网络主导、对 Harness 作者毫无信息量：
-
-| 分量 | 来源 | 含义 |
-| --- | --- | --- |
-| `model_ms` | `model_call_completed.duration_ms` 之和 | 等待 provider，含重试 |
-| `tool_ms` | `tool_call_completed.duration_ms` 之和 | 子进程与文件系统 |
-| `harness_ms` | `total_ms − model_ms − tool_ms` | Harness 自身开销（残差） |
-
-## 失败分类
-
-单一成功率把两个问题合并了。分类法把终态拆成 9 个类别、再归并成 4 个**层**，完整决策顺序见 [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)：
-
-| 层 | 类别 | 读法 |
-| --- | --- | --- |
-| `success` | `none` | 跑完且判据通过 |
-| `harness` | `permission_denied` `invalid_tool_call` `tool_error` `budget_exhausted` | **运行时按规格工作**：它正确地拒绝了或限制住了 Agent |
-| `agent` | `model_reasoning_failure` `context_miss` `verification_failed` `loop_stuck` | Harness 没问题，模型仍然失败——这才是能力信号 |
-| `environment` | `provider_error` | Provider 故障 |
-
-`permission_denied` 是"Harness 正确"的**证据**而不是缺陷。报告只给层分解，不给一个混合的成功率。
-
-**层回答的是"运行时是否被免责"，不是"模型是否失败"——这两问的答案可以相反。** `harness` 这一层里，`budget_exhausted` 尤其容易被误读：预算被按规格执行了，所以运行时免责，但一次跑到预算尽头的运行**按能力读就是一次未收敛**。`hard` 套件里唯一的失败正是这种情形（17/24 步、21 次工具调用全部成功、Token 撞顶），因此那份结果的 `agent: 0` **不能**读成"模型从未失败"，只能读成"没有任何失败可以归因到 harness 坏了或 provider 挂了"。逐类别的完整判读见 [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md)。
-
-## 配置
-
-优先级 `CLI > 环境变量 > 已选方案 > minidsh.toml > 默认值`，可打印来源：
+### 可选本地模型路径
 
 ```bash
-uv run mini-dsh config            # 打印生效值与每个字段的来源
-MINIDSH_MAX_STEPS=20 uv run mini-dsh config
+uv sync --extra mlx
+uv run --extra mlx mini-dsh run "修复测试" --provider mlx \
+  --model /path/to/pinned/snapshot --workspace /path/to/repo \
+  --allow-write --allow-shell --allow-command python
+```
+
+MLX 适用于支持的 Apple Silicon 环境，模型权重需预先下载并固定 revision；运行时不自动下载。
+支持 Qwen3 4B/8B 4bit 矩阵和正式实验 runner；本页只引用已完成的小规模 pilot。
+TTFT、decode/prefill 与 MLX peak 是可选遥测，缺失保持 null；进程峰值不是整机内存。
+安装、矩阵与 formal-study 命令见[Local-first](docs/local-first.md)、[正式实验协议](docs/local-formal-study.md)。
+
+## 配置与扩展
+
+配置优先级为 `CLI > 环境变量 > 已选命名方案 > minidsh.toml > 默认值`，可打印字段来源：
+
+```bash
+uv run mini-dsh config
+uv run mini-dsh config --config examples/profiles.toml --profile review
+uv run python examples/custom_runtime.py
 ```
 
 ```toml
 # minidsh.toml
 [minidsh]
 max_steps = 12
-max_tokens = 200000
+max_tokens = 100000
 max_seconds = 120
 enabled_tools = ["read_file", "search", "git"]
 denied_tools = ["shell"]
 ```
 
-可用 `[profiles.review]`、`[profiles.edit]` 等命名方案保存不同设定，再通过 `--profile` 或 `MINIDSH_PROFILE` 切换。CLI 支持 Context 窗口、系统提示词、反思、反馈详略、工具重试与输出策略，并可用 `--no-allow-write` / `--no-allow-shell` 撤销低优先级配置中的权限。
+`MINIDSH_*` 环境变量、`[profiles.NAME]` 和 CLI 支持 Context、权限、预算、输出与模型参数。
+`--no-allow-write` / `--no-allow-shell` 可撤销低优先级配置权限；Model Profile 和运行配置 Profile 是不同概念。
+OpenAI-compatible 接口可接 DeepSeek、OpenAI、Ollama、llama.cpp，厂商差异隔离在 adapter；
+声明了模型兼容接口不代表所有 provider 都经过同等实测。例子与协议见[真实模型评测](docs/real-model-evaluation.md)。
+
+Python API 可用 `RuntimeComponents` 替换 Context、执行器、Session、Journal、权限、事件和 Loop 工厂。
+插件通过 `plugin_runtime` 显式启动，不依赖 import 副作用；热替换入口由调用方在步骤边界使用，
+不是任意进行中调用可替换的保证。工具仍进入统一校验/授权/反馈链。
+MCP Streamable HTTP 通过可选依赖和 Python API 接入，端点需显式网络授权；不直接兼容 npm/Cordis 插件。
+详见[扩展文档](docs/extensibility.md)与[DSH 对齐](docs/dsh-alignment.md)。
+
+子 Agent 演示与启用：
 
 ```bash
-uv run mini-dsh config --config examples/profiles.toml --profile review
-uv run python examples/custom_runtime.py
+uv run python examples/multi_agent.py
+uv run mini-dsh chat --model-profile deepseek --multi-agent --subagent-max-parallel 2
 ```
 
-Python API 支持 `RuntimeComponents` 替换组件，以及 `plugin_runtime` 按服务名选择插件提供的模型、Context、Session、Journal、Loop 工厂、Permission、Event、执行器和工具。可关闭内置工具后使用自己的工具集；所有工具共享校验、授权和 Observation 链。详见 [自定义运行时与配置方案](docs/extensibility.md) 与 [DSH 对齐说明](docs/dsh-alignment.md)。
+子 Agent 独立模型实例、Context、run_id 与 Session，共享团队预算并受并发上限约束。
+它们只读、不递归委派、不并行写共享工作区；主 Agent 执行修改。
+`role` 主要改变提示词，不授予权限，也不构成版本化专家 Skill 或领域知识库。
+详见[协作文档](docs/multi-agent.md)。
 
-## 工程命令
+## 当前限制与后续工作
+
+| 当前边界 | 为什么需要说明 | 下一步怎么验收 |
+| --- | --- | --- |
+| 任务集小，公开题为函数修复 | 不能由 12/12 推广到大型仓库、长程工程或通用成功率 | 增加预声明分层任务、独立判据与重复；开发集和最终测试集分开 |
+| v1 预算限制收益判断 | 输入缩减不代表完成任务，截断也可能增加总量 | 校准估算/刺激，冻结 v2，确保能走到修复与测试；保留 v1 |
+| 轻量 Context 与检索 | 裁剪策略保留明确标记状态；Runtime 通过授权工具生成有界快照，词面/AST 检索不保证召回 | 扩大真实仓库场景；独立记录保留、拒绝与省略证据 |
+| 本地 runner 不提供硬隔离 | 通用解释器可自行发起系统调用 | 使用容器/VM，独立检查网络、挂载、超时与取消后的进程清理 |
+| 非流式兼容 adapter 的取消有限 | 新流式 HTTP 可关闭连接；旧 complete/MLX 路径仍可能等待底层线程 | 不将新接口的验收推广到旧路径；保留未知用量 |
+| 回放主要用于诊断 | 回放一致不能证明行为正确或机制因果 | 将高价值失败转为固定回归 case，再用独立对照验收 |
+| 尚无垂类专家产品证据 | GUI、角色提示和插件入口不能说明领域价值 | 选具体任务，建立版本化知识/流程、领域判据和实际使用记录 |
+
+这些是待验收工作，不在本页承诺已经实现或已带来收益。架构取舍与范围见 [ADR 索引](docs/adr/README.md)。
+
+## 工程门禁与文档
+
+工程检查使用 Ruff、mypy strict、pytest，测试包含 unit、integration、e2e。
+994 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
+
+提高预算并扩大真实模型样本的实验见 [Harness v2 冻结设计](docs/harness-study-v2.md)。
+2026-10-28 新增 36 次公开函数任务回归及 72 次机制配对运行，全部 108 行保留，
+总消耗 2,454,087 Token。回归 36/36 通过；Context 和输出组的总 Token 分别减少
+39.86% / 58.07%，恢复窗口通过 6/12 → 12/12；均限于冻结刺激与选定任务。
+完整目标、预算约束和终态分别报告，详见[本轮结果](docs/results/harness-followup-v2-2026-10-28.md)。
+每次提交前执行：
 
 ```bash
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy src tests
-uv run pytest --cov=minidsh --cov-report=term-missing
+uv run pytest
 ```
 
-质量门禁为 `ruff format --check`、`ruff check`、`mypy --strict` 和完整 pytest；复现脚本另用
-`uv run mypy src tests scripts/offline_regression.py` 检查类型。CI 见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
+需要重新测覆盖率时执行 `uv run pytest --cov=src/minidsh --cov-report=term-missing`。
+CI 见 [ci.yml](.github/workflows/ci.yml)；前台版本、规模与旧归档表格由 `tests/test_docs.py` 检查一致性。
+本页手工维护，数字来源为下列固定报告及本机产物；更新指标时保留原实验事实和评分器来源。
 
-## 文档
+目录按用途区分：`src/minidsh/` 是源码，`tests/` 是 pytest 套件；`benchmarks/build_*.py`
+是 fixture 生成器，其 `fixtures/`、`verification/`、`solutions/`、manifest 与响应脚本是
+已提交的生成数据。`benchmark-results/` 和本机 `.minidsh/` 是可再生成或被忽略的运行产物；
+`docs/results/` 是需要保留的冻结评测证据，不随当前源码重算覆盖。
 
 | 文档 | 内容 |
 | --- | --- |
-| [`AGENTS.md`](AGENTS.md) | 仓库级开发约束（12 节，含架构与依赖方向） |
-| [`docs/real-model-evaluation.md`](docs/real-model-evaluation.md) | Provider profile、成本与延迟模型、重复采样协议、数字来源说明 |
-| [`docs/failure-taxonomy.md`](docs/failure-taxonomy.md) | 失败类别与层归属、决策顺序、Trace 回放/差分工作流 |
-| [`docs/benchmark.md`](docs/benchmark.md) | Manifest 格式、指标定义、消融协议与结果解读 |
-| [`docs/context-engineering.md`](docs/context-engineering.md) | 六种 Context 策略的实现、成本与选型 |
-| [`docs/sandbox-security.md`](docs/sandbox-security.md) | 威胁模型、六类攻击测试与已验证边界 |
-| [`docs/technical-highlights.md`](docs/technical-highlights.md) | 技术亮点、5 个设计决策、SWE-bench 路线图 |
-| [`docs/adr/`](docs/adr/) | 架构决策记录 |
-| [`docs/results/`](docs/results/) | 实验报告与原始指标 |
+| [AGENTS.md](AGENTS.md) | 架构、安全、评测、质量与交付约束 |
+| [Harness 评测指标](docs/harness-evaluation.md) | 分层指标、分母、覆盖率与 sidecar |
+| [轻量公开修复评测](docs/lightweight-public-benchmark.md) | 十二道公开题选取、门禁、独立验证与结果 |
+| [Harness study 协议](docs/harness-study.md) | 二十项功能 case、三组受控对照与复现 |
+| [Harness study v1 结果](docs/harness-study-results-v1.md) | 运行事实、机制读数、预算超额与结论限制 |
+| [Context Engineering](docs/context-engineering.md) | 历史策略、检索实现与协议回合保护 |
+| [Benchmark](docs/benchmark.md) | manifest、历史指标与消融入口 |
+| [真实模型评测](docs/real-model-evaluation.md) | provider、失败用量、重复采样与旧费用模型 |
+| [失败分类](docs/failure-taxonomy.md) | 诊断类别、证据链、回放与差分 |
+| [安全文档](docs/sandbox-security.md) | 威胁模型、攻击性检查与安全边界 |
+| [可复现基线](docs/reproducible-baseline.md) | 固定输入、源码摘要与离线审计 |
+| [Local-first](docs/local-first.md) / [正式本地实验](docs/local-formal-study.md) | 可选 MLX、本地矩阵与冻结协议 |
+| [扩展](docs/extensibility.md) / [DSH 对齐](docs/dsh-alignment.md) | 显式注入、插件、Loop 工厂、Session 事实与 MCP |
+| [GUI](docs/gui-design.md) / [Multi-Agent](docs/multi-agent.md) | 交互与受限协作的使用方法 |
+| [ADR](docs/adr/) / [历史结果](docs/results/) | 决策依据、历史实验与归档 |
 
-## 安全边界声明
-
-`local` Process Runner 是**策略层**（工作区、命令、环境、网络），不是容器或内核级隔离。允许执行通用解释器时，它仍可直接发起系统调用或网络访问。不可信模型与不可信仓库必须在外层容器或 VM 中运行并关闭网络；本地模式不宣称为恶意代码提供硬安全边界。详见 [`docs/adr/0002-security-model.md`](docs/adr/0002-security-model.md)。
+可选 Project Memory 的配置与限制见 [Memory 开发记录](docs/extension-memory.md)，离线示例：`uv run python examples/project_memory_demo.py`。

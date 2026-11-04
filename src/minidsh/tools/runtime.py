@@ -6,7 +6,8 @@ import asyncio
 import json
 import time
 import uuid
-from dataclasses import dataclass, field
+from copy import deepcopy
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Protocol, cast, runtime_checkable
 
@@ -20,8 +21,11 @@ from minidsh.domain import (
     ToolDefinition,
     ToolObservation,
     ToolStatus,
+    redact_text,
 )
-from minidsh.ports import EventSink
+from minidsh.domain.harness import ApprovalChoice, ApprovalRequest
+from minidsh.ports import ApprovalProvider, EventSink
+from minidsh.runtime.hooks import HookRegistry, tool_hook_active
 from minidsh.tools.results import diagnostics, summarize
 
 
@@ -45,6 +49,21 @@ class Tool(Protocol):
 
     async def execute(self, arguments: BaseModel) -> JsonValue:
         """Execute with already validated arguments."""
+
+
+@runtime_checkable
+class RunScopedTool(Protocol):
+    """Optional execution interface: identity is trusted executor data, not model input."""
+
+    async def execute_in_run(
+        self, arguments: BaseModel, *, run_id: str, step_id: int
+    ) -> JsonValue: ...
+
+
+@runtime_checkable
+class PreparedTool(Protocol):
+    async def prepare(self, arguments: BaseModel) -> tuple[str, str]:
+        """Validate execution targets and return scope plus a safe action preview."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -141,6 +160,8 @@ class ToolRuntime:
         max_output_chars: int = 20_000,
         max_retries: int = 1,
         normalize_results: bool = True,
+        approvals: ApprovalProvider | None = None,
+        hooks: HookRegistry | None = None,
     ) -> None:
         self._registry = registry
         self._permissions = permissions
@@ -149,14 +170,63 @@ class ToolRuntime:
         self._max_output_chars = max_output_chars
         self._max_retries = max_retries
         self._normalize_results = normalize_results
+        self._approvals = approvals
+        self._hooks = hooks or HookRegistry()
+        self._hooks.bind_events(events)
+
+    def bind_approvals(self, provider: ApprovalProvider) -> None:
+        """Bind a trusted presentation adapter before a run starts."""
+        self._approvals = provider
+
+    def release_run(self, run_id: str) -> None:
+        release = getattr(self._approvals, "release", None)
+        if callable(release):
+            release(run_id)
 
     def definitions(self) -> tuple[ToolDefinition, ...]:
         """Return registered model-visible definitions."""
         return self._registry.definitions()
 
     async def execute(self, call: ToolCall, run_id: str, step_id: int) -> ToolObservation:
+        """Establish auditable identity for Loop and standalone tool callers."""
+        if tool_hook_active():
+            raise RuntimeError("tool invocation is forbidden in this hook phase")
+        with self._hooks.tool_scope(self._hooks.tool_view(run_id, step_id)):
+            return await self._execute(call, run_id, step_id)
+
+    async def _execute(self, call: ToolCall, run_id: str, step_id: int) -> ToolObservation:  # noqa: PLR0911, PLR0912, PLR0915 - guarded execution stages
         """Run the complete tool pipeline and never leak an exception to the loop."""
+        if tool_hook_active():
+            raise RuntimeError("recursive tool invocation from tool hook")
         started = time.monotonic()
+        original = call
+        try:
+            call = await self._hooks.call(call)
+            call = await self._hooks.transform_call(call, self._hooks.tool_view(run_id, step_id))
+        except Exception:
+            return await self._reject(
+                call,
+                started,
+                run_id,
+                step_id,
+                ToolStatus.DENIED,
+                "hook_rejected",
+                "tool hook rejected the call",
+            )
+        if call != original:
+            await self._events.publish(
+                Event(
+                    "tool_call_rewritten",
+                    run_id,
+                    step_id,
+                    {
+                        "before": original.arguments,
+                        "after": call.arguments,
+                        "tool_before": original.name,
+                        "tool_after": call.name,
+                    },
+                )
+            )
         tool = self._registry.get(call.name)
         if tool is None:
             return await self._reject(
@@ -200,6 +270,81 @@ class ToolRuntime:
                 decision.reason,
             )
 
+        try:
+            if (
+                self._approvals is not None
+                and tool.definition.side_effects
+                and tool.definition.approval_required
+            ):
+                scope, preview = await self._prepare(tool, arguments, call)
+                request = ApprovalRequest(
+                    uuid.uuid4().hex, run_id, step_id, call, redact_text(preview)[:20_000], scope
+                )
+                await self._events.publish(
+                    Event("approval_requested", run_id, step_id, request.payload())
+                )
+                try:
+                    async with asyncio.timeout(120):
+                        choice = await self._approvals.approve(request)
+                except (TimeoutError, EOFError):
+                    choice = ApprovalChoice.DENY
+                await self._events.publish(
+                    Event(
+                        "approval_decided",
+                        run_id,
+                        step_id,
+                        {
+                            "request_id": request.request_id,
+                            "call_id": call.call_id,
+                            "choice": choice.value,
+                        },
+                    )
+                )
+                if choice is ApprovalChoice.DENY:
+                    return await self._reject(
+                        call,
+                        started,
+                        run_id,
+                        step_id,
+                        ToolStatus.DENIED,
+                        "approval_denied",
+                        "action was not approved",
+                    )
+                await self._prepare(tool, arguments, call)
+                if not self._permissions.authorize(tool.definition).allowed:
+                    raise PermissionError("permission changed before execution")
+        except ToolError as exc:
+            denied = exc.code in {"file_backend_denied", "sandbox_violation", "permission_denied"}
+            return await self._reject(
+                call,
+                started,
+                run_id,
+                step_id,
+                ToolStatus.DENIED if denied else ToolStatus.FAILED,
+                exc.code,
+                redact_text(str(exc)),
+            )
+        except (PermissionError, ValueError) as exc:
+            return await self._reject(
+                call,
+                started,
+                run_id,
+                step_id,
+                ToolStatus.DENIED,
+                "preflight_denied",
+                redact_text(str(exc)),
+            )
+        except OSError as exc:
+            return await self._reject(
+                call,
+                started,
+                run_id,
+                step_id,
+                ToolStatus.FAILED,
+                "preflight_failed",
+                redact_text(str(exc)),
+            )
+
         await self._events.publish(
             Event(
                 "tool_call_started",
@@ -212,8 +357,34 @@ class ToolRuntime:
         for attempt in range(1, attempts + 1):
             try:
                 async with asyncio.timeout(tool.definition.timeout_seconds):
-                    result = await tool.execute(arguments)
+                    if isinstance(tool, RunScopedTool):
+                        result = await tool.execute_in_run(
+                            arguments, run_id=run_id, step_id=step_id
+                        )
+                    else:
+                        result = await tool.execute(arguments)
                 observation = self._success(call, run_id, result, started)
+                try:
+                    await self._hooks.observed(observation)
+                except Exception:
+                    await self._events.publish(
+                        Event(
+                            "hook_failed",
+                            run_id,
+                            step_id,
+                            {"phase": "after_tool", "call_id": call.call_id},
+                        )
+                    )
+                    observation = replace(
+                        observation,
+                        status=ToolStatus.FAILED,
+                        error=ErrorInfo(
+                            "hook_failed",
+                            "post-execution hook failed",
+                            {"execution_succeeded": True},
+                        ),
+                        retryable=False,
+                    )
                 await self._publish_completed(observation, run_id, step_id, attempt)
                 return observation
             except TimeoutError:
@@ -247,6 +418,14 @@ class ToolRuntime:
                 return observation
         raise AssertionError("unreachable tool retry state")
 
+    @staticmethod
+    async def _prepare(tool: Tool, arguments: BaseModel, call: ToolCall) -> tuple[str, str]:
+        if isinstance(tool, PreparedTool):
+            scope, preview = await tool.prepare(arguments)
+            return f"{call.name}:{scope}", preview
+        encoded = json.dumps(call.arguments, ensure_ascii=False, sort_keys=True)
+        return f"{call.name}:{encoded}", f"{call.name} {encoded}"
+
     def _success(
         self, call: ToolCall, run_id: str, result: JsonValue, started: float
     ) -> ToolObservation:
@@ -260,15 +439,26 @@ class ToolRuntime:
                 result,
                 duration_ms=(time.monotonic() - started) * 1_000,
                 summary=summary,
+                effective_call=deepcopy(call),
             )
         artifacts: tuple[str, ...] = ()
         if self._artifacts is not None:
             artifacts = (self._artifacts.write(run_id, serialized),)
         preview = serialized[: max(0, self._max_output_chars - 1_500)]
         extracted = diagnostics(result) if self._normalize_results else []
+        process_status: dict[str, JsonValue] = {}
+        if (
+            isinstance(result, dict)
+            and type(result.get("exit_code")) is int
+            and type(result.get("timed_out")) is bool
+        ):
+            # Truncation must not erase the outcome consumed by controlled finish checks.
+            process_status = {"exit_code": result["exit_code"], "timed_out": result["timed_out"]}
+            extracted = diagnostics(result)
         truncated: dict[str, JsonValue] = {}
         while True:
             truncated = {
+                **process_status,
                 "summary": summary,
                 "diagnostics": cast("list[JsonValue]", extracted),
                 "preview": preview,
@@ -297,6 +487,7 @@ class ToolRuntime:
             truncated=True,
             artifacts=artifacts,
             summary=summary,
+            effective_call=deepcopy(call),
         )
 
     @staticmethod
@@ -316,6 +507,7 @@ class ToolRuntime:
             error=ErrorInfo(code, message),
             duration_ms=(time.monotonic() - started) * 1_000,
             retryable=retryable,
+            effective_call=deepcopy(call),
         )
 
     async def _reject(  # noqa: PLR0913, PLR0917 - normalized rejection fields stay explicit
@@ -371,6 +563,7 @@ class ToolRuntime:
                 },
             )
         )
+        await self._hooks.observe_all(observation, self._hooks.tool_view(run_id, step_id))
 
 
 def schema_for(model: type[BaseModel]) -> dict[str, JsonValue]:

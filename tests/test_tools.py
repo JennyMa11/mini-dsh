@@ -83,6 +83,37 @@ async def test_tool_runtime_validates_authorizes_and_executes(tmp_path: Path) ->
 
 
 @pytest.mark.asyncio
+async def test_missing_optional_file_is_distinct_from_a_path_violation(tmp_path: Path) -> None:
+    registry = ToolRegistry()
+    registry.register(ReadFileTool(WorkspaceSandbox(tmp_path)))
+    runtime = ToolRuntime(registry, PermissionPolicy(frozenset({"fs.read"})), EventBus())
+    observation = await runtime.execute(
+        ToolCall("missing", "read_file", {"path": "AGENTS.md"}), "run", 0
+    )
+    assert observation.status is ToolStatus.FAILED
+    assert observation.error is not None
+    assert observation.error.code == "file_not_found"
+    assert not observation.retryable
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["../missing-directory/AGENTS.md", "link/AGENTS.md"])
+async def test_missing_external_file_remains_a_path_violation(tmp_path: Path, path: str) -> None:
+    workspace = tmp_path / "workspace"
+    workspace.mkdir()
+    outside = tmp_path / "external"
+    outside.mkdir()
+    (workspace / "link").symlink_to(outside, target_is_directory=True)
+    registry = ToolRegistry()
+    registry.register(ReadFileTool(WorkspaceSandbox(workspace)))
+    runtime = ToolRuntime(registry, PermissionPolicy(frozenset({"fs.read"})), EventBus())
+    observation = await runtime.execute(ToolCall("outside", "read_file", {"path": path}), "run", 0)
+    assert observation.status is ToolStatus.FAILED
+    assert observation.error is not None
+    assert observation.error.code == "sandbox_violation"
+
+
+@pytest.mark.asyncio
 async def test_tool_runtime_denies_missing_permission(tmp_path: Path) -> None:
     registry = ToolRegistry()
     registry.register(PatchFileTool(WorkspaceSandbox(tmp_path)))

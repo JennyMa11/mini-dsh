@@ -1,0 +1,23 @@
+{
+  "schema_version": "2.0",
+  "name": "public_harness_followup_v2",
+  "selection": "benchmarks/public_lite/v1/selection.json",
+  "model": "deepseek-flash",
+  "temperature": 0,
+  "thinking": false,
+  "max_output_tokens": 1024,
+  "repeats": 3,
+  "regression_tokens": 32000,
+  "mechanism_tokens": 64000,
+  "total_token_budget": 6000000,
+  "max_steps": 16,
+  "max_tool_calls": 32,
+  "max_duration_seconds": 180,
+  "bootstrap_seed": 20261028,
+  "bootstrap_samples": 2000,
+  "groups": {
+    "context": ["python_000_has_close_elements", "python_001_separate_paren_groups", "js_118_getclosestvowel", "js_151_doublethedifference"],
+    "output": ["python_007_filter_by_substring", "python_025_factorize", "js_062_derivative", "js_089_encrypt"],
+    "recovery": ["python_010_make_palindrome", "python_090_next_smallest", "js_021_rescaletounit", "js_026_removeduplicates"]
+  }
+}

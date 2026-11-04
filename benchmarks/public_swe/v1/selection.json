@@ -1,0 +1,447 @@
+{
+  "schema_version": "1.0",
+  "kind": "benchmark_selection",
+  "name": "public_swe_small_v1",
+  "authorship": "Manually curated before Mini-dsh model runs; source metadata verified against the pinned upstream Git tree.",
+  "source": {
+    "benchmark": "SWE-bench Pro V2",
+    "repository": "https://github.com/scaleapi/SWE-bench_Pro-os",
+    "commit": "66f92766bba642462d4bbe5479e83f91f9211862",
+    "population_tasks": 642,
+    "population_repositories": 11
+  },
+  "selection_policy": {
+    "purpose": "Broad-coverage, Token-limited development evaluation.",
+    "rules": [
+      "Cover every upstream repository at least once.",
+      "Cover Python, Go, TypeScript and JavaScript.",
+      "Select by task specifications and capability coverage, without Mini-dsh trial outcomes or reference-patch contents.",
+      "Prefer bounded scopes; specification length is a proxy, not a Token prediction.",
+      "Freeze tasks before model calls; retain failures and budget exhaustion in the denominator.",
+      "Version selection or budget changes and rerun comparisons."
+    ],
+    "extra_task_reason": "An extra OpenLibrary HTTP-client migration adds explicit refactoring and error-handling coverage."
+  },
+  "run_protocol": {
+    "model": "deepseek-flash",
+    "temperature": 0,
+    "thinking": false,
+    "repeats": 1,
+    "agent_count": 1,
+    "total_run_token_budget": 900000,
+    "comparison_configurations": 2,
+    "comparison_round_token_budget": 1800000,
+    "token_accounting": "Provider input + output; cached input is a subset. Include reported failed calls and failed tasks.",
+    "budget_semantics": "Nominal limits. Current runtime learns usage after each response; one in-flight response may overshoot. Record overruns and do not start another call after exhaustion.",
+    "cost_metrics": false,
+    "agent_network": "Model endpoint only; repository tools offline.",
+    "verifier": "Capture patch, apply to a fresh official task image, run the unchanged upstream verifier.",
+    "score_label": "Custom 12-task Token-limited subset, not an official full-benchmark score."
+  },
+  "coverage": {
+    "tasks": 12,
+    "repositories": {
+      "NodeBB/NodeBB": 1,
+      "ansible/ansible": 1,
+      "element-hq/element-web": 1,
+      "flipt-io/flipt": 1,
+      "future-architect/vuls": 1,
+      "gravitational/teleport": 1,
+      "internetarchive/openlibrary": 2,
+      "navidrome/navidrome": 1,
+      "protonmail/webclients": 1,
+      "qutebrowser/qutebrowser": 1,
+      "tutao/tutanota": 1
+    },
+    "primary_languages": {
+      "Go": 4,
+      "JavaScript": 1,
+      "Python": 4,
+      "TypeScript": 3
+    },
+    "tags": [
+      "api_contract",
+      "async_control",
+      "authentication",
+      "boundary_conditions",
+      "cache_consistency",
+      "configuration",
+      "cross_file",
+      "error_handling",
+      "file_loading",
+      "filesystem_permissions",
+      "frontend",
+      "http_client",
+      "missing_data",
+      "ordering",
+      "parsing",
+      "refactor",
+      "resource_lifecycle",
+      "security"
+    ]
+  },
+  "execution_readiness": {
+    "status": "superseded_for_local_resource_requirements",
+    "completed_model_runs": 0,
+    "requirements": [
+      "Docker Desktop engine is running; enable compatible Linux/amd64 execution for pinned toolchains.",
+      "Resolve official Linux/amd64 image tags to immutable digests; domestic transport proxy is supported.",
+      "Pass reference/empty patch gates for all selected tasks in offline containers."
+    ],
+    "entrypoint": "uv run python -m minidsh.benchmark.public_swe {prepare,check,run}",
+    "source_verification": "Complete 12 selected task trees verified; 120 files, including official verifiers and reference patches.",
+    "model_run_budget_tokens": 900000,
+    "replacement": "benchmarks/public_lite/v1/selection.json"
+  },
+  "tasks": [
+    {
+      "id": "nodebb_topic_order",
+      "upstream_id": "instance_NodeBB__NodeBB-05f2236193f407cf8e2072757fbd6bb170bc13f0-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "repository": "NodeBB/NodeBB",
+      "primary_language": "JavaScript",
+      "summary": "主题排序与接口行为",
+      "coverage_tags": [
+        "ordering",
+        "api_contract"
+      ],
+      "upstream_task_path": "v2/tasks/instance_NodeBB__NodeBB-05f2236193f407cf8e2072757fbd6bb170bc13f0-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "upstream_task_tree_git_sha1": "059e8c81a6902d2ee03e0d33745a3cd84d12727a",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_NodeBB__NodeBB-05f2236193f407cf8e2072757fbd6bb170bc13f0-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "base_commit": "c5ae8a70e1b0305af324ad7b1b0911d4023f1338",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_NodeBB__NodeBB-05f2236193f407cf8e2072757fbd6bb170bc13f0-vf2cf3cbd463b7ad942381f1c6d077626485a1e9e",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:2d03d08a0a282455b464b38d3e5f4dd6798aeca8465da36e6dd79d8f0cc06fec",
+        "task.toml": "sha256:cc3b35ad0279268565e58cf544a05307a98ca1b52d18a8d9eda3f75a31367783",
+        "environment/Dockerfile": "sha256:ba79a379b95b88b2ba3f8934cc9263e0f3df0b3ca43a33bacefee0362084ce33"
+      },
+      "instruction_characters": 2371,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "ansible_atomic_permissions",
+      "upstream_id": "instance_ansible__ansible-5260527c4a71bfed99d803e687dd19619423b134-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "repository": "ansible/ansible",
+      "primary_language": "Python",
+      "summary": "原子文件写入的权限默认值",
+      "coverage_tags": [
+        "filesystem_permissions",
+        "security"
+      ],
+      "upstream_task_path": "v2/tasks/instance_ansible__ansible-5260527c4a71bfed99d803e687dd19619423b134-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "upstream_task_tree_git_sha1": "ec8aa73baff0d8c8f35d59c1615d17d00bdd6374",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_ansible__ansible-5260527c4a71bfed99d803e687dd19619423b134-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "base_commit": "bf98f031f3f5af31a2d78dc2f0a58fe92ebae0bb",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_ansible__ansible-5260527c4a71bfed99d803e687dd19619423b134-vba6da65a0f3baefda7a058ebbd0a8dcafb8512f5",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:b616d27dace6ba21f4e8c4d57ba64891219542fa187526d8a51c1a8b09127388",
+        "task.toml": "sha256:c7e1c59e668d3821f6d1e692271c8352f5d3026ed962ede3ff948fbcfcf4d139",
+        "environment/Dockerfile": "sha256:4885f6abe7409c4de2fa711a0b9bd9b470854c859c2db2a603c4f1a03b91c7ad"
+      },
+      "instruction_characters": 2456,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "element_admin_actions",
+      "upstream_id": "instance_element-hq__element-web-2760bfc8369f1bee640d6d7a7e910783143d4c5f-vnan",
+      "repository": "element-hq/element-web",
+      "primary_language": "TypeScript",
+      "summary": "前端异步操作与重复点击",
+      "coverage_tags": [
+        "frontend",
+        "async_control"
+      ],
+      "upstream_task_path": "v2/tasks/instance_element-hq__element-web-2760bfc8369f1bee640d6d7a7e910783143d4c5f-vnan",
+      "upstream_task_tree_git_sha1": "12b101f99ceb81738ee2477e3e157421c70113cb",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_element-hq__element-web-2760bfc8369f1bee640d6d7a7e910783143d4c5f-vnan",
+      "base_commit": "cdffd1ca1f7b60334a8ca3bba64d0a4e6d2b68d0",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_element-hq__element-web-2760bfc8369f1bee640d6d7a7e910783143d4c5f-vnan",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:7ee19f4b398032ecb1362b8137dced150edba6c02f585dc8d8b4ff527aa9cba4",
+        "task.toml": "sha256:f4da99e6e476d8faaf08c90cd319ca885917dcd0ecfec8337d0c9812dc1106c9",
+        "environment/Dockerfile": "sha256:218ca46c774973419457cf7af45fa9dc7c288b6f9aaa643593cbffbed9f04a12"
+      },
+      "instruction_characters": 4923,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "flipt_polling_lifecycle",
+      "upstream_id": "instance_flipt-io__flipt-dbe263961b187e1c5d7fe34c65b000985a2da5a0",
+      "repository": "flipt-io/flipt",
+      "primary_language": "Go",
+      "summary": "后台轮询的关闭与资源清理",
+      "coverage_tags": [
+        "resource_lifecycle",
+        "cross_file"
+      ],
+      "upstream_task_path": "v2/tasks/instance_flipt-io__flipt-dbe263961b187e1c5d7fe34c65b000985a2da5a0",
+      "upstream_task_tree_git_sha1": "cce22a77f5819613a37dc8794141d3a3ab76b271",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_flipt-io__flipt-dbe263961b187e1c5d7fe34c65b000985a2da5a0",
+      "base_commit": "8ba3ab7d7ac8f552e61204103f5632ab8843a721",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_flipt-io__flipt-dbe263961b187e1c5d7fe34c65b000985a2da5a0",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:67b919ad53894d4c3aa55a0b2b95e1a29aae127dafe7b2810e1b23bc6d908173",
+        "task.toml": "sha256:9c627eb38c67c496e1553c4b2cebda180419666c9fc1a0ae11c01e73b7289bc0",
+        "environment/Dockerfile": "sha256:4fb2c4bbfe085378043942017ef39ab6b100b3dd47c4b0935bc853fa9d17f572"
+      },
+      "instruction_characters": 3900,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "vuls_package_parser",
+      "upstream_id": "instance_future-architect__vuls-bff6b7552370b55ff76d474860eead4ab5de785a-v1151a6325649aaf997cd541ebe533b53fddf1b07",
+      "repository": "future-architect/vuls",
+      "primary_language": "Go",
+      "summary": "混杂命令输出的严格解析",
+      "coverage_tags": [
+        "parsing",
+        "boundary_conditions"
+      ],
+      "upstream_task_path": "v2/tasks/instance_future-architect__vuls-bff6b7552370b55ff76d474860eead4ab5de785a-v1151a6325649aaf997cd541ebe533b53fddf1b07",
+      "upstream_task_tree_git_sha1": "7f6d65fa2fea1ed8f2f14ea169359fd41221a461",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_future-architect__vuls-bff6b7552370b55ff76d474860eead4ab5de785a-v1151a6325649aaf997cd541ebe533b53fddf1b07",
+      "base_commit": "6fca8d97c145fbe50a247dd222947a240639fd50",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_future-architect__vuls-bff6b7552370b55ff76d474860eead4ab5de785a-v1151a6325649aaf997cd541ebe533b53fddf1b07",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:88b1974644d1153788beff7ef91cca05f9877edb33604429a05d725db75c5e4e",
+        "task.toml": "sha256:b446bb98e04da6d73773c7681eaa199c1ea2abae87f030d6f613cb8797661c26",
+        "environment/Dockerfile": "sha256:53974db131f88b45ea6d61c69ba077816338bc9cbf7a6cac5adb65633bb9c798"
+      },
+      "instruction_characters": 2224,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "teleport_last_mfa_device",
+      "upstream_id": "instance_gravitational__teleport-3ff75e29fb2153a2637fe7f83e49dc04b1c99c9f",
+      "repository": "gravitational/teleport",
+      "primary_language": "Go",
+      "summary": "认证状态与最后一个 MFA 设备",
+      "coverage_tags": [
+        "authentication",
+        "security"
+      ],
+      "upstream_task_path": "v2/tasks/instance_gravitational__teleport-3ff75e29fb2153a2637fe7f83e49dc04b1c99c9f",
+      "upstream_task_tree_git_sha1": "d6356a52f9af639cd0b2c748dc89a0c90993fa9b",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_gravitational__teleport-3ff75e29fb2153a2637fe7f83e49dc04b1c99c9f",
+      "base_commit": "4b11dc4a8e02ec5620b27f9ecb28f3180a5e67f7",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_gravitational__teleport-3ff75e29fb2153a2637fe7f83e49dc04b1c99c9f",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:0b90899bcbb8e4e352939f5e8a79e59cf57d40609f3da499b3cc94a578076834",
+        "task.toml": "sha256:c46e7d9217625a3dc6dd0318f0365d0779e702eedfd38ffe3dcd3d876ccfc3ab",
+        "environment/Dockerfile": "sha256:c7bda653a4ea0889c044657880cfe4714a01de896e6020ccb73c365e9ac56e06"
+      },
+      "instruction_characters": 2236,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "openlibrary_missing_authors",
+      "upstream_id": "instance_internetarchive__openlibrary-89e4b4431fe7506c365a6f6eb6f6d048d04c044c-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "repository": "internetarchive/openlibrary",
+      "primary_language": "Python",
+      "summary": "缺失字段与数据转换边界",
+      "coverage_tags": [
+        "missing_data",
+        "boundary_conditions"
+      ],
+      "upstream_task_path": "v2/tasks/instance_internetarchive__openlibrary-89e4b4431fe7506c365a6f6eb6f6d048d04c044c-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "upstream_task_tree_git_sha1": "ea749a1038c4d9b4e43bf7b5549e96a5bcdcbc1c",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_internetarchive__openlibrary-89e4b4431fe7506c365a6f6eb6f6d048d04c044c-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "base_commit": "64c18604714c0672f272ee1e620ad62e9a248312",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_internetarchive__openlibrary-89e4b4431fe7506c365a6f6eb6f6d048d04c044c-v08d8e8889ec945ab821fb156c04c7d2e2810debb",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:d39f0d179bf288e389b9b7ef5e6e979a95e1fd91f024f1dd761940dcdde94b0c",
+        "task.toml": "sha256:b60c6fb71579c726f7cc6edd464e36e6be2cceac1a99e150e6310e1d2b1bb582",
+        "environment/Dockerfile": "sha256:09ad8882bccce46e48f6d5899b3b631c31a0ca542bdb5962ce1736bf18e493e8"
+      },
+      "instruction_characters": 3110,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "navidrome_audio_config",
+      "upstream_id": "instance_navidrome__navidrome-27875ba2dd1673ddf8affca526b0664c12c3b98b",
+      "repository": "navidrome/navidrome",
+      "primary_language": "Go",
+      "summary": "配置文件加载与模块迁移",
+      "coverage_tags": [
+        "configuration",
+        "file_loading"
+      ],
+      "upstream_task_path": "v2/tasks/instance_navidrome__navidrome-27875ba2dd1673ddf8affca526b0664c12c3b98b",
+      "upstream_task_tree_git_sha1": "1fb1d0db00a89e9324c7467c42ffb64bf56ef4e5",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_navidrome__navidrome-27875ba2dd1673ddf8affca526b0664c12c3b98b",
+      "base_commit": "28f7ef43c1083fab4f7eabbade6a5bab83615e73",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_navidrome__navidrome-27875ba2dd1673ddf8affca526b0664c12c3b98b",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:46c8bc49a3245e8f59b41a71d9a8c45e626e468fde020e44627aa9db86bfbb33",
+        "task.toml": "sha256:e7681e125c638e6d5f33481c107cc67d9eba2fab128f3dbde56674a80f90aa80",
+        "environment/Dockerfile": "sha256:5833a63bcf5ab57629141eb26c38a085d58e73d5fad3430dd6885399bbe00544"
+      },
+      "instruction_characters": 3127,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "proton_dropdown_refactor",
+      "upstream_id": "instance_protonmail__webclients-8be4f6cb9380fcd2e67bcb18cef931ae0d4b869c",
+      "repository": "protonmail/webclients",
+      "primary_language": "TypeScript",
+      "summary": "前端组件接口重构",
+      "coverage_tags": [
+        "frontend",
+        "refactor"
+      ],
+      "upstream_task_path": "v2/tasks/instance_protonmail__webclients-8be4f6cb9380fcd2e67bcb18cef931ae0d4b869c",
+      "upstream_task_tree_git_sha1": "ce44e243c58a095bd3180ecf74fff45ac0ba5371",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_protonmail__webclients-8be4f6cb9380fcd2e67bcb18cef931ae0d4b869c",
+      "base_commit": "57f1225f76db015f914c010d2c840c12184b587e",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_protonmail__webclients-8be4f6cb9380fcd2e67bcb18cef931ae0d4b869c",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:6e5764067e4dd8b65407985989d2a6081c96590369b11452b483d7b75f64f95b",
+        "task.toml": "sha256:8c94bc73d9b45f244b97648214b9f26f594e0943257ab7d44f7239bbf8def631",
+        "environment/Dockerfile": "sha256:d176845bcff258f45505c1f3b2e089fe4b09c4985f75a0a654e9915001b41f35"
+      },
+      "instruction_characters": 2050,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "qutebrowser_coordinate_parser",
+      "upstream_id": "instance_qutebrowser__qutebrowser-85b867fe8d4378c8e371f055c70452f546055854-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "repository": "qutebrowser/qutebrowser",
+      "primary_language": "Python",
+      "summary": "统一解析与非法输入处理",
+      "coverage_tags": [
+        "parsing",
+        "error_handling"
+      ],
+      "upstream_task_path": "v2/tasks/instance_qutebrowser__qutebrowser-85b867fe8d4378c8e371f055c70452f546055854-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "upstream_task_tree_git_sha1": "7915e04b47b47417caad964edfbc14274e9b0b7e",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_qutebrowser__qutebrowser-85b867fe8d4378c8e371f055c70452f546055854-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "base_commit": "c97257cac01d9f7d67fb42d0344cb4332c7a0833",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_qutebrowser__qutebrowser-85b867fe8d4378c8e371f055c70452f546055854-v2ef375ac784985212b1805e1d0431dc8f1b3c171",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:79e89c8a85dc2c9004635126a3873a1809c821c0e27b96951f97c8f2223f4b10",
+        "task.toml": "sha256:f891f90bcd95d8ed60154fe05c7a4de02e497e8c32d8266d8d1b723ac80461d9",
+        "environment/Dockerfile": "sha256:dbe0162b4a18d111f3a9424da1a487a411fa848b308683a7478d0bee997955b9"
+      },
+      "instruction_characters": 2951,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "tutanota_decryption_cache",
+      "upstream_id": "instance_tutao__tutanota-f373ac3808deefce8183dad8d16729839cc330c1-v2939aa9f4356f0dc9f523ee5ce19d09e08ab979b",
+      "repository": "tutao/tutanota",
+      "primary_language": "TypeScript",
+      "summary": "加载器、缓存与解密状态传递",
+      "coverage_tags": [
+        "cache_consistency",
+        "cross_file"
+      ],
+      "upstream_task_path": "v2/tasks/instance_tutao__tutanota-f373ac3808deefce8183dad8d16729839cc330c1-v2939aa9f4356f0dc9f523ee5ce19d09e08ab979b",
+      "upstream_task_tree_git_sha1": "40b28b84f2156c655fc9195c98caebf149ea0f6a",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_tutao__tutanota-f373ac3808deefce8183dad8d16729839cc330c1-v2939aa9f4356f0dc9f523ee5ce19d09e08ab979b",
+      "base_commit": "a834bd49d148888778075a3a48d3b92d832c4eed",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_tutao__tutanota-f373ac3808deefce8183dad8d16729839cc330c1-v2939aa9f4356f0dc9f523ee5ce19d09e08ab979b",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:e194da19b6c4ec3a1c7937afb01e98b659206096f4e2c014de8640576df323d9",
+        "task.toml": "sha256:a800b6a817091b9363358055b175e915d8220f482a52ad5ca68e5fd607cf091e",
+        "environment/Dockerfile": "sha256:2c11ff0e5a8a6619fc6c1f620448600e0656294a13944186bf881a36373c856b"
+      },
+      "instruction_characters": 6278,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    },
+    {
+      "id": "openlibrary_http_refactor",
+      "upstream_id": "instance_internetarchive__openlibrary-fad4a40acf5ff5f06cd7441a5c7baf41a7d81fe4-vfa6ff903cb27f336e17654595dd900fa943dcd91",
+      "repository": "internetarchive/openlibrary",
+      "primary_language": "Python",
+      "summary": "HTTP 客户端迁移与异常处理",
+      "coverage_tags": [
+        "refactor",
+        "http_client",
+        "error_handling"
+      ],
+      "upstream_task_path": "v2/tasks/instance_internetarchive__openlibrary-fad4a40acf5ff5f06cd7441a5c7baf41a7d81fe4-vfa6ff903cb27f336e17654595dd900fa943dcd91",
+      "upstream_task_tree_git_sha1": "f82aaad63ff9f848f33d384101bf0bb4d4e41517",
+      "source_url": "https://github.com/scaleapi/SWE-bench_Pro-os/tree/66f92766bba642462d4bbe5479e83f91f9211862/v2/tasks/instance_internetarchive__openlibrary-fad4a40acf5ff5f06cd7441a5c7baf41a7d81fe4-vfa6ff903cb27f336e17654595dd900fa943dcd91",
+      "base_commit": "afb819f8166c6dff4295c6802cc0b55b67f05731",
+      "docker_image_tag": "ghcr.io/scaleapi/swe-bench_pro-v2:instance_internetarchive__openlibrary-fad4a40acf5ff5f06cd7441a5c7baf41a7d81fe4-vfa6ff903cb27f336e17654595dd900fa943dcd91",
+      "docker_image_digest": null,
+      "source_file_sha256": {
+        "instruction.md": "sha256:1e54b1f799e28e3692b89a5f08a006e6992064fb3f7c540b2e84d0477da76571",
+        "task.toml": "sha256:098d4a30b3dd1cc484162e0305a5fab43cbf8f398bda8f506fb63ff7a983aa2e",
+        "environment/Dockerfile": "sha256:aef77747066422316f563ca33f98491fca2eda4960b437a168c7f99c8605d79d"
+      },
+      "instruction_characters": 2571,
+      "budget": {
+        "max_tokens": 75000,
+        "max_steps": 24,
+        "max_tool_calls": 48,
+        "max_duration_seconds": 600
+      }
+    }
+  ]
+}

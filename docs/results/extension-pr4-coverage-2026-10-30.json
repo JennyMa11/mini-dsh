@@ -1,0 +1,178 @@
+{
+  "schema_version": "1.0",
+  "source_sha256": "7249c0eae026ca0626883329d347cbaaceb01f0c408344d17a5b36a09765250b",
+  "functional_rows_checked": 28,
+  "functional_rows_declared": 28,
+  "phase_accepted": true,
+  "rows": [
+    {
+      "case_id": "H01",
+      "status": "pass",
+      "evidence": "H01/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H02",
+      "status": "pass",
+      "evidence": "H02/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H03",
+      "status": "pass",
+      "evidence": "H03/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H04",
+      "status": "pass",
+      "evidence": "H04/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H05",
+      "status": "pass",
+      "evidence": "H05/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H06",
+      "status": "pass",
+      "evidence": "H06/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H07",
+      "status": "pass",
+      "evidence": "H07/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "H08",
+      "status": "pass",
+      "evidence": "H08/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "C01",
+      "status": "pass",
+      "evidence": "C01/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "S01",
+      "status": "pass",
+      "evidence": "S01/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "S02",
+      "status": "pass",
+      "evidence": "S02/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "S03",
+      "status": "pass",
+      "evidence": "S03/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "S04",
+      "status": "pass",
+      "evidence": "S04/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "C02",
+      "status": "pass",
+      "evidence": "C02/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "C03",
+      "status": "pass",
+      "evidence": "C03/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "C04",
+      "status": "pass",
+      "evidence": "C04/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "V01",
+      "status": "pass",
+      "evidence": "V01/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "V02",
+      "status": "pass",
+      "evidence": "V02/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "V03",
+      "status": "pass",
+      "evidence": "V03/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "V04",
+      "status": "pass",
+      "evidence": "V04/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "V05",
+      "status": "pass",
+      "evidence": "V05/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "M01",
+      "status": "pass",
+      "evidence": "M01/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "M02",
+      "status": "pass",
+      "evidence": "M02/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "M03",
+      "status": "pass",
+      "evidence": "M03/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "M04",
+      "status": "pass",
+      "evidence": "M04/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "E03",
+      "status": "pass",
+      "evidence": "E03/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "E01",
+      "status": "pass",
+      "evidence": "E01/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    },
+    {
+      "case_id": "E02",
+      "status": "pass",
+      "evidence": "E02/0/check.json",
+      "scope": "current-source accepted PR4 functional evidence"
+    }
+  ],
+  "review_source": "implementation agent review plus independent executable audit; no external human signoff"
+}

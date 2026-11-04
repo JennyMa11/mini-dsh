@@ -6,14 +6,15 @@ import asyncio
 import json
 import uuid
 from collections import deque
-from collections.abc import Callable
+from collections.abc import AsyncGenerator, Callable
 from dataclasses import replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 from minidsh.adapters import JsonlTraceWriter, JsonSessionStore, ScriptedModel
+from minidsh.adapters.conversations import JsonConversationRepository
 from minidsh.composition import (
     MAX_SUBAGENT_PARALLEL,
     MAX_SUBAGENTS,
@@ -22,6 +23,8 @@ from minidsh.composition import (
     build_local_runtime,
 )
 from minidsh.domain import Event, Message, Role, RunResult, ToolCall, redact_text, redact_value
+from minidsh.domain.harness import ApprovalChoice
+from minidsh.runtime.approvals import ApprovalBroker
 
 _VIEW_LIMIT = 20_000
 
@@ -29,6 +32,26 @@ _VIEW_LIMIT = 20_000
 def _preview(text: str) -> str:
     value = redact_text(text)
     return value if len(value) <= _VIEW_LIMIT else value[:_VIEW_LIMIT] + "\n[展示已截断]"
+
+
+def _truncated_diff(result: dict[str, Any]) -> str:
+    """Recover the diff text from a bounded JSON preview, without trusting its tail."""
+    preview = result.get("preview")
+    if not isinstance(preview, str):
+        return ""
+    marker = '"stdout": "'
+    start = preview.find(marker)
+    if start < 0:
+        return preview
+    raw = preview[start + len(marker) :]
+    for cut in range(len(raw), max(len(raw) - 8, 0), -1):
+        try:
+            value = json.loads(f'"{raw[:cut]}"')
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, str):
+            return value
+    return raw.replace("\\n", "\n").replace('\\"', '"').replace("\\\\", "\\")
 
 
 class _EmptyInput(BaseModel):
@@ -41,6 +64,15 @@ class _TaskInput(_EmptyInput):
 
 class _ResumeInput(_EmptyInput):
     run_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+class _ApprovalInput(_ResumeInput):
+    request_id: str = Field(min_length=1, max_length=128)
+    choice: Literal["allow", "deny", "remember"]
+
+
+class _SessionInput(_EmptyInput):
+    session_id: str = Field(min_length=1, max_length=128, pattern=r"^[A-Za-z0-9_-]+$")
 
 
 class _SettingsInput(_EmptyInput):
@@ -89,6 +121,12 @@ class GuiSession:
         self._error: str | None = None
         self._metrics: dict[str, Any] = {}
         self._diff = ""
+        self._approvals = ApprovalBroker()
+        self._streaming_text = ""
+        self._followers: set[asyncio.Queue[dict[str, Any]]] = set()
+        self._approvals.on_change = self._notify
+        self._session_id: str | None = None
+        self._conversation_repository = JsonConversationRepository(workspace)
 
     @property
     def busy(self) -> bool:
@@ -128,14 +166,59 @@ class GuiSession:
             "metrics": self._metrics,
             "diff": self._diff,
             "trace": f".minidsh/traces/{self._run_id}.jsonl" if self._run_id else None,
+            "approvals": [request.payload() for request in self._approvals.pending],
+            "streaming_text": self._streaming_text,
+            "session_id": self._session_id,
+            "streaming_capable": self._runtime.streaming_capable if self._runtime else None,
         }
+
+    async def sessions(self) -> dict[str, Any]:
+        summaries = await self._conversation_repository.list()
+        legacy = await self._sessions.list()
+        return {
+            "sessions": [summary.payload() for summary in summaries],
+            "legacy_runs": [result.run_id for result in legacy if not result.session_id],
+        }
+
+    async def follow(self) -> AsyncGenerator[dict[str, Any], None]:
+        """Bounded snapshots resynchronize reconnecting or slow clients."""
+        queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue(maxsize=1)
+        self._followers.add(queue)
+        try:
+            yield self.snapshot()
+            while True:
+                yield await queue.get()
+        finally:
+            self._followers.discard(queue)
+
+    def _notify(self) -> None:
+        if not self._followers:
+            return
+        snapshot = self.snapshot()
+        for queue in self._followers:
+            if queue.full():
+                queue.get_nowait()
+            queue.put_nowait(snapshot)
+
+    def _bind(self, runtime: LocalRuntime) -> None:
+        if self._options.approval_mode == "ask":
+            binder = getattr(runtime.tools, "bind_approvals", None)
+            if callable(binder):
+                binder(self._approvals)
 
     async def action(self, action: str, data: dict[str, Any]) -> None:
         """Validate browser input before scheduling any runtime operation."""
         async with self._action_lock:
             await self._action(action, data)
+            self._notify()
 
-    async def _action(self, action: str, data: dict[str, Any]) -> None:
+    async def _action(self, action: str, data: dict[str, Any]) -> None:  # noqa: PLR0912, PLR0915 - explicit presentation state transitions
+        if action == "approval":
+            selected = _ApprovalInput.model_validate(data)
+            self._approvals.respond(
+                selected.request_id, selected.run_id, ApprovalChoice(selected.choice)
+            )
+            return
         if action == "cancel":
             _EmptyInput.model_validate(data)
             if self.busy and self._task is not None:
@@ -154,6 +237,7 @@ class GuiSession:
             self._event_count = 0
             self._run_id = uuid.uuid4().hex
             self._status = "running"
+            self._streaming_text = ""
             self._message("user", task)
             self._task = asyncio.create_task(self._execute(task))
             self._task.add_done_callback(self._operation_done)
@@ -163,11 +247,54 @@ class GuiSession:
             if result is None:
                 raise ValueError("No saved session for this run_id")
             self._restore(result)
+            if result.session_id:
+                summaries = await self._conversation_repository.list()
+                latest = next(
+                    (
+                        item.latest_run_id
+                        for item in summaries
+                        if item.session_id == result.session_id
+                    ),
+                    None,
+                )
+                if latest != run_id:
+                    self._session_id = await self._conversation_repository.fork(run_id)
+        elif action == "session":
+            identifier = _SessionInput.model_validate(data).session_id
+            history = await self._conversation_repository.history(identifier)
+            self._session_id = identifier
+            self._history = history
+            self._messages.clear()
+            self._message_count = 0
+            self._run_id = None
+            self._status = "idle"
+            self._error = None
+            self._metrics = {}
+            self._events.clear()
+            self._event_count = 0
+            self._sub_agents.clear()
+            self._diff = ""
+            for message in history:
+                if message.role in {Role.USER, Role.ASSISTANT} and message.content:
+                    self._message(message.role.value, message.content)
+        elif action == "fork":
+            run_id = _ResumeInput.model_validate(data).run_id
+            if await self._conversation_repository.find_run(run_id) is None:
+                source = await self._sessions.load(run_id)
+                if source is None:
+                    raise ValueError("no saved run")
+                await self._conversation_repository.import_run(source)
+            identifier = await self._conversation_repository.fork(run_id)
+            await self._action("session", {"session_id": identifier})
         elif action == "settings":
-            self._update_settings(data)
+            old_runtime = self._runtime
+            await self._update_settings(data)
+            if old_runtime is not None and old_runtime.close is not None:
+                await old_runtime.close()
         elif action == "clear":
             _EmptyInput.model_validate(data)
             self._history = ()
+            self._session_id = None
             self._messages.clear()
             self._events.clear()
             self._sub_agents.clear()
@@ -186,7 +313,7 @@ class GuiSession:
         else:
             raise ValueError("Unknown action")
 
-    def _update_settings(self, data: dict[str, Any]) -> None:
+    async def _update_settings(self, data: dict[str, Any]) -> None:
         selected = _SettingsInput.model_validate(data)
         if self._settings_factory is None:
             raise ValueError("Runtime settings are fixed by the embedding application")
@@ -211,7 +338,10 @@ class GuiSession:
         )
         # Construct successfully before committing changes; credentials never enter options.
         runtime = self._settings_factory(options, secret.get_secret_value() if secret else None)
+        if runtime.initialize is not None:
+            await runtime.initialize()
         self._options, self._runtime, self._api_key = options, runtime, secret
+        self._bind(runtime)
         self._error = None
 
     def _operation_done(self, task: asyncio.Task[None]) -> None:
@@ -222,6 +352,7 @@ class GuiSession:
         elif (error := task.exception()) is not None:
             self._status = "failed"
             self._error = _preview(str(error))
+        self._notify()
 
     async def wait(self) -> None:
         """Wait for the current operation to release the runtime."""
@@ -238,6 +369,8 @@ class GuiSession:
             self._task.cancel()
         await self.wait()
         self._api_key = None
+        if self._runtime is not None and self._runtime.close is not None:
+            await self._runtime.close()
         self._runtime = None
 
     def _message(self, role: str, content: str) -> None:
@@ -247,6 +380,7 @@ class GuiSession:
     def _restore(self, result: RunResult) -> None:
         self._history = result.history
         self._run_id = result.run_id
+        self._session_id = result.session_id or None
         self._messages.clear()
         self._message_count = 0
         for message in result.history:
@@ -270,6 +404,10 @@ class GuiSession:
         }
 
     async def _progress(self, event: Event) -> None:
+        if event.name == "model_text_received" and event.run_id == self._run_id:
+            self._streaming_text = _preview(self._streaming_text + str(event.data.get("text", "")))
+        elif event.name == "model_call_completed" and event.run_id == self._run_id:
+            self._streaming_text = ""
         self._agent_progress(event)
         self._event_count += 1
         self._events.append(
@@ -280,6 +418,7 @@ class GuiSession:
                 "data": _preview(json.dumps(redact_value(event.data), ensure_ascii=False)),
             }
         )
+        self._notify()
 
     def _agent_progress(self, event: Event) -> None:
         child_id = (
@@ -320,12 +459,22 @@ class GuiSession:
             if self._runtime is None:
                 self._runtime = self._factory()
             runtime = self._runtime
+            self._bind(runtime)
             unsubscribe = runtime.events.subscribe(
                 "*", JsonlTraceWriter(self.workspace / ".minidsh" / "traces" / f"{run_id}.jsonl")
             )
             progress = runtime.events.subscribe("*", self._progress)
-            result = await runtime.agent.run(task, run_id=run_id, prior_history=self._history)
+            if runtime.conversations is not None:
+                result = await runtime.conversations.run_turn(
+                    task,
+                    run_id=run_id,
+                    session_id=self._session_id,
+                    seed=self._history,
+                )
+            else:
+                result = await runtime.agent.run(task, run_id=run_id, prior_history=self._history)
             self._history = result.history
+            self._session_id = result.session_id or None
             self._result(result)
             if result.answer:
                 self._message("assistant", result.answer)
@@ -342,8 +491,11 @@ class GuiSession:
             self._status = "failed"
             self._error = _preview(str(exc))
         finally:
+            self._approvals.release(run_id)
             unsubscribe()
             progress()
+            self._streaming_text = ""
+            self._notify()
 
     async def _show_diff(self) -> None:
         options = replace(
@@ -371,7 +523,7 @@ class GuiSession:
             elif isinstance(observation.result, dict):
                 result = observation.result
                 if observation.truncated:
-                    self._diff = _preview(str(result.get("preview", "")))
+                    self._diff = _preview(_truncated_diff(result) or str(result.get("preview", "")))
                     self._diff += "\n[工具输出已截断]"
                     if observation.artifacts:
                         self._diff += "\n完整输出: " + ", ".join(observation.artifacts)

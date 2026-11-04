@@ -1,0 +1,42 @@
+[
+  {
+    "tool_calls": [
+      {
+        "call_id": "read",
+        "name": "read_file",
+        "arguments": {
+          "path": "solution.py"
+        }
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "patch",
+        "name": "patch_file",
+        "arguments": {
+          "path": "solution.py",
+          "expected": "def total(values):\n    return len(values)\n",
+          "replacement": "def total(values):\n    return sum(values)\n"
+        }
+      }
+    ],
+    "output_tokens": 10
+  },
+  {
+    "tool_calls": [
+      {
+        "call_id": "test",
+        "name": "test",
+        "arguments": {}
+      }
+    ],
+    "output_tokens": 5
+  },
+  {
+    "content": "Repair complete.",
+    "output_tokens": 5
+  }
+]

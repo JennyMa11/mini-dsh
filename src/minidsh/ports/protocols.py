@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import AbstractContextManager
 from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
@@ -20,6 +21,8 @@ from minidsh.domain import (
     ToolDefinition,
     ToolObservation,
 )
+from minidsh.domain.extensions import FinishDecision, FinishProposal, HookView
+from minidsh.domain.harness import ApprovalChoice, ApprovalRequest, PreparedContext, StreamEvent
 
 
 @runtime_checkable
@@ -31,11 +34,61 @@ class Model(Protocol):
 
 
 @runtime_checkable
+class StreamingModel(Protocol):
+    def stream(self, request: ModelRequest) -> AsyncIterator[StreamEvent]:
+        """Yield text deltas and one final response; close on cancellation."""
+
+
+class ApprovalProvider(Protocol):
+    async def approve(self, request: ApprovalRequest) -> ApprovalChoice:
+        """Resolve one guarded action without expanding capabilities."""
+
+
+class ExecutionHooks(Protocol):
+    async def request(self, request: ModelRequest) -> ModelRequest: ...
+    async def call(self, call: ToolCall) -> ToolCall: ...
+    async def observed(self, observation: ToolObservation) -> None: ...
+    async def finishing(self, result: RunResult) -> None: ...
+
+
+@runtime_checkable
+class ExtensionHooks(ExecutionHooks, Protocol):
+    """V2 phases are opt-in; legacy execution hooks keep their existing signatures."""
+
+    def tool_scope(self, state: HookView) -> AbstractContextManager[None]: ...
+    async def started(self, state: HookView) -> None: ...
+    async def model(self, request: ModelRequest, state: HookView) -> ModelRequest: ...
+    async def transform_call(self, call: ToolCall, state: HookView) -> ToolCall: ...
+    async def observe_all(self, observation: ToolObservation, state: HookView) -> None: ...
+    async def step_ended(self, state: HookView) -> None: ...
+    async def decide(self, proposal: FinishProposal) -> FinishDecision: ...
+    async def ended(self, result: RunResult, *, timeout_seconds: float = 1.0) -> None: ...
+
+
+@runtime_checkable
 class ContextManager(Protocol):
     """Build a model view without mutating authoritative history."""
 
     def build(self, history: tuple[Message, ...], task: str) -> ContextView:
         """Return a serializable context view."""
+
+
+@runtime_checkable
+class AdjustableContextBudget(Protocol):
+    def with_counter(self, counter: Callable[[tuple[Message, ...]], int]) -> ContextManager: ...
+
+
+@runtime_checkable
+class PreparedContextManager(Protocol):
+    async def prepare(  # noqa: PLR0913, PLR0917 - explicit preparation and accounting inputs
+        self,
+        history: tuple[Message, ...],
+        task: str,
+        run_id: str,
+        step_id: int,
+        max_calls: int,
+        account: Callable[[int, float], None] | None = None,
+    ) -> PreparedContext: ...
 
 
 class ToolExecutor(Protocol):
@@ -127,6 +180,10 @@ class AgentDependencies:
     journal: SessionJournal
     local_first_enabled: bool = False
     error_recovery_enabled: bool = True
+    workspace_instructions_enabled: bool = False
+    streaming_enabled: bool = False
+    hooks: ExecutionHooks | None = None
+    request_input_budget: int | None = None
 
 
 @runtime_checkable

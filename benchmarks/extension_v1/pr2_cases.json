@@ -1,0 +1,144 @@
+{
+  "schema_version": "1.0",
+  "plan_version": "v1",
+  "stage": "PR2",
+  "criterion_version": "pr2-contracts-v1",
+  "cases": {
+    "S01": [
+      "tests/test_skill_context.py::test_progressive_skill_requests_and_accounting_in_each_strategy",
+      "tests/test_skill_context.py::test_managed_composition_routes_prepare_load_and_release",
+      "tests/test_skill_context.py::test_disabled_skills_do_not_scan_or_add_tools",
+      "tests/test_skill_context.py::test_skill_roots_are_explicit_configuration",
+      "tests/test_skill_context.py::test_explicit_tool_filter_cannot_silently_disable_skill_loading",
+      "tests/test_skill_context.py::test_repeat_load_inserts_one_body_and_charges_each_read",
+      "tests/test_skill_runtime.py::test_discovery_keeps_only_metadata_and_load_requires_the_same_run",
+      "tests/test_skill_files.py::test_worker_file_listing_canonicalizes_aliases_before_context_filtering",
+      "tests/test_skill_context.py::test_runtime_option_extension_keeps_legacy_positional_arguments"
+    ],
+    "S02": [
+      "tests/test_skills.py",
+      "tests/test_skill_files.py::test_file_bounds_are_checked_before_returning_any_catalog",
+      "tests/test_skill_files.py::test_invalid_or_missing_roots_are_explicit_errors",
+      "tests/test_skill_context.py::test_invalid_catalog_never_publishes_partial_initial_context",
+      "tests/test_skill_runtime.py::test_missing_frozen_skill_is_an_error_without_activation",
+      "tests/test_skill_runtime.py::test_malformed_backend_results_cannot_publish_a_partial_catalog",
+      "tests/test_skill_runtime.py::test_activation_limit_cleanup_and_run_isolation"
+    ],
+    "S03": [
+      "tests/test_skill_files.py",
+      "tests/test_skill_runtime.py::test_changed_skill_never_activates_and_does_not_refresh_the_snapshot",
+      "tests/test_skill_runtime.py::test_release_during_io_does_not_reopen_a_run",
+      "tests/test_skill_runtime.py::test_model_cannot_supply_scope_or_override_configured_roots",
+      "tests/test_skill_runtime.py::test_permission_denial_precedes_any_skill_file_access"
+    ],
+    "S04": [
+      "tests/test_skill_context.py::test_skill_guidance_cannot_auto_execute_or_grant_permission"
+    ],
+    "C02": [
+      "tests/test_skill_context.py::test_compaction_preserves_facts_order_pairs_and_source_identity",
+      "tests/test_skill_context.py::test_trimming_preserves_all_unnamed_system_constraints",
+      "tests/test_skill_context.py::test_disabled_assembly_preserves_exact_base_messages",
+      "tests/test_context.py",
+      "tests/test_context_retention.py"
+    ],
+    "C03": [
+      "tests/test_skill_context.py::test_compaction_preserves_facts_order_pairs_and_source_identity",
+      "tests/test_skill_context.py::test_derived_untrusted_context_does_not_gain_system_role",
+      "tests/test_skill_context.py::test_repeat_load_inserts_one_body_and_charges_each_read",
+      "tests/test_skill_context.py::test_disabled_assembly_preserves_exact_base_messages"
+    ],
+    "C04": [
+      "tests/test_skill_context.py::test_discovery_budget_and_authorization_stop_before_model",
+      "tests/test_skill_context.py::test_large_loaded_prefix_stops_next_model_call",
+      "tests/test_skill_context.py::test_post_hook_limit_applies_even_without_a_request_change",
+      "tests/test_skill_context.py::test_schema_and_guidance_use_the_same_final_input_counter",
+      "tests/test_skill_context.py::test_cancelled_discovery_keeps_attempt_and_closes_snapshot",
+      "tests/test_harness_safety.py::test_context_reads_are_authorized_and_budgeted",
+      "tests/test_harness_safety.py::test_cancelled_context_preparation_keeps_attempted_tool_count"
+    ]
+  },
+  "retained_regression_criteria": "benchmarks/extension_v1/pr1_cases.json",
+  "command_modules": [
+    "tests/test_extension_hooks.py",
+    "tests/test_runtime.py",
+    "tests/test_composition.py",
+    "tests/test_harness_extensions.py",
+    "tests/test_harness_safety.py",
+    "tests/test_context.py",
+    "tests/test_context_retention.py",
+    "tests/test_security.py",
+    "tests/test_skills.py",
+    "tests/test_skill_files.py",
+    "tests/test_skill_runtime.py",
+    "tests/test_skill_context.py"
+  ],
+  "safety_cases": [
+    "E01",
+    "E02",
+    "S03",
+    "S04"
+  ],
+  "container_probes": {
+    "S03": [
+      "legitimate raw-hash discovery and load",
+      "path traversal refusal",
+      "external symlink refusal",
+      "casefolded sensitive-root refusal",
+      "frozen-file mutation refusal",
+      "resolved-file and resolved-directory swap refusal",
+      "no content-canary in results; host sentinel unchanged",
+      "file listing canonicalizes an internal SKILL alias before automatic filtering"
+    ],
+    "S04": [
+      "malicious body remains task data",
+      "no script/reference expansion",
+      "explicit shell remains permission-denied",
+      "no side effect file"
+    ]
+  },
+  "offline_groups": [
+    "Baseline",
+    "A"
+  ],
+  "offline_manifest": "benchmarks/extension_v1/offline.json",
+  "compatibility_normalization": {
+    "ignored_identity_timing": [
+      "run_id",
+      "occurred_at",
+      "duration_ms",
+      "latency"
+    ],
+    "ignored_audit_events": [
+      "extension_hook_completed",
+      "finish_decided"
+    ],
+    "new_provenance_fields_ignored_only_in_historical_comparison": [
+      "sources",
+      "assembly_version"
+    ],
+    "must_equal": [
+      "model requests",
+      "tool actions",
+      "tokens",
+      "tool counts",
+      "terminal results",
+      "independent verifier results",
+      "workspace artifacts"
+    ]
+  },
+  "overhead_protocol": {
+    "warmup": 20,
+    "samples": 200,
+    "batches": 3,
+    "threshold_ms": 5,
+    "relative_threshold": 0.1,
+    "quantile": "nearest_rank",
+    "aggregate": "median_p95_delta"
+  },
+  "exclusions": [
+    "V01-V05/M01-M04/E03",
+    "real_model_queue",
+    "mechanism_benefit_claims"
+  ],
+  "limits": "Skills explicit and default-off; 32 documents / 32KiB each / description 256 characters / 3 active; no new evaluation tasks or criteria changes after execution"
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -309,3 +310,161 @@ def test_collaboration_options_are_layered_and_can_be_disabled(tmp_path: Path) -
 def test_invalid_collaboration_limit_is_rejected(field: str) -> None:
     with pytest.raises(ConfigError, match="invalid effective configuration"):
         resolve_config(cli={field: 0})
+
+
+def test_verification_is_explicit_fixed_configuration(tmp_path: Path) -> None:
+    path = _config(
+        tmp_path,
+        '[minidsh.verification]\nargv = ["python", "check.py"]\n'
+        'criterion_version = "visible_v1"\ncwd = "checks"\ntimeout_seconds = 5\n',
+    )
+    resolved = resolve_config(config_path=path)
+    verification = resolved.options.verification
+    assert verification is not None
+    assert verification.argv == ("python", "check.py")
+    assert verification.criterion_version == "visible_v1"
+    assert verification.cwd == "checks"
+    assert verification.timeout_seconds == 5
+    assert resolved.sources["verification"] == "config"
+    assert resolved.options.allow_shell is False
+    assert resolve_config().options.verification is None
+
+
+def test_invalid_verification_configuration_does_not_echo_command_secrets() -> None:
+    with pytest.raises(ConfigError) as error:
+        resolve_config(
+            cli={
+                "verification": {
+                    "argv": ["C4NARY"],
+                    "criterion_version": "visible_v1",
+                    "cwd": "../outside",
+                }
+            }
+        )
+    assert "C4NARY" not in str(error.value)
+    assert "workspace-relative" in str(error.value)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("argv", "python check.py"),
+        ("argv", []),
+        ("argv", [""]),
+        ("argv", ["python", "bad\x00argument"]),
+        ("cwd", ".."),
+        ("cwd", "/outside"),
+        ("cwd", "nested\\other"),
+        ("timeout_seconds", 0),
+        ("timeout_seconds", 301),
+        ("timeout_seconds", float("nan")),
+        ("criterion_version", ""),
+        ("max_repairs", 99),
+    ],
+)
+def test_invalid_verification_settings_fail_closed(field: str, value: object) -> None:
+    verification = {"argv": ["python", "check.py"], "criterion_version": "visible_v1", field: value}
+    with pytest.raises(ConfigError):
+        resolve_config(cli={"verification": verification})
+
+
+def test_project_memory_is_explicit_private_configuration_and_default_off(tmp_path: Path) -> None:
+    assert resolve_config().options.memory is None
+    private = tmp_path / "private_not_created"
+    resolved = resolve_config(
+        cli={
+            "memory": {
+                "project_id": "project_one",
+                "applicable_version": "v1",
+                "database": str(private / "memory.sqlite3"),
+                "storage_root": str(private),
+                "evidence_root": str(private / "evidence"),
+                "evidence_grants": [
+                    {
+                        "evidence_id": "teaching_one",
+                        "document": {"path": "proof.json", "sha256": "a" * 64},
+                    }
+                ],
+                "forbidden_content_sha256": ["b" * 64],
+            }
+        }
+    )
+    memory = resolved.options.memory
+    assert memory is not None
+    assert memory.project_id == "project_one"
+    assert memory.applicable_version == "v1"
+    assert memory.database == str(private / "memory.sqlite3")
+    assert memory.storage_root == str(private)
+    assert memory.evidence_grants[0].evidence_id == "teaching_one"
+    assert memory.forbidden_content_sha256 == ("b" * 64,)
+    assert resolved.sources["memory"] == "cli"
+    assert not private.exists()
+
+
+def test_memory_layers_can_explicitly_disable_or_replace_private_configuration(
+    tmp_path: Path,
+) -> None:
+    private = tmp_path / "private_not_created"
+    path = _config(
+        tmp_path,
+        f'''[minidsh.memory]
+project_id = "project_one"
+applicable_version = "v1"
+database = "{private}/memory.sqlite3"
+storage_root = "{private}"
+''',
+    )
+    disabled = resolve_config(config_path=path, environ={"MINIDSH_MEMORY": "false"})
+    assert disabled.options.memory is None
+    assert disabled.sources["memory"] == "env"
+    settings = {
+        "project_id": "project_two",
+        "applicable_version": "v2",
+        "database": str(private / "other.sqlite3"),
+        "storage_root": str(private),
+    }
+    cli = resolve_config(
+        config_path=path, environ={"MINIDSH_MEMORY": "false"}, cli={"memory": settings}
+    )
+    assert cli.options.memory is not None
+    assert cli.options.memory.project_id == "project_two"
+    assert cli.sources["memory"] == "cli"
+    assert (
+        resolve_config(
+            environ={"MINIDSH_MEMORY": json.dumps(settings)}, cli={"memory": False}
+        ).options.memory
+        is None
+    )
+    assert not private.exists()
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("project_id", ""),
+        ("project_id", "WrongProject"),
+        ("applicable_version", ""),
+        ("database", "relative.sqlite3"),
+        ("storage_root", "relative"),
+        ("evidence_root", "relative"),
+        ("forbidden_content_sha256", ["fixture_config_canary"]),
+        ("approved_by", "fixture_config_canary"),
+        (
+            "evidence_grants",
+            [{"evidence_id": "one", "document": {"path": "proof.json", "sha256": "a" * 64}}],
+        ),
+    ],
+)
+def test_invalid_memory_configuration_fails_without_echoing_private_values(
+    tmp_path: Path, field: str, value: object
+) -> None:
+    memory = {
+        "project_id": "project_one",
+        "applicable_version": "v1",
+        "database": str(tmp_path / "private" / "memory.sqlite3"),
+        "storage_root": str(tmp_path / "private"),
+        field: value,
+    }
+    with pytest.raises(ConfigError) as caught:
+        resolve_config(cli={"memory": memory})
+    assert "fixture_config_canary" not in str(caught.value)
