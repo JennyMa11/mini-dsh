@@ -11,7 +11,7 @@ Mini-dsh 是一个供自己在终端使用的 **Coding Agent Harness / Runtime**
 
 - 版本：`0.3.2`（Apache-2.0）；本页能力与评测说明更新至 2026-10-28。
 - 技术基线：Python `>=3.12`、`uv`、`src/` 布局；运行依赖包括 `pydantic`、流式 HTTP 的 `httpx` 和终端输入的 `prompt_toolkit`，MLX 与 MCP 为可选依赖。
-- 规模：105 个源码模块、59 个测试模块、1008 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
+- 规模：105 个源码模块、59 个测试模块、1009 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
 
 轻量 DSH 扩展现已提供可取消的 OpenAI-compatible 流式输出、逐次审批、稳定会话及历史分叉、
 配置驱动的 Python 插件组合、受控执行钩子和统一 local/Docker 文件与进程后端。
@@ -171,7 +171,7 @@ uv run mini-dsh work --workspace /absolute/path/to/website \
 终端列出修改文件和真实测试状态：非零退出码显示失败，测试后继续改文件会显示需重新验证。
 测试通过只代表配置的命令返回成功，测试充分性与最终任务正确性仍需你审核。
 
-常用命令：`/help`、`/status`、`/tools`、`/diff`、`/test`、`/key`、`/clear`、`/resume RUN_ID`、`/exit`。
+常用命令：`/help`、`/status`、`/tools`、`/diff`、`/test`、`/budget`、`/key`、`/clear`、`/resume RUN_ID`、`/exit`。
 每轮输出 Run ID，重启后可以用：
 
 ```bash
@@ -268,7 +268,9 @@ Local-first 模式另有轻量 Plan State。独立验证由 Benchmark 侧执行�
 把工具请求交给 Tool Runtime，将 Observation 提交到历史后继续。终态只有
 `finished`、`failed`、`cancelled`、`budget_exhausted`。
 
-四类预算分别限制步骤、Token、工具调用和墙钟时间。Token 用量通常在模型返回后才能确定，
+四类预算分别限制步骤、Token、工具调用和墙钟时间。交互会话内可用 `/budget` 查看，
+或用 `/budget tokens 200000`、`/budget seconds 1800` 修改；修改从下一轮任务生效，
+不写入配置文件，重启后恢复启动值。Token 用量通常在模型返回后才能确定，
 因此可能出现单次在途超量：全部计入实际消耗，达到额度后停止后续调用与动作。
 这是一种可观测的停止策略，不能宣称实际 Token 永远不越过名义额度。
 模型失败携带已报告用量；未知用量单独记录。契约见[失败用量记录](docs/model-failure-accounting.md)。
@@ -837,7 +839,7 @@ uv run mini-dsh chat --model-profile deepseek --multi-agent --subagent-max-paral
 ## 工程门禁与文档
 
 工程检查使用 Ruff、mypy strict、pytest，测试包含 unit、integration、e2e。
-1008 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
+1009 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
 
 提高预算并扩大真实模型样本的实验见 [Harness v2 冻结设计](docs/harness-study-v2.md)。
 2026-10-28 新增 36 次公开函数任务回归及 72 次机制配对运行，全部 108 行保留，

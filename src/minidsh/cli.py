@@ -1567,6 +1567,8 @@ def _chat(args: argparse.Namespace) -> int:  # noqa: PLR0915 - explicit interact
         else CredentialSelection(None, "not used")
     )
 
+    budget_state = {"value": resolved.budget}
+
     def configured_factory(options: RuntimeOptions, api_key: str | None = None) -> LocalRuntime:
         environment: Mapping[str, str] = os.environ
         selected_key = api_key if api_key is not None else credential.value
@@ -1587,7 +1589,11 @@ def _chat(args: argparse.Namespace) -> int:  # noqa: PLR0915 - explicit interact
             args,
             workspace,
             model,
-            replace(resolved, options=replace(options, pricing=pricing)),
+            replace(
+                resolved,
+                budget=budget_state["value"],
+                options=replace(options, pricing=pricing),
+            ),
             environ=environment,
         )
 
@@ -1642,6 +1648,8 @@ def _chat(args: argparse.Namespace) -> int:  # noqa: PLR0915 - explicit interact
         options=resolved.options,
         cost_reportable=priced,
         resume=args.resume,
+        budget=resolved.budget,
+        budget_applier=lambda budget: budget_state.__setitem__("value", budget),
         credential_factory=(
             (lambda key: configured_factory(resolved.options, key))
             if args.script is None and args.provider == "openai-compatible"

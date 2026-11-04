@@ -16,7 +16,7 @@ import pytest
 from minidsh.adapters import ModelProfile, ScriptedModel
 from minidsh.cli import main
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
-from minidsh.domain import ModelRequest, ModelResponse, Role, ToolCall
+from minidsh.domain import AgentBudget, ModelRequest, ModelResponse, Role, ToolCall
 from minidsh.interactive import InteractiveChat
 
 
@@ -154,6 +154,39 @@ def test_status_bar_line_reports_permissions_and_last_turn(tmp_path: Path) -> No
     assert tmp_path.name in line
     assert "write+shell" in line
     assert "no turns yet" in line
+
+
+def test_budget_command_reports_and_updates_run_limits(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    applied: list[AgentBudget] = []
+    _input(
+        monkeypatch,
+        ["/budget", "/budget tokens 250000", "/budget seconds 1200", "/budget tokens 0", "/exit"],
+    )
+    chat = InteractiveChat(
+        workspace=tmp_path,
+        runtime_factory=lambda: build_local_runtime(
+            workspace=tmp_path, model=ScriptedModel([]), options=RuntimeOptions()
+        ),
+        model_label="test",
+        options=RuntimeOptions(),
+        cost_reportable=False,
+        budget=AgentBudget(),
+        budget_applier=applied.append,
+    )
+
+    assert chat.run() == 0
+
+    output = capsys.readouterr().out
+    assert "50 steps · 100000 tokens · 100 tool calls · 900s" in output
+    assert applied == [
+        AgentBudget(max_tokens=250_000),
+        AgentBudget(max_tokens=250_000, max_duration_seconds=1200),
+    ]
+    assert "Budget values must be positive." in output
 
 
 def test_chat_resume_restores_history(

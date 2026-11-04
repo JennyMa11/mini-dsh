@@ -17,7 +17,16 @@ from minidsh import __version__
 from minidsh.adapters import JsonlTraceWriter, JsonSessionStore, ScriptedModel
 from minidsh.adapters.conversations import JsonConversationRepository
 from minidsh.composition import LocalRuntime, RuntimeOptions, build_local_runtime
-from minidsh.domain import Event, Message, Role, RunResult, ToolCall, redact_text, redact_value
+from minidsh.domain import (
+    AgentBudget,
+    Event,
+    Message,
+    Role,
+    RunResult,
+    ToolCall,
+    redact_text,
+    redact_value,
+)
 from minidsh.domain.harness import ApprovalChoice, ApprovalRequest
 from minidsh.runtime.approvals import CallbackApproval
 from minidsh.terminal import TerminalInput
@@ -28,6 +37,7 @@ _HELP = """/help             Show commands
 /diff             Show the workspace Git diff
 /test             Run the configured tests and keep their result for follow-ups
 /key              Enter or update the provider API Key privately
+/budget [KEY VALUE] Show or change run budgets (steps, tokens, tools, seconds)
 /clear            Start a fresh conversation (files stay as they are)
 /resume RUN_ID    Continue a saved run from this workspace
 /sessions         List saved conversations and runs
@@ -75,6 +85,8 @@ class InteractiveChat:
         options: RuntimeOptions,
         cost_reportable: bool,
         resume: str | None = None,
+        budget: AgentBudget | None = None,
+        budget_applier: Callable[[AgentBudget], None] | None = None,
         credential_factory: Callable[[str], LocalRuntime] | None = None,
         credential_saver: Callable[[str], Awaitable[Path]] | None = None,
         credential_source: str | None = None,
@@ -86,6 +98,8 @@ class InteractiveChat:
         self._options = options
         self._cost_reportable = cost_reportable
         self._resume = resume
+        self._budget = budget or AgentBudget()
+        self._budget_applier = budget_applier
         self._credential_factory = credential_factory
         self._credential_saver = credential_saver
         self._credential_source = credential_source
@@ -184,6 +198,74 @@ class InteractiveChat:
         workspace = self._workspace.name or str(self._workspace)
         return f" {self._model_label} · {workspace} · {permissions} · {self._last_summary}"
 
+    def _budget_command(self, argument: str) -> None:
+        if not argument:
+            budget = self._budget
+            _write(
+                f"  Budget: {budget.max_steps} steps · {budget.max_tokens} tokens · "
+                f"{budget.max_tool_calls} tool calls · {budget.max_duration_seconds:g}s"
+            )
+            _write("  Change: /budget KEY VALUE, keys: steps, tokens, tools, seconds")
+            return
+        try:
+            key, raw = argument.split()
+        except ValueError:
+            _write("Usage: /budget KEY VALUE")
+            return
+        updated = self._parse_budget(key, raw)
+        if updated is None:
+            return
+        if self._budget_applier is None:
+            self._budget = updated
+            _write("Budget updated for display only; this runtime cannot apply it.")
+            return
+        try:
+            self._budget_applier(updated)
+            self._reset_runtime()
+        except (OSError, ValueError, RuntimeError) as exc:
+            _write(f"Cannot apply budget: {exc}")
+            return
+        self._budget = updated
+        _write(
+            f"Budget updated: {updated.max_steps} steps · {updated.max_tokens} tokens · "
+            f"{updated.max_tool_calls} tool calls · {updated.max_duration_seconds:g}s "
+            "(from the next task)"
+        )
+
+    def _parse_budget(self, key: str, raw: str) -> AgentBudget | None:  # noqa: PLR0911
+        if key == "seconds":
+            try:
+                seconds = float(raw)
+            except ValueError:
+                _write(f"Invalid value for seconds: {raw}")
+                return None
+            if seconds <= 0:
+                _write("Budget values must be positive.")
+                return None
+            return replace(self._budget, max_duration_seconds=seconds)
+        if key not in {"steps", "tokens", "tools", "tool-calls"}:
+            _write("Unknown budget key. Use steps, tokens, tools or seconds.")
+            return None
+        try:
+            value = int(raw)
+        except ValueError:
+            _write(f"Invalid value for {key}: {raw}")
+            return None
+        if value <= 0:
+            _write("Budget values must be positive.")
+            return None
+        if key == "steps":
+            return replace(self._budget, max_steps=value)
+        if key == "tokens":
+            return replace(self._budget, max_tokens=value)
+        return replace(self._budget, max_tool_calls=value)
+
+    def _reset_runtime(self) -> None:
+        runtime = self._runtime
+        self._runtime = None
+        if runtime is not None and runtime.close is not None:
+            self._runner.run(self._await_callback(runtime.close()))
+
     def _command(self, task: str) -> bool:  # noqa: PLR0912 - explicit user command dispatch
         command, _, argument = task.partition(" ")
         argument = argument.strip()
@@ -200,6 +282,8 @@ class InteractiveChat:
                 _write(f"Cannot resume session: {exc}")
         elif command == "/fork" and argument:
             self._fork(argument)
+        elif command == "/budget":
+            self._budget_command(argument)
         elif argument:
             _write("Unknown command or arguments. Type /help.")
         elif command == "/help":

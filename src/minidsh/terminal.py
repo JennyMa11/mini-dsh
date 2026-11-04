@@ -34,6 +34,7 @@ _COMMANDS: dict[str, str] = {
     "/tools": "show registered tools and command permissions",
     "/diff": "show the workspace Git diff",
     "/test": "run the configured tests",
+    "/budget": "show or change steps, tokens, tools and time limits",
     "/key": "enter or update the provider API key privately",
     "/clear": "start a fresh conversation",
     "/resume": "continue a saved run ID",
