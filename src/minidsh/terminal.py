@@ -9,7 +9,6 @@ from collections.abc import Callable, Iterable
 from typing import override
 
 from prompt_toolkit import PromptSession
-from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.completion import CompleteEvent, Completer, Completion
 from prompt_toolkit.document import Document
 from prompt_toolkit.filters import Always
@@ -20,6 +19,7 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.key_binding.key_processor import KeyPressEvent
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.layout.controls import BufferControl
+from prompt_toolkit.layout.dimension import Dimension
 from prompt_toolkit.layout.layout import Layout
 from prompt_toolkit.layout.mouse_handlers import MouseHandlers
 from prompt_toolkit.layout.screen import Screen, WritePosition
@@ -75,9 +75,8 @@ def _status_text(value: str) -> str:
 class _CompactInputLayout(HSplit):
     """Render the required draft rows without filling all space below the cursor."""
 
-    def __init__(self, original: HSplit, buffer: Buffer) -> None:
+    def __init__(self, original: HSplit) -> None:
         super().__init__(original.children)
-        self._buffer = buffer
 
     @override
     def write_to_screen(
@@ -90,9 +89,6 @@ class _CompactInputLayout(HSplit):
         z_index: int | None,
     ) -> None:
         rows = self.preferred_height(write_position.width, write_position.height).preferred
-        completion = self._buffer.complete_state
-        if completion is not None:
-            rows += min(8, len(completion.completions))
         compact = WritePosition(
             write_position.xpos,
             write_position.ypos,
@@ -146,9 +142,11 @@ def create_prompt_session(
         multiline=True,
         prompt_continuation="... > ",
         history=InMemoryHistory(),
-        enable_history_search=True,
+        # prompt_toolkit disables complete_while_typing while history search is on;
+        # Up/Down still navigate the in-memory history without prefix search.
+        enable_history_search=False,
         completer=_CommandCompleter(),
-        complete_while_typing=False,
+        complete_while_typing=True,
         key_bindings=bindings,
         reserve_space_for_menu=0,
         rprompt=[("class:hint", "Enter: send | Alt+Enter: newline")],
@@ -164,17 +162,23 @@ def create_prompt_session(
         input=input_stream,
         output=output,
     )
-    # Grow with the draft, rather than filling the terminal with blank input rows.
+    default_buffer = session.default_buffer
+
+    def buffer_height() -> Dimension:
+        state = default_buffer.complete_state
+        if state is None:
+            return Dimension()
+        return Dimension(min=min(8, len(state.completions)))
+
+    # Grow with the draft and the visible completion menu, without reserving blank rows.
     for window in session.layout.find_all_windows():
-        if (
-            isinstance(window.content, BufferControl)
-            and window.content.buffer is session.default_buffer
-        ):
+        if isinstance(window.content, BufferControl) and window.content.buffer is default_buffer:
             window.dont_extend_height = Always()
+            window.height = buffer_height
     container = session.layout.container
     if isinstance(container, HSplit):
         session.layout = Layout(
-            _CompactInputLayout(container, session.default_buffer),
+            _CompactInputLayout(container),
             focused_element=session.layout.current_window,
         )
         session.app.layout = session.layout

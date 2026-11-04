@@ -37,7 +37,8 @@ _HELP = """/help             Show commands
 
 Ctrl+C cancels the current task or clears the input.
 Enter sends; Alt+Enter inserts a newline (or Escape, then Enter).
-Up/Down recalls input history; Tab completes commands.
+Type / to list commands; keep typing to filter; Tab completes.
+Up/Down recalls input history.
 Multiline paste stays in one draft until Enter sends it.
 Ending a line with a backslash also inserts a newline.
 """

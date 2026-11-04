@@ -12,6 +12,7 @@ import time
 
 import pytest
 from prompt_toolkit.application.current import set_app
+from prompt_toolkit.buffer import Buffer
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 from prompt_toolkit.input import create_pipe_input
@@ -57,6 +58,38 @@ def test_slash_completion_lists_matching_commands_with_descriptions() -> None:
         }
         assert all(completion.display_meta for completion in completions)
         assert len(list(completer.get_completions(Document(), CompleteEvent()))) == len(_COMMANDS)
+
+
+@pytest.mark.asyncio
+async def test_typing_slash_opens_and_filters_the_command_menu() -> None:
+    with create_pipe_input() as pipe:
+        session = create_prompt_session(input_stream=pipe, output=DummyOutput())
+        assert session.complete_while_typing is True
+        changes = asyncio.Event()
+
+        def completion_changed(_buffer: Buffer) -> None:
+            changes.set()
+
+        session.default_buffer.on_completions_changed += completion_changed
+
+        async def wait_for_count(expected: int) -> None:
+            async with asyncio.timeout(2):
+                while True:
+                    changes.clear()
+                    state = session.default_buffer.complete_state
+                    if state is not None and len(state.completions) == expected:
+                        return
+                    await changes.wait()
+
+        task = asyncio.create_task(session.prompt_async())
+        try:
+            pipe.send_text("/")
+            await wait_for_count(len(_COMMANDS))
+            pipe.send_text("s")
+            await wait_for_count(3)
+        finally:
+            task.cancel()
+            await asyncio.gather(task, return_exceptions=True)
 
 
 def test_status_bar_stays_on_one_safe_line_and_fits_the_terminal(
@@ -180,6 +213,59 @@ async def test_editor_renders_only_the_required_rows(draft: str, rows: int) -> N
             )
         await session.app.cancel_and_wait_for_background_tasks()
         assert screen.height == rows
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(os.name != "posix", reason="real PTY acceptance is POSIX-specific")
+def test_real_terminal_shows_the_slash_command_menu() -> None:
+    code = """
+from minidsh.terminal import TerminalInput
+TerminalInput().read_task()
+"""
+    master, slave = os.openpty()
+    process = subprocess.Popen(
+        [sys.executable, "-c", code],
+        stdin=slave,
+        stdout=slave,
+        stderr=slave,
+        env={
+            **os.environ,
+            "TERM": "xterm-256color",
+            "COLUMNS": "100",
+            "LINES": "30",
+        },
+    )
+    os.close(slave)
+    output = bytearray()
+    sent = False
+    try:
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline:
+            if not select.select([master], [], [], 0.1)[0]:
+                if process.poll() is not None:
+                    break
+                continue
+            try:
+                chunk = os.read(master, 8192)
+            except OSError:
+                break
+            if not chunk:
+                break
+            output.extend(chunk)
+            if b"\x1b[6n" in chunk:
+                os.write(master, b"\x1b[1;1R")
+            if b"you > " in output and not sent:
+                os.write(master, b"/")
+                sent = True
+            if b"/status" in output and b"show commands" in output:
+                break
+        assert b"/status" in output, repr(bytes(output))
+        assert b"show commands" in output, repr(bytes(output))
+    finally:
+        os.close(master)
+        if process.poll() is None:
+            process.kill()
+        process.wait(timeout=2)
 
 
 @pytest.mark.integration
