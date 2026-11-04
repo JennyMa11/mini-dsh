@@ -11,7 +11,7 @@ Mini-dsh 是一个供自己在终端使用的 **Coding Agent Harness / Runtime**
 
 - 版本：`0.3.2`（Apache-2.0）；本页能力与评测说明更新至 2026-10-28。
 - 技术基线：Python `>=3.12`、`uv`、`src/` 布局；运行依赖包括 `pydantic`、流式 HTTP 的 `httpx` 和终端输入的 `prompt_toolkit`，MLX 与 MCP 为可选依赖。
-- 规模：105 个源码模块、59 个测试模块、1001 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
+- 规模：105 个源码模块、59 个测试模块、1002 个测试、35 个 Benchmark 任务（`core` 25 + `repo` 6 + `hard` 4）。测试数量由完整 pytest 收集核对，不代表功能验收充分。
 
 轻量 DSH 扩展现已提供可取消的 OpenAI-compatible 流式输出、逐次审批、稳定会话及历史分叉、
 配置驱动的 Python 插件组合、受控执行钩子和统一 local/Docker 文件与进程后端。
@@ -125,11 +125,13 @@ you > /test
 you > /exit
 ```
 
-`work` 明确选择一个允许工作区编辑的配置：提供文件定位、局部读取、Patch、新文件写入
-和 `shell` 工具。shell 默认只允许常用开发命令（`git`、`uv`、`python`、`python3`、
-`pytest`、`ruff`、`mypy`），每次调用仍需终端审批；`--no-allow-shell` 可关闭，
-其他程序用 `--allow-command` 显式列出。模型不能修改 `test` 工具的命令参数。
-已有 CLI、环境变量或配置中的显式权限限制继续优先，例如 `--no-allow-write`。
+`work` 明确选择一个允许工作区编辑的配置：默认注册当前能力允许的全部工具，不在
+运行时按预设裁剪；test/build 需要配置命令，多 Agent、Skills 与 Memory 仍由各自开关启用。
+文件定位、局部读取、Patch、新文件写入和 `shell` 默认可用。
+shell 默认只允许常用开发命令（`git`、`uv`、`python`、`python3`、`pytest`、`ruff`、`mypy`），
+每次调用仍需终端审批；`--no-allow-shell` 可关闭，其他程序用 `--allow-command` 显式列出。
+模型不能修改 `test` 工具的命令参数。已有 CLI、环境变量或配置中的显式权限限制继续优先，
+例如 `--no-allow-write`。
 输入 `/tools` 可查看工具列表、执行后端和命令授权，无需模型凭据。
 本地后端的命令运行在启动 Mini-dsh 的同一台机器上；工作区限制不代表远程执行。
 例如需要查找并停止本机开发服务器时，启动时显式授予对应程序：
@@ -831,7 +833,7 @@ uv run mini-dsh chat --model-profile deepseek --multi-agent --subagent-max-paral
 ## 工程门禁与文档
 
 工程检查使用 Ruff、mypy strict、pytest，测试包含 unit、integration、e2e。
-1001 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
+1002 个测试是当前收集规模，不是模型能力成绩；覆盖率与通过数也不能替代功能覆盖矩阵。
 
 提高预算并扩大真实模型样本的实验见 [Harness v2 冻结设计](docs/harness-study-v2.md)。
 2026-10-28 新增 36 次公开函数任务回归及 72 次机制配对运行，全部 108 行保留，

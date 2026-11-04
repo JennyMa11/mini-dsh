@@ -23,6 +23,16 @@
 - 交互式 work 默认 `approval_mode=ask`；shell 有副作用且 `approval_required` 为真，
   因此每次调用仍要终端审批。`--approval-mode configured` 只用于用户显式选择或离线测试。
 
+## 2026-11-04：默认注册全部可用工具
+
+用户进一步要求“所有工具默认注册，不要运行时再修改”。work 不再根据 `allow_write`、
+`allow_shell`、test/build 或多 Agent 开关构造 `enabled_tools` 子集；默认保持
+`enabled_tools` 未设置，由 Tool Registry 注册当前能力允许的全部工具。
+
+能力仍由构造条件决定，而不是运行时裁剪工具列表：test/build 需要配置命令，
+多 Agent、Skills 与 Memory 需要各自开关或配置。显式配置的 `enabled_tools`
+仍作为用户过滤生效，不会被 work 预设覆盖。
+
 ## 替代方案
 
 - 保持默认拒绝：仍然需要启动参数，未满足用户“任意目录裸启动即可用 shell”的要求。

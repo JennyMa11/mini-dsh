@@ -1724,22 +1724,6 @@ def _work_config(_args: argparse.Namespace, resolved: ResolvedConfig) -> Resolve
             options,
             allowed_commands=options.allowed_commands | {Path(options.test_command[0]).name},
         )
-    # A fixed test capability does not also expose the model-facing argv shell tool.
-    if options.enabled_tools is None:
-        tools = {"read_file", "search", "git"}
-        if options.progressive_tools_enabled:
-            tools.update({"list_files", "search_code", "find_symbol"})
-        if options.allow_write:
-            tools.update({"patch_file", "write_file"})
-        if options.allow_shell:
-            tools.add("shell")
-            if options.test_command:
-                tools.add("test")
-            if options.build_command:
-                tools.add("build")
-        if options.multi_agent_enabled:
-            tools.add("delegate_sub_agents")
-        options = replace(options, enabled_tools=frozenset(tools))
     if "system_prompt" in selected:
         backend = (
             "Execution backend: local. Local command tools run on the same host machine "

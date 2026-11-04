@@ -84,7 +84,47 @@ async def test_explicit_extension_tool_is_resolved_after_plugin_start(tmp_path: 
 
 
 @pytest.mark.asyncio
-async def test_work_auto_filter_includes_plugin_tools_and_default_shell(tmp_path: Path) -> None:
+async def test_work_registers_every_available_tool_without_runtime_filtering(
+    tmp_path: Path,
+) -> None:
+    resolved = resolve_config(
+        cli={
+            "allow_write": True,
+            "allow_shell": True,
+            "test_command": ["pytest"],
+            "progressive_tools_enabled": True,
+        }
+    )
+    resolved = _work_config(argparse.Namespace(command="work"), resolved)
+    assert resolved.options.enabled_tools is None
+    runtime = build_configured_runtime(
+        workspace=tmp_path,
+        model=ScriptedModel([ModelResponse("ok")]),
+        options=resolved.options,
+        budget=resolved.budget,
+    )
+    try:
+        await runtime.agent.run("hello")
+        names = {tool.name for tool in runtime.tools.definitions()}
+        assert {
+            "read_file",
+            "search",
+            "git",
+            "list_files",
+            "search_code",
+            "find_symbol",
+            "patch_file",
+            "write_file",
+            "shell",
+            "test",
+        } <= names
+    finally:
+        assert runtime.close is not None
+        await runtime.close()
+
+
+@pytest.mark.asyncio
+async def test_work_registers_plugin_tools_alongside_default_shell(tmp_path: Path) -> None:
     catalog = PluginCatalog()
     tool = ReadFileTool(WorkspaceSandbox(tmp_path))
     tool.definition = replace(tool.definition, name="extension_read")
