@@ -3,6 +3,8 @@
 本页描述当前工作树的目录职责、依赖规则与阅读路径。规则来自仓库
 [AGENTS.md](../AGENTS.md) 与 [ADR 0001](adr/0001-runtime-architecture.md)，本次整理决策见
 [ADR 0031](adr/0031-architecture-checks.md)。结构检查不替代功能、安全或机制收益验收。
+CLI 职责拆分见 [ADR 0032](adr/0032-cli-command-modules.md)。
+模型选择与配置翻译拆分见 [ADR 0033](adr/0033-cli-model-configuration.md)。
 
 ## 1. 仓库目录
 
@@ -182,3 +184,39 @@ uv run pytest tests/test_architecture.py
 第一轮检查：105 个源码模块、379 条去重内部导入时发现 1 条反向依赖；提取证据 Schema
 后为 106 个模块、380 条导入，分层违规 0、显式多模块循环 0。可再生成快照见
 [首轮结构 JSON](results/architecture-2026-11-05.json)，对应当时源码与检查器，保持不变。
+
+第二轮拆分 CLI 参数、报告命令与 work 配置后，110 个模块、388 条内部导入，分层违规
+0、显式多模块循环 0。`cli.py` 从 1816 行降至 1289 行；其余实现分布在三个职责文件
+与一个不聚合导入的包入口。当前快照见
+[CLI 整理后结构 JSON](results/architecture-cli-2026-11-05.json)。结构检查不重签历史功能验收。
+
+第三轮将模型选择与配置翻译独立后，112 个模块、397 条内部导入，分层违规 0、显式
+多模块循环 0；`cli.py` 为 949 行。当前源码与检查器身份见
+[本轮最终结构 JSON](results/architecture-final-2026-11-05.json)。前两份报告保持原样。
+
+## 6. 当前维护热点与后续顺序
+
+| 位置 | 结构压力 | 后续整理方向 |
+| --- | --- | --- |
+| `cli.py` | 已拆出参数、离线查看命令、work 配置、模型选择和配置翻译；交互/运行接线与评测驱动保留 | 后续若有明确任务再拆评测驱动；不从 commands 回调 cli |
+| `application/agent_loop.py` | 预算、流式、完成与恢复状态集中 | 先固化状态转换契约，再按独立职责拆分；不增加透明转发层 |
+| `composition.py` / `configured_runtime.py` | 配置、生命周期和多种实现选择交叉 | 明确共同接线职责，防止新增平行组装系统 |
+| `runtime/` | 核心机制与能力扩展共处一个物理目录 | 本次先按逻辑职责检查；有明确迁移任务时再移动扩展目录 |
+| `adapters/__init__.py` | 聚合导出扩大导入时加载的模块集合 | 后续评估精确导入，单独验证可选模型依赖的惰性行为 |
+| `tests/` | 当前是平铺文件，标记与能力分组并存 | 先按能力名和 integration/e2e 标记定位，避免破坏冻结 nodeid |
+| `docs/` | 阶段开发记录与最终报告并存 | 按源码身份和阶段最终报告解释状态，不以较早检查点覆盖结果 |
+
+以上清单区分了已完成的 CLI 拆分和后续工作。尚未移动其他大模块、历史证据或测试节点，
+也没有扩充下一阶段功能。新增文件按上表放置；需要改变依赖方向时，先更新 ADR、
+检查规则和契约测试。
+
+本轮按用户要求在模型与配置模块拆分及工程门禁完成后结束。后续清单是维护备忘，
+不表示继续执行或自动进入新的功能阶段。
+
+## 7. 源码阅读顺序
+
+先读 `domain/models.py → ports/protocols.py → application/agent_loop.py`，了解一次运行。
+再读 `composition.py → tools/runtime.py → infrastructure/`，了解能力如何组装与授权。
+随后读 `application/context_assembly.py → context/ → runtime/skills/ → runtime/memory.py`。
+需要会话恢复时读 `application/conversations.py` 与对应 Session adapters；需要结果评估时
+再进入 `evaluation/` 和 `benchmark/`，不要把评测驱动当作线上 Loop 的组成部分。

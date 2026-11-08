@@ -44,6 +44,10 @@
 
 | [0031](0031-architecture-checks.md) | 显式分层检查与独立证据输入解码 | Accepted |
 
+| [0032](0032-cli-command-modules.md) | CLI 参数、离线查看命令与 work 配置分离 | Accepted |
+
+| [0033](0033-cli-model-configuration.md) | CLI 模型选择与配置翻译的显式依赖 | Accepted |
+
 ## 状态含义
 
 - **Proposed**：规划中的决策；尚未完成实现与验收。

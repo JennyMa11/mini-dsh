@@ -11,8 +11,84 @@ import pytest
 
 from minidsh.adapters import ModelProfile, ScriptedModel
 from minidsh.cli import main
+from minidsh.commands.arguments import build_parser
 from minidsh.domain import ModelRequest, ModelResponse, ToolCall
 from minidsh.gui import GuiSession
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected"),
+    [
+        (["doctor"], {"command": "doctor"}),
+        (["run", "task"], {"command": "run", "task": "task", "provider": "scripted"}),
+        (["chat"], {"command": "chat", "provider": "openai-compatible", "allow_unpriced": True}),
+        (["work"], {"command": "work", "provider": "openai-compatible", "session": None}),
+        (["gui"], {"command": "gui", "port": 0, "no_open": False}),
+        (["benchmark", "tasks.json"], {"command": "benchmark", "repeat": 1}),
+        (["ablation", "tasks.json"], {"command": "ablation", "suite": "standard", "repeat": 1}),
+        (
+            ["matrix", "tasks.json", "--model-4b", "four", "--model-8b", "eight"],
+            {"command": "matrix", "repeat": 3, "model_4b": Path("four")},
+        ),
+        (
+            ["formal-study", "tasks.json", "--model-4b", "four", "--model-8b", "eight"],
+            {"command": "formal-study", "phase": "all", "repeat": 3},
+        ),
+        (["harness-study", "check"], {"command": "harness-study", "action": "check"}),
+        (["report", "report.json"], {"command": "report", "markdown": None}),
+        (["config"], {"command": "config", "allow_write": None, "allow_shell": None}),
+        (["trace", "replay", "t.jsonl"], {"trace_command": "replay", "as_json": False}),
+        (["trace", "diff", "a.jsonl", "b.jsonl"], {"trace_command": "diff", "as_json": False}),
+        (["trace", "metrics", "t.jsonl"], {"trace_command": "metrics", "evidence": None}),
+    ],
+)
+def test_command_parsing_preserves_defaults(argv: list[str], expected: dict[str, object]) -> None:
+    parsed = vars(build_parser().parse_args(argv))
+    assert {key: parsed[key] for key in expected} == expected
+
+
+def test_explicit_provider_and_permission_revocation_survive_parsing() -> None:
+    args = build_parser().parse_args(
+        [
+            "work",
+            "--provider",
+            "scripted",
+            "--no-allow-write",
+            "--no-allow-shell",
+            "--enabled-tools",
+        ]
+    )
+    assert args.provider_explicit is True
+    assert args.allow_write is False
+    assert args.allow_shell is False
+    assert args.enabled_tools == []
+
+
+@pytest.mark.parametrize("content", ["[", "[]"])
+def test_invalid_report_is_a_cli_error_without_writing_output(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], content: str
+) -> None:
+    source = tmp_path / "invalid.json"
+    destination = tmp_path / "report.md"
+    source.write_text(content, encoding="utf-8")
+    with pytest.raises(SystemExit) as error:
+        main(["report", str(source), "--markdown", str(destination)])
+    assert error.value.code == 2
+    assert "mini-dsh:" in capsys.readouterr().err
+    assert not destination.exists()
+
+
+def test_report_writes_the_requested_markdown_file(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    source = tmp_path / "report.json"
+    destination = tmp_path / "nested/report.md"
+    source.write_text('{"name":"suite","aggregate":{"tasks":1}}', encoding="utf-8")
+    with pytest.raises(SystemExit) as result:
+        main(["report", str(source), "--markdown", str(destination)])
+    assert result.value.code == 0
+    assert destination.read_text(encoding="utf-8") == "# Benchmark report: suite\n\n- `tasks`: 1\n"
+    assert capsys.readouterr().out == f"wrote {destination}\n"
 
 
 def test_noninteractive_run_loads_workspace_key_and_redacts_provider_output(
