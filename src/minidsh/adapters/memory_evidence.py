@@ -12,6 +12,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, ValidationError, field_validator
 
+from minidsh.adapters.scoring_evidence import ScoringEvidence
 from minidsh.domain import JsonValue
 from minidsh.domain.memory import (
     MemoryEvidence,
@@ -20,7 +21,6 @@ from minidsh.domain.memory import (
     MemoryEvidenceKind,
     MemoryValidationError,
 )
-from minidsh.evaluation.harness_metrics import ScoringEvidence
 from minidsh.ports.memory import MemoryEvidenceError
 
 MAX_EVIDENCE_FILE_BYTES = 8 * 1024 * 1024
