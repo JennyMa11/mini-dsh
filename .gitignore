@@ -22,6 +22,8 @@ artifacts/
 traces/
 benchmark-workspaces/
 benchmark-results/
+swanlog/
+.swanlab/
 
 # Editors and operating systems
 .DS_Store

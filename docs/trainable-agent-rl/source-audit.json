@@ -1,0 +1,25 @@
+{
+  "generated_by": "2026-11-06 规划调研：Python hashlib.sha256，对下列本地文件原始字节取摘要；可按 files 清单重新生成",
+  "head": "a7c5d3bb0eff990e701051e6262a62a82bfbf349",
+  "branch": "experiment",
+  "scope": "工作树有既有未提交修改；仅为阅读文件身份，不是完整源码冻结或测试证据",
+  "files": {
+    "README.md": "197bd38c472902a84a7b202b50c4be200d35fb310576e36e1a52e03b2e1c29fc",
+    "docs/architecture.md": "469af608f1566e6d0a3f91805e63d82a0f2987d6bc5c5e8e364c8055ec54d0bd",
+    "docs/extension-roadmap.md": "a4760eb52f6064ef54fa81b9522ad30eac8aec487372d131653d3ca6cf4a7fe6",
+    "pyproject.toml": "5c97d565b1097b5b415f95d73941e031b782f234e0d4d2c681cf30337ae9f648",
+    "src/minidsh/domain/models.py": "4ab1d8e749ff27ce70bcec00e2733a07b915aa4f76f85f08350a924af3d03bcb",
+    "src/minidsh/ports/protocols.py": "b771641bf9172636b348b6f908a16df1cae1d4072ededb6cacdc54fba5153d12",
+    "src/minidsh/application/agent_loop.py": "5096ffcf172d8e20e4e46412623613d445afb53dec63379865f09fca8cc556a1",
+    "src/minidsh/composition.py": "4c6b813a17597b858c900e93bbc4a92373f1e4f98bd3908ed3e5e447fd49cbab",
+    "src/minidsh/tools/runtime.py": "c9afb491484ffbca3c6c5c0218adfd380112e9eb6450f0f22bc35c602448f638",
+    "src/minidsh/adapters/models.py": "b30b1cc4b1b5f4f286ae63566171a6748717be512f10d75e4d9b11182735fb9a",
+    "src/minidsh/adapters/mlx.py": "7cebffba1629e67ec619be8a921479bb0a92f47c5e639099f5039db46aaa57ce",
+    "src/minidsh/adapters/trace.py": "e2c5dc793f04e7bde61b20ad1117fe5f576ee3516460c29f16d39b121fcf00dd",
+    "src/minidsh/infrastructure/containers.py": "ec9582d7ace977d94c6ac74377341e23ec195dd16a595c424bd7085f048e09b7",
+    "src/minidsh/benchmark/runner.py": "b5328711e26bc597609b09d1d1832d9adce13c7f88a33a26159f8748e1f55853",
+    "src/minidsh/benchmark/public_lite.py": "53edce8488b3750781a3c0b259bece5cc53f8905b1212ae5a70376c0915a8f65",
+    "src/minidsh/benchmark/public_swe.py": "4b05aa3033a0a19080c1d0db7e795cea0e8fd72cf741cdd341ab82e293d404a7",
+    "src/minidsh/evaluation/harness_metrics.py": "a62bb8b6947c7f8ec9f9ec02a00010c61795b9ffe8096e5964fcdb2621d17ac6"
+  }
+}

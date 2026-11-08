@@ -1,0 +1,35 @@
+[project]
+name = "minidsh-rl-experiment"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = ["mini-dsh", "pytrio==0.2.9"]
+
+[project.optional-dependencies]
+lab = ["swanlab==0.10.4", "torch==2.9.1"]
+
+[tool.uv.sources]
+mini-dsh = { path = "../..", editable = true }
+
+[dependency-groups]
+dev = ["pytest>=8.4,<9", "pytest-asyncio>=1.2,<2", "ruff>=0.13,<1", "mypy>=1.18,<2"]
+
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/minidsh_rl"]
+
+[tool.mypy]
+strict = true
+mypy_path = "src"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = ["integration: crosses real adapter/process boundaries in isolated Docker"]
+
+[tool.ruff]
+extend = "../../pyproject.toml"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["PLR2004", "S101"]

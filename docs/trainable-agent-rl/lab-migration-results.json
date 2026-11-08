@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-07",
+  "phase": "engineering_smoke",
+  "algorithm": "gspo_multiturn_wide_clip_v1",
+  "lab_revision": "238bc688ca7d5c994c580f732ee9c2c92483bd20",
+  "result": {
+    "schema_version": 1,
+    "declared_rollouts": 8,
+    "completed_rollouts": 8,
+    "nonzero_updates": 2,
+    "adapter_weight_delta": 0.06596684367392955,
+    "numeric_probe_passed": true,
+    "stage_upper_cny": "3.036",
+    "attempt_upper_cny": "2.580",
+    "cumulative_upper_cny": "44.199",
+    "actual_provider_bill_cny": null,
+    "source_unchanged": true,
+    "efficacy_evaluation": false,
+    "elapsed_seconds": 456.8304832079448,
+    "passed": true
+  },
+  "trajectory_audit": {
+    "schema_version": 1,
+    "passed": true,
+    "declared": 8,
+    "completed": 8,
+    "training_successes": 4,
+    "inference_tokens": 79358,
+    "tool_calls": 54,
+    "double_pass_padded_upper_tokens": 262616,
+    "assistant_loss_tokens": 3868,
+    "terminal_statuses": {
+      "budget_exhausted": 5,
+      "finished": 3
+    },
+    "scorer_sha256": "a64aebb54089e48f260d1539aae1a5ff54074739efd45fac96a41de0f38c8df0",
+    "scope": "engineering smoke, not held-out evaluation; direct target loss mask only"
+  },
+  "numeric_probe": {
+    "failed_first_attempt": {
+      "schema_version": 1,
+      "mask_passed": true,
+      "weight_deltas": {
+        "1": 4.8514426699324315e-08,
+        "2": 9.702885339864863e-08
+      },
+      "duplicate_to_single_delta_ratio": 2.0,
+      "relative_tolerance": 0.03,
+      "reduction": "sample_mean",
+      "passed": false
+    },
+    "corrected": {
+      "schema_version": 1,
+      "mask_passed": true,
+      "weight_deltas": {
+        "1": 4.85144266993243e-08,
+        "2": 4.8514426699324295e-08
+      },
+      "duplicate_to_single_delta_ratio": 0.9999999999999999,
+      "relative_tolerance": 0.03,
+      "reduction": "sum",
+      "passed": true
+    }
+  },
+  "budget": {
+    "migration_start_upper_cny": "41.163",
+    "migration_upper_cny": "3.036",
+    "failed_probe_included_cny": "0.456",
+    "cumulative_upper_cny": "44.199",
+    "remaining_to_50_cny": "5.801",
+    "pending_operations": 0,
+    "actual_provider_bill_cny": null,
+    "new_gpu_rental": false
+  },
+  "swanlab": {
+    "schema_version": 1,
+    "state": "FINISHED",
+    "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/42jx7bz5",
+    "completed": 8,
+    "updates": 2,
+    "stage_upper_cny": 3.036,
+    "cumulative_upper_cny": 44.199,
+    "stage_tokens": 79358
+  },
+  "historical_import": {
+    "base_successes": 28,
+    "rl_successes": 34,
+    "declared_per_policy": 64,
+    "success_delta": 0.09375,
+    "family_bootstrap_ci95": [
+      -0.109375,
+      0.265625
+    ],
+    "historical_readback_matched": true,
+    "archived_replay_exact": true,
+    "new_model_calls_for_import_or_replay": 0
+  },
+  "quality": {
+    "schema_version": 1,
+    "captured_at": "2026-11-07T01:36:56.589646+00:00",
+    "root": {
+      "ruff_format_files": 432,
+      "ruff_check_passed": true,
+      "mypy_files": 175,
+      "pytest_passed": 1072,
+      "pytest_seconds": 49.78
+    },
+    "experimental": {
+      "ruff_check_passed": true,
+      "mypy_with_scripts_files": 101,
+      "pytest_passed": 145,
+      "pytest_seconds": 3.16
+    },
+    "legacy_replay_exact": true,
+    "gspo_trajectory_audit_passed": true,
+    "new_model_calls_for_final_checks": 0
+  },
+  "input_sha256": {
+    "benchmark-results/trainable_agent/lab-migration/gspo-smoke-02/summary.json": "4feb8af9b9c39edc769c7b79b58c27e5561787423e1024bfcb6de4705939ff7e",
+    "benchmark-results/trainable_agent/lab-migration/gspo-smoke-02/trajectory-audit.json": "72d180db44575c61534ec3291c5759ac2f00a28a6bef24d730dced6cc46f00d6",
+    "benchmark-results/trainable_agent/lab-migration/gspo-smoke-02/trajectory-audit-final.json": "d2c3cc00561fba2a412d30d0ccaea04645923b9566eb4631f1012277d38a0f1b",
+    "benchmark-results/trainable_agent/lab-migration/gspo-smoke-02/source.json": "6e80cff8dc4727964dd23f34b78c66b037ebebc612bf714b3bdf11ca2b365fd2",
+    "benchmark-results/trainable_agent/lab-migration/gspo-smoke-02/cloud-readback-final.json": "db3fa76e428e62d08d84c2e1dba93586d67fdc2b033bf3dbd9873e548b9521c0",
+    "benchmark-results/trainable_agent/lab-migration/post-observability-01.json": "2fbf20820ee2356b537421de164d95bd29fbd0f4a251c47bba8ba03d269fedf9",
+    "benchmark-results/trainable_agent/lab-migration/service-preflight-01.json": "524542ca06a372af80892376dc53aec78e7f6f6f4cb9d8b5f6490ab0d481197c",
+    "benchmark-results/trainable_agent/lab-migration/cloud-readback-01.json": "c9b1de48dbbff1f8d11d91ff40309708d6878d8579966a647056bcc3638d7f96",
+    "benchmark-results/trainable_agent/lab-migration/legacy-test-replay-01.json": "4f75e531ecc0e7defd63231dd5e2cf379b6972fa35c9ba69a47afbd969d46717",
+    "benchmark-results/trainable_agent/lab-migration/quality-gates-01.json": "7191eea392c95799f90f29e1daa0add428b981022135f7f14107751cb4197d5b",
+    "benchmark-results/trainable_agent/lab-migration/adapter-config-readback.json": "34bace57a86d62e070caef9917ca0d09b885ea16f0948687ec00bd60458ae802"
+  },
+  "limitations": [
+    "engineering tasks only; no new held-out efficacy evaluation",
+    "one training seed; wider clip and centred advantages differ from Lab defaults",
+    "equal-trajectory vs historical token-mean weighting is another variable",
+    "5 budget_exhausted terminal states retained in 8 declared trajectories",
+    "cross-engine probability equality is approximate; no automatic GSPO resume validated",
+    "price-based estimates, not reconciled invoice; remote GPU details unknown",
+    "observability-only patch after immutable run; archive remains the runtime source",
+    "short 1/2-Datum numerical probe does not certify future large-batch sharding normalization or bitwise base-model revision reproducibility"
+  ],
+  "adapter_config_readback": {
+    "r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0,
+    "bias": "none",
+    "target_modules": [
+      "gate_proj",
+      "k_proj",
+      "q_proj",
+      "o_proj",
+      "v_proj",
+      "down_proj",
+      "in_proj_z",
+      "out_proj",
+      "up_proj"
+    ]
+  }
+}

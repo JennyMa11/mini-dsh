@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-06T12:14:31.360279+00:00",
+  "pricing_version": "2026-08-21",
+  "model": "Qwen/Qwen3.5-4B",
+  "currency": "CNY",
+  "unit": "per_1m_tokens",
+  "rates_cny": {
+    "prefill": 1.49,
+    "cached_prefill": 0.3,
+    "sample": 4.54,
+    "train": 4.54
+  },
+  "conversion_evidence": "Official pricing UI bundle function sD divides unit_price by 100; unit M",
+  "bundle_url": "https://pytrio.com/assets/index-DKJQgcdu.js",
+  "bundle_sha256": "90e91e2b88bae2f1bd4f41bc7f6b5a74fa74ef88cd18d0ad88fb69e87d9c0065",
+  "expected_core_cny_before_extras": 5.16912,
+  "scope": "Readonly catalog and price lookup; no model computation submitted."
+}

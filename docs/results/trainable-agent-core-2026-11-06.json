@@ -1,0 +1,1127 @@
+{
+  "schema_version": 1,
+  "training": {
+    "phase": "core",
+    "declared_slots": 20,
+    "completed_slots": 20,
+    "nonzero_updates": 8,
+    "final_state": "trio://run_kkfuzsulr02j/weights/final_state",
+    "conservative_spend_cny": "20.68"
+  },
+  "evaluation": {
+    "validation": {
+      "base": {
+        "declared": 8,
+        "verified": 8,
+        "successes": 5,
+        "success_rate_declared": 0.625,
+        "success_rate_verified": 0.625,
+        "coverage": 1.0,
+        "total_tokens": 67189,
+        "tokens_per_success": 13437.8,
+        "mean_tool_calls": 4.875,
+        "tool_sample_count": 8,
+        "latency_p50_ms": 9861.648833029903,
+        "latency_p95_ms": 33935.65416603815,
+        "latency_sample_count": 8,
+        "model_cost_upper_cny": "0.98",
+        "model_cost_upper_per_success_cny": "0.196",
+        "malformed_responses": 6,
+        "model_rpc_records": 49,
+        "failure_types": {
+          "independent_verification_failed": 3
+        },
+        "terminal_statuses": {
+          "budget_exhausted": 3,
+          "finished": 4,
+          "failed": 1
+        },
+        "trace_metrics": {
+          "schema_version": "1.0",
+          "measurements": {
+            "runs": 8,
+            "total_tokens": 67189,
+            "input_tokens": 62661,
+            "output_tokens": 4528,
+            "cached_input_tokens": null,
+            "unknown_usage_calls": 0,
+            "model_calls": 49,
+            "tool_calls": 39,
+            "token_usage_complete": true,
+            "avg_steps": 6.125,
+            "steps_sample_count": 8,
+            "avg_tool_calls": 4.875,
+            "tool_calls_sample_count": 8,
+            "latency_p50_ms": 12271.415916504338,
+            "latency_p95_ms": 30050.596174533708,
+            "latency_sample_count": 8,
+            "finalized_runs": 8,
+            "cached_input_tokens_raw_placeholder": 0
+          },
+          "rates": {
+            "cache_hit_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 49,
+              "coverage": 0.0
+            },
+            "cached_input_share": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 62661,
+              "coverage": 0.0
+            },
+            "constraint_satisfaction": {
+              "value": 1.0,
+              "numerator": 32,
+              "denominator": 32,
+              "eligible": 32,
+              "coverage": 1.0
+            },
+            "constraint_satisfied_run_rate": {
+              "value": 1.0,
+              "numerator": 8,
+              "denominator": 8,
+              "eligible": 8,
+              "coverage": 1.0
+            },
+            "goal_completion_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "human_escalation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 8,
+              "coverage": 0.0
+            },
+            "invalid_tool_call_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 39,
+              "eligible": 39,
+              "coverage": 1.0
+            },
+            "partial_success_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 8,
+              "coverage": 0.0
+            },
+            "permission_denied_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 39,
+              "eligible": 39,
+              "coverage": 1.0
+            },
+            "policy_violation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "repeated_failed_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 39,
+              "eligible": 39,
+              "coverage": 1.0
+            },
+            "retry_recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "safe_action_false_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "secret_leak_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "task_success_rate": {
+              "value": 0.625,
+              "numerator": 5,
+              "denominator": 8,
+              "eligible": 8,
+              "coverage": 1.0
+            },
+            "tool_call_accuracy": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "tool_error_rate": {
+              "value": 0.3076923076923077,
+              "numerator": 12,
+              "denominator": 39,
+              "eligible": 39,
+              "coverage": 1.0
+            },
+            "unsafe_action_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "user_acceptance_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 8,
+              "coverage": 0.0
+            }
+          }
+        },
+        "repeated_cat_read_proxy": {
+          "numerator": 0,
+          "denominator": 10,
+          "eligible": 10,
+          "value": 0.0,
+          "coverage": 1.0,
+          "scope": "successful untruncated cat calls only; Python reads unchecked; legitimate rereads may count"
+        }
+      },
+      "rl": {
+        "declared": 8,
+        "verified": 8,
+        "successes": 6,
+        "success_rate_declared": 0.75,
+        "success_rate_verified": 0.75,
+        "coverage": 1.0,
+        "total_tokens": 63728,
+        "tokens_per_success": 10621.333333333334,
+        "mean_tool_calls": 4.5,
+        "tool_sample_count": 8,
+        "latency_p50_ms": 9830.126207903959,
+        "latency_p95_ms": 25045.875040930696,
+        "latency_sample_count": 8,
+        "model_cost_upper_cny": "0.94",
+        "model_cost_upper_per_success_cny": "0.1566666666666666666666666667",
+        "malformed_responses": 4,
+        "model_rpc_records": 47,
+        "failure_types": {
+          "independent_verification_failed": 2
+        },
+        "terminal_statuses": {
+          "finished": 7,
+          "failed": 1
+        },
+        "trace_metrics": {
+          "schema_version": "1.0",
+          "measurements": {
+            "runs": 8,
+            "total_tokens": 63728,
+            "input_tokens": 59530,
+            "output_tokens": 4198,
+            "cached_input_tokens": null,
+            "unknown_usage_calls": 0,
+            "model_calls": 47,
+            "tool_calls": 36,
+            "token_usage_complete": true,
+            "avg_steps": 5.875,
+            "steps_sample_count": 8,
+            "avg_tool_calls": 4.5,
+            "tool_calls_sample_count": 8,
+            "latency_p50_ms": 9231.06777103385,
+            "latency_p95_ms": 22601.46756265312,
+            "latency_sample_count": 8,
+            "finalized_runs": 8,
+            "cached_input_tokens_raw_placeholder": 0
+          },
+          "rates": {
+            "cache_hit_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 47,
+              "coverage": 0.0
+            },
+            "cached_input_share": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 59530,
+              "coverage": 0.0
+            },
+            "constraint_satisfaction": {
+              "value": 1.0,
+              "numerator": 32,
+              "denominator": 32,
+              "eligible": 32,
+              "coverage": 1.0
+            },
+            "constraint_satisfied_run_rate": {
+              "value": 1.0,
+              "numerator": 8,
+              "denominator": 8,
+              "eligible": 8,
+              "coverage": 1.0
+            },
+            "goal_completion_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "human_escalation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 8,
+              "coverage": 0.0
+            },
+            "invalid_tool_call_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 36,
+              "eligible": 36,
+              "coverage": 1.0
+            },
+            "partial_success_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 8,
+              "coverage": 0.0
+            },
+            "permission_denied_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 36,
+              "eligible": 36,
+              "coverage": 1.0
+            },
+            "policy_violation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "repeated_failed_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 36,
+              "eligible": 36,
+              "coverage": 1.0
+            },
+            "retry_recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "safe_action_false_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "secret_leak_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "task_success_rate": {
+              "value": 0.75,
+              "numerator": 6,
+              "denominator": 8,
+              "eligible": 8,
+              "coverage": 1.0
+            },
+            "tool_call_accuracy": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "tool_error_rate": {
+              "value": 0.25,
+              "numerator": 9,
+              "denominator": 36,
+              "eligible": 36,
+              "coverage": 1.0
+            },
+            "unsafe_action_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "user_acceptance_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 8,
+              "coverage": 0.0
+            }
+          }
+        },
+        "repeated_cat_read_proxy": {
+          "numerator": 0,
+          "denominator": 10,
+          "eligible": 10,
+          "value": 0.0,
+          "coverage": 1.0,
+          "scope": "successful untruncated cat calls only; Python reads unchecked; legitimate rereads may count"
+        }
+      },
+      "paired": {
+        "difference": 0.125,
+        "ci95": [
+          0.0,
+          0.25
+        ],
+        "families": 2,
+        "pairs": 8,
+        "bootstrap_repetitions": 10000,
+        "seed": 20261106,
+        "quantile_method": "nearest_rank",
+        "limitation": "single training seed and four test families; exploratory interval only"
+      },
+      "discordance": {
+        "base_only": 0,
+        "rl_only": 1
+      }
+    },
+    "test": {
+      "base": {
+        "declared": 32,
+        "verified": 32,
+        "successes": 25,
+        "success_rate_declared": 0.78125,
+        "success_rate_verified": 0.78125,
+        "coverage": 1.0,
+        "total_tokens": 287033,
+        "tokens_per_success": 11481.32,
+        "mean_tool_calls": 5.6875,
+        "tool_sample_count": 32,
+        "latency_p50_ms": 12683.358041918837,
+        "latency_p95_ms": 19644.5534999948,
+        "latency_sample_count": 32,
+        "model_cost_upper_cny": "4.44",
+        "model_cost_upper_per_success_cny": "0.1776",
+        "malformed_responses": 21,
+        "model_rpc_records": 222,
+        "failure_types": {
+          "independent_verification_failed": 7
+        },
+        "terminal_statuses": {
+          "finished": 19,
+          "budget_exhausted": 11,
+          "failed": 2
+        },
+        "trace_metrics": {
+          "schema_version": "1.0",
+          "measurements": {
+            "runs": 32,
+            "total_tokens": 287033,
+            "input_tokens": 272190,
+            "output_tokens": 14843,
+            "cached_input_tokens": null,
+            "unknown_usage_calls": 0,
+            "model_calls": 222,
+            "tool_calls": 182,
+            "token_usage_complete": true,
+            "avg_steps": 6.9375,
+            "steps_sample_count": 32,
+            "avg_tool_calls": 5.6875,
+            "tool_calls_sample_count": 32,
+            "latency_p50_ms": 12107.019666524138,
+            "latency_p95_ms": 19006.08944565174,
+            "latency_sample_count": 32,
+            "finalized_runs": 32,
+            "cached_input_tokens_raw_placeholder": 0
+          },
+          "rates": {
+            "cache_hit_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 222,
+              "coverage": 0.0
+            },
+            "cached_input_share": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 272190,
+              "coverage": 0.0
+            },
+            "constraint_satisfaction": {
+              "value": 1.0,
+              "numerator": 128,
+              "denominator": 128,
+              "eligible": 128,
+              "coverage": 1.0
+            },
+            "constraint_satisfied_run_rate": {
+              "value": 1.0,
+              "numerator": 32,
+              "denominator": 32,
+              "eligible": 32,
+              "coverage": 1.0
+            },
+            "goal_completion_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "human_escalation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 32,
+              "coverage": 0.0
+            },
+            "invalid_tool_call_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 182,
+              "eligible": 182,
+              "coverage": 1.0
+            },
+            "partial_success_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 32,
+              "coverage": 0.0
+            },
+            "permission_denied_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 182,
+              "eligible": 182,
+              "coverage": 1.0
+            },
+            "policy_violation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "repeated_failed_action_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 182,
+              "eligible": 182,
+              "coverage": 1.0
+            },
+            "retry_recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "safe_action_false_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "secret_leak_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "task_success_rate": {
+              "value": 0.78125,
+              "numerator": 25,
+              "denominator": 32,
+              "eligible": 32,
+              "coverage": 1.0
+            },
+            "tool_call_accuracy": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "tool_error_rate": {
+              "value": 0.3021978021978022,
+              "numerator": 55,
+              "denominator": 182,
+              "eligible": 182,
+              "coverage": 1.0
+            },
+            "unsafe_action_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "user_acceptance_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 32,
+              "coverage": 0.0
+            }
+          }
+        },
+        "repeated_cat_read_proxy": {
+          "numerator": 2,
+          "denominator": 53,
+          "eligible": 53,
+          "value": 0.03773584905660377,
+          "coverage": 1.0,
+          "scope": "successful untruncated cat calls only; Python reads unchecked; legitimate rereads may count"
+        }
+      },
+      "rl": {
+        "declared": 32,
+        "verified": 32,
+        "successes": 24,
+        "success_rate_declared": 0.75,
+        "success_rate_verified": 0.75,
+        "coverage": 1.0,
+        "total_tokens": 285811,
+        "tokens_per_success": 11908.791666666666,
+        "mean_tool_calls": 5.5,
+        "tool_sample_count": 32,
+        "latency_p50_ms": 13502.165500074625,
+        "latency_p95_ms": 20648.654958000407,
+        "latency_sample_count": 32,
+        "model_cost_upper_cny": "4.34",
+        "model_cost_upper_per_success_cny": "0.1808333333333333333333333333",
+        "malformed_responses": 22,
+        "model_rpc_records": 217,
+        "failure_types": {
+          "independent_verification_failed": 8
+        },
+        "terminal_statuses": {
+          "finished": 19,
+          "budget_exhausted": 11,
+          "failed": 2
+        },
+        "trace_metrics": {
+          "schema_version": "1.0",
+          "measurements": {
+            "runs": 32,
+            "total_tokens": 285811,
+            "input_tokens": 268647,
+            "output_tokens": 17164,
+            "cached_input_tokens": null,
+            "unknown_usage_calls": 0,
+            "model_calls": 217,
+            "tool_calls": 176,
+            "token_usage_complete": true,
+            "avg_steps": 6.78125,
+            "steps_sample_count": 32,
+            "avg_tool_calls": 5.5,
+            "tool_calls_sample_count": 32,
+            "latency_p50_ms": 13054.726520495024,
+            "latency_p95_ms": 19889.01895256131,
+            "latency_sample_count": 32,
+            "finalized_runs": 32,
+            "cached_input_tokens_raw_placeholder": 0
+          },
+          "rates": {
+            "cache_hit_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 217,
+              "coverage": 0.0
+            },
+            "cached_input_share": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 268647,
+              "coverage": 0.0
+            },
+            "constraint_satisfaction": {
+              "value": 1.0,
+              "numerator": 128,
+              "denominator": 128,
+              "eligible": 128,
+              "coverage": 1.0
+            },
+            "constraint_satisfied_run_rate": {
+              "value": 1.0,
+              "numerator": 32,
+              "denominator": 32,
+              "eligible": 32,
+              "coverage": 1.0
+            },
+            "goal_completion_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "human_escalation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 32,
+              "coverage": 0.0
+            },
+            "invalid_tool_call_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 176,
+              "eligible": 176,
+              "coverage": 1.0
+            },
+            "partial_success_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 32,
+              "coverage": 0.0
+            },
+            "permission_denied_rate": {
+              "value": 0.0,
+              "numerator": 0,
+              "denominator": 176,
+              "eligible": 176,
+              "coverage": 1.0
+            },
+            "policy_violation_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "repeated_failed_action_rate": {
+              "value": 0.011363636363636364,
+              "numerator": 2,
+              "denominator": 176,
+              "eligible": 176,
+              "coverage": 1.0
+            },
+            "retry_recovery_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "safe_action_false_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "secret_leak_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "task_success_rate": {
+              "value": 0.75,
+              "numerator": 24,
+              "denominator": 32,
+              "eligible": 32,
+              "coverage": 1.0
+            },
+            "tool_call_accuracy": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "tool_error_rate": {
+              "value": 0.2727272727272727,
+              "numerator": 48,
+              "denominator": 176,
+              "eligible": 176,
+              "coverage": 1.0
+            },
+            "unsafe_action_block_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 0,
+              "coverage": null
+            },
+            "user_acceptance_rate": {
+              "value": null,
+              "numerator": 0,
+              "denominator": 0,
+              "eligible": 32,
+              "coverage": 0.0
+            }
+          }
+        },
+        "repeated_cat_read_proxy": {
+          "numerator": 1,
+          "denominator": 49,
+          "eligible": 49,
+          "value": 0.02040816326530612,
+          "coverage": 1.0,
+          "scope": "successful untruncated cat calls only; Python reads unchecked; legitimate rereads may count"
+        }
+      },
+      "paired": {
+        "difference": -0.03125,
+        "ci95": [
+          -0.1875,
+          0.09375
+        ],
+        "families": 4,
+        "pairs": 32,
+        "bootstrap_repetitions": 10000,
+        "seed": 20261106,
+        "quantile_method": "nearest_rank",
+        "limitation": "single training seed and four test families; exploratory interval only"
+      },
+      "discordance": {
+        "base_only": 6,
+        "rl_only": 5
+      }
+    }
+  },
+  "budget": {
+    "limit_cny": "50",
+    "conservative_spend_cny": "31.38",
+    "pending": {},
+    "evaluation_cny": "10.70",
+    "s0_cny": "6.09",
+    "core_training_cny": "14.59"
+  },
+  "limitations": [
+    "one training seed; four held-out test families; two inference repeats are correlated",
+    "cache telemetry unavailable; raw unknown usage retained; do not infer zero cached usage",
+    "model timing includes adapter overhead; end-to-end includes sandbox/verification",
+    "currency is conservative per-RPC rounded accounting, not provider invoice; storage/unsettled bills require separate audit"
+  ],
+  "source": "derived from local core-analysis-03.json, no new model runs",
+  "full_analysis_sha256": "2b5cbbfee49e90729c184aff024ad77542e7d51b91aa0019002b4535768acaef",
+  "method": {
+    "success": "independent lightweight_v2 verifier",
+    "test_attempts_per_policy": 32,
+    "test_cases": 16,
+    "inference_repeats": 2,
+    "training_seeds": [
+      17
+    ],
+    "ci": "family-cluster bootstrap, 10000 draws, seed20261106, nearest-rank",
+    "cache": "unavailable, derived metrics null"
+  },
+  "evidence": {
+    "benchmark-results/trainable_agent/core-protocol-v2/training-audit.json": {
+      "sha256": "d68740fd992a7299114ebc818f1c37e2ae1b99855151c0dce122f491796fd55e",
+      "content": {
+        "passed": true,
+        "groups": [
+          {
+            "slot": 0,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 26692,
+            "padded_tokens": 43838,
+            "updated": false
+          },
+          {
+            "slot": 1,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 43877,
+            "padded_tokens": 75951,
+            "updated": false
+          },
+          {
+            "slot": 2,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 41999,
+            "padded_tokens": 68045,
+            "updated": true
+          },
+          {
+            "slot": 3,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 43884,
+            "padded_tokens": 73200,
+            "updated": true
+          },
+          {
+            "slot": 4,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 41682,
+            "padded_tokens": 79431,
+            "updated": true
+          },
+          {
+            "slot": 5,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 31431,
+            "padded_tokens": 90090,
+            "updated": false
+          },
+          {
+            "slot": 6,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 37560,
+            "padded_tokens": 63684,
+            "updated": false
+          },
+          {
+            "slot": 7,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 39079,
+            "padded_tokens": 72268,
+            "updated": true
+          },
+          {
+            "slot": 8,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 26077,
+            "padded_tokens": 40273,
+            "updated": false
+          },
+          {
+            "slot": 9,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 31386,
+            "padded_tokens": 54964,
+            "updated": true
+          },
+          {
+            "slot": 10,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 20380,
+            "padded_tokens": 32580,
+            "updated": false
+          },
+          {
+            "slot": 11,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 30458,
+            "padded_tokens": 44148,
+            "updated": false
+          },
+          {
+            "slot": 12,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 28625,
+            "padded_tokens": 45864,
+            "updated": false
+          },
+          {
+            "slot": 13,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 33952,
+            "padded_tokens": 56511,
+            "updated": false
+          },
+          {
+            "slot": 14,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 39522,
+            "padded_tokens": 70560,
+            "updated": true
+          },
+          {
+            "slot": 15,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 30465,
+            "padded_tokens": 61272,
+            "updated": false
+          },
+          {
+            "slot": 16,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 28955,
+            "padded_tokens": 43175,
+            "updated": false
+          },
+          {
+            "slot": 17,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 32858,
+            "padded_tokens": 57252,
+            "updated": false
+          },
+          {
+            "slot": 18,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 35897,
+            "padded_tokens": 63028,
+            "updated": true
+          },
+          {
+            "slot": 19,
+            "datum_hash_matched": true,
+            "tokens_reconciled": true,
+            "reward_checked": true,
+            "policy_fixed": true,
+            "compute_tokens": 40548,
+            "padded_tokens": 80569,
+            "updated": true
+          }
+        ],
+        "source": "raw token sidecars + independently verified result.json + update journals; no new model calls"
+      }
+    },
+    "benchmark-results/trainable_agent/core-artifacts-01/result.json": {
+      "sha256": "a94291c795ee6f14c2a068d880a3f74ff189af382085878e1d62a746dee85228",
+      "content": {
+        "model_path": "trio://run_kkfuzsulr02j/sampler_weights/final_weights",
+        "sha256": "adec367df2601b97c0d79b9176ffcac6436298188bcbc57252ef6bf68fff0a93",
+        "bytes": 64952320,
+        "lora_b_tensors": 248,
+        "lora_b_l2_norm": 0.1377845491536063,
+        "baseline_archive": "initial temporary sampler is not listed as a downloadable checkpoint; baseline path retained in frozen policies.json",
+        "method": "B norm relative to zero initialization; not a paired full-adapter delta"
+      }
+    },
+    "benchmark-results/trainable_agent/security-gates-final/result.json": {
+      "sha256": "cfbeef2b46db45d4587d559e42a71810dd04a8472235d75d171e7640ac49dac8",
+      "content": {
+        "no_host_mounts": true,
+        "network_none": true,
+        "capabilities_dropped": true,
+        "host_file_hidden": true,
+        "network_blocked": true,
+        "credential_env_absent": true,
+        "probe_container_removed": true,
+        "host_file_unchanged": true,
+        "timeout_reported": true,
+        "timeout_children_removed": true,
+        "cancellation_propagated": true,
+        "cancel_children_removed": true,
+        "credential_detector_configured": true,
+        "credential_scan_files": 4288,
+        "credential_scan_hits": 0,
+        "passed": true
+      }
+    }
+  },
+  "billing": {
+    "posted_workspace_model_tokens_cny": "3.37",
+    "observed_local": "2026-11-06 approximately 22:03 Asia/Shanghai",
+    "final_invoice": false,
+    "scope": "workspace-level current hour may update; storage not finally reconciled"
+  }
+}

@@ -29,6 +29,7 @@ Context 对照观察到输入 Token 减少约 39.1%，尚未证明任务成功�
 
 ## 阅读导航
 
+- [独立RL实验当前状态](docs/trainable-agent-rl/execution-status.md)：历史模型结果、新任务离线准备及预算边界；训练能力位于独立实验包。
 - [项目结构与分层检查](docs/architecture.md)：目录职责、依赖规则、核心调用链、自动检查与维护清单。
 - [扩展升级执行与验收主计划 v1](docs/extension-roadmap.md)：后续升级的固定范围、四个 PR、验收矩阵与停止条件。
 - [人工 Skills 与 Context](docs/extension-skills.md)：默认关闭、显式配置、按需加载与阶段验收边界。

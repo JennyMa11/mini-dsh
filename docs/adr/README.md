@@ -48,6 +48,23 @@
 
 | [0033](0033-cli-model-configuration.md) | CLI 模型选择与配置翻译的显式依赖 | Accepted |
 
+| [0034](0034-trainable-agent-experiments.md) | 独立 Trainable Agent 实验包 | Accepted |
+| [0035](0035-lab-gspo-swanlab.md) | 迁移 Lab GSPO 与 SwanLab | Accepted |
+| [0036](0036-minirepo-interaction-experiment.md) | 小仓库交互修复实验 | Accepted |
+| [0037](0037-interaction-learnability.md) | 交互可学习性优先与单变量工具示例 | Accepted |
+| [0038](0038-batch-read-learnability.md) | 可选批量读取与反馈后的修复机会 | Accepted（离线开发） |
+| [0039](0039-batch-path-limit.md) | 固定输出上限下的批量读取路径数 | Accepted（离线开发） |
+| [0040](0040-feedback-coverage-audit.md) | 公开反馈的离线缺陷覆盖审计 | Accepted（离线审计） |
+| [0041](0041-interaction-learning-readiness.md) | 交互学习的新家族协议与完整预算准备 | Accepted（离线协议） |
+| [0042](0042-learning-fixtures.md) | 新家族任务及反馈覆盖矩阵 | Accepted（离线夹具） |
+| [0043](0043-learning-trajectory-bridge.md) | 原始轨迹与训练Batch的独立版本绑定 | Accepted（离线桥接） |
+| [0044](0044-learning-orchestration.md) | 固定队列、完整资金准入与确认后恢复 | Accepted（离线调度） |
+| [0045](0045-learning-provider-adapter.md) | 显式SDK适配、持久策略身份与反馈证据 | Accepted（离线契约） |
+| [0046](0046-learning-execution-admission.md) | 固定执行配置、历史数值组件复核及初始LoRA门禁 | Accepted（离线实施） |
+| [0047](0047-closed-period-budget-coverage.md) | 整账期覆盖审计与不丢消费的财务结转 | Accepted（条件结转） |
+| [0048](0048-confirmed-stage-funding.md) | 固定完整队列与确认阶段的资金准入 | Accepted（离线实现） |
+| [0049](0049-supplemental-closed-hour-coverage.md) | 已计入整段账单的补充覆盖与资金基线校正 | Accepted（条件应用） |
+
 ## 状态含义
 
 - **Proposed**：规划中的决策；尚未完成实现与验收。
