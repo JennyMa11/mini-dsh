@@ -32,7 +32,7 @@ class FamilyDefinition:
 @dataclass(frozen=True, slots=True)
 class LearningCase:
     task: MiniTask
-    split: Literal["train", "test"]
+    split: Literal["train", "test", "dev", "validation"]
     variant: int
     faults: tuple[Mutation, Mutation]
     semantic_mutations: tuple[Mutation, Mutation]
@@ -40,3 +40,8 @@ class LearningCase:
     dataset_version: str = "learnability_dataset_v2"
     criterion_version: str = "learnability_private_v1"
     public_feedback_version: str = "learnability_public_v1"
+
+
+def uses_curve_profile(dataset_version: str) -> bool:
+    """Only explicitly registered experimental datasets may use this Harness profile."""
+    return dataset_version in {"curve_dataset_v2", "curve_development_v3", "curve_dataset_v4"}

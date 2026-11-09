@@ -11,7 +11,7 @@ from minidsh.domain import JsonValue, ToolDefinition
 from minidsh.infrastructure.process import ProcessRunner
 from minidsh.tools.runtime import ToolError, schema_for
 from minidsh_rl.minirepo_tasks import MiniTask
-from minidsh_rl.minirepo_verification import candidate_allowed
+from minidsh_rl.minirepo_verification import CurvePolicy, candidate_allowed
 
 WIDE_BATCH_PATH_LIMIT = 8
 
@@ -74,6 +74,7 @@ class RepoSession:
     snapshots: list[dict[str, str]] = field(default_factory=list)
     operations: list[dict[str, object]] = field(default_factory=list)
     batch_path_limit: Literal[4, 8] = 4
+    candidate_policy: CurvePolicy = "legacy"
 
     def __post_init__(self) -> None:
         value: object = self.batch_path_limit
@@ -104,7 +105,9 @@ class RepoSession:
         if operation == "test":
             captured = await self.capture()
             if not candidate_allowed(
-                self.task, {name: captured[name] for name in self.task.writable}
+                self.task,
+                {name: captured[name] for name in self.task.writable},
+                policy=self.candidate_policy,
             ):
                 raise ToolError("candidate_policy_rejected", "candidate_policy_rejected")
         payload = json.dumps(

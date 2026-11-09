@@ -1,0 +1,139 @@
+{
+  "version": "gspo_expansion_efficacy_v1",
+  "plan_sha256": "8cba6b92db51b50442c73b28acf46a9a010719c01efcf0cd6f92f5babd5e77f6",
+  "declared_trajectories": 352,
+  "completed_trajectories": 352,
+  "training": {
+    "groups": 40,
+    "trajectories": 160,
+    "actual_updates": 25,
+    "zero_signal_groups": 15,
+    "training_successes": 98,
+    "reconstructed_datum_coverage": 1.0,
+    "loss_and_mask_audit": "passed"
+  },
+  "validation": {
+    "declared_trajectories": 64,
+    "completed_trajectories": 64,
+    "base": {
+      "successes": 10,
+      "denominator": 32,
+      "success_rate": 0.3125
+    },
+    "gspo": {
+      "successes": 18,
+      "denominator": 32,
+      "success_rate": 0.5625
+    },
+    "gspo_only_success": 11,
+    "base_only_success": 3,
+    "paired_difference": {
+      "difference": 0.25,
+      "ci95": [
+        0.0,
+        0.4375
+      ],
+      "families": 4,
+      "pairs": 32,
+      "bootstrap_repetitions": 10000,
+      "seed": 20261106,
+      "quantile_method": "nearest_rank",
+      "limitation": "single training seed; family-cluster exploratory interval"
+    },
+    "failure_types": {
+      "base": {
+        "independent_verification_failed": 22
+      },
+      "gspo": {
+        "independent_verification_failed": 14
+      }
+    }
+  },
+  "test": {
+    "declared_trajectories": 128,
+    "completed_trajectories": 128,
+    "base": {
+      "successes": 28,
+      "denominator": 64,
+      "success_rate": 0.4375
+    },
+    "gspo": {
+      "successes": 33,
+      "denominator": 64,
+      "success_rate": 0.515625
+    },
+    "gspo_only_success": 12,
+    "base_only_success": 7,
+    "paired_difference": {
+      "difference": 0.078125,
+      "ci95": [
+        -0.015625,
+        0.171875
+      ],
+      "families": 8,
+      "pairs": 64,
+      "bootstrap_repetitions": 10000,
+      "seed": 20261106,
+      "quantile_method": "nearest_rank",
+      "limitation": "single training seed; family-cluster exploratory interval"
+    },
+    "failure_types": {
+      "base": {
+        "independent_verification_failed": 36
+      },
+      "gspo": {
+        "independent_verification_failed": 31
+      }
+    }
+  },
+  "weights": {
+    "initial_delta_from_grpo_seed17": 0.0,
+    "trained_delta_l2": 0.26529206331196975,
+    "measurement_sha256": "82441acffec58f136a1304a26b362d0aff69c329b12aea8c1b5aaa250d2f0ee5"
+  },
+  "algorithm": "gspo_multiturn_wide_clip_v1",
+  "clip_low": 0.2,
+  "clip_high": 0.2,
+  "comparison": "base_vs_gspo_only",
+  "limitations": [
+    "previously opened fixed benchmark; not a new blind test",
+    "single training seed; no GRPO-vs-GSPO efficacy claim"
+  ],
+  "evidence": {
+    "root": "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/gspo-efficacy-v1/run-03",
+    "state_sha256": "86350a0f550752ca4218e6c11b399bedda47644181c7a855bed5fec5a3e769d2",
+    "source_archive_sha256": "198d81c4726d7605cf1edf57dbc504fe74d1500734fd2e2ee5f988ee8d5950fb"
+  },
+  "recovery": {
+    "kind": "terminal_backward_only_rollback",
+    "original_completed_trajectories": 124,
+    "original_confirmed_groups": 30,
+    "original_confirmed_updates": 19,
+    "original_unknown_backward_preserved": true,
+    "copied_raw_trajectories_identical": true,
+    "restored_adapter_delta_l2": 0.0,
+    "full_adam_state_equal": true,
+    "readiness_only_stops_preserved": true,
+    "proof_sha256": "d94785e3b0987b21faad187f59a02b8afc414069a6feb4b565a0533ec3fe6026",
+    "inputs": {
+      "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/gspo-efficacy-v1/run-03/rollback-proof.json": "31eec95e53f00e34d37ed0936eec0cd08efa023f4e683092b47ac2cf1dfbf23c",
+      "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/gspo-efficacy-v1/run-03/rollback-sdk/reference.archive": "a0a83e39b658d4d4826d767552dbdc5cb7b37eadc602a79b00d2bbefe161a1e0",
+      "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/gspo-efficacy-v1/run-03/rollback-sdk/restored.archive": "32d45e7708c349f09c46111ab8cfc93c0461e5fa97bf8c68a56c09df0992eab8"
+    }
+  },
+  "security": {
+    "security-before-01": {
+      "passed": true,
+      "sha256": "5dc9bb530bed590949317f04d7bc6f34300bb0fb607b3448b34cfc08420647df"
+    },
+    "security-after-01": {
+      "passed": true,
+      "sha256": "fe476df39fe2b4112483b1a0a58f6bf6be5c992d030f7efff2fcceba2ee07152"
+    }
+  },
+  "scorer": {
+    "script": "/Users/jennyma/Projects/mini-dsh/experiments/trainable_agent/scripts/gspo_efficacy_report.py",
+    "sha256": "11f1c14cfd004ac7f744faff45522c08d5e88047f4eca348dd10a19492662eff",
+    "analysis_sha256": "1aa1225d6359db7353311441466dab16725aa774b6acd8db5c4477b54d75a6a2"
+  }
+}

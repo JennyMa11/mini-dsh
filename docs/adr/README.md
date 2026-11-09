@@ -64,6 +64,16 @@
 | [0047](0047-closed-period-budget-coverage.md) | 整账期覆盖审计与不丢消费的财务结转 | Accepted（条件结转） |
 | [0048](0048-confirmed-stage-funding.md) | 固定完整队列与确认阶段的资金准入 | Accepted（离线实现） |
 | [0049](0049-supplemental-closed-hour-coverage.md) | 已计入整段账单的补充覆盖与资金基线校正 | Accepted（条件应用） |
+| [0050](0050-grpo-learning-curve.md) | 单 seed GRPO 学习曲线与新判据版本 | Accepted |
+| [0051](0051-development-feedback-v3.md) | 开发反馈 v3，仅重新验收可学习性 | Accepted |
+| [0052](0052-learning-curve-v4.md) | 通过 v3 准入后冻结单 seed 学习曲线 v4 | Accepted |
+| [0053](0053-initialization-recovery.md) | 初始化失败的一次隔离恢复与结构化诊断 | Accepted |
+| [0054](0054-equivalent-empty-optimizer-start.md) | 空优化器起点的可验证重建 | Accepted |
+| [0055](0055-positive-control-and-policy-v2.md) | 正控 v1 与候选策略 v2 | Accepted（执行入口待实现） |
+
+| [0056](0056-gspo-efficacy-study.md) | 按历史 GRPO 规模验证 Base 对 GSPO | Accepted |
+
+| [0057](0057-gspo-terminal-backward-rollback.md) | GSPO终止反传任务的完整优化器回滚 | Accepted |
 
 ## 状态含义
 

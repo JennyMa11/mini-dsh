@@ -1,0 +1,1547 @@
+{
+  "schema_version": 1,
+  "phase": "dev_failed",
+  "declared_trajectories": 216,
+  "completed_trajectories": 24,
+  "new_provider_calls": 245,
+  "unknown_provider_calls": 0,
+  "known_rollout_tokens": 669604,
+  "train_groups": 0,
+  "optimizer_updates": 0,
+  "effective_update_rate": null,
+  "dev": {
+    "rewards": {
+      "dev_00": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "dev_01": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "dev_02": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "dev_03": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "dev_04": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "dev_05": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    "families": {
+      "dev_00": "match_rank",
+      "dev_01": "match_rank",
+      "dev_02": "dependency_batches",
+      "dev_03": "dependency_batches",
+      "dev_04": "table_join",
+      "dev_05": "table_join"
+    },
+    "feedback_groups": [
+      "dependency_batches"
+    ],
+    "passed": false,
+    "completed": 24,
+    "declared": 24
+  },
+  "checkpoints": {
+    "0": {
+      "declared": 24,
+      "completed": 0,
+      "successes": 0,
+      "success_rate_checked": null,
+      "evidence_coverage": 0.0,
+      "total_tokens_known": 0,
+      "tokens_per_success": null,
+      "mean_tool_calls": null,
+      "functional_tests_executed": 0,
+      "format_rejections": 0,
+      "format_rejection_rate": null,
+      "latency_p50_ms": null,
+      "latency_p95_ms": null,
+      "sampled_surprisal": null,
+      "full_policy_entropy": null
+    },
+    "8": {
+      "declared": 24,
+      "completed": 0,
+      "successes": 0,
+      "success_rate_checked": null,
+      "evidence_coverage": 0.0,
+      "total_tokens_known": 0,
+      "tokens_per_success": null,
+      "mean_tool_calls": null,
+      "functional_tests_executed": 0,
+      "format_rejections": 0,
+      "format_rejection_rate": null,
+      "latency_p50_ms": null,
+      "latency_p95_ms": null,
+      "sampled_surprisal": null,
+      "full_policy_entropy": null
+    },
+    "16": {
+      "declared": 24,
+      "completed": 0,
+      "successes": 0,
+      "success_rate_checked": null,
+      "evidence_coverage": 0.0,
+      "total_tokens_known": 0,
+      "tokens_per_success": null,
+      "mean_tool_calls": null,
+      "functional_tests_executed": 0,
+      "format_rejections": 0,
+      "format_rejection_rate": null,
+      "latency_p50_ms": null,
+      "latency_p95_ms": null,
+      "sampled_surprisal": null,
+      "full_policy_entropy": null
+    },
+    "24": {
+      "declared": 24,
+      "completed": 0,
+      "successes": 0,
+      "success_rate_checked": null,
+      "evidence_coverage": 0.0,
+      "total_tokens_known": 0,
+      "tokens_per_success": null,
+      "mean_tool_calls": null,
+      "functional_tests_executed": 0,
+      "format_rejections": 0,
+      "format_rejection_rate": null,
+      "latency_p50_ms": null,
+      "latency_p95_ms": null,
+      "sampled_surprisal": null,
+      "full_policy_entropy": null
+    }
+  },
+  "paired_success_delta": null,
+  "family_delta": {},
+  "exploratory_ci95": null,
+  "learning_gate_passed": false,
+  "max_fresh_policy_clipped_share": null,
+  "stage_committed_cny": "1.626",
+  "cumulative_committed_cny": "50.589",
+  "pending_operations": [],
+  "source_plan_sha256": "5df22c69e5519f043f16b162e505b81ac5bf1ac5e45851df1626d34e266c1221",
+  "state_sha256": "bfc1b423d678c3e3bd0f823552c44c2fca37c4b07cf1461e1d59326f81ecd56a",
+  "generator_sha256": "be7669e394ee5c829fe50a3335e39df38968722c13520a5e5de01b596290e2ca",
+  "trajectories": [
+    {
+      "run_id": "curve2_dev_00_0",
+      "case_id": "curve_v2_path_router_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "failed",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 35239,
+      "tools": 11,
+      "latency": 32517.96316599939,
+      "format_rejections": 0,
+      "sampled": 11,
+      "executed": true,
+      "surprisal_sum": 751.7863678153072,
+      "action_tokens": 1694
+    },
+    {
+      "run_id": "curve2_dev_00_1",
+      "case_id": "curve_v2_path_router_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 23203,
+      "tools": 6,
+      "latency": 25115.175166982226,
+      "format_rejections": 1,
+      "sampled": 8,
+      "executed": true,
+      "surprisal_sum": 694.623920880508,
+      "action_tokens": 1349
+    },
+    {
+      "run_id": "curve2_dev_00_2",
+      "case_id": "curve_v2_path_router_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 11718,
+      "tools": 3,
+      "latency": 29787.085041985847,
+      "format_rejections": 1,
+      "sampled": 5,
+      "executed": true,
+      "surprisal_sum": 777.0219003933748,
+      "action_tokens": 1300
+    },
+    {
+      "run_id": "curve2_dev_00_3",
+      "case_id": "curve_v2_path_router_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 16541,
+      "tools": 5,
+      "latency": 27748.272832948714,
+      "format_rejections": 0,
+      "sampled": 6,
+      "executed": true,
+      "surprisal_sum": 719.9278816316149,
+      "action_tokens": 1202
+    },
+    {
+      "run_id": "curve2_dev_01_0",
+      "case_id": "curve_v2_path_router_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 30405,
+      "tools": 12,
+      "latency": 17491.251999977976,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 194.13749943362512,
+      "action_tokens": 644
+    },
+    {
+      "run_id": "curve2_dev_01_1",
+      "case_id": "curve_v2_path_router_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 31817,
+      "tools": 12,
+      "latency": 10465.207291999832,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 13.671040266962102,
+      "action_tokens": 302
+    },
+    {
+      "run_id": "curve2_dev_01_2",
+      "case_id": "curve_v2_path_router_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 23668,
+      "tools": 6,
+      "latency": 29033.02574995905,
+      "format_rejections": 2,
+      "sampled": 9,
+      "executed": true,
+      "surprisal_sum": 640.5353606937547,
+      "action_tokens": 1379
+    },
+    {
+      "run_id": "curve2_dev_01_3",
+      "case_id": "curve_v2_path_router_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 22197,
+      "tools": 6,
+      "latency": 30650.292875012383,
+      "format_rejections": 1,
+      "sampled": 8,
+      "executed": true,
+      "surprisal_sum": 679.4811995362445,
+      "action_tokens": 1382
+    },
+    {
+      "run_id": "curve2_dev_02_0",
+      "case_id": "curve_v2_dependency_batches_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "failed",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 31970,
+      "tools": 9,
+      "latency": 36228.74658298679,
+      "format_rejections": 1,
+      "sampled": 10,
+      "executed": true,
+      "surprisal_sum": 699.4598346967451,
+      "action_tokens": 1592
+    },
+    {
+      "run_id": "curve2_dev_02_1",
+      "case_id": "curve_v2_dependency_batches_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 18798,
+      "tools": 6,
+      "latency": 40433.442584006116,
+      "format_rejections": 0,
+      "sampled": 7,
+      "executed": true,
+      "surprisal_sum": 714.6291648990673,
+      "action_tokens": 1892
+    },
+    {
+      "run_id": "curve2_dev_02_2",
+      "case_id": "curve_v2_dependency_batches_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 25160,
+      "tools": 7,
+      "latency": 44765.67162503488,
+      "format_rejections": 0,
+      "sampled": 8,
+      "executed": true,
+      "surprisal_sum": 1429.168975457431,
+      "action_tokens": 2331
+    },
+    {
+      "run_id": "curve2_dev_02_3",
+      "case_id": "curve_v2_dependency_batches_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "failed",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 34300,
+      "tools": 10,
+      "latency": 32379.19766700361,
+      "format_rejections": 1,
+      "sampled": 11,
+      "executed": true,
+      "surprisal_sum": 750.0632049233511,
+      "action_tokens": 1438
+    },
+    {
+      "run_id": "curve2_dev_03_0",
+      "case_id": "curve_v2_dependency_batches_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "failed",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 32078,
+      "tools": 11,
+      "latency": 30300.495708943345,
+      "format_rejections": 0,
+      "sampled": 11,
+      "executed": true,
+      "surprisal_sum": 703.7285140102247,
+      "action_tokens": 1470
+    },
+    {
+      "run_id": "curve2_dev_03_1",
+      "case_id": "curve_v2_dependency_batches_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 29908,
+      "tools": 12,
+      "latency": 18670.142540941015,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 315.9782394088821,
+      "action_tokens": 683
+    },
+    {
+      "run_id": "curve2_dev_03_2",
+      "case_id": "curve_v2_dependency_batches_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 27037,
+      "tools": 9,
+      "latency": 19229.226500028744,
+      "format_rejections": 0,
+      "sampled": 10,
+      "executed": true,
+      "surprisal_sum": 208.60651256472963,
+      "action_tokens": 880
+    },
+    {
+      "run_id": "curve2_dev_03_3",
+      "case_id": "curve_v2_dependency_batches_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 31338,
+      "tools": 12,
+      "latency": 19261.447541997768,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 144.56476876013147,
+      "action_tokens": 614
+    },
+    {
+      "run_id": "curve2_dev_04_0",
+      "case_id": "curve_v2_table_join_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 30413,
+      "tools": 10,
+      "latency": 21651.961665949784,
+      "format_rejections": 2,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 191.4681701637214,
+      "action_tokens": 1017
+    },
+    {
+      "run_id": "curve2_dev_04_1",
+      "case_id": "curve_v2_table_join_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "finished",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 29199,
+      "tools": 9,
+      "latency": 23973.439041990787,
+      "format_rejections": 0,
+      "sampled": 10,
+      "executed": true,
+      "surprisal_sum": 329.55080919524005,
+      "action_tokens": 1064
+    },
+    {
+      "run_id": "curve2_dev_04_2",
+      "case_id": "curve_v2_table_join_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 33103,
+      "tools": 10,
+      "latency": 30360.865790979005,
+      "format_rejections": 2,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 301.27897924669736,
+      "action_tokens": 1275
+    },
+    {
+      "run_id": "curve2_dev_04_3",
+      "case_id": "curve_v2_table_join_04",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": true,
+      "tokens": 30925,
+      "tools": 12,
+      "latency": 20417.26075008046,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 124.17049927673429,
+      "action_tokens": 839
+    },
+    {
+      "run_id": "curve2_dev_05_0",
+      "case_id": "curve_v2_table_join_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 28734,
+      "tools": 12,
+      "latency": 16140.581540996209,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 105.34937698177079,
+      "action_tokens": 576
+    },
+    {
+      "run_id": "curve2_dev_05_1",
+      "case_id": "curve_v2_table_join_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 29834,
+      "tools": 12,
+      "latency": 17257.308416999876,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 193.02021518557623,
+      "action_tokens": 645
+    },
+    {
+      "run_id": "curve2_dev_05_2",
+      "case_id": "curve_v2_table_join_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "failed",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 31487,
+      "tools": 10,
+      "latency": 38993.72324999422,
+      "format_rejections": 1,
+      "sampled": 11,
+      "executed": true,
+      "surprisal_sum": 392.70103003505074,
+      "action_tokens": 1635
+    },
+    {
+      "run_id": "curve2_dev_05_3",
+      "case_id": "curve_v2_table_join_05",
+      "phase": "dev",
+      "checkpoint": 0,
+      "status": "completed",
+      "loop_status": "budget_exhausted",
+      "budget_violations": [],
+      "success": false,
+      "tokens": 30532,
+      "tools": 12,
+      "latency": 16490.981042035855,
+      "format_rejections": 0,
+      "sampled": 12,
+      "executed": true,
+      "surprisal_sum": 89.77118223477106,
+      "action_tokens": 471
+    },
+    {
+      "run_id": "curve2_val_00_00_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_00_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_01_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_01_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_02_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_02_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_03_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_03_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_04_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_04_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_05_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_05_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_06_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_06_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_07_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_07_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_08_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_08_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_09_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_09_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_10_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_10_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_11_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_00_11_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_01_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_01_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_01_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_01_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_02_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_02_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_02_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_02_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_03_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_03_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_03_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_03_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_04_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_04_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_04_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_04_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_05_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_05_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_05_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_05_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_06_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_06_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_06_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_06_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_07_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_07_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_07_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_07_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_08_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_08_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_08_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_08_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_03_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_03_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_04_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_04_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_05_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_05_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_06_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_06_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_07_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_07_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_08_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_08_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_09_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_09_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_10_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_10_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_11_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_11_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_00_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_00_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_01_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_01_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_02_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_08_02_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_09_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_09_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_09_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_09_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_10_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_10_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_10_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_10_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_11_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_11_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_11_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_11_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_12_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_12_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_12_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_12_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_13_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_13_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_13_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_13_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_14_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_14_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_14_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_14_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_15_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_15_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_15_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_15_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_16_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_16_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_16_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_16_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_06_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_06_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_07_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_07_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_08_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_08_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_09_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_09_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_10_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_10_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_11_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_11_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_00_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_00_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_01_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_01_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_02_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_02_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_03_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_03_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_04_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_04_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_05_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_16_05_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_17_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_17_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_17_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_17_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_18_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_18_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_18_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_18_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_19_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_19_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_19_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_19_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_20_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_20_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_20_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_20_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_21_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_21_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_21_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_21_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_22_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_22_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_22_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_22_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_23_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_23_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_23_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_23_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_24_0",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_24_1",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_24_2",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_train_24_3",
+      "phase": "train",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_09_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_09_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_10_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_10_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_11_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_11_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_00_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_00_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_01_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_01_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_02_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_02_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_03_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_03_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_04_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_04_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_05_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_05_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_06_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_06_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_07_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_07_1",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_08_0",
+      "phase": "validation",
+      "status": "not_run"
+    },
+    {
+      "run_id": "curve2_val_24_08_1",
+      "phase": "validation",
+      "status": "not_run"
+    }
+  ],
+  "limitations": [
+    "One training seed and three previously seen algorithm families.",
+    "Validation instances share specifications, reference code and defect primitives.",
+    "Sampled surprisal is not full policy entropy; that entropy is unmeasured.",
+    "Money fields are conservative occupied estimates, not settled provider bills."
+  ]
+}

@@ -119,7 +119,8 @@ async def test_only_executed_functional_failure_counts_as_pre_revision_failure(
 
     calls = []
 
-    async def checker(*_args: object) -> Verdict:
+    async def checker(*_args: object, policy: str = "legacy") -> Verdict:
+        assert policy == "legacy"
         calls.append(True)
         target = cast(Path, _args[-1])
         target.mkdir(parents=True)

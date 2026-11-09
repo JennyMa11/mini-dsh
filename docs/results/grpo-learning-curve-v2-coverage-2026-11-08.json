@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "phase": "curve_dataset_v2_coverage",
+  "source": "benchmark-results/trainable_agent/learning-curve-v2/audit-01/summary.json",
+  "source_sha256": "8f7d04c02f4d98541fca53d5641054fbba78827855f6dae6a03f416a647c1096",
+  "generator_sha256": "dcccb0c5a7e9bf5f5a742596956ce57d0c9db988bea8783ba0517678acf06c9c",
+  "declared_checks": 420,
+  "completed_checks": 420,
+  "unique_candidate_programs": 55,
+  "coverage": {
+    "categories": {
+      "broken": {
+        "declared_incorrect": 30,
+        "public_checked": 30,
+        "public_detected": 30,
+        "private_checked": 30,
+        "private_detected": 30,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "constant": {
+        "declared_incorrect": 30,
+        "public_checked": 30,
+        "public_detected": 30,
+        "private_checked": 30,
+        "private_detected": 30,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "original_fault": {
+        "declared_incorrect": 60,
+        "public_checked": 60,
+        "public_detected": 60,
+        "private_checked": 60,
+        "private_detected": 60,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "semantic": {
+        "declared_incorrect": 60,
+        "public_checked": 60,
+        "public_detected": 60,
+        "private_checked": 60,
+        "private_detected": 60,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      }
+    },
+    "feedback_blind_spots": 0,
+    "feedback_coverage_gate_passed": true,
+    "reference_gate_passed": true
+  },
+  "data_gate_passed": true,
+  "mismatches": [],
+  "new_model_calls": 0,
+  "new_training_calls": 0,
+  "declared_model_trajectories": 216,
+  "completed_model_trajectories": 0,
+  "pending": [],
+  "budget_migration_executed": false,
+  "stop_reason": null,
+  "next_stage": "offline_scheduler_and_budget_contracts",
+  "limitations": [
+    "Candidate programs are reused across case/probe instances; counts are not independent samples.",
+    "No new policy learning or generalization was evaluated.",
+    "Coverage is limited to predeclared mutations, not exhaustive semantic correctness."
+  ]
+}

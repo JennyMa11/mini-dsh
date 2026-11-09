@@ -1,13 +1,49 @@
 """Real Docker contracts for controlled multi-file tools and atomic patch rejection."""
 
+import json
+
 import pytest
+from minidsh_rl.curve_cases_v4 import curve_cases_v4
 from minidsh_rl.minirepo_tasks import development_tasks
 from minidsh_rl.minirepo_tools import RepoSession
 from minidsh_rl.minirepo_verification import IMAGE, seed
 
 from minidsh.infrastructure.containers import ContainerResources, DockerHost, DockerSandbox
-from minidsh.infrastructure.process import CommandPolicy
+from minidsh.infrastructure.process import CommandPolicy, ProcessResult
 from minidsh.tools.runtime import ToolError
+
+
+class _CaptureRunner:
+    def __init__(self, files: dict[str, str]) -> None:
+        self._files = files
+
+    async def run(
+        self,
+        argv: tuple[str, ...],
+        *,
+        cwd: str = ".",
+        timeout_seconds: float = 30.0,
+    ) -> ProcessResult:
+        del cwd, timeout_seconds
+        payload = json.loads(argv[3])
+        result = {"files": self._files} if payload["operation"] == "capture" else {"exit_code": 0}
+        return ProcessResult(argv, 0, json.dumps({"ok": True, "result": result}), "")
+
+
+async def test_run_tests_uses_the_configured_candidate_policy() -> None:
+    case = next(c for c in curve_cases_v4() if c.task.family == "dependency_batches")
+    candidate = dict(case.task.reference)
+    candidate["ready.py"] = candidate["ready.py"].replace(
+        "graph[node] <= done", "graph[node].issubset(done)"
+    )
+    result = await RepoSession(
+        _CaptureRunner(candidate), case.task, candidate_policy="curve_pure_v2"
+    ).call("test", {})
+    assert result == {"exit_code": 0}
+    with pytest.raises(ToolError, match="candidate_policy_rejected"):
+        await RepoSession(_CaptureRunner(candidate), case.task, candidate_policy="legacy").call(
+            "test", {}
+        )
 
 
 @pytest.mark.integration

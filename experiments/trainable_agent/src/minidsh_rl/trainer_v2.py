@@ -16,6 +16,7 @@ from pytrio.types.optim_step import optim_step_response as opt  # type: ignore[i
 
 from minidsh_rl.datum import TrainingBatch
 from minidsh_rl.reprice import milli_upper
+from minidsh_rl.rpc_diagnostics import rpc_diagnostic
 from minidsh_rl.trainer import CLIP, MAX_CLIPPED_SHARE, normalized_batch, policy_diagnostics
 from minidsh_rl.transaction import UpdateJournal
 
@@ -46,7 +47,13 @@ class TrainerV2:
         scope = hashlib.sha256(str(self.directory.resolve()).encode()).hexdigest()[:16]
         operation = self.directory.name + "_" + scope + "_" + name
         self.budget.reserve(operation, maximum)
-        result = call()
+        try:
+            result = call()
+        except Exception as error:
+            self.directory.mkdir(parents=True, exist_ok=True)
+            with (self.directory / (name + "-error.json")).open("x") as output:
+                json.dump(rpc_diagnostic(error), output, indent=2)
+            raise
         self.budget.settle(operation, maximum)
         return result
 

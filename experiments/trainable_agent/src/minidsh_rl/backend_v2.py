@@ -5,6 +5,7 @@ import hashlib
 import json
 from dataclasses import dataclass
 from decimal import Decimal
+from pathlib import Path
 from typing import Protocol, cast
 from uuid import uuid4
 
@@ -13,7 +14,6 @@ import pytrio as trio  # type: ignore[import-untyped]
 from minidsh.domain import ModelRequest
 from minidsh_rl.budget import cost_upper_bound
 from minidsh_rl.contracts import Turn
-from minidsh_rl.cost_store import CostStore
 from minidsh_rl.model import Sample
 
 
@@ -35,13 +35,22 @@ class Tokenizer(Protocol):
     ) -> list[int]: ...
 
 
+class SamplingBudget(Protocol):
+    @property
+    def path(self) -> Path: ...
+    @property
+    def available(self) -> Decimal: ...
+    def reserve(self, operation: str, maximum: Decimal) -> None: ...
+    def settle(self, operation: str, estimate: Decimal) -> None: ...
+
+
 @dataclass(slots=True)
 class ExpansionBackend:
     """A frozen SDK sampler, explicit tokenizer, and one shared spending lease."""
 
     sampler: object
     tokenizer: Tokenizer
-    budget: CostStore
+    budget: SamplingBudget
     policy_id: str
     evaluation_reserve: Decimal = Decimal("0")
 

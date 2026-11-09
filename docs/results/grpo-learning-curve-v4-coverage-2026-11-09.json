@@ -1,0 +1,3598 @@
+{
+  "schema_version": 1,
+  "dataset_version": "curve_dataset_v4",
+  "source_summary_sha256": "ef9c69017275e19e92b6fb0b4fafbbfebdb683f812d22087cf7f74d706f95aa0",
+  "declared_checks": 336,
+  "completed_checks": 336,
+  "unique_candidate_programs": 49,
+  "coverage": {
+    "categories": {
+      "broken": {
+        "declared_incorrect": 24,
+        "public_checked": 24,
+        "public_detected": 24,
+        "private_checked": 24,
+        "private_detected": 24,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "constant": {
+        "declared_incorrect": 24,
+        "public_checked": 24,
+        "public_detected": 24,
+        "private_checked": 24,
+        "private_detected": 24,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "original_fault": {
+        "declared_incorrect": 48,
+        "public_checked": 48,
+        "public_detected": 48,
+        "private_checked": 48,
+        "private_detected": 48,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "semantic": {
+        "declared_incorrect": 48,
+        "public_checked": 48,
+        "public_detected": 48,
+        "private_checked": 48,
+        "private_detected": 48,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      }
+    },
+    "feedback_blind_spots": 0,
+    "feedback_coverage_gate_passed": true,
+    "reference_gate_passed": true
+  },
+  "cases": {
+    "curve_v4_path_router_00": {
+      "family": "path_router",
+      "split": "train",
+      "variant": 0,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "f885ae9f713c48cf6d02f2ebcc2bf434fc047753a7cef4fd4182c872b9e5d647",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_01": {
+      "family": "path_router",
+      "split": "train",
+      "variant": 1,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "3522db911691ddf8302ddf01122c9ec2b366391a31b3493012aa99bd17c61e50",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_02": {
+      "family": "path_router",
+      "split": "train",
+      "variant": 2,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "6a5f6e28f5e1014ea73587da1a8bc38a733ddd538905d0e9a3291925bdd5063d",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_03": {
+      "family": "path_router",
+      "split": "train",
+      "variant": 3,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "ee6728c390a02e7fca2749bc9d3f05a13d7af753c562eda88ce8486634b8317c",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_06": {
+      "family": "path_router",
+      "split": "validation",
+      "variant": 6,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "c210f90d95174c3b651638dc5aff39d42bb30e09c98f4929c11040d554e09cdf",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_07": {
+      "family": "path_router",
+      "split": "validation",
+      "variant": 7,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "22e62129bf09482cde0308110c253ef727875d592dfae3dd732323d6da2aaa40",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_08": {
+      "family": "path_router",
+      "split": "validation",
+      "variant": 8,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "37cc46ab68e6b706a76ce6bc7ad97ba4d68af4a0073c1b377aa84f54f0e3e234",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_path_router_09": {
+      "family": "path_router",
+      "split": "validation",
+      "variant": 9,
+      "family_group": "match_rank",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "35b5e6b40c6e3ba276ec64c2ad0bb3262cba9dbb232a1e5325f021e18cec3927",
+      "public_checker_sha256": "ae13e55fc00f33e03cb059d32598958d25f52a685fa9bd113b9d3bd9f8159b69",
+      "public_fixture_sha256": "54905b40ab88544d4bdfb170cdc73cc4c56a0b5dd97e7d2269b6265caab9e97a",
+      "reference_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "writable": [
+        "contracts.py",
+        "matching.py",
+        "paths.py",
+        "routing.py",
+        "selection.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_00": {
+      "family": "dependency_batches",
+      "split": "train",
+      "variant": 0,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "f5a496255b6b12734dce419434b930004c2c3af65eb80303375cc60219cbc8e8",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_01": {
+      "family": "dependency_batches",
+      "split": "train",
+      "variant": 1,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "7a1bc4609d9cba33c760698d44b3623e88b5fdae8746dd000bdbe534b486cea0",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_02": {
+      "family": "dependency_batches",
+      "split": "train",
+      "variant": 2,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "be2d46bba9c944ebddb92ef12b0db34504f81be04d9169e772764091e65e25a9",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_03": {
+      "family": "dependency_batches",
+      "split": "train",
+      "variant": 3,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "8a2c132af237bb922dda270f38bc023e0ffefec50308fcb5e7da6326f60e273e",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_06": {
+      "family": "dependency_batches",
+      "split": "validation",
+      "variant": 6,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "b5cd8355885cec112687146b66e38aa4debc1ab52a8034f39825df822b874dde",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_07": {
+      "family": "dependency_batches",
+      "split": "validation",
+      "variant": 7,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "2832d36a300cc27f46eb3cf11cbbeaa5d75b4d6a125d0348982f0e2575833fe6",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_08": {
+      "family": "dependency_batches",
+      "split": "validation",
+      "variant": 8,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "8223347452844d30898c15e9849c1fa3d87c7f524f0d800c563b5c9a3d5ff094",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_dependency_batches_09": {
+      "family": "dependency_batches",
+      "split": "validation",
+      "variant": 9,
+      "family_group": "dependency_batches",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "7e8cf1ba94911507d0d28844c4b5faf8409232ebd7d8acd076d3e615a9c20d4d",
+      "public_checker_sha256": "2535bf1fd73cfac564d7aae0c7bd7548bc74d3fe124e6f50da2c3c204cf1d9cc",
+      "public_fixture_sha256": "90a06e25ca388ad3914cb3482367ea513de37c827c8d423af8bb40f0c602e4b1",
+      "reference_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "writable": [
+        "contracts.py",
+        "graph.py",
+        "ready.py",
+        "scheduler.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_00": {
+      "family": "table_join",
+      "split": "train",
+      "variant": 0,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "5d17ab7fb3e82c075eb825bc1ec16b96fb928433df104a8fced4a6a7548527ec",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_01": {
+      "family": "table_join",
+      "split": "train",
+      "variant": 1,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "112112ea2e68376ee4fe0c83b49f61dcacfca9c92583eb2cea7be6e81798d465",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_02": {
+      "family": "table_join",
+      "split": "train",
+      "variant": 2,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "abe4ba2db3ecbf700768538909fd118755c6c2e06b9da935001c1013bd65fbcd",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_03": {
+      "family": "table_join",
+      "split": "train",
+      "variant": 3,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "1e5971d5fe0b7c01f194741273fe56e1915c90e529478502597d4eae98371640",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_06": {
+      "family": "table_join",
+      "split": "validation",
+      "variant": 6,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "41e33b22d8653dad8da6bdb96b116bb4ff857ee6142cf138fdd4ae8f92585681",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_07": {
+      "family": "table_join",
+      "split": "validation",
+      "variant": 7,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "fca85ca9e3e0b2b00c3f31935f291c17980f32cfa8f26e8a38c780bb3691b67f",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_08": {
+      "family": "table_join",
+      "split": "validation",
+      "variant": 8,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "e79d15b33880afaa772a755e78cab51c7620471618ebc3a7cd93b11af9d4fbc3",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    },
+    "curve_v4_table_join_09": {
+      "family": "table_join",
+      "split": "validation",
+      "variant": 9,
+      "family_group": "table_join",
+      "dataset_version": "curve_dataset_v4",
+      "criterion_version": "curve_private_v2",
+      "public_feedback_version": "curve_public_feedback_v3",
+      "private_checker_sha256": "09b7a541c599803c6b66d842462ea6cefe58eff04d8199b3b9d531eceb95dd9f",
+      "public_checker_sha256": "fc0d93dabf60bccac823e6f57cd8772f1c8b660ef0c41c9bcee35be091ffb0e3",
+      "public_fixture_sha256": "bd9b4921d8d2eae4ae898510f4046882278fb854039795e2aa4ce4715e899996",
+      "reference_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "writable": [
+        "contracts.py",
+        "indexing.py",
+        "joining.py",
+        "modes.py",
+        "service.py",
+        "validation.py"
+      ]
+    }
+  },
+  "rows": [
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "8621fc6bd8e5b03d8be5f48663d689f9f55f7723775d377c4fb934cddfd5d284",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "path segment boundary",
+      "expected_correct": false,
+      "candidate_sha256": "3068631f619cd356944022311b57f803d7f3849a9b9fec9a1f9f5e4d4de89a9c",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "highest score wins",
+      "expected_correct": false,
+      "candidate_sha256": "fb6ba3c1ec5a657579a88c637b7df9e7c7c7078f4820c9fd856449df91e167ef",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_00",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "79639205aba70dfa1f177250530f4282f06d12b162e0fe3257958e4bb3ff461a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_01",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "61546cc14f619bf9ccfbd4d4796c4ec9356b7f21fe79d2d33b129e63487f5846",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "path segment boundary",
+      "expected_correct": false,
+      "candidate_sha256": "3068631f619cd356944022311b57f803d7f3849a9b9fec9a1f9f5e4d4de89a9c",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_02",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0cd2b23e85b1b65e4e935548bddc5bd63395726c26a35a85045a8eb5b62fcfb4",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "trailing slash normalization",
+      "expected_correct": false,
+      "candidate_sha256": "d32d8a5076d5a6b29bcb7a29b7db79b29aed944154783af743329a9e32729be1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_03",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "64b2a56ad60071c45731d0c8ec6c5fb1fbc00e8b2d0a6d3f2c37587a191acec3",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "trailing slash normalization",
+      "expected_correct": false,
+      "candidate_sha256": "d32d8a5076d5a6b29bcb7a29b7db79b29aed944154783af743329a9e32729be1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_06",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "92af9cf8d1a87162173b0a911c2b7f7e461ac88238f5a99ab98c07ac47838a3e",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "path segment boundary",
+      "expected_correct": false,
+      "candidate_sha256": "3068631f619cd356944022311b57f803d7f3849a9b9fec9a1f9f5e4d4de89a9c",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_07",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "e0edb4aa7597144f0e994663442a2daf9d4b80a2154c845221790e6d20fae8a0",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "root matches every absolute path",
+      "expected_correct": false,
+      "candidate_sha256": "59a132bf08fefb98f9eb44f093401f06e11471f46a2902e4f494e8ca6159c0e6",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_08",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "a0616b990932f22cbf20fd86f136f834fa5cd2cd7a005b9a822255ada1860f20",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "6e183d63cde29dc977ee2ce1191fa77e166cd9d8194f9663093614c5a7cd521a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "0f6107a65b0dddd4523c1f1a43d2c6a3ed85dd81b4dc7ba56e4f05eeb359c3fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "exact method beats wildcard at equal prefix length",
+      "expected_correct": false,
+      "candidate_sha256": "1af78ad02a5ebacfcec86252ba6d32ee07be22bd625db8abf5148ad606356a28",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "trailing slash normalization",
+      "expected_correct": false,
+      "candidate_sha256": "d32d8a5076d5a6b29bcb7a29b7db79b29aed944154783af743329a9e32729be1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "method case folding",
+      "expected_correct": false,
+      "candidate_sha256": "ca0b81450668f777a447e77ecec9a28bb8fe41eaba89dfa1091896ad20366345",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_path_router_09",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "earliest declaration wins ties",
+      "expected_correct": false,
+      "candidate_sha256": "d798fce1d210263abaf53143ae7aab6bb8dd0beac0da9d7ffc5a66ed24c416ec",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "be61719b029c58f212b85de7c8bd56b13b14f69fffabb4ba516ffd5bb32c55cd",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "completed dependencies unlock nodes",
+      "expected_correct": false,
+      "candidate_sha256": "5e96f284335ea566e62001bf8e274d58978f232bb4c65743e6aedb2ae7eb1077",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_00",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "d9c96cbd25f3bdd47535c7703ce6cce55bd7667b3a9cf0c6c51e336f117f727b",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "edge parent precedes child",
+      "expected_correct": false,
+      "candidate_sha256": "98210153cdcc42f41bda7170044c6cec6f500c50cbfc3acb701b45263176a552",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_01",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "62791b3e08ecaec53a5eff62000ac736187cbcc95c5f61f5e88c0ce1cc7e5db1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "dependency is parent, not self",
+      "expected_correct": false,
+      "candidate_sha256": "45c15911c4d7b64a8edf2eb0cb9b7aa3a6065ff84749f577bb6931fe74863fb1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_02",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "d85378284530f9b98a675c64514483f598ef45a9792739523c712114692e0d54",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "edge parent precedes child",
+      "expected_correct": false,
+      "candidate_sha256": "98210153cdcc42f41bda7170044c6cec6f500c50cbfc3acb701b45263176a552",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_03",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "b182fffecddd9d10c4fe43fcb71fb60c10d9be07e2fe31d3a6bacb3e7549f18a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "edge parent precedes child",
+      "expected_correct": false,
+      "candidate_sha256": "98210153cdcc42f41bda7170044c6cec6f500c50cbfc3acb701b45263176a552",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "completed dependencies unlock nodes",
+      "expected_correct": false,
+      "candidate_sha256": "5e96f284335ea566e62001bf8e274d58978f232bb4c65743e6aedb2ae7eb1077",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_06",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "8279a1b588d4e2df23942697d86e5df19f34e2e0947f1a54124245dd31387c69",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "whole batch commits before next batch",
+      "expected_correct": false,
+      "candidate_sha256": "ece8aa78f324751d08d9b4ff6759645c4100abfe49f3bf976bb361c0a8e55d3b",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_07",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "82919489347d41679ec9f92e35f835b53978e4c42cfe678c54e41330bcf3b319",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "dependency is parent, not self",
+      "expected_correct": false,
+      "candidate_sha256": "45c15911c4d7b64a8edf2eb0cb9b7aa3a6065ff84749f577bb6931fe74863fb1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "completed dependencies unlock nodes",
+      "expected_correct": false,
+      "candidate_sha256": "5e96f284335ea566e62001bf8e274d58978f232bb4c65743e6aedb2ae7eb1077",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_08",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "ff4028cca172c341f94ae0b80be6c5621b5309ca785be2a133464e4b7c73a9b6",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "92dd0123e3563943df1747888296415a0ed77fbd46153a31623ec4505fb25a60",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4e04afd505969b2fcc93f6c808466b80630313adf7733026de64f541f9932472",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "dependency is parent, not self",
+      "expected_correct": false,
+      "candidate_sha256": "45c15911c4d7b64a8edf2eb0cb9b7aa3a6065ff84749f577bb6931fe74863fb1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "ready batch sorted by ID",
+      "expected_correct": false,
+      "candidate_sha256": "8991d1c3eb19ed6ecd473b29c5c26df4482a84e20891cdb70d7ca86bd91b43aa",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_dependency_batches_09",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "cycle is an error, not partial success",
+      "expected_correct": false,
+      "candidate_sha256": "07e8698754ea2914754a6193b062d590f9fe76642c0b044777155bd1c092477a",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "4a70d24fc51b780ef27a4ea2bf742873f746429a0dcb354c86c41c04bf1cc7cc",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "right duplicates all retained",
+      "expected_correct": false,
+      "candidate_sha256": "af08eafe1b48c317f6c3b2d079eddf32c70824a7e219657a85d7bf3d050fa224",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "valid inner mode remains inner",
+      "expected_correct": false,
+      "candidate_sha256": "b29154241dc33ba38aed4f4a4423fadf67813a35cb6638541313941521f88cb4",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_00",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "b5258f39e3bb91c50d8a54c7f633486d9093ca892f4f7ca07798b786986c39b3",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "right match order preserved",
+      "expected_correct": false,
+      "candidate_sha256": "f41e464773f5ab17932781192ddf6bc7f6f857231929effd3f067ececd5857c1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "valid modes accepted, invalid modes rejected",
+      "expected_correct": false,
+      "candidate_sha256": "8110d624533e40ee00665249390cca2a8e15758ea8de3797764a09b661551b64",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_01",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "29ca6371701be9d2b36f6fef1ccf3a1779b0a6be71b42f80ab36ebbadeca4f62",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "right duplicates all retained",
+      "expected_correct": false,
+      "candidate_sha256": "af08eafe1b48c317f6c3b2d079eddf32c70824a7e219657a85d7bf3d050fa224",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_02",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "a5e3bdeae72eb8d5dccbe6603b0eb3795f8c76184d216345b27ccb0189d42b74",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "valid inner mode remains inner",
+      "expected_correct": false,
+      "candidate_sha256": "b29154241dc33ba38aed4f4a4423fadf67813a35cb6638541313941521f88cb4",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_03",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "b1197cde65af35450f19b589136de5687afb43305014f60590324595d32eeb94",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "valid inner mode remains inner",
+      "expected_correct": false,
+      "candidate_sha256": "b29154241dc33ba38aed4f4a4423fadf67813a35cb6638541313941521f88cb4",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_06",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "bdb52de9088889bf4281701205f8d9a9aa6469b14e894e5344f73eeb81f34ab8",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "right duplicates all retained",
+      "expected_correct": false,
+      "candidate_sha256": "af08eafe1b48c317f6c3b2d079eddf32c70824a7e219657a85d7bf3d050fa224",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_07",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "bdc61352e5432d942e61713a880291a5981795a2454dd736111cb240e04850fb",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "right match order preserved",
+      "expected_correct": false,
+      "candidate_sha256": "f41e464773f5ab17932781192ddf6bc7f6f857231929effd3f067ececd5857c1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "valid inner mode remains inner",
+      "expected_correct": false,
+      "candidate_sha256": "b29154241dc33ba38aed4f4a4423fadf67813a35cb6638541313941521f88cb4",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_08",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "reference",
+      "kind": "reference",
+      "clause": "service API control",
+      "expected_correct": true,
+      "candidate_sha256": "fd3feb41f65a968ed8875051210f8981c674d5abe27587a1d651048b2e0b90de",
+      "public": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "private": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "broken",
+      "kind": "broken",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3611919cfcd091ae8109df7901e3111bdf8846863ddf361bbeb9aea0af108dc5",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "constant",
+      "kind": "constant",
+      "clause": "service API control",
+      "expected_correct": false,
+      "candidate_sha256": "3123e8a18987db8333df22d2ad1c24e482f2cc4a53b8c61aa0410c66798f5872",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "original_fault_0",
+      "kind": "original_fault",
+      "clause": "right match order preserved",
+      "expected_correct": false,
+      "candidate_sha256": "f41e464773f5ab17932781192ddf6bc7f6f857231929effd3f067ececd5857c1",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "original_fault_1",
+      "kind": "original_fault",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "semantic_0",
+      "kind": "semantic",
+      "clause": "unmatched left value is retained",
+      "expected_correct": false,
+      "candidate_sha256": "3e20449a8a7aec5427a57da4f2c71670f8be4f5eefb7c57b24ff6d950a3aac16",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v4_table_join_09",
+      "probe_id": "semantic_1",
+      "kind": "semantic",
+      "clause": "left input order retained",
+      "expected_correct": false,
+      "candidate_sha256": "08742a2cdfad22767f31c758ac2216a52322d0ca67a523323af0270c546b05f9",
+      "public": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      },
+      "private": {
+        "passed": false,
+        "exit_code": 1,
+        "timed_out": false
+      }
+    }
+  ],
+  "new_model_calls": 0,
+  "new_training_calls": 0,
+  "limitations": [
+    "Finite predeclared mutation checks, not exhaustive semantics or model learning.",
+    "Original verifier sidecars retain their legacy label; new bindings identify actual checkers.",
+    "No semantic near-duplicate or pretraining contamination proof."
+  ]
+}

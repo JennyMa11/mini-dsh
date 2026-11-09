@@ -8,6 +8,7 @@ from pydantic import ConfigDict, Field, TypeAdapter
 
 from minidsh.evaluation.tracefile import TraceRun
 from minidsh.infrastructure.process import ProcessRunner
+from minidsh_rl.learning_contracts import uses_curve_profile
 from minidsh_rl.learning_rollout import LearningRollout, load_rollout
 from minidsh_rl.learning_schedule import FrozenRecord, atomic_record, digest
 from minidsh_rl.minirepo_analysis import feedback_revision_indices
@@ -150,7 +151,14 @@ async def verify_feedback(
             raise ValueError("feedback snapshot missing")
         candidate = {name: snapshots[patch - 1][name] for name in rollout.case.task.writable}
         verdict = await verify(
-            host, rollout.case.task, candidate, image, output / f"patch_{patch:03}"
+            host,
+            rollout.case.task,
+            candidate,
+            image,
+            output / f"patch_{patch:03}",
+            policy="curve_pure_v1"
+            if uses_curve_profile(rollout.case.dataset_version)
+            else "legacy",
         )
         checks.append(
             PartialCheck(

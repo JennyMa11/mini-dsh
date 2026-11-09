@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "phase": "curve_dataset_v1_coverage",
+  "source": "benchmark-results/trainable_agent/learning-curve-v1/audit-01/summary.json",
+  "source_sha256": "febb0add66a8ff760842daa7ac87ec6d31fc0b97bda9b1f17eae34cb30d212e4",
+  "generator_sha256": "2aaaa649f0fdbf41528717567f7c0a9d75988a929923f749b7741eedb5fd24ac",
+  "declared_checks": 420,
+  "completed_checks": 420,
+  "unique_candidate_programs": 55,
+  "coverage": {
+    "categories": {
+      "broken": {
+        "declared_incorrect": 30,
+        "public_checked": 30,
+        "public_detected": 30,
+        "private_checked": 30,
+        "private_detected": 30,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "constant": {
+        "declared_incorrect": 30,
+        "public_checked": 30,
+        "public_detected": 30,
+        "private_checked": 30,
+        "private_detected": 30,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "original_fault": {
+        "declared_incorrect": 60,
+        "public_checked": 60,
+        "public_detected": 60,
+        "private_checked": 60,
+        "private_detected": 56,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "semantic": {
+        "declared_incorrect": 60,
+        "public_checked": 60,
+        "public_detected": 60,
+        "private_checked": 60,
+        "private_detected": 60,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      }
+    },
+    "feedback_blind_spots": 0,
+    "feedback_coverage_gate_passed": false,
+    "reference_gate_passed": true
+  },
+  "data_gate_passed": false,
+  "mismatches": [
+    {
+      "case_id": "curve_v1_path_router_03",
+      "probe_id": "original_fault_1",
+      "checks": "private",
+      "clause": "trailing slash normalization",
+      "actual": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v1_path_router_05",
+      "probe_id": "original_fault_0",
+      "checks": "private",
+      "clause": "trailing slash normalization",
+      "actual": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v1_path_router_06",
+      "probe_id": "original_fault_1",
+      "checks": "private",
+      "clause": "trailing slash normalization",
+      "actual": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    },
+    {
+      "case_id": "curve_v1_path_router_09",
+      "probe_id": "original_fault_1",
+      "checks": "private",
+      "clause": "trailing slash normalization",
+      "actual": {
+        "passed": true,
+        "exit_code": 0,
+        "timed_out": false
+      }
+    }
+  ],
+  "new_model_calls": 0,
+  "new_training_calls": 0,
+  "declared_model_trajectories": 216,
+  "completed_model_trajectories": 0,
+  "pending": [],
+  "budget_migration_executed": false,
+  "stop_reason": "private_or_public_coverage_failed",
+  "next_stage": "not_admitted",
+  "limitations": [
+    "55 unique programs are reused across 210 case/probe instances.",
+    "No new policy learning or generalization was evaluated.",
+    "Private checker misses concern one unique trailing-slash defect."
+  ]
+}

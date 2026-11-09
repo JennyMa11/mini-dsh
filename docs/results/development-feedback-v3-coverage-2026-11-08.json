@@ -1,0 +1,66 @@
+{
+  "declared_probes": 42,
+  "completed_probes": 42,
+  "declared_checks": 84,
+  "completed_checks": 84,
+  "unique_candidate_programs": 23,
+  "coverage": {
+    "categories": {
+      "broken": {
+        "declared_incorrect": 6,
+        "public_checked": 6,
+        "public_detected": 6,
+        "private_checked": 6,
+        "private_detected": 6,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "constant": {
+        "declared_incorrect": 6,
+        "public_checked": 6,
+        "public_detected": 6,
+        "private_checked": 6,
+        "private_detected": 6,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "original_fault": {
+        "declared_incorrect": 12,
+        "public_checked": 12,
+        "public_detected": 12,
+        "private_checked": 12,
+        "private_detected": 12,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      },
+      "semantic": {
+        "declared_incorrect": 12,
+        "public_checked": 12,
+        "public_detected": 12,
+        "private_checked": 12,
+        "private_detected": 12,
+        "public_detection_rate_checked": 1.0,
+        "public_evidence_coverage": 1.0
+      }
+    },
+    "feedback_blind_spots": 0,
+    "feedback_coverage_gate_passed": true,
+    "reference_gate_passed": true
+  },
+  "source_unchanged": true,
+  "new_model_calls": 0,
+  "new_training_calls": 0,
+  "dataset_version": "curve_development_v3",
+  "scope": "six development cases only; no new train/test acceptance",
+  "source": "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/development-feedback-v3/audit-01/summary.json",
+  "source_sha256": "0b8de4055056429f9dff360b1dca5b300604a312724006e37c3ca3c328b1bf61",
+  "generator_sha256": "1d72b0f8c55358c0e6dc9e6246df3a71ee44606770c09734ed7d3f228ad1b289",
+  "case_ids": [
+    "curve_dev_v3_path_router_04",
+    "curve_dev_v3_path_router_05",
+    "curve_dev_v3_dependency_batches_04",
+    "curve_dev_v3_dependency_batches_05",
+    "curve_dev_v3_table_join_04",
+    "curve_dev_v3_table_join_05"
+  ]
+}

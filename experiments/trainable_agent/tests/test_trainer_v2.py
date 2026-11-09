@@ -119,3 +119,21 @@ def test_local_reservation_failure_never_marks_backward_submitted(
         trainer.update(0, batch)
     assert UpdateJournal.load(tmp_path / "update_000.json").state == "prepared"
     assert client.calls == 0
+
+
+def test_rpc_error_capsule_does_not_settle_unknown_or_leak(
+    tmp_path: Path, budget: CostStore
+) -> None:
+    trainer = TrainerV2(Client(), budget, tmp_path, "sample_mean")
+
+    def failure() -> None:
+        raise RuntimeError("secret-value https://signed.invalid/?token=secret-value")
+
+    with pytest.raises(RuntimeError, match="secret-value"):
+        trainer.charge("state_initial", Decimal(".10"), failure)
+    capsule = (tmp_path / "state_initial-error.json").read_text()
+    assert "secret-value" not in capsule
+    assert "https://" not in capsule
+    assert budget.committed == Decimal(".10")
+    state = json.loads(budget.path.read_text())
+    assert [v["status"] for v in state["charges"].values()] == ["pending"]

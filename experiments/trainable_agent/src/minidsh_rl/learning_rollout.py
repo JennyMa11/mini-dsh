@@ -14,7 +14,7 @@ from minidsh.evaluation.tracefile import TraceRun
 from minidsh.infrastructure.process import ProcessRunner
 from minidsh_rl.contracts import Turn, advantages
 from minidsh_rl.datum import TrainingBatch, build_batch
-from minidsh_rl.learning_contracts import LearningCase
+from minidsh_rl.learning_contracts import LearningCase, uses_curve_profile
 from minidsh_rl.minirepo_prompts import instruction
 from minidsh_rl.minirepo_rollout import run_rollout as run_minirepo
 from minidsh_rl.model import Sample, SamplingBackend
@@ -89,6 +89,7 @@ class _Result(BaseModel):
     case_id: str
     family: str
     policy_id: str
+    candidate_policy: Literal["legacy", "curve_pure_v1", "curve_pure_v2"] = "legacy"
     mode: Literal["single", "interactive"]
     prompt_variant: Literal["original", "tool_example"]
     read_variant: Literal["single_read", "batch_read", "batch_read_eight"]
@@ -129,7 +130,7 @@ class _Final(BaseModel):
 class _CaseMetadata(_Closed):
     case_id: str
     family_group: str
-    split: Literal["train", "test"]
+    split: Literal["train", "test", "dev", "validation"]
     dataset_version: str
     criterion_version: str
     public_feedback_version: str
@@ -328,9 +329,14 @@ def _load(case: LearningCase, directory: Path, policy: PolicyBinding) -> Learnin
     ).hexdigest()
     if result.instruction_sha256 != expected_instruction:
         raise ValueError("instruction identity mismatch")
+    curve = uses_curve_profile(case.dataset_version)
+    if curve and (
+        result.candidate_policy != "curve_pure_v1" or result.prompt_variant != "tool_example"
+    ):
+        raise ValueError("curve Harness/policy mismatch")
     if policy.kind == "provider" and (
         result.mode != "interactive"
-        or result.prompt_variant != "original"
+        or result.prompt_variant != ("tool_example" if curve else "original")
         or result.read_variant != "batch_read_eight"
     ):
         raise ValueError("provider rollout does not match learning Harness")
@@ -472,8 +478,9 @@ async def run_learning_rollout(  # noqa: PLR0913 - explicit isolated dependencie
         host=host,
         image=image,
         max_output_per_call=1024,
-        prompt_variant="original",
+        prompt_variant="tool_example" if uses_curve_profile(case.dataset_version) else "original",
         read_variant="batch_read_eight",
+        candidate_policy="curve_pure_v1" if uses_curve_profile(case.dataset_version) else "legacy",
     )
     await seal_rollout(case, output, policy)
     return await asyncio.to_thread(load_rollout, case, output, policy)

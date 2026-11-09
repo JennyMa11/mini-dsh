@@ -1,0 +1,1074 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-09",
+  "phase": "finished",
+  "dataset_version": "curve_dataset_v4",
+  "training_seed": 17,
+  "model": "Qwen/Qwen3.5-4B",
+  "lora_rank": 16,
+  "algorithm": "group-centered reward; native PPO clip; assistant-token-mean normalization; no reference KL or group std normalization",
+  "declared_trajectories": 192,
+  "completed_trajectories": 192,
+  "training_trajectories": 96,
+  "validation_trajectories": 96,
+  "attempted_training_slots": 24,
+  "actual_optimizer_updates": 17,
+  "zero_signal_groups": 7,
+  "unknown_optimizer_submissions": 0,
+  "points": [
+    {
+      "checkpoint": 0,
+      "successes": 7,
+      "declared": 24,
+      "success_rate": 0.2916666666666667,
+      "private_checks_executed": 21,
+      "family_successes": {
+        "match_rank": 3,
+        "dependency_batches": 2,
+        "table_join": 2
+      },
+      "effective_optimizer_updates": 0
+    },
+    {
+      "checkpoint": 8,
+      "successes": 8,
+      "declared": 24,
+      "success_rate": 0.3333333333333333,
+      "private_checks_executed": 22,
+      "family_successes": {
+        "match_rank": 1,
+        "dependency_batches": 2,
+        "table_join": 5
+      },
+      "effective_optimizer_updates": 6
+    },
+    {
+      "checkpoint": 16,
+      "successes": 6,
+      "declared": 24,
+      "success_rate": 0.25,
+      "private_checks_executed": 21,
+      "family_successes": {
+        "dependency_batches": 2,
+        "table_join": 4,
+        "match_rank": 0
+      },
+      "effective_optimizer_updates": 11
+    },
+    {
+      "checkpoint": 24,
+      "successes": 8,
+      "declared": 24,
+      "success_rate": 0.3333333333333333,
+      "private_checks_executed": 18,
+      "family_successes": {
+        "table_join": 4,
+        "match_rank": 0,
+        "dependency_batches": 4
+      },
+      "effective_optimizer_updates": 17
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "checkpoint": 8,
+      "delta_successes": 1,
+      "paired_success_delta": 0.041666666666666664,
+      "family_delta_successes": {
+        "match_rank": -2,
+        "dependency_batches": 0,
+        "table_join": 3
+      },
+      "exploratory_family_bootstrap_ci95": [
+        -0.25,
+        0.375
+      ]
+    },
+    {
+      "checkpoint": 16,
+      "delta_successes": -1,
+      "paired_success_delta": -0.041666666666666664,
+      "family_delta_successes": {
+        "match_rank": -3,
+        "dependency_batches": 0,
+        "table_join": 2
+      },
+      "exploratory_family_bootstrap_ci95": [
+        -0.375,
+        0.25
+      ]
+    },
+    {
+      "checkpoint": 24,
+      "delta_successes": 1,
+      "paired_success_delta": 0.041666666666666664,
+      "family_delta_successes": {
+        "match_rank": -3,
+        "dependency_batches": 2,
+        "table_join": 2
+      },
+      "exploratory_family_bootstrap_ci95": [
+        -0.375,
+        0.25
+      ]
+    }
+  ],
+  "primary_comparison": {
+    "checkpoint": 24,
+    "delta_successes": 1,
+    "paired_success_delta": 0.041666666666666664,
+    "family_delta_successes": {
+      "match_rank": -3,
+      "dependency_batches": 2,
+      "table_join": 2
+    },
+    "exploratory_family_bootstrap_ci95": [
+      -0.375,
+      0.25
+    ]
+  },
+  "learning_gate_passed": true,
+  "initialization": {
+    "mode": "verified_fresh_seed17",
+    "adapter_parameter_delta_l2": 0,
+    "empty_optimizer_config_equal": true,
+    "prior_restore_attempts_failed": 2,
+    "prior_sampling_trajectories": 0,
+    "prior_optimizer_updates": 0,
+    "prior_restore_http_status": 404,
+    "prior_restore_code": "not_found",
+    "original_failed_runs_preserved": true
+  },
+  "weight_audit": {
+    "parameter_delta_l2": 0.21639781298754196,
+    "verified_offline_again": true,
+    "recomputed_parameter_delta_l2": 0.21639781298754196,
+    "recheck_relative_tolerance": 1e-10,
+    "recheck_absolute_tolerance": 1e-12
+  },
+  "training_families": {
+    "table_join": {
+      "declared_groups": 8,
+      "completed_groups": 8,
+      "effective_updates": 8,
+      "zero_signal_groups": 0,
+      "successes": 13,
+      "declared_trajectories": 32
+    },
+    "match_rank": {
+      "declared_groups": 8,
+      "completed_groups": 8,
+      "effective_updates": 4,
+      "zero_signal_groups": 4,
+      "successes": 6,
+      "declared_trajectories": 32
+    },
+    "dependency_batches": {
+      "declared_groups": 8,
+      "completed_groups": 8,
+      "effective_updates": 5,
+      "zero_signal_groups": 3,
+      "successes": 11,
+      "declared_trajectories": 32
+    }
+  },
+  "max_fresh_policy_clipped_share": 0.003165735567970205,
+  "full_policy_entropy": null,
+  "correctness_trajectories": [
+    {
+      "run_id": "curve4_val_00_00_0",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_00_1",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_01_0",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947000,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_01_1",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_02_0",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948000,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_02_1",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948020,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_03_0",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_03_1",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_00_04_0",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_04_1",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_05_0",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951000,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_05_1",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951020,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_06_0",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_06_1",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_07_0",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_07_1",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_00_08_0",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_08_1",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_09_0",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_09_1",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955020,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_10_0",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956000,
+      "checkpoint": 0,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_10_1",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_11_0",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957000,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_00_11_1",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957020,
+      "checkpoint": 0,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_03_0",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_03_1",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_04_0",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_04_1",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_05_0",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951000,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_05_1",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951020,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_06_0",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_06_1",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_07_0",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_07_1",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_08_08_0",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_08_1",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_09_0",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955000,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_09_1",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955020,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_10_0",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956000,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_10_1",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_11_0",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957000,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_11_1",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957020,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_08_00_0",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_00_1",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_01_0",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947000,
+      "checkpoint": 8,
+      "success": true,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_01_1",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_02_0",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948000,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_08_02_1",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948020,
+      "checkpoint": 8,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_06_0",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_06_1",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_07_0",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_07_1",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953020,
+      "checkpoint": 16,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_08_0",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954000,
+      "checkpoint": 16,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_08_1",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_09_0",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955000,
+      "checkpoint": 16,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_09_1",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955020,
+      "checkpoint": 16,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_10_0",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_10_1",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_11_0",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_11_1",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957020,
+      "checkpoint": 16,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_16_00_0",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_00_1",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_01_0",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_01_1",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_02_0",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_02_1",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_03_0",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_03_1",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_16_04_0",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950000,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_04_1",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_05_0",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951000,
+      "checkpoint": 16,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_16_05_1",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951020,
+      "checkpoint": 16,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_09_0",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_09_1",
+      "case_id": "curve_v4_table_join_07",
+      "seed": 955020,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_10_0",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": false,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_10_1",
+      "case_id": "curve_v4_table_join_08",
+      "seed": 956020,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_11_0",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957000,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_11_1",
+      "case_id": "curve_v4_table_join_09",
+      "seed": 957020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_00_0",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_00_1",
+      "case_id": "curve_v4_path_router_06",
+      "seed": 946020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_01_0",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_01_1",
+      "case_id": "curve_v4_path_router_07",
+      "seed": 947020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_02_0",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_02_1",
+      "case_id": "curve_v4_path_router_08",
+      "seed": 948020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_03_0",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_03_1",
+      "case_id": "curve_v4_path_router_09",
+      "seed": 949020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": false,
+      "family": "match_rank"
+    },
+    {
+      "run_id": "curve4_val_24_04_0",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_04_1",
+      "case_id": "curve_v4_dependency_batches_06",
+      "seed": 950020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_05_0",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951000,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_05_1",
+      "case_id": "curve_v4_dependency_batches_07",
+      "seed": 951020,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_06_0",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_06_1",
+      "case_id": "curve_v4_dependency_batches_08",
+      "seed": 952020,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_07_0",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953000,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_07_1",
+      "case_id": "curve_v4_dependency_batches_09",
+      "seed": 953020,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "dependency_batches"
+    },
+    {
+      "run_id": "curve4_val_24_08_0",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954000,
+      "checkpoint": 24,
+      "success": false,
+      "private_check_executed": true,
+      "family": "table_join"
+    },
+    {
+      "run_id": "curve4_val_24_08_1",
+      "case_id": "curve_v4_table_join_06",
+      "seed": 954020,
+      "checkpoint": 24,
+      "success": true,
+      "private_check_executed": true,
+      "family": "table_join"
+    }
+  ],
+  "stable_gain_demonstrated": false,
+  "verification": {
+    "final_safety_checks_passed": true,
+    "training_audit_recheck_identical": true,
+    "independent_G4_reward_advantage_datum_and_receipt_audit": true,
+    "source_archive_members_verified": 231,
+    "root_pytest": 1072,
+    "experiment_pytest": 331,
+    "root_strict_mypy_files": 175,
+    "experiment_strict_mypy_files": 198
+  },
+  "provenance": {
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-03/plan.json": "10dcb406274144e593bf7071a6dc2731c0b2957c273c5bd7224665ec3b0eff73",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-03/source.tar.gz": "2a3b6327cf3bbd21e2cfe3a0a17c0dabdfe5410b5c8ad7909cb91c06043b91bf",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-03/curve-state.json": "302019fe3f3070281d5b8b6e3f1f12e1ea94d274c69ebd4f3a7c9b4b2713ca75",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-03/initial-sdk/restored-equivalence.json": "e777ed6ed7e4ae3eaa98991bbe5b8ee1ba12ee3afa4de3e70951d9c8405d6dd6",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-03/final-audit/result.json": "100ca706f197b45859f43316986bd32762c97094cb35b2bf964cc5aff7f97c72",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/correctness-final-run03-01.json": "c1b0828e90e2fe358835205a8b26cf38c094a61e5f3558de73aacb141af17a1a",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/training-audit-final-run03-01.json": "82b65e88b5b81dcc0d792a7730112f8a8ed4f2f2cc49e3e4474b8b0241b836e3",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/execution-03-ended.json": "27e36bcbb2587f2e9b266e6c2163eb1af6a389cf7d7c847e30676bcf29b6c0d6",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/build_learning_result.py": "8a71170209f88aad6a1c8163047c6271d6ec75f404c68275392f31ce2eadbdae"
+  },
+  "limitations": [
+    "Single training seed; same-family variants with shared specifications and reference code.",
+    "Family bootstrap uses only three clusters and does not establish multi-seed stability.",
+    "Sampled surprisal is not full policy entropy; full entropy is unmeasured.",
+    "Binary rewards and mixed-group counts do not prove successful learning.",
+    "Finite mutation checks are not exhaustive semantics; several examples share source/reference/defect primitives.",
+    "Observed family update imbalance is a candidate bottleneck, not a controlled causal demonstration.",
+    "Prior initialization failures are preserved as separate execution attempts; neither produced a sampled trajectory."
+  ]
+}

@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from minidsh_rl.contracts import Turn
+from minidsh_rl.curve_cases_v2 import curve_cases_v2
 from minidsh_rl.learning_rollout import (
     PolicyBinding,
     assemble_group,
@@ -326,3 +327,32 @@ async def test_known_overrun_preserves_success_and_usage_but_blocks_training(
     assert "request_tokens" in loaded.budget_violations
     with pytest.raises(ValueError, match="budget"):
         assemble_group(tuple(replace(loaded, run_id=f"overrun_{i}", seed=17 + i) for i in range(4)))
+
+
+async def test_curve_profile_requires_example_and_new_policy(tmp_path: Path) -> None:
+    case = curve_cases_v2()[0]
+    directory = tmp_path / "curve"
+    fixture(directory)
+    result = json.loads((directory / "result.json").read_text())
+    result.update(
+        case_id=case.task.case_id,
+        family=case.task.family,
+        prompt_variant="tool_example",
+        candidate_policy="curve_pure_v1",
+        instruction_sha256=hashlib.sha256(
+            instruction(case.task, "interactive", "tool_example").encode()
+        ).hexdigest(),
+    )
+    (directory / "result.json").write_text(json.dumps(result))
+    candidate = dict(case.task.reference)
+    (directory / "candidate.json").write_text(json.dumps(candidate))
+    verdict = json.loads((directory / "verification/result.json").read_text())
+    verdict.update(case_id=case.task.case_id, candidate_sha256=turn_digest(candidate))
+    (directory / "verification/result.json").write_text(json.dumps(verdict))
+    await seal_rollout(case, directory, policy())
+    assert load_rollout(case, directory, policy()).case == case
+    (directory / "learning-binding/turn_000.json").unlink()
+    result["candidate_policy"] = "legacy"
+    (directory / "result.json").write_text(json.dumps(result))
+    with pytest.raises(ValueError, match="curve"):
+        await seal_rollout(case, directory, policy())

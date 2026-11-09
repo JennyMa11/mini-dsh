@@ -1,5 +1,31 @@
 # Mini-dsh ¥50 RL 核心实验
 
+> **继续 RL 实验先读：[近期工作总结与启动手册](../../docs/trainable-agent-rl/research-handoff.md)（2026-11-09）。** 汇总两条实验主线、最新停点、候选策略误拒、正控待接线与离线复核入口；以下历史“最新”段落按各自时点理解。
+
+最新 [v4 完整学习曲线](../../docs/trainable-agent-rl/learning-curve-v4-recovery.md)：
+96 条训练＋96 条验证已完成，24 个槽产生 17 次真实更新；成功数 7→8→6→8（各 24 条）。
+最终 +4.17 个百分点，探索门槛通过但稳定收益未证实；三家族结果分化。初始化恢复失败
+保留，run-03 经参数差0和空优化器配置一致验证后完成。本轮不开展额外用量核对。
+以下为历史阶段记录。
+
+最新 [学习曲线 v4](../../docs/trainable-agent-rl/learning-curve-v4.md)：排除已打开 dev，
+336 项数据检查通过，固定 96 train + 96 validation；真实运行在初始 checkpoint
+保存时失败，0 新采样/更新，学习效果未测。累计保守占用 52.264 元，含一项
+0.100 元未知请求预留，禁止重放。唯一活动财务账本仍为
+`benchmark-results/trainable_agent/learning-curve-v2/run-01/finance/budget.json`。
+后文为各历史时点；最新入口为 `python -m minidsh_rl.learning_curve_run`。
+
+最新[开发反馈v3](../../docs/trainable-agent-rl/development-feedback-v3.md)：仅修订6道已打开
+开发题的公开反馈，84检查通过；24条真实开发成功8条，混合4组、反馈覆盖2算法组，
+原准入门槛通过。无训练或学习收益结论；复用原零LoRA与唯一活动账本，新增1.515元
+保守占用，累计52.104元，无pending。旧v2结果不变。
+
+最新阶段为[单seed学习曲线v2](../../docs/trainable-agent-rl/learning-curve-v2.md)：
+420项判据通过，真实开发24条成功7条，但混合组/反馈家族门槛未过，停止训练。
+训练与验证192条未运行。累计150/新增100元预算已显式迁移，唯一活动账本为
+`benchmark-results/trainable_agent/learning-curve-v2/run-01/finance/budget.json`；
+旧50元入口已封存，以下旧余额与状态仅为各历史阶段记录。
+
 当前阶段见[固定执行入口](../../docs/trainable-agent-rl/learning-execution-results.md)：
 已实现离线prepare/inspect与受完整资金/配置/组件证据控制的显式run；历史数值仅复用
 可核对旧组件证据，新初始LoRA仍须真实检查。80条provider完成数为0，完整需20.302元、
@@ -89,3 +115,21 @@ H3已结束：[结果](../../docs/trainable-agent-rl/batch-limit-results.md)。�
 真实容器脚本控制；独立schema2绑定新版本，保留原始Token与失败，不改旧result/Trace。
 脚本不能进入provider训练，已知预算超量保留消耗并阻止更新。仍无新provider采样/
 训练，当前缺口为新任务完整调度、真实身份/数值和恢复准入，累计费用不变。
+
+最新[单 seed 学习曲线阶段](../../docs/trainable-agent-rl/learning-curve-results.md)：
+新增30题与显式curve_pure_v1判据，420次容器检查完整执行；私有判据漏检4个
+尾斜杠缺陷实例，按门禁停止，未进入216条模型队列，未迁移预算或训练。
+`python -m minidsh_rl.curve_gates --summarize ... --output ...`可离线复核派生报告。
+
+
+2026-11-09：用户授权按历史 GRPO 规模进行 Base / GSPO 效果复测；160训练轨迹、
+64验证、128测试，当前真实执行中。协议：[冻结协议](../../docs/trainable-agent-rl/gspo-efficacy-v1.md)。
+旧test已使用，不称新盲测；不以历史GRPO成绩直接作算法优劣结论。
+
+
+2026-11-09 Base/GSPO同规模实验已完成：[完整结果](../../docs/results/gspo-efficacy-v1-2026-11-09.md)。
+352/352真实轨迹、40个G4训练组、25次有效更新；验证10/32→18/32，
+测试28/64→33/64（+7.8125pp；95%家族聚类区间[-1.5625,+17.1875]pp）。
+单训练seed、既有测试集复测，不能宣称稳定收益或优于GRPO。反传查询失败后按ADR0057
+从实际权重与完整Adam状态全等的检查点恢复，原失败保留、124条轨迹未重采；
+358项实验回归及前后容器隔离检查通过。不自动扩大新seed或算法对照。

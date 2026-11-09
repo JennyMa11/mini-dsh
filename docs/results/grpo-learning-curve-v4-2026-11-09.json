@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "phase": "initialization_stopped_unknown_checkpoint",
+  "date": "2026-11-09",
+  "dataset_version": "curve_dataset_v4",
+  "scope": "single training seed; fixed GRPO; no algorithm comparison",
+  "readiness": {
+    "reused_version": "curve_development_v3",
+    "new_development_calls": 0,
+    "historical_successes": 8,
+    "historical_declared": 24,
+    "historical_mixed_groups": 4,
+    "historical_declared_groups": 6,
+    "historical_feedback_recoveries": 3,
+    "historical_feedback_families": 2
+  },
+  "dataset": {
+    "train_cases": 12,
+    "validation_cases": 12,
+    "opened_development_cases_included": 0,
+    "declared_checks": 336,
+    "completed_checks": 336,
+    "reference_gate_passed": true,
+    "mutation_gate_passed": true,
+    "unique_candidate_programs": 49,
+    "probe_programs": 168,
+    "source_unchanged": true,
+    "private_criterion_version": "curve_private_v2",
+    "public_feedback_version": "curve_public_feedback_v3"
+  },
+  "queue": {
+    "declared_training_trajectories": 96,
+    "declared_validation_trajectories": 96,
+    "declared_training_attempt_slots": 24,
+    "completed_trajectories": 0,
+    "optimizer_updates": 0,
+    "sampling_calls": 0,
+    "known_rollout_tokens": 0,
+    "validation_checkpoints": [
+      0,
+      8,
+      16,
+      24
+    ],
+    "validation_completed_per_checkpoint": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "execution": {
+    "error_type": "ActorEventSubmitError",
+    "failed_stage": "initial optimizer checkpoint save; lazy actor initialization submit",
+    "controller_phase": "running",
+    "controller_pending": "initialize",
+    "exit_code": 1,
+    "elapsed_seconds": 47.12357275001705,
+    "automatic_retry": false,
+    "new_registered_restored_training_runs": 1,
+    "observed_remote_run_statuses": [
+      "ENDED"
+    ],
+    "observed_new_checkpoint_count": 0,
+    "initial_adapter_equivalence_verified": false,
+    "final_weight_delta_verified": false,
+    "root_cause_confirmed": false
+  },
+  "learning": {
+    "status": "not_measured",
+    "success_rate": null,
+    "paired_delta": null,
+    "effective_update_rate": null,
+    "full_policy_entropy": null,
+    "clipped_share": null,
+    "gate_passed": false,
+    "trajectory_evidence_coverage": 0.0
+  },
+  "finance": {
+    "full_queue_upper_cny": "56.706",
+    "stage_cap_cny": "60",
+    "cumulative_nominal_limit_cny": "150",
+    "epoch_incremental_limit_cny": "100",
+    "before_committed_cny": "52.104",
+    "after_committed_cny": "52.264",
+    "stage_committed_cny": "0.160",
+    "confirmed_estimate_cny": "0.060",
+    "pending_reservation_cny": "0.100",
+    "pending_operations": 1,
+    "pending_released": false,
+    "new_epoch_created": false,
+    "provider_bills_settled": false
+  },
+  "verification": {
+    "root_pytest_passed": 1072,
+    "experiment_pytest_passed": 318,
+    "root_strict_mypy_files": 175,
+    "experiment_strict_mypy_files": 190,
+    "ruff_format_and_check_passed": true,
+    "frozen_source_members_verified": 226,
+    "offline_analysis_recheck_identical": true,
+    "independent_training_audit_recheck_identical": true,
+    "security_before": {
+      "no_host_mounts": true,
+      "network_none": true,
+      "capabilities_dropped": true,
+      "host_file_hidden": true,
+      "network_blocked": true,
+      "credential_env_absent": true,
+      "probe_container_removed": true,
+      "host_file_unchanged": true,
+      "timeout_reported": true,
+      "timeout_children_removed": true,
+      "cancellation_propagated": true,
+      "cancel_children_removed": true,
+      "credential_detector_configured": true,
+      "credential_scan_files": 35354,
+      "credential_scan_hits": 0,
+      "passed": true
+    },
+    "security_after": {
+      "no_host_mounts": true,
+      "network_none": true,
+      "capabilities_dropped": true,
+      "host_file_hidden": true,
+      "network_blocked": true,
+      "credential_env_absent": true,
+      "probe_container_removed": true,
+      "host_file_unchanged": true,
+      "timeout_reported": true,
+      "timeout_children_removed": true,
+      "cancellation_propagated": true,
+      "cancel_children_removed": true,
+      "credential_detector_configured": true,
+      "credential_scan_files": 36576,
+      "credential_scan_hits": 0,
+      "passed": true
+    },
+    "remaining_experiment_containers": 0
+  },
+  "provenance": {
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-01/plan.json": "1778fa1836c7f06f94fbeda5643156ade03709a79f3e8a6bb04b1aca457a5ddd",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-01/source.tar.gz": "890897e93924df1e55bddabd7621e066468b92f2158c1f7228ba28b947a1617b",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-01/curve-state.json": "e0343fd209504a70ddcb08ae023a352b3826f98f637baf2fc44d3c7139152870",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-01/stop-001.json": "8092dd54e92f0f6cf01fa505924096aa4e142de1a96f02e75f5a0f6e3f06d211",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-01/budget-before.json": "dc54eeba473b9bbed98afdeb05aa6d0b62959f7157440c4cae154828e1db3f71",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/run-01/budget-after.json": "45dacc673f37f58cadeadbed973596505a7b3357a62a9c0b2e59b5805856eab6",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/audit-01/summary.json": "ef9c69017275e19e92b6fb0b4fafbbfebdb683f812d22087cf7f74d706f95aa0",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/analysis-01.json": "ebec49ab49a759495936c1c2b4aa2a2d72dc583232b06b85743405f843fa7b32",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/training-audit-01.json": "7cbd0d33d9e3c981f4bbf4fa807a4a97faaf90d0035ec2925a0cec5399822ab4",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/readonly-stop-inspection-01.json": "0584e4ab7ae70f337a707c95909a9aa4eea05554853bf0e873f6390fc9f5d121",
+    "/Users/jennyma/Projects/mini-dsh/benchmark-results/trainable_agent/learning-curve-v4/build_report.py": "5181f577be2af265f5043edc261fc8e41ce2b0307db82574f3e7a90dcebb3c63"
+  },
+  "limitations": [
+    "Initial actor submission failed; provider root cause and actual billing outcome remain unknown.",
+    "Zero new sampling trajectories cannot support zero task success or a negative learning effect.",
+    "336 finite mutation checks do not prove exhaustive semantics or data independence.",
+    "Validation shares family specifications and reference code with training; no unseen-family or multi-seed evidence.",
+    "Money is conservative occupied estimate including unknown reservations, not provider-settled charges."
+  ]
+}

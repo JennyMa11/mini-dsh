@@ -18,7 +18,7 @@ from minidsh_rl.minirepo_prompts import PromptVariant
 from minidsh_rl.minirepo_prompts import instruction as assemble_instruction
 from minidsh_rl.minirepo_tasks import MiniTask
 from minidsh_rl.minirepo_tools import ReadVariant, RepoSession, RepoTool, ToolName
-from minidsh_rl.minirepo_verification import seed, verify
+from minidsh_rl.minirepo_verification import CurvePolicy, seed, verify
 from minidsh_rl.model import RecordingModel, SamplingBackend
 from minidsh_rl.recording import FileRecordingSink
 
@@ -65,6 +65,7 @@ async def run_rollout(  # noqa: PLR0913 - explicit isolated experiment compositi
     max_output_per_call: int = 512,
     prompt_variant: PromptVariant = "original",
     read_variant: ReadVariant = "single_read",
+    candidate_policy: CurvePolicy = "legacy",
 ) -> dict[str, object]:
     if max_output_per_call not in (512, 1024):
         raise ValueError("unsupported development output cap")
@@ -102,6 +103,7 @@ async def run_rollout(  # noqa: PLR0913 - explicit isolated experiment compositi
             task,
             1 if mode == "single" else 12,
             batch_path_limit=8 if read_variant == "batch_read_eight" else 4,
+            candidate_policy=candidate_policy,
         )
         model = SubmissionModel(recording, session, mode, output)
         instruction = assemble_instruction(task, mode, prompt_variant)
@@ -159,7 +161,9 @@ async def run_rollout(  # noqa: PLR0913 - explicit isolated experiment compositi
     if candidate is not None:
         (output / "candidate.json").write_text(json.dumps(candidate, indent=2))
         candidate_hash = hashlib.sha256(json.dumps(candidate, sort_keys=True).encode()).hexdigest()
-        verdict = await verify(host, task, candidate, image, output / "verification")
+        verdict = await verify(
+            host, task, candidate, image, output / "verification", policy=candidate_policy
+        )
         passed = verdict.passed
         if not passed:
             failure_type = "independent_verification_failed"
@@ -192,5 +196,7 @@ async def run_rollout(  # noqa: PLR0913 - explicit isolated experiment compositi
         "failure_type": failure_type,
         "loop_failure_reason": result.failure_reason,
     }
+    if candidate_policy != "legacy":
+        record["candidate_policy"] = candidate_policy
     (output / "result.json").write_text(json.dumps(record, indent=2))
     return record

@@ -35,6 +35,8 @@ class CalibratedBudget(CostStore):
     """A fixed new ledger; keep all predecessor locks while any new RPC is possible."""
 
     def __init__(self, path: Path, *, audit: Path) -> None:
+        if path.with_suffix(".curve-150.json").exists():
+            raise ValueError("old financial epoch sealed by curve migration")
         self._parent_leases: list[FileLease] = []
         self._bindings: dict[Path, str] = {audit: _hash(audit)}
         record = _Audit.model_validate_json(audit.read_bytes())

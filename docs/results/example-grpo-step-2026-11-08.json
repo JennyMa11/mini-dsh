@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-08T06:35:47.468984+00:00",
+  "scope": "one real native GRPO update,4 reused complete on-policy example trajectories,8 fresh paired development evaluations",
+  "training": {
+    "optimizer_updates": 1,
+    "reused_rollouts": 4,
+    "new_training_rollouts": 0,
+    "rewards": [
+      1.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "advantages": [
+      0.5,
+      -0.5,
+      -0.5,
+      0.5
+    ],
+    "assistant_tokens": 4525,
+    "padded_tokens": 227056,
+    "normalized_datum_hash": "902e8cd7a654775f8f21fa76c0cdccc8e92450b106355d20a8bafd4603537be9",
+    "mask": "only newly generated assistant tokens; prior context/observations zero, native sample-mean compensated",
+    "policy_diagnostics": {
+      "clipped_share": 0.0017679558011049724,
+      "action_tokens": 4525.0,
+      "mean_abs_log_ratio": 0.009654439235293364,
+      "max_abs_log_ratio": 0.31344032287597656
+    },
+    "initial_clone_delta": 0,
+    "final_weight_delta": 0.042495183713043824,
+    "final_b_norm": 0.042495183713043824,
+    "checkpoint_with_optimizer": "trio://run_5by7wf4rts0t/weights/final_optimizer",
+    "adapter_config_observed": {
+      "r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0,
+      "bias": "none",
+      "target_modules": [
+        "gate_proj",
+        "k_proj",
+        "q_proj",
+        "o_proj",
+        "v_proj",
+        "down_proj",
+        "in_proj_z",
+        "out_proj",
+        "up_proj"
+      ]
+    }
+  },
+  "declared": 8,
+  "completed": 8,
+  "arms": {
+    "base": {
+      "declared": 4,
+      "completed": 4,
+      "independent_criterion_checked": 4,
+      "functional_verifier_executed": 2,
+      "static_policy_rejected": 2,
+      "successes": 0,
+      "success_rate": 0.0,
+      "tokens": 81555,
+      "tokens_per_success_all_failures_retained": null,
+      "mean_tool_calls": 7.0,
+      "mean_steps": 8.0,
+      "e2e_ms": {
+        "p50": 26342.47100003995,
+        "p95": 34283.20858406369,
+        "method": "nearest_rank",
+        "sample_size": 4
+      },
+      "tool_rates": {
+        "invalid_tool_call_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 28,
+          "eligible": 28,
+          "coverage": 1.0
+        },
+        "permission_denied_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 28,
+          "eligible": 28,
+          "coverage": 1.0
+        },
+        "repeated_failed_action_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 28,
+          "eligible": 28,
+          "coverage": 1.0
+        },
+        "tool_error_rate": {
+          "value": 0.2857142857142857,
+          "numerator": 8,
+          "denominator": 28,
+          "eligible": 28,
+          "coverage": 1.0
+        }
+      },
+      "terminal_states": {
+        "finished": 3,
+        "budget_exhausted": 1
+      },
+      "sampling_estimated_cny": "0.174",
+      "unknown_provider_usage_calls": 0,
+      "local_pre_rpc_budget_rejections": 0
+    },
+    "rl": {
+      "declared": 4,
+      "completed": 4,
+      "independent_criterion_checked": 4,
+      "functional_verifier_executed": 1,
+      "static_policy_rejected": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "tokens": 116522,
+      "tokens_per_success_all_failures_retained": null,
+      "mean_tool_calls": 10.0,
+      "mean_steps": 10.75,
+      "e2e_ms": {
+        "p50": 27751.07541703619,
+        "p95": 33771.87454199884,
+        "method": "nearest_rank",
+        "sample_size": 4
+      },
+      "tool_rates": {
+        "invalid_tool_call_rate": {
+          "value": 0.025,
+          "numerator": 1,
+          "denominator": 40,
+          "eligible": 40,
+          "coverage": 1.0
+        },
+        "permission_denied_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 40,
+          "eligible": 40,
+          "coverage": 1.0
+        },
+        "repeated_failed_action_rate": {
+          "value": 0.025,
+          "numerator": 1,
+          "denominator": 40,
+          "eligible": 40,
+          "coverage": 1.0
+        },
+        "tool_error_rate": {
+          "value": 0.23076923076923078,
+          "numerator": 9,
+          "denominator": 39,
+          "eligible": 39,
+          "coverage": 1.0
+        }
+      },
+      "terminal_states": {
+        "budget_exhausted": 2,
+        "failed": 1,
+        "finished": 1
+      },
+      "sampling_estimated_cny": "0.241",
+      "unknown_provider_usage_calls": 0,
+      "local_pre_rpc_budget_rejections": 1
+    }
+  },
+  "paired_difference": 0.0,
+  "base_only_pairs": 0,
+  "rl_only_pairs": 0,
+  "pairs": [
+    {
+      "case_id": "learnability_v1_path_router_1",
+      "repeat": 0,
+      "seed": 836000,
+      "base_success": false,
+      "rl_success": false
+    },
+    {
+      "case_id": "learnability_v1_path_router_1",
+      "repeat": 1,
+      "seed": 836020,
+      "base_success": false,
+      "rl_success": false
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_1",
+      "repeat": 0,
+      "seed": 837000,
+      "base_success": false,
+      "rl_success": false
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_1",
+      "repeat": 1,
+      "seed": 837020,
+      "base_success": false,
+      "rl_success": false
+    }
+  ],
+  "budget": {
+    "stage_estimated_cny": "2.126",
+    "stage_cap_cny": "2.45",
+    "prior_baseline_correction_cny": ".848",
+    "corrected_prior_baseline_cny": "46.837",
+    "cumulative_mixed_occupied_cny": "48.963",
+    "available_cny": "1.037",
+    "pending": 0,
+    "old_pilot_reconciliation_cny": ".472",
+    "exact_project_invoice_cny": null
+  },
+  "recoveries": {
+    "count": 3,
+    "unknown_update_replays": 0,
+    "initial_metadata_audit_failure_records_preserved": true
+  },
+  "limitations": [
+    "Only1 optimizer update and2 historically seen development tasks, not formal generalization or algorithm comparison.",
+    "Both arms use identical fixed example prompt; prior original-prompt control not used as RL baseline.",
+    "Reused on-policy trajectories verified by exact initial weight clone equivalence, not fresh training sampling.",
+    "Token estimates, complete failed usage and recovery costs retained; no exact project cash invoice."
+  ],
+  "origin": "new_real_one_step_grpo_followup",
+  "local_analysis_path": "benchmark-results/trainable_agent/example-grpo-step-v1/run-01/analysis-01.json",
+  "local_analysis_sha256": "2ea44e08a8d678792eb0a6c0d985b9da55b608d97fc7858973a030cdc5a2be22",
+  "post_hoc_shadow_checker": {
+    "criterion_version": "pure_set_issubset_shadow_v1",
+    "declared": 8,
+    "completed": 8,
+    "functional_executions": 7,
+    "by_arm": {
+      "base": {
+        "declared": 4,
+        "original_successes": 0,
+        "shadow_successes": 1
+      },
+      "rl": {
+        "declared": 4,
+        "original_successes": 0,
+        "shadow_successes": 1
+      }
+    },
+    "original_scores_unchanged": true,
+    "not_a_replacement_eval": true
+  },
+  "cloud_visibility": "PRIVATE",
+  "cloud_runs": [
+    {
+      "arm": "base",
+      "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/iih4923b",
+      "readback_verified": true
+    },
+    {
+      "arm": "rl",
+      "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/bmnda9vj",
+      "readback_verified": true
+    },
+    {
+      "arm": "summary",
+      "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/re0uvayr",
+      "readback_verified": true
+    }
+  ]
+}

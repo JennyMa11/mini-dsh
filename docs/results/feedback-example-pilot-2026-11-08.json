@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "observed_at_utc": "2026-11-08T04:30:03.813746+00:00",
+  "scope": "16 newly sampled development trajectories, prompt-only diagnosis, zero optimizer updates",
+  "declared": 16,
+  "completed": 16,
+  "arms": {
+    "original": {
+      "declared": 8,
+      "completed": 8,
+      "independent_criterion_checked": 8,
+      "functional_verifier_executed": 8,
+      "static_policy_rejected": 0,
+      "successes": 0,
+      "success_rate": 0.0,
+      "mixed_groups": 0,
+      "groups": 2,
+      "tokens": 156661,
+      "tokens_per_success_all_failures_retained": null,
+      "mean_tool_calls": 7.375,
+      "mean_steps": 8.25,
+      "patches": 2,
+      "e2e_ms": {
+        "p50": 26674.144083051942,
+        "p95": 56556.62058305461,
+        "method": "nearest_rank",
+        "sample_size": 8
+      },
+      "tool_rates": {
+        "invalid_tool_call_rate": {
+          "value": 0.01694915254237288,
+          "numerator": 1,
+          "denominator": 59,
+          "eligible": 59,
+          "coverage": 1.0
+        },
+        "permission_denied_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 59,
+          "eligible": 59,
+          "coverage": 1.0
+        },
+        "repeated_failed_action_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 59,
+          "eligible": 59,
+          "coverage": 1.0
+        },
+        "tool_error_rate": {
+          "value": 0.20689655172413793,
+          "numerator": 12,
+          "denominator": 58,
+          "eligible": 58,
+          "coverage": 1.0
+        }
+      },
+      "feedback_path": {
+        "numerator": 0,
+        "declared_denominator": 8,
+        "observed_opportunity_denominator": 8,
+        "conditional_rate": 0.0,
+        "scope": "descriptive public failure, subsequent new patch, final independent success; not first-patch private-failure or causal proof"
+      },
+      "terminal_states": {
+        "finished": 5,
+        "budget_exhausted": 3
+      },
+      "sampling_estimated_cny": "0.345",
+      "unknown_provider_usage_calls": 0,
+      "local_pre_rpc_budget_rejections": 0
+    },
+    "tool_example": {
+      "declared": 8,
+      "completed": 8,
+      "independent_criterion_checked": 8,
+      "functional_verifier_executed": 8,
+      "static_policy_rejected": 0,
+      "successes": 3,
+      "success_rate": 0.375,
+      "mixed_groups": 2,
+      "groups": 2,
+      "tokens": 250281,
+      "tokens_per_success_all_failures_retained": 83427.0,
+      "mean_tool_calls": 11.125,
+      "mean_steps": 12.0,
+      "patches": 9,
+      "e2e_ms": {
+        "p50": 21127.52595799975,
+        "p95": 41788.879917003214,
+        "method": "nearest_rank",
+        "sample_size": 8
+      },
+      "tool_rates": {
+        "invalid_tool_call_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 89,
+          "eligible": 89,
+          "coverage": 1.0
+        },
+        "permission_denied_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 89,
+          "eligible": 89,
+          "coverage": 1.0
+        },
+        "repeated_failed_action_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "denominator": 89,
+          "eligible": 89,
+          "coverage": 1.0
+        },
+        "tool_error_rate": {
+          "value": 0.19101123595505617,
+          "numerator": 17,
+          "denominator": 89,
+          "eligible": 89,
+          "coverage": 1.0
+        }
+      },
+      "feedback_path": {
+        "numerator": 3,
+        "declared_denominator": 8,
+        "observed_opportunity_denominator": 7,
+        "conditional_rate": 0.42857142857142855,
+        "scope": "descriptive public failure, subsequent new patch, final independent success; not first-patch private-failure or causal proof"
+      },
+      "terminal_states": {
+        "failed": 2,
+        "budget_exhausted": 6
+      },
+      "sampling_estimated_cny": "0.527",
+      "unknown_provider_usage_calls": 0,
+      "local_pre_rpc_budget_rejections": 2
+    }
+  },
+  "groups": [
+    {
+      "case_id": "learnability_v1_path_router_0",
+      "arm": "original",
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "advantages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mixed_reward": false
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_0",
+      "arm": "original",
+      "rewards": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "advantages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "mixed_reward": false
+    },
+    {
+      "case_id": "learnability_v1_path_router_0",
+      "arm": "tool_example",
+      "rewards": [
+        1.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "advantages": [
+        0.5,
+        -0.5,
+        -0.5,
+        0.5
+      ],
+      "mixed_reward": true
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_0",
+      "arm": "tool_example",
+      "rewards": [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "advantages": [
+        -0.25,
+        0.75,
+        -0.25,
+        -0.25
+      ],
+      "mixed_reward": true
+    }
+  ],
+  "paired_difference": 0.375,
+  "original_only_pairs": 0,
+  "tool_example_only_pairs": 3,
+  "pairs": [
+    {
+      "case_id": "learnability_v1_path_router_0",
+      "repeat": 0,
+      "seed": 826000,
+      "original_success": false,
+      "tool_example_success": true
+    },
+    {
+      "case_id": "learnability_v1_path_router_0",
+      "repeat": 1,
+      "seed": 826020,
+      "original_success": false,
+      "tool_example_success": false
+    },
+    {
+      "case_id": "learnability_v1_path_router_0",
+      "repeat": 2,
+      "seed": 826040,
+      "original_success": false,
+      "tool_example_success": false
+    },
+    {
+      "case_id": "learnability_v1_path_router_0",
+      "repeat": 3,
+      "seed": 826060,
+      "original_success": false,
+      "tool_example_success": true
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_0",
+      "repeat": 0,
+      "seed": 827000,
+      "original_success": false,
+      "tool_example_success": false
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_0",
+      "repeat": 1,
+      "seed": 827020,
+      "original_success": false,
+      "tool_example_success": true
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_0",
+      "repeat": 2,
+      "seed": 827040,
+      "original_success": false,
+      "tool_example_success": false
+    },
+    {
+      "case_id": "learnability_v1_dependency_batches_0",
+      "repeat": 3,
+      "seed": 827060,
+      "original_success": false,
+      "tool_example_success": false
+    }
+  ],
+  "budget": {
+    "stage_estimated_cny": "0.922",
+    "sampling_estimated_cny": "0.872",
+    "setup_estimated_cny": "0.05",
+    "cumulative_mixed_occupied_cny": "48.157",
+    "available_cny": "1.843",
+    "pending": 0,
+    "exact_project_invoice_cny": null
+  },
+  "limitations": [
+    "Only2 retrospectively selected development tasks; not independent held-out generalization.",
+    "Prompt appendix also increases context length; does not isolate example semantics.",
+    "No model weights updated; cannot infer RL learning benefit or algorithm superiority.",
+    "Cash paid, cache telemetry, semantic tool-choice accuracy and global safety unmeasured."
+  ],
+  "origin": "new_real_prompt_only_development_experiment",
+  "training_updates": 0,
+  "model": "Qwen/Qwen3.5-4B",
+  "source_commit": "946c83a",
+  "local_analysis_path": "benchmark-results/trainable_agent/feedback-example-pilot-v1/run-01/analysis-01.json",
+  "local_analysis_sha256": "55a2c3b12540f371f3a72c12103a3c1f8c19c271e97c8d9e85948d6bd234f4e4",
+  "protocol_sha256": "d29d1fe2b66be32d0b044dae8040007df4477791266fb7d13f49c884da7ec59b",
+  "cloud_visibility": "PRIVATE",
+  "cloud_runs": [
+    {
+      "arm": "original",
+      "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/n7n9petv",
+      "readback_verified": true
+    },
+    {
+      "arm": "tool_example",
+      "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/cs558ror",
+      "readback_verified": true
+    },
+    {
+      "arm": "summary",
+      "url": "https://swanlab.cn/@JennyMa11/mini-dsh-agent-rl/runs/a4w868xq",
+      "readback_verified": true
+    }
+  ]
+}

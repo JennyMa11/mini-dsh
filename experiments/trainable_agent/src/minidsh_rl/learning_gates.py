@@ -37,7 +37,13 @@ def _sources() -> dict[str, str]:
     return {str(path): _hash(path) for path in sorted(files)}
 
 
-async def audit(cases: tuple[LearningCase, ...], output: Path, ledger: Path) -> None:
+async def audit(
+    cases: tuple[LearningCase, ...],
+    output: Path,
+    ledger: Path,
+    *,
+    policy: Literal["legacy", "curve_pure_v1"] = "legacy",
+) -> None:
     """Freeze all probes, run independent checkers, preserve the entire denominator."""
     if not cases or len({case.task.case_id for case in cases}) != len(cases):
         raise ValueError("nonempty unique case set required")
@@ -90,7 +96,13 @@ async def audit(cases: tuple[LearningCase, ...], output: Path, ledger: Path) -> 
         for mode in modes:
             folder = output / f"{probe.case_id}__{probe.probe_id}" / mode
             verdict = await verify(
-                DockerHost(), case.task, dict(probe.candidate), IMAGE, folder, checks=mode
+                DockerHost(),
+                case.task,
+                dict(probe.candidate),
+                IMAGE,
+                folder,
+                checks=mode,
+                policy=policy,
             )
             sidecar = json.loads((folder / "result.json").read_text())
             if (
@@ -140,6 +152,7 @@ async def audit(cases: tuple[LearningCase, ...], output: Path, ledger: Path) -> 
     report = {
         "schema_version": 1,
         "phase": "learning_fixture_offline_coverage_v1",
+        "candidate_policy": policy,
         "image": IMAGE,
         "complete_dataset": cases == learning_cases(),
         "case_bindings": bindings,

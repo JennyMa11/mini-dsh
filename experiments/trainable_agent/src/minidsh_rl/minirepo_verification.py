@@ -21,30 +21,66 @@ IMAGE = (
 )
 
 
-def candidate_allowed(task: MiniTask, files: dict[str, str]) -> bool:  # noqa: PLR0911, PLR0912
-    """Only pure functions, literal module docstrings and safe project imports."""
+CurvePolicy = Literal["legacy", "curve_pure_v1", "curve_pure_v2"]
+
+_POLICY_EXTRA_METHODS: dict[CurvePolicy, frozenset[str]] = {
+    "legacy": frozenset(),
+    "curve_pure_v1": frozenset({"issubset"}),
+    "curve_pure_v2": frozenset({"issubset", "lstrip", "replace", "rstrip"}),
+}
+
+
+def candidate_rejection_reason(  # noqa: PLR0911, PLR0912 - explicit policy branches
+    task: MiniTask,
+    files: dict[str, str],
+    *,
+    policy: CurvePolicy = "legacy",
+) -> dict[str, object] | None:
+    """Return the first failing policy branch, or None when the candidate is allowed."""
+    if policy not in _POLICY_EXTRA_METHODS:
+        raise ValueError("unknown candidate policy")
+    methods = _SAFE_METHODS | _POLICY_EXTRA_METHODS[policy]
     if set(files) != set(task.writable):
-        return False
+        return {
+            "reason": "file_set_mismatch",
+            "missing": sorted(set(task.writable) - set(files)),
+            "extra": sorted(set(files) - set(task.writable)),
+        }
     try:
         trees = {name[:-3]: ast.parse(source) for name, source in files.items()}
-    except (SyntaxError, ValueError, RecursionError):
-        return False
+    except (SyntaxError, ValueError, RecursionError) as error:
+        return {"reason": "syntax_error", "detail": type(error).__name__}
     functions = {
         module: {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}
         for module, tree in trees.items()
     }
-    for tree in trees.values():
+    for module, tree in trees.items():
         names = set(_SAFE_CALLS)
         names.update(n.name for n in tree.body if isinstance(n, ast.FunctionDef))
         for node in tree.body:
             if isinstance(node, ast.ImportFrom):
                 if node.level or node.module not in functions:
-                    return False
+                    return {
+                        "reason": "import_module",
+                        "module": module,
+                        "line": node.lineno,
+                        "name": node.module,
+                    }
                 for alias in node.names:
-                    if alias.name not in functions[node.module] or (
-                        alias.asname or alias.name
-                    ).startswith("__"):
-                        return False
+                    if alias.name not in functions[node.module]:
+                        return {
+                            "reason": "import_name",
+                            "module": module,
+                            "line": node.lineno,
+                            "name": alias.name,
+                        }
+                    if (alias.asname or alias.name).startswith("__"):
+                        return {
+                            "reason": "import_dunder",
+                            "module": module,
+                            "line": node.lineno,
+                            "name": alias.asname or alias.name,
+                        }
                     names.add(alias.asname or alias.name)
             elif not (
                 isinstance(node, ast.FunctionDef)
@@ -54,24 +90,61 @@ def candidate_allowed(task: MiniTask, files: dict[str, str]) -> bool:  # noqa: P
                     and isinstance(node.value.value, str)
                 )
             ):
-                return False
+                return {
+                    "reason": "top_level_statement",
+                    "module": module,
+                    "line": node.lineno,
+                    "name": type(node).__name__,
+                }
         for element in ast.walk(tree):
             if isinstance(element, ast.ImportFrom) and element not in tree.body:
-                return False
+                return {"reason": "nested_import", "module": module, "line": element.lineno}
             if isinstance(
                 element, (ast.Import, ast.ClassDef, ast.AsyncFunctionDef, ast.Global, ast.Nonlocal)
             ):
-                return False
+                return {
+                    "reason": "forbidden_node",
+                    "module": module,
+                    "line": element.lineno,
+                    "name": type(element).__name__,
+                }
             if isinstance(element, ast.Name) and element.id.startswith("__"):
-                return False
-            if isinstance(element, ast.Attribute) and element.attr not in _SAFE_METHODS:
-                return False
+                return {
+                    "reason": "dunder_name",
+                    "module": module,
+                    "line": element.lineno,
+                    "name": element.id,
+                }
+            if isinstance(element, ast.Attribute) and element.attr not in methods:
+                return {
+                    "reason": "unsupported_method",
+                    "module": module,
+                    "line": element.lineno,
+                    "name": element.attr,
+                }
             if isinstance(element, ast.Call):
                 if isinstance(element.func, ast.Name) and element.func.id not in names:
-                    return False
+                    return {
+                        "reason": "unknown_call",
+                        "module": module,
+                        "line": element.lineno,
+                        "name": element.func.id,
+                    }
                 if not isinstance(element.func, (ast.Name, ast.Attribute)):
-                    return False
-    return True
+                    return {
+                        "reason": "invalid_call_target",
+                        "module": module,
+                        "line": element.lineno,
+                        "name": type(element.func).__name__,
+                    }
+    return None
+
+
+def candidate_allowed(
+    task: MiniTask, files: dict[str, str], *, policy: CurvePolicy = "legacy"
+) -> bool:
+    """Only pure functions, literal module docstrings and safe project imports."""
+    return candidate_rejection_reason(task, files, policy=policy) is None
 
 
 async def seed(box: DockerSandbox, files: dict[str, str]) -> None:
@@ -96,11 +169,24 @@ async def verify(  # noqa: PLR0913 - independent container verifier boundary
     output: Path,
     *,
     checks: Literal["private", "public"] = "private",
+    policy: CurvePolicy = "legacy",
 ) -> Verdict:
     """Fresh container; hidden checks are never placed in an agent-accessible box."""
     await asyncio.to_thread(output.mkdir, parents=True, exist_ok=False)
     began = time.monotonic()
-    passed = candidate_allowed(task, candidate)
+    rejection = candidate_rejection_reason(task, candidate, policy=policy)
+    passed = rejection is None
+    (output / "policy.json").write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "policy": policy,
+                "allowed": passed,
+                "reason": rejection,
+            },
+            indent=2,
+        )
+    )
     exit_code, timed_out, stdout, stderr = -1, False, "", "candidate_policy_rejected"
     if passed:
         marker = "verified_" + secrets.token_hex(16)
