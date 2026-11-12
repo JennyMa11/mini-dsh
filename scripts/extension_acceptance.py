@@ -34,6 +34,7 @@ from minidsh.benchmark.hashes import frozen_tree_digest
 from minidsh.benchmark.public_lite import checked_image_size, seed_container
 from minidsh.benchmark.runner import BenchmarkManifest, BenchmarkRunner
 from minidsh.composition import (
+    LocalRuntime,
     RuntimeComponents,
     RuntimeEnvironment,
     RuntimeOptions,
@@ -59,6 +60,7 @@ from minidsh.infrastructure import CommandPolicy
 from minidsh.infrastructure.containers import ContainerResources, DockerHost, DockerSandbox
 from minidsh.ports.memory import MemoryEvidenceError, MemoryStoreError
 from minidsh.runtime.hooks import HookRegistry
+from minidsh.tools import RunCommandTool
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = "benchmarks/extension_v1/manifest.json"
@@ -809,6 +811,9 @@ async def isolated_row(  # noqa: PLR0912, PLR0913, PLR0915, PLR0917 - actor then
     host: DockerHost,
     model: ObservedModel,
     remaining: int,
+    *,
+    runtime_options: RuntimeOptions | None = None,
+    memory_database_sha256: str | None = None,
 ) -> dict[str, Any]:
     group = ExtensionGroup(declared["group"])
     language = "js" if task.test_argv[0] == "node" else "python"
@@ -833,7 +838,21 @@ async def isolated_row(  # noqa: PLR0912, PLR0913, PLR0915, PLR0917 - actor then
         )
     await asyncio.to_thread(workspace.mkdir, mode=0o700)
     memory = None
-    if group is ExtensionGroup.D:
+    if runtime_options is not None:
+        memory = runtime_options.memory
+        if memory is not None:
+            if memory_database_sha256 is None:
+                raise AcceptanceError("pinned_memory_database_required")
+            private = directory / "private"
+            await asyncio.to_thread(private.mkdir, mode=0o700)
+            data = await asyncio.to_thread(
+                read_seed_file, Path(memory.database), memory_database_sha256
+            )
+            await asyncio.to_thread(write_private, private / "memory.sqlite3", data)
+            memory = replace(
+                memory, database=str(private / "memory.sqlite3"), storage_root=str(private)
+            )
+    elif group is ExtensionGroup.D:
         profile = await load_seed(
             snapshot / "memory_seed.json", workspace=workspace, frozen_snapshot=snapshot
         )
@@ -867,6 +886,7 @@ async def isolated_row(  # noqa: PLR0912, PLR0913, PLR0915, PLR0917 - actor then
     run_id = uuid.uuid4().hex
     archive = directory / "candidate.tar"
     captured = False
+    interrupted: asyncio.CancelledError | None = None
     async with DockerSandbox(host, image=image, resources=resources) as actor:
         await record_world(host, actor, directory / "actor_container.json")
         await seed_container(host, actor, actor_input)
@@ -886,26 +906,49 @@ async def isolated_row(  # noqa: PLR0912, PLR0913, PLR0915, PLR0917 - actor then
         runner = actor.runner(
             "/app", CommandPolicy(allowed_commands=frozenset({"python", "python3", "node", "git"}))
         )
-        runtime = build_extension_runtime(
-            group=group,
-            workspace=workspace,
-            model=model,
-            environment=RuntimeEnvironment(
-                runner,
-                DockerFileBackend(runner, worker_runtime="node" if language == "js" else "python"),
-                host_storage_isolated=True,
-            ),
-            budget=budget,
-            test_argv=task.test_argv,
-            memory=memory,
+        environment = RuntimeEnvironment(
+            runner,
+            DockerFileBackend(runner, worker_runtime="node" if language == "js" else "python"),
+            host_storage_isolated=True,
         )
+        runtime: LocalRuntime
+        if runtime_options is None:
+            runtime = build_extension_runtime(
+                group=group,
+                workspace=workspace,
+                model=model,
+                environment=environment,
+                budget=budget,
+                test_argv=task.test_argv,
+                memory=memory,
+            )
+        else:
+            runtime = build_local_runtime(
+                workspace=workspace,
+                model=model,
+                budget=budget,
+                options=replace(runtime_options, memory=memory),
+                components=RuntimeComponents(
+                    environment=environment,
+                    tools=(RunCommandTool("test", runner, task.test_argv, timeout_seconds=30),),
+                ),
+            )
         runtime.events.subscribe(
             "*", JsonlTraceWriter(directory / "trace.jsonl", truncate_on_start=True)
         )
         try:
-            async with asyncio.timeout(180):
+            async with asyncio.timeout(
+                180 if runtime_options is None else budget.max_duration_seconds + 10
+            ):
                 result = await runtime.agent.run(task.goal, run_id=run_id)
         except TimeoutError:
+            result = await runtime.sessions.load(run_id)
+        except asyncio.CancelledError as exc:
+            if runtime_options is None:
+                raise
+            # P5 retains the cancelled artifact and independent verdict before
+            # propagating cancellation. No further model call is made.
+            interrupted = exc
             result = await runtime.sessions.load(run_id)
         finally:
             if runtime.close is not None:
@@ -1020,6 +1063,8 @@ async def isolated_row(  # noqa: PLR0912, PLR0913, PLR0915, PLR0917 - actor then
         "status": "checked" if accepted is not None else "unverified",
     }
     write_json(directory / "check.json", facts)
+    if interrupted is not None:
+        raise interrupted
     return facts
 
 

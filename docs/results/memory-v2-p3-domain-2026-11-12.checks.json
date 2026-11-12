@@ -1,0 +1,818 @@
+{
+  "schema_version": "1.0",
+  "phase": "P3_domain_development",
+  "phase_acceptance": false,
+  "source_manifest": {
+    "source_sha256": "adfa39014e25157d4679312bc61bb99d10ea4cc188cfd775ca639fdbc7284eb1",
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "c3f73b5669cbb2cbb46507988453c4f829d3743ef581db3a5f64e8c48f000ef5"
+      },
+      {
+        "path": "docs/adr/0032-structured-memory-notes-and-history.md",
+        "sha256": "15c95aac2f0c0feeb33eefec9dd3d1b3863b0cceff5244f9c0d772e3c7091aa1"
+      },
+      {
+        "path": "docs/memory-v2-p3-contract.md",
+        "sha256": "daa5c0ed06e2a72ee92688bf92148fa3e8329a5f74256f096f9b9765038534bd"
+      },
+      {
+        "path": "pyproject.toml",
+        "sha256": "5c97d565b1097b5b415f95d73941e031b782f234e0d4d2c681cf30337ae9f648"
+      },
+      {
+        "path": "src/minidsh/__init__.py",
+        "sha256": "25e35c547aa0fd0bb7b9c5a3c320099a7864bc0cf6737b84819886d21314c6e8"
+      },
+      {
+        "path": "src/minidsh/__main__.py",
+        "sha256": "5eb23de638abfa720990c9dc4875c6e6484502b3432961879470085d34b0647d"
+      },
+      {
+        "path": "src/minidsh/adapters/__init__.py",
+        "sha256": "98aba2d99d4abf1780db7a0cc26afa1f9050a0ad6b489470511ea8161c9d1499"
+      },
+      {
+        "path": "src/minidsh/adapters/conversations.py",
+        "sha256": "442f569b60a16d96b16f88bbbf1dce9584761dcff959424364e9c6e892b90496"
+      },
+      {
+        "path": "src/minidsh/adapters/credentials.py",
+        "sha256": "ea7c3d9bf1c67f9357e09518095e97f990dde1221c5cf8af0fd82c49fa12b8ee"
+      },
+      {
+        "path": "src/minidsh/adapters/file_backend.py",
+        "sha256": "5dd7096955fe0637313434fe92c68f0b51cae991d4d2a11e04c1143c09824398"
+      },
+      {
+        "path": "src/minidsh/adapters/mcp.py",
+        "sha256": "c7d4fd4bc0552d40598a252d66472601062bd4c7fb922fe5f80ac498b1bd0c84"
+      },
+      {
+        "path": "src/minidsh/adapters/mcp_http.py",
+        "sha256": "610b8cdee65f93d3312988758f09d8abf940cfefd0a7916f8acdd7686ce7e635"
+      },
+      {
+        "path": "src/minidsh/adapters/memory.py",
+        "sha256": "0443e001db8d28606d5619b70b269a1159e735b1adeb8495dea120d21bc18663"
+      },
+      {
+        "path": "src/minidsh/adapters/memory_evidence.py",
+        "sha256": "ee0124f39bb325ff3346bdcdff33b4a918d307bbcd2511cf6fa0e3714c91c3cb"
+      },
+      {
+        "path": "src/minidsh/adapters/mlx.py",
+        "sha256": "7cebffba1629e67ec619be8a921479bb0a92f47c5e639099f5039db46aaa57ce"
+      },
+      {
+        "path": "src/minidsh/adapters/models.py",
+        "sha256": "b30b1cc4b1b5f4f286ae63566171a6748717be512f10d75e4d9b11182735fb9a"
+      },
+      {
+        "path": "src/minidsh/adapters/plugin_trust.py",
+        "sha256": "6eda9b4b63e50a0c6778468e986e830914ab5d76cb9a4a214a5d61374401c5b0"
+      },
+      {
+        "path": "src/minidsh/adapters/profiles.py",
+        "sha256": "091776dbc7a47ac7539789efd9096022211e433cec1a0bd1e7c212cf372d22b8"
+      },
+      {
+        "path": "src/minidsh/adapters/session_codec.py",
+        "sha256": "5e50fc35f9143fc00c4aa77254795f2c212067379018b02591532213cd0442a3"
+      },
+      {
+        "path": "src/minidsh/adapters/session_journal.py",
+        "sha256": "11f2824e76f12fa48fdb7fe8ea9ee1c9211c5767e28c6857d19c3c65beff3755"
+      },
+      {
+        "path": "src/minidsh/adapters/sessions.py",
+        "sha256": "7411741fc2b7d2a04d1b142a4d59ea2b9432ec0f5d1947851386b13bcb8e7b15"
+      },
+      {
+        "path": "src/minidsh/adapters/streaming.py",
+        "sha256": "90aa6884e3e5ea26b70bdad918faaef05a0e1a23da21ef9f13e59d5461c82fd2"
+      },
+      {
+        "path": "src/minidsh/adapters/trace.py",
+        "sha256": "e2c5dc793f04e7bde61b20ad1117fe5f576ee3516460c29f16d39b121fcf00dd"
+      },
+      {
+        "path": "src/minidsh/application/__init__.py",
+        "sha256": "4a50b3283abd49c393eb5e1f95d8e4d264cd46fb8fa078261377b4cec55bd959"
+      },
+      {
+        "path": "src/minidsh/application/agent_loop.py",
+        "sha256": "5096ffcf172d8e20e4e46412623613d445afb53dec63379865f09fca8cc556a1"
+      },
+      {
+        "path": "src/minidsh/application/context_assembly.py",
+        "sha256": "ebafacf2a0017f4e155c95e52f871241f567de724bbb6ca87878aff17290909c"
+      },
+      {
+        "path": "src/minidsh/application/conversations.py",
+        "sha256": "1abacd3f9e32070d2bac70e8836eced22b06b981b1f792773857a021533cf3f4"
+      },
+      {
+        "path": "src/minidsh/application/local_policy.py",
+        "sha256": "39cf1feb733b9b2c1522a8f2c1f48ce344584cecc46b79db496f70d184eb7f5c"
+      },
+      {
+        "path": "src/minidsh/application/memory_query.py",
+        "sha256": "ff33ff0fa0775ee227cc1fd6089640857f39f8b973366671a058b2b69374e50b"
+      },
+      {
+        "path": "src/minidsh/application/session_journal.py",
+        "sha256": "6c57370e7c1c9758891464d36e9562d59d858a00b7a98bf63068c38683c64041"
+      },
+      {
+        "path": "src/minidsh/benchmark/__init__.py",
+        "sha256": "8cd2709ac28ecce12b2d47e2c0a3af6c5f2d180192e37699376db02eae8d97ab"
+      },
+      {
+        "path": "src/minidsh/benchmark/ablation.py",
+        "sha256": "bc01e5fa10e3e6df4a186829906c236c3087874e517ad383a12236c4c61bbb59"
+      },
+      {
+        "path": "src/minidsh/benchmark/extension_matrix.py",
+        "sha256": "b7cfc1b52e9bd0e407808e95210d8a5db0bc15bad5b4e973337c8f242309c636"
+      },
+      {
+        "path": "src/minidsh/benchmark/followup.py",
+        "sha256": "f2663d6c1a3624592ec4d99145275a70711a3dce839f9fc0caf95ecbf5c68da3"
+      },
+      {
+        "path": "src/minidsh/benchmark/formal.py",
+        "sha256": "105613ef4a619e7111bc597b62b57ad2a0721e6e452b7bd0520b3a9c3a6f894b"
+      },
+      {
+        "path": "src/minidsh/benchmark/harness_report.py",
+        "sha256": "28b2fa3258a37f2e38e93cb92d514666342f32183e0ed00cdac8c03802fe5ba6"
+      },
+      {
+        "path": "src/minidsh/benchmark/harness_runner.py",
+        "sha256": "ef923db237e40eebfc5d4e85d440b7893c03cb9324a7aa25665db58c0c1ccfe1"
+      },
+      {
+        "path": "src/minidsh/benchmark/harness_study.py",
+        "sha256": "e1b6b06cf3be587344fd2588f72042bc8705aeb83ea3671193cf543db714aa9d"
+      },
+      {
+        "path": "src/minidsh/benchmark/hashes.py",
+        "sha256": "8441050dde383958f8cbe72887c67dd8e3c689fd4d7842e090c450b09bef5c19"
+      },
+      {
+        "path": "src/minidsh/benchmark/memory.py",
+        "sha256": "52fde6257686a99a15172182ae6ac55644ddac09b7e80e721323ba4238417146"
+      },
+      {
+        "path": "src/minidsh/benchmark/mini_dsh.py",
+        "sha256": "a145ba798d8538800b1b6865e86ac7c47c8cdf68ff6a6b3a8dbf17ba38ce9160"
+      },
+      {
+        "path": "src/minidsh/benchmark/public_lite.py",
+        "sha256": "53edce8488b3750781a3c0b259bece5cc53f8905b1212ae5a70376c0915a8f65"
+      },
+      {
+        "path": "src/minidsh/benchmark/public_swe.py",
+        "sha256": "4b05aa3033a0a19080c1d0db7e795cea0e8fd72cf741cdd341ab82e293d404a7"
+      },
+      {
+        "path": "src/minidsh/benchmark/runner.py",
+        "sha256": "b5328711e26bc597609b09d1d1832d9adce13c7f88a33a26159f8748e1f55853"
+      },
+      {
+        "path": "src/minidsh/cli.py",
+        "sha256": "0eedd5ded5d635b4489dbc56de251d8ae2ea9d55206f7708c01d805d62822e59"
+      },
+      {
+        "path": "src/minidsh/collaboration.py",
+        "sha256": "b8bdc486f545edff94c09b0fafac263cd6f4dc83d8379736823e35cdba6d548a"
+      },
+      {
+        "path": "src/minidsh/composition.py",
+        "sha256": "db56d8a64f7ff790ad28a3f7fed83797b4bc8cbe7afb4cce092ed9a8adc1f77c"
+      },
+      {
+        "path": "src/minidsh/config.py",
+        "sha256": "8f5b22c2bf643e087f896e42a4e140b64971b7766655211fdc09212a7c01858b"
+      },
+      {
+        "path": "src/minidsh/configured_runtime.py",
+        "sha256": "3b470d07422ebe9224747da7c3f5f93cbb4a60feaf0045f1299e8771717d2337"
+      },
+      {
+        "path": "src/minidsh/context/__init__.py",
+        "sha256": "7bdcd2e409954b7e11e0a596979a87f6174fe2b5ad762012b89775f6ba1d0813"
+      },
+      {
+        "path": "src/minidsh/context/retrieval.py",
+        "sha256": "55659336d917f9c4eee3de9ce08274b27bfec1de158a4c6b43718e58a239acf8"
+      },
+      {
+        "path": "src/minidsh/context/snapshots.py",
+        "sha256": "91b55a22f547035ff8733b10c770925793cd26efa7836a24d3c6622a843b0b62"
+      },
+      {
+        "path": "src/minidsh/context/strategies.py",
+        "sha256": "0c9d236cb891ce8dd2c4d30cede4e43397232fbd1c2ce4ab6937c68484cd461e"
+      },
+      {
+        "path": "src/minidsh/domain/__init__.py",
+        "sha256": "22a0031f86257d52a8a2d81ca05d91413b7779e903449c0a5ea69f19b2e94fa3"
+      },
+      {
+        "path": "src/minidsh/domain/extensions.py",
+        "sha256": "6961d0463882c24721fa18c1422ab22f2b2f6b03613e7065c69cebb0c1b94b3d"
+      },
+      {
+        "path": "src/minidsh/domain/harness.py",
+        "sha256": "ddd148b1f7e52ad2f86bd5a019aba9825afe91af181c18fc7197b1a35c913c16"
+      },
+      {
+        "path": "src/minidsh/domain/memory.py",
+        "sha256": "357787e3d848766fe3841e36aab74153dcd2ac64d0e65f42e243daf1c14ce311"
+      },
+      {
+        "path": "src/minidsh/domain/memory_content.py",
+        "sha256": "4ff85b557aa2e4e88408fe8115c566ed2cf305ed8253580b53e53fe92ce7192f"
+      },
+      {
+        "path": "src/minidsh/domain/memory_discovery.py",
+        "sha256": "e4458217fcdafe9bd196f14f16df8df6af3d648abfcf9184c7b840fbc1d59b0a"
+      },
+      {
+        "path": "src/minidsh/domain/memory_notes.py",
+        "sha256": "bdc3e530d6174273aed9bfaf437740709364c0ccc451865708c2fd14c6225cf4"
+      },
+      {
+        "path": "src/minidsh/domain/memory_query.py",
+        "sha256": "789302c04e38e2cd30c5a61a6045184c69b2d4a9f731326dcf0c6f3eb08c7fef"
+      },
+      {
+        "path": "src/minidsh/domain/models.py",
+        "sha256": "4ab1d8e749ff27ce70bcec00e2733a07b915aa4f76f85f08350a924af3d03bcb"
+      },
+      {
+        "path": "src/minidsh/domain/redaction.py",
+        "sha256": "d237e10b318b1a5eaea35f35b1ff75df038742c0ace3afbda3ab2d7e4d224404"
+      },
+      {
+        "path": "src/minidsh/domain/session.py",
+        "sha256": "851ac2fa067e9f1f8f75517ec759ee629a937de08560c2c8be43877b8425acdc"
+      },
+      {
+        "path": "src/minidsh/domain/skills.py",
+        "sha256": "5b0031a8ed39f2585f8cd4af90877ab109fb70cd865dcb3c848dcdd183dc35bd"
+      },
+      {
+        "path": "src/minidsh/domain/verification.py",
+        "sha256": "88be5af44a8e9b6b3290c8aac0455073069bb8ae20f12fa876e6a95ac944569a"
+      },
+      {
+        "path": "src/minidsh/evaluation/__init__.py",
+        "sha256": "49c98097e3dc9f5d759975e9d98b4765aa63fec6fc3c0b825657e1f91135822d"
+      },
+      {
+        "path": "src/minidsh/evaluation/diff.py",
+        "sha256": "088c01d12edd8b48a68ed310f5f171a87231c8925bf2d6f882829567925075e8"
+      },
+      {
+        "path": "src/minidsh/evaluation/extension_comparison.py",
+        "sha256": "7e08693a7d4e0ebac72cb09312a9005c1b8298cfd78e4d16e8ef9546b59332c4"
+      },
+      {
+        "path": "src/minidsh/evaluation/harness_metrics.py",
+        "sha256": "dacbf552def68d44c5d4e7aae43fe2c74bee862b1786bba0bd74f6c090c04c1e"
+      },
+      {
+        "path": "src/minidsh/evaluation/inference.py",
+        "sha256": "ea24733c6dd91c4e313d49e92b2c4937754b717e6ba55a2bb21ed46e702fe83c"
+      },
+      {
+        "path": "src/minidsh/evaluation/latency.py",
+        "sha256": "065cffed9dbcb5cf77a3fbe0f7008004cf8c2ab9da5dab37a91762b81f508283"
+      },
+      {
+        "path": "src/minidsh/evaluation/pareto.py",
+        "sha256": "28ffb16a9cf293ceeae0e09c74ea1135412cbea052ac9522c187ee4adcbba34f"
+      },
+      {
+        "path": "src/minidsh/evaluation/replay.py",
+        "sha256": "4a3bdc564bf098b0fb59fac978a0a3017e4ef8f2517e8f6724bd61a17582429c"
+      },
+      {
+        "path": "src/minidsh/evaluation/taxonomy.py",
+        "sha256": "934e4f749155be29b833d4fe0229307ff462a76a2d7ec116264a69d06b1c8e08"
+      },
+      {
+        "path": "src/minidsh/evaluation/tracefile.py",
+        "sha256": "b7a779415a7cc2997372cc9f594e069f3c0e5c89262bfa3242aa2aed601af53c"
+      },
+      {
+        "path": "src/minidsh/gui/__init__.py",
+        "sha256": "1bac6cb6d473f835a8a33dc79bd79f12f8f564d52de9ce12412f471f9f13f94c"
+      },
+      {
+        "path": "src/minidsh/gui/server.py",
+        "sha256": "6b2902ffd7eb7254601e40aa47fe7ff36a5c6841f132409c562679649d3df9e8"
+      },
+      {
+        "path": "src/minidsh/gui/session.py",
+        "sha256": "eeb0bad924bc31a912b5b87a398ffe2bc17cc185f9ee84514e4484d3761d94e6"
+      },
+      {
+        "path": "src/minidsh/infrastructure/__init__.py",
+        "sha256": "e36e68969bbcc8554214e61a0bb5bb5e5b45c7fc6bf005b79840f43606802554"
+      },
+      {
+        "path": "src/minidsh/infrastructure/containers.py",
+        "sha256": "ec9582d7ace977d94c6ac74377341e23ec195dd16a595c424bd7085f048e09b7"
+      },
+      {
+        "path": "src/minidsh/infrastructure/file_worker.py",
+        "sha256": "021d3d843a2a76369564b7c8e90ebba1b67f936b86bcf370319178d8459ee077"
+      },
+      {
+        "path": "src/minidsh/infrastructure/locks.py",
+        "sha256": "e310dc54617d583b30be45676c54378309feff81dca927226e5711eb60123d8e"
+      },
+      {
+        "path": "src/minidsh/infrastructure/process.py",
+        "sha256": "bf8b9757ef4debe5738aeeebe0e79597e5dd53b8362dadb019889dab27ac40e8"
+      },
+      {
+        "path": "src/minidsh/infrastructure/sandbox.py",
+        "sha256": "e8ddc992918b87f777468305abb0ff40f2303fa7a58de8dcf8ae7412c8cfe447"
+      },
+      {
+        "path": "src/minidsh/interactive.py",
+        "sha256": "03cfe59b5c33dc222534e10636b091976a42c3b4021872cf0a2bd5ee2e39d0e9"
+      },
+      {
+        "path": "src/minidsh/ports/__init__.py",
+        "sha256": "f92f40fb90d6ee624b22f5972ea20e4de0d53707dc689cce6631a3a564728f41"
+      },
+      {
+        "path": "src/minidsh/ports/conversations.py",
+        "sha256": "01857f0c95ebd6cf78ffd8ad0519e44f80f27fb36b284cb00c0737f1b0bad24a"
+      },
+      {
+        "path": "src/minidsh/ports/files.py",
+        "sha256": "c410315313195a8d68942a75a6af3812bd9cba1f9040b47fc7ca55f802bf7841"
+      },
+      {
+        "path": "src/minidsh/ports/memory.py",
+        "sha256": "8162e5482df26a77d637b8bac9ffabac9f113de1a3cad540ff3ff1369f411aaa"
+      },
+      {
+        "path": "src/minidsh/ports/protocols.py",
+        "sha256": "b771641bf9172636b348b6f908a16df1cae1d4072ededb6cacdc54fba5153d12"
+      },
+      {
+        "path": "src/minidsh/ports/skills.py",
+        "sha256": "6c664d318c5c2b060c2e495eb0b9cab77a670dcf0cd7d264a02ec72932ca4aa6"
+      },
+      {
+        "path": "src/minidsh/runtime/__init__.py",
+        "sha256": "4c75cfd5c85db1176413e13bdfb40a193402f911af4f79a5365491461e912dad"
+      },
+      {
+        "path": "src/minidsh/runtime/approvals.py",
+        "sha256": "4258279c364f087f6af3c518dc9f664109ed45f0b28741693629593be5812d52"
+      },
+      {
+        "path": "src/minidsh/runtime/catalog.py",
+        "sha256": "36b37179ae316b403bdc52aca9d1caccd43103d73d96db07981d5f28b20fbd7a"
+      },
+      {
+        "path": "src/minidsh/runtime/events.py",
+        "sha256": "8885e495d27107269dc7184223c73d2649e90fe302e6a8658187522b298e68a3"
+      },
+      {
+        "path": "src/minidsh/runtime/hooks.py",
+        "sha256": "447a794713978c459ff5a18eaefd623590b19dc4c43c41062704da22dbf1cbd4"
+      },
+      {
+        "path": "src/minidsh/runtime/memory.py",
+        "sha256": "c37dc1ba51950aef19946ba74fc1a0866aeb445db7b9c86f1297e837afc5328b"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_maintenance.py",
+        "sha256": "e7cec2da561caad229bf40e9392ef3df83ae88472c62a7a2263b624196844cb7"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_model.py",
+        "sha256": "d2972782fbb09ca6704a1a92ff6f994872dedeaddc820d0e034424b78aedd24a"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_reading.py",
+        "sha256": "3ddb58b006cc494f5d7a6203491f6c4226ebed770f9434eeae4c73fd1a048843"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_runner.py",
+        "sha256": "7a2cc1e3acdac704e980f5fb4545dd5c26e6efea40bc8919c05d1899bd24d8eb"
+      },
+      {
+        "path": "src/minidsh/runtime/plugins.py",
+        "sha256": "bfe7b0c360dd99d21004183a546aae1b3f17c42aaefa79774ece14f0b2f8b9ab"
+      },
+      {
+        "path": "src/minidsh/runtime/services.py",
+        "sha256": "62e4a8554aa458b92d31c235b58071d4f687a444d1dbc516bd3a7281b2c254d7"
+      },
+      {
+        "path": "src/minidsh/runtime/skills/__init__.py",
+        "sha256": "08eb9dd1be4ec0137184178553a16a379d4270c68d0ada647f35e9f11a5078f8"
+      },
+      {
+        "path": "src/minidsh/runtime/skills/service.py",
+        "sha256": "389f599374c92107502bb2209b0dc2e40cb503fa8989e4f38e34041078c7b414"
+      },
+      {
+        "path": "src/minidsh/runtime/skills/tools.py",
+        "sha256": "5bb067716d9881c04d6bf87c6538bf0860baaf0532bd2d52f306f115f50ad07b"
+      },
+      {
+        "path": "src/minidsh/runtime/verification.py",
+        "sha256": "44de555438b415df735194a72c113579517ad8488b6f57e1f3fdea71ca73c39a"
+      },
+      {
+        "path": "src/minidsh/terminal.py",
+        "sha256": "f223caf0ffc3c66a8cd4200aacd6d5555c6a6d24c176ce0de2ca3baa0815eadd"
+      },
+      {
+        "path": "src/minidsh/tools/__init__.py",
+        "sha256": "7d3e8315662ab9aaa6bd1a4169dd9128664597a2fd90af1c37229e322abeaf76"
+      },
+      {
+        "path": "src/minidsh/tools/builtin.py",
+        "sha256": "158f23eafd3a08d2c68bf23b48a5fec0d09eaaca44dc6932952243a1bd265860"
+      },
+      {
+        "path": "src/minidsh/tools/results.py",
+        "sha256": "72262ab1d6fd0a2bbf445f29daaa5e0a56355bd795d5c8e62d8e006e6dcf5513"
+      },
+      {
+        "path": "src/minidsh/tools/runtime.py",
+        "sha256": "c9afb491484ffbca3c6c5c0218adfd380112e9eb6450f0f22bc35c602448f638"
+      },
+      {
+        "path": "src/minidsh/work_profile.py",
+        "sha256": "465497263e31afacb712f4ec3cf98ad591a026776b2911b5b1d2e388f43da6ca"
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "e71c0be0ebc777d143a49f8b16d57c464876a8f700f99228bcf6313d1fb199d6"
+      },
+      {
+        "path": "tests/test_ablation.py",
+        "sha256": "e2dc01303c98eabe094139e9d13fd6d4cfe5969750cb4d8b931fdf52c8a0e307"
+      },
+      {
+        "path": "tests/test_adapters.py",
+        "sha256": "5838b8af8b5a546a522a286dacc5274b0e3a2b42d7f04ae34da2720f5de05418"
+      },
+      {
+        "path": "tests/test_agent_loop.py",
+        "sha256": "74ab91f3c49ce84acd2af65bf8413cc669c6c4873ffbc33f4b9bc7dd194a6d55"
+      },
+      {
+        "path": "tests/test_benchmark.py",
+        "sha256": "2c13817bc3475b2921f47cbf5608850580bfbc5e36f988af7438d75dfe26bbbf"
+      },
+      {
+        "path": "tests/test_cli.py",
+        "sha256": "79af093b8a9bc695fc84f837d16dd8eff6a5e9976e24bd2b304ceae1e38dd449"
+      },
+      {
+        "path": "tests/test_collaboration.py",
+        "sha256": "8ba889eab90e9d89cb4b18a8761fb74ccf003fbdfea25de25f4912958c9fc0e6"
+      },
+      {
+        "path": "tests/test_composition.py",
+        "sha256": "113d9ea9cadc5983d9db48405060ff33036d5dbfec6ec5fe2625c296a22a92ad"
+      },
+      {
+        "path": "tests/test_config.py",
+        "sha256": "ac56d6100011d23621b795a9fe62aa70b266a231500c58dd9623aaa0690d001b"
+      },
+      {
+        "path": "tests/test_container_archive.py",
+        "sha256": "51ad6253318a7504d384f2234ba51117ebf01f2b46c8ca5082e39f8f6b160d6a"
+      },
+      {
+        "path": "tests/test_context.py",
+        "sha256": "2b946ac0ce74dfefe498f873745d2bb151d9494e885415aa11e304b31d15b250"
+      },
+      {
+        "path": "tests/test_context_retention.py",
+        "sha256": "7c4793a2ec45c6909a1d8b80a17cf9783efbd181277cdc5c70da5798154b95c6"
+      },
+      {
+        "path": "tests/test_conversations.py",
+        "sha256": "60829662b4797fbca832c6da662750523e6412ae08fee4fdf16dd5f4720b57aa"
+      },
+      {
+        "path": "tests/test_credentials.py",
+        "sha256": "755129781486d1fe8f63f4eb67bf91f6d3e36498b99dbee5ef03d5f84581855f"
+      },
+      {
+        "path": "tests/test_docs.py",
+        "sha256": "a9fdc7a9f9f4d3de7bb53dbfc5003f50719913fcd256ef182e047b37ee671550"
+      },
+      {
+        "path": "tests/test_evaluation.py",
+        "sha256": "8eb2bd3e4343450f9286b1403cb096d5b9feb31eac57fdd26e3e7cd84ef17314"
+      },
+      {
+        "path": "tests/test_extension_acceptance.py",
+        "sha256": "850dcd572cbd4db63b98975f70dac3ec87e01aa1e381d026163f2baf7b93d059"
+      },
+      {
+        "path": "tests/test_extension_comparison.py",
+        "sha256": "772f1fbb8210c1b8d47c2d1ed09d1434d91d60dce28ac2bd6063bd695ec716e3"
+      },
+      {
+        "path": "tests/test_extension_hooks.py",
+        "sha256": "500040a3eaed9b879bac9b744d978797bd790a8c1ac0c6381e714a7345999143"
+      },
+      {
+        "path": "tests/test_extension_matrix.py",
+        "sha256": "030037f1a70a27c9634a6233644cf5c11c0e52f9b8792d0d0a34429e8d4a17a5"
+      },
+      {
+        "path": "tests/test_file_backend.py",
+        "sha256": "15a316f27d6634924c9d115687a71d72e3da0854396cf99a02d7b0ce1a8fd2f3"
+      },
+      {
+        "path": "tests/test_followup_study.py",
+        "sha256": "54f6d1ff69e02b30b7c6ab32169d28c5b5f6a4996fc583b413d0d0ee5110e415"
+      },
+      {
+        "path": "tests/test_formal_corpus.py",
+        "sha256": "deae60220a88a91e36bf3932171b6da65188da2b10a62836130b52334edbfff1"
+      },
+      {
+        "path": "tests/test_formal_study.py",
+        "sha256": "12b9b40a8921f098f235f8db5ba7dc7480ab4b5eb2c82173f72dfcd7a20f6298"
+      },
+      {
+        "path": "tests/test_gui.py",
+        "sha256": "2430935ffda795216ce2c7b1fad4bc605afafc6a4e2479fc83548327866b567c"
+      },
+      {
+        "path": "tests/test_hard_context_experiment.py",
+        "sha256": "e7643cc73d86328865075437a1d8e04b95e787f2d84c5a6b57b57ebaf30f709c"
+      },
+      {
+        "path": "tests/test_hard_suite.py",
+        "sha256": "a0dc5a0a70d79a9c7f7eed501c67f3efc067096dc7302f10fedcb987e544e3b8"
+      },
+      {
+        "path": "tests/test_harness_extensions.py",
+        "sha256": "73a956d92cee488f39ab1cf6e93064137e31a702a4efe7cf3f88cf84bb5c24e0"
+      },
+      {
+        "path": "tests/test_harness_metrics.py",
+        "sha256": "cd0109912131284f8f70914f6d7c7425d42bd7f6890027fef0bb996569fa1a2f"
+      },
+      {
+        "path": "tests/test_harness_safety.py",
+        "sha256": "d81c1b9453934e5ea7e7c61094730d3b1fc78fab761447c99c82baf8bc1ddae0"
+      },
+      {
+        "path": "tests/test_harness_study.py",
+        "sha256": "405de4f578f8d11c0f872d8405cc67ccd226e504ae3163d050a2521a74e183a0"
+      },
+      {
+        "path": "tests/test_integration.py",
+        "sha256": "3ab65a05601cce293c3ec73249e16ec1105128a811682eeae1c63999e72b803a"
+      },
+      {
+        "path": "tests/test_interactive.py",
+        "sha256": "b859c8bd85ddcdefb0842f10db11338740302554c4241afc0b5d02a2224b6659"
+      },
+      {
+        "path": "tests/test_local_first_contracts.py",
+        "sha256": "a628da470e81cc0b691d77a815bf822ca8ac830a4a4425511aeac986cab9eab8"
+      },
+      {
+        "path": "tests/test_mcp.py",
+        "sha256": "13aa4ee9c98ed74ee88d36e40a0003daafd4ed961256dee8b7eaec64f187dbe4"
+      },
+      {
+        "path": "tests/test_mcp_http.py",
+        "sha256": "f9c4cb484a4195da1bdfdf4cc710521f926164c898ec16b1fc7663dc4ecfb18b"
+      },
+      {
+        "path": "tests/test_memory_composition.py",
+        "sha256": "af8ec37549c5c9425c6d1d4c127573efcad2c008ec408b19f625178eceb84f6d"
+      },
+      {
+        "path": "tests/test_memory_discovery.py",
+        "sha256": "ab7114c2697bdbcbc61742e0b474cf163eaa447c3ea6742fa944c94c00fd11c2"
+      },
+      {
+        "path": "tests/test_memory_domain.py",
+        "sha256": "a49c77b9cb95e3d582beaf6d17e7f3bc7afd50dd4968ba33131ae2f62c99e7c3"
+      },
+      {
+        "path": "tests/test_memory_evidence.py",
+        "sha256": "8361e35c7c3b79039733b58e59c4f7bfb931ca7ad12ebfb30725e89e067b0b58"
+      },
+      {
+        "path": "tests/test_memory_notes.py",
+        "sha256": "46a7279437375ec3069370c4a636c0ed4ca4aa59941504f40c88f12bdc8a2516"
+      },
+      {
+        "path": "tests/test_memory_progressive.py",
+        "sha256": "65b8bcc948227811e6fa7c2d1e1c57a6f7996ecb982b256d98eb1d4f7553fcf1"
+      },
+      {
+        "path": "tests/test_memory_runtime.py",
+        "sha256": "d9e958d23db6713e11a395314aed3770efad95b5baa0a186163cb87053bef7c7"
+      },
+      {
+        "path": "tests/test_memory_selection.py",
+        "sha256": "494ca8cf0da4801012e1393c6268e9ebbc2011de172b3219d9ac12587336e4da"
+      },
+      {
+        "path": "tests/test_memory_sqlite.py",
+        "sha256": "d817b7168ab959902f98918ed6b33b5937e3e9b6e06695226aeb6fb7ae3b21da"
+      },
+      {
+        "path": "tests/test_mini_dsh_acceptance.py",
+        "sha256": "a497d2425c0738be2d20b627d989c699aab8ac7f8162cf4cb75634903190d3fc"
+      },
+      {
+        "path": "tests/test_offline_regression.py",
+        "sha256": "e275cb5873e03cbc7b5f743c65e02c3faa7f27549ba9c16eb5845332dd8fdabf"
+      },
+      {
+        "path": "tests/test_plugin_catalog.py",
+        "sha256": "765536f5547a7e194ec056708c1445a107207bad28973f55583f53bc058f3566"
+      },
+      {
+        "path": "tests/test_public_lite.py",
+        "sha256": "2b9527bd88465f0cf8dcfd3e5117ca5ead235b8f20a68301ef2dc0f0282c7b7b"
+      },
+      {
+        "path": "tests/test_public_swe.py",
+        "sha256": "2f80fe8113c88f0d2298c5febd1f9dc23e1867b4e014ec55f752b0c3eb9a578b"
+      },
+      {
+        "path": "tests/test_runtime.py",
+        "sha256": "1fa4dd3a1fbc437ee811a42a89889da716cff3f1f05101d199fd6ae5e92a9efd"
+      },
+      {
+        "path": "tests/test_security.py",
+        "sha256": "86353e3692ede025c0d619808b386bac5e03ce19377eba5cdc84b2a587bcb00e"
+      },
+      {
+        "path": "tests/test_session_journal.py",
+        "sha256": "96ca3bc8fc298380d961f7c110df0e90eb03c63641f6ecc28d01364844538730"
+      },
+      {
+        "path": "tests/test_sessions.py",
+        "sha256": "73a1c36770038f48139b69f4b145c22dcb6ce46467dcaa175145e4f245d519de"
+      },
+      {
+        "path": "tests/test_skill_context.py",
+        "sha256": "88c38106432a61ea4af7068ca8c3ed6c4cdecbcaa52a03d5808f4ab04e29712f"
+      },
+      {
+        "path": "tests/test_skill_files.py",
+        "sha256": "1e474ccbff355bc094621c610a671af5b906a2395d56868c1637cd563593c568"
+      },
+      {
+        "path": "tests/test_skill_runtime.py",
+        "sha256": "fd900051d1748e3cdab9661e147e229b25cab51919d123b8afe405a885820aeb"
+      },
+      {
+        "path": "tests/test_skills.py",
+        "sha256": "3f7cf3969ef484eeb9cbf4ccec7324089351b9d4516526a99af885d8cdebf093"
+      },
+      {
+        "path": "tests/test_terminal.py",
+        "sha256": "ee641b6ee52c8784a142f4c65d3ccf44d6c2f501a9b81942e76b2963ac0a7430"
+      },
+      {
+        "path": "tests/test_terminal_agent.py",
+        "sha256": "6ed7048afa4403055eea21508e5047785b18bb6b74ae55f3a8d1b055edab5a96"
+      },
+      {
+        "path": "tests/test_tools.py",
+        "sha256": "eddf31caba2fea682c6f43978caced084ab2dda0c92b055e22370c517f0979b9"
+      },
+      {
+        "path": "tests/test_verification.py",
+        "sha256": "82e1740c0f0e9add85de658ebac17537724d1cc2beca1d492f40aea8133f8e72"
+      },
+      {
+        "path": "tests/test_work_profile.py",
+        "sha256": "b9c4df987789470621b3035e1204f41a3c1c34c193c76296f4c1ab78931efce6"
+      },
+      {
+        "path": "uv.lock",
+        "sha256": "7e419b2d20bb62de39c05d5f5355dc5cb2ada9fc5f309790cf4cb8f5ae004f70"
+      }
+    ],
+    "scope": "P3 domain development src/tests/project/lock/AGENTS/ADR/contract; not phase acceptance"
+  },
+  "gates": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.055933834,
+      "log": "gate-0.log",
+      "output": "310 files already formatted\n",
+      "log_sha256": "0beb92815a83401fd4abecd0a456e7a77e49eddf21ff85ed48b60de171354362"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.023317167,
+      "log": "gate-1.log",
+      "output": "All checks passed!\n",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "mypy",
+        "src",
+        "tests"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.241626,
+      "log": "gate-2.log",
+      "output": "Success: no issues found in 173 source files\n",
+      "log_sha256": "708dd26d3e3340a041b8b6e76d37049974d296e37f7c8c4771fbafe59a5f2785"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 51.688733125,
+      "log": "gate-3.log",
+      "output": "........................................................................ [  6%]\n........................................................................ [ 12%]\n........................................................................ [ 18%]\n........................................................................ [ 25%]\n........................................................................ [ 31%]\n........................................................................ [ 37%]\n........................................................................ [ 44%]\n........................................................................ [ 50%]\n........................................................................ [ 56%]\n........................................................................ [ 62%]\n........................................................................ [ 69%]\n........................................................................ [ 75%]\n........................................................................ [ 81%]\n........................................................................ [ 88%]\n........................................................................ [ 94%]\n...............................................................          [100%]\n1143 passed in 50.98s\n",
+      "log_sha256": "9d4c013a708d23881e5248b90d73622090c7176299229cce647d360392f57271"
+    }
+  ],
+  "domain_contract_tests": 25,
+  "targeted_notes_domain_sqlite_regression": {
+    "passed": 76,
+    "failed": 0,
+    "scope": "earlier targeted command, current runtime sources unchanged since that command except documentation"
+  },
+  "mutation_probe": {
+    "scope": "private source copy only; production files untouched",
+    "criterion": "tests/test_memory_notes.py",
+    "criterion_sha256": "46a7279437375ec3069370c4a636c0ed4ca4aa59941504f40c88f12bdc8a2516",
+    "mutation": "bypass lineage evidence reuse guard",
+    "original_sha256": "bdc3e530d6174273aed9bfaf437740709364c0ccc451865708c2fd14c6225cf4",
+    "mutant_sha256": "f197c8974a11b91e59edad152caf27c42f852e8e108815061720bf07bc8cd2da",
+    "baseline_exit_code": 0,
+    "mutant_exit_code": 1,
+    "expected": "baseline 3 pass; mutant 3 fail",
+    "passed": true,
+    "baseline_output": "...                                                                      [100%]\n3 passed, 22 deselected in 0.14s\n",
+    "mutant_output": "FFF                                                                      [100%]\n=================================== FAILURES ===================================\n_ test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[hash] _\n\nreuse = 'hash'\n\n    @pytest.mark.parametrize(\"reuse\", [\"hash\", \"source_run\", \"target_run\"])\n    def test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation(\n        reuse: str,\n    ) -> None:\n        entry, evidence = _entry(_note()), _evidence()\n        if reuse == \"hash\":\n            evidence = replace(evidence, sha256=\"a\" * 64)\n        elif reuse == \"source_run\":\n            evidence = replace(evidence, source_run_id=\"old_run\")\n        else:\n            entry = replace(entry, source_run_id=\"old_run\")\n            evidence = replace(evidence, source_run_id=\"old_run\")\n>       with pytest.raises(MemoryValidationError, match=\"memory_note_evidence_reused\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE <class 'minidsh.domain.memory.MemoryValidationError'>\n\n/Users/jennyma/Projects/mini-dsh-memory/tests/test_memory_notes.py:210: Failed\n_ test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[source_run] _\n\nreuse = 'source_run'\n\n    @pytest.mark.parametrize(\"reuse\", [\"hash\", \"source_run\", \"target_run\"])\n    def test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation(\n        reuse: str,\n    ) -> None:\n        entry, evidence = _entry(_note()), _evidence()\n        if reuse == \"hash\":\n            evidence = replace(evidence, sha256=\"a\" * 64)\n        elif reuse == \"source_run\":\n            evidence = replace(evidence, source_run_id=\"old_run\")\n        else:\n            entry = replace(entry, source_run_id=\"old_run\")\n            evidence = replace(evidence, source_run_id=\"old_run\")\n>       with pytest.raises(MemoryValidationError, match=\"memory_note_evidence_reused\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE <class 'minidsh.domain.memory.MemoryValidationError'>\n\n/Users/jennyma/Projects/mini-dsh-memory/tests/test_memory_notes.py:210: Failed\n_ test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[target_run] _\n\nreuse = 'target_run'\n\n    @pytest.mark.parametrize(\"reuse\", [\"hash\", \"source_run\", \"target_run\"])\n    def test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation(\n        reuse: str,\n    ) -> None:\n        entry, evidence = _entry(_note()), _evidence()\n        if reuse == \"hash\":\n            evidence = replace(evidence, sha256=\"a\" * 64)\n        elif reuse == \"source_run\":\n            evidence = replace(evidence, source_run_id=\"old_run\")\n        else:\n            entry = replace(entry, source_run_id=\"old_run\")\n            evidence = replace(evidence, source_run_id=\"old_run\")\n>       with pytest.raises(MemoryValidationError, match=\"memory_note_evidence_reused\"):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE <class 'minidsh.domain.memory.MemoryValidationError'>\n\n/Users/jennyma/Projects/mini-dsh-memory/tests/test_memory_notes.py:210: Failed\n=========================== short test summary info ============================\nFAILED ../../../../../../../Users/jennyma/Projects/mini-dsh-memory/tests/test_memory_notes.py::test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[hash]\nFAILED ../../../../../../../Users/jennyma/Projects/mini-dsh-memory/tests/test_memory_notes.py::test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[source_run]\nFAILED ../../../../../../../Users/jennyma/Projects/mini-dsh-memory/tests/test_memory_notes.py::test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[target_run]\n3 failed, 22 deselected in 0.15s\n"
+  },
+  "source_archive": {
+    "path": "benchmark-results/extension-v1/memory-v2/p3-development/domain_1/frozen-source.tar.gz",
+    "sha256": "a994471b38e187587134a9436af709d7c28ebbf6aa4fb2ed983bd0f4b312a345"
+  },
+  "coverage": {
+    "N01_N04": "partial_domain_evidence_only",
+    "N05_N12": "not_implemented_or_not_run"
+  },
+  "not_implemented": [
+    "Runtime integration of note validation and actual source lineage rechecks",
+    "History port, SQLite migration/backup/history and atomic supersession",
+    "Typed proposal, outside-run merge/revise/supersede maintenance and CLI",
+    "P3 integration/OS acceptance and demo",
+    "P4 and P5"
+  ],
+  "retained_failure": "domain_0 full gate: 1142 passed, one README historical amount drift; archived value restored, same existing docs gate passed in domain_1",
+  "real_model_calls": 0
+}

@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "matrix_id": "memory_v2_p5_v1",
+  "source": "Authored from docs/memory-v2-p5-contract.md before final preflight execution; results belong in a separate signed receipt.",
+  "protocol": "benchmarks/memory_v2/p5-protocol.json",
+  "component_budget": "30 seconds per node; complete quality suite 300 seconds",
+  "isolation_budget": "Protocol-native linux/arm64, 1 CPU, 1 GiB, no network/mounts; 6000 tokens/12 steps/24 tools/120 seconds. Explicit fault probes use one 6001-token response, a full-ceiling overrun, or a 1-second wall deadline as declared in their criteria.",
+  "status": "not_run",
+  "component_selection": [
+    "tests/test_memory_acceptance.py",
+    "tests/test_memory_study.py",
+    "tests/test_memory_consolidation.py",
+    "tests/test_extension_comparison.py",
+    "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1"
+  ],
+  "cases": [
+    {
+      "case_id": "P501",
+      "category": "input_boundary_and_reconstruction",
+      "task_input": "Fixed six-task protocol, 90-slot queue, source archive/manifest and independent overlays",
+      "expected_behavior": ["Unique 6 x 5 x 3 slots and fixed budgets", "Strict scalar/model configuration", "Exact source members/hashes", "Fresh temporary reconstruction with frozen/offline dependency install and arm contracts"],
+      "forbidden_behavior": ["Change or duplicate slots", "Accept changed archive/input hashes", "Rebuild using an unfrozen HEAD or dynamic network content"],
+      "component_tests": ["tests/test_memory_study.py::test_p501_protocol_has_ninety_unique_slots_and_three_repeats", "tests/test_memory_acceptance.py::test_p501_protocol_rejects_changed_opportunities_or_conditions", "tests/test_memory_acceptance.py::test_p501_source_package_roundtrip_and_archive_tamper_is_rejected"],
+      "native_checks": ["reconstruction.json", "reconstruction.log"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P502",
+      "category": "arm_configuration_and_projection",
+      "task_input": "Same approved original corpus for A/B/C; fixed consolidated corpus for D; explicit off configuration",
+      "expected_behavior": ["Off never initializes Memory Store", "A/B differ only in representation", "B/C differ only in active tools", "C/D differ only in corpus", "Actual advertised tools and first/subsequent ModelRequest projections match the arm"],
+      "forbidden_behavior": ["Register proposal/maintenance tools", "Enable Skills or Verification", "Expose body in index-only mode", "Turn absence of exposure into semantic non-applicability"],
+      "component_tests": ["tests/test_memory_study.py", "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1"],
+      "native_checks": ["native/mechanisms/off", "native/mechanisms/v1", "native/mechanisms/index", "native/mechanisms/active", "native/mechanisms/consolidated"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P503",
+      "category": "evidence_and_authorization",
+      "task_input": "Actual SQLite original/selected notes, current source evidence, exact review/revision/content bindings and copied preparation provenance",
+      "expected_behavior": ["Fresh evidence and approval for the selected policy", "Immutable original corpus", "Exact source/protocol/review/authority/provenance checks", "Synthetic seeds cannot authorize a real queue"],
+      "forbidden_behavior": ["Inherit old evidence for a new claim", "Relabel scripted preparation as real", "Reuse historical queue approval", "Accept changed review or preparation hash"],
+      "component_tests": ["tests/test_memory_acceptance.py::test_p503_505_proposal_review_then_fixture_commit_cannot_authorize_real_queue", "tests/test_memory_acceptance.py::test_p503_review_hash_must_match_exact_authority_before_clone", "tests/test_memory_acceptance.py::test_p503_sealed_preparation_provenance_cannot_be_relabelled"],
+      "native_checks": ["prepared/review.json", "seed/authorization.json", "native/mechanisms/checks.json"],
+      "real_evidence_required": ["Actual provider draft and explicit user approval of the exact selected revision/hash"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P504",
+      "category": "preflight_and_stopping",
+      "task_input": "Missing/failed/stale native receipts, missing credentials, previous reservation and unknown/overrun usage",
+      "expected_behavior": ["Reject before real provider/output when authority, preflight, credentials or prior-attempt conditions fail", "One consolidation attempt and one real queue", "Stop on unknown consumption or insufficient remaining unchanged budget", "Use process state, not reservation presence, to describe liveness"],
+      "forbidden_behavior": ["Replace native safety checks with a green task cohort", "Retry or restart a reserved queue", "Shrink the last task budget", "Claim complete consumption for unknown usage"],
+      "component_tests": ["tests/test_memory_acceptance.py::test_p504_green_offline_cohort_cannot_replace_native_safety_evidence", "tests/test_memory_acceptance.py::test_p504_preparation_needs_preflight_before_provider_or_output", "tests/test_memory_acceptance.py::test_p504_missing_key_or_previous_attempt_stops_before_output", "tests/test_memory_acceptance.py::test_p504_505_controlled_provider_branch_audits_and_reserves_one_attempt"],
+      "native_checks": ["native/mechanisms/cohort_unknown", "native/mechanisms/cohort_overrun", "native/mechanisms/cohort_cancel"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P505",
+      "category": "operator_consolidation_and_review",
+      "task_input": "Only three prior approved notes plus explicit operator instruction, with frozen provenance",
+      "expected_behavior": ["Proposed-only review with full body/revision/hash/input digest", "Original notes, source DB and actor facts unchanged", "Fixed first-eligible policy selection", "Terminal failure metadata and retained model usage"],
+      "forbidden_behavior": ["Expose hidden answers, independent criteria, labels or old evaluation feedback", "Automatically approve or commit a draft", "Call a failed attempt running", "Select a seed using task outcomes"],
+      "component_tests": ["tests/test_memory_acceptance.py::test_p503_505_proposal_review_then_fixture_commit_cannot_authorize_real_queue", "tests/test_memory_acceptance.py::test_p505_failed_preparation_records_terminal_attempt_without_review", "tests/test_memory_consolidation.py"],
+      "native_checks": ["prepared/maintenance.jsonl", "prepared/review.md", "prepared/preparation_model_usage.json"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P506",
+      "category": "physical_isolation_and_terminal_artifacts",
+      "task_input": "Actual mount-free Docker actor/evaluator, approved private corpus, hostile absolute file/maintenance calls and native namespace/process canaries",
+      "expected_behavior": ["Exact resource/network receipts", "Actor removal before independent evaluator", "Preserve candidate/trace/sidecar for success, failure, budgets and cancellation", "Private host bytes unchanged", "Timeout/cancel removes confirmed descendants and entire container", "Audit the exact active credential without echoing it"],
+      "forbidden_behavior": ["Host Memory write/read through actor file tools", "Actor access to maintenance authority or criteria", "Secret forwarding to container environment", "Successful socket under disabled networking", "Leaked child processes", "Semantic/encoded-secret claims from an exact scanner"],
+      "component_tests": ["tests/test_memory_acceptance.py::test_p506_credential_audit_detects_plain_and_compressed_leaks_without_echo", "tests/test_memory_acceptance.py::test_p506_audit_rejects_symlink_instead_of_reading_outside_inputs", "tests/test_memory_acceptance.py::test_p506_usage_witness_keeps_credential_input_audit_before_model_calls"],
+      "native_checks": ["native/mechanisms/checks.json", "native/os/checks.json", "offline/runs/*/actor_container.json", "offline/runs/*/evaluator_container.json"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P507",
+      "category": "denominators_costs_and_paired_derivation",
+      "task_input": "All 90 declared slots with raw Trace/sidecar/independent usage witnesses, including missing/failed/unknown/overrun cases",
+      "expected_behavior": ["Preserve full denominators and failed consumption", "Null undefined success ratios and unknown totals", "Six-case cluster bootstrap retains all three repeats", "Each arm has 18 body-exposure opportunities", "Report served model IDs/fingerprints or unknown counts", "Read-only derived reports bind original execution and current scorer"],
+      "forbidden_behavior": ["Filter complete cases", "Count missing usage as zero", "Claim script benefit", "Treat cards/body exposure as semantic utility", "Relabel old traces as current-source execution"],
+      "component_tests": ["tests/test_memory_acceptance.py::test_p507_failed_model_reported_usage_survives_missing_trace", "tests/test_memory_acceptance.py::test_p507_unknown_response_usage_remains_unknown", "tests/test_memory_acceptance.py::test_p507_interrupted_slot_retains_failure_cost_and_unknown_safety", "tests/test_memory_acceptance.py::test_p507_all_arms_report_exposure_coverage_against_declared_opportunities", "tests/test_memory_acceptance.py::test_p507_report_retains_slot_and_unknown_usage_when_witness_is_missing", "tests/test_extension_comparison.py"],
+      "native_checks": ["native/mechanisms/cohort_unknown_report", "native/mechanisms/cohort_overrun_report", "native/mechanisms/cohort_cancel_report", "offline_report/report.json"],
+      "status": "not_run"
+    },
+    {
+      "case_id": "P508",
+      "category": "end_to_end_and_real_experiment",
+      "task_input": "Frozen source/protocol, sequential offline rehearsal, then one separately authorized actual-provider corpus and paired cohort",
+      "expected_behavior": ["Four quality gates and reconstruction/native/cohort receipts under the same frozen source", "Separate offline readiness from phase acceptance", "Real traces/sidecars/model metadata tied to exact human-approved seed", "Report benefits, no observed benefit or unavailable evidence without changing the denominator"],
+      "forbidden_behavior": ["Call scripted results real", "Use fixture_operator for a real queue", "Mark phase accepted before actual experiment", "Start automatic reruns or expand tasks"],
+      "component_tests": ["tests/test_memory_acceptance.py", "tests/test_memory_study.py"],
+      "native_checks": ["preflight.json", "gates.json", "offline_report/report.json"],
+      "real_evidence_required": ["Configured DeepSeek credential", "New exact seed approval after real draft review", "Actual paired execution or preserved protocol stop with complete denominators", "Final separate P5 result and coverage signoff"],
+      "status": "not_run"
+    }
+  ]
+}

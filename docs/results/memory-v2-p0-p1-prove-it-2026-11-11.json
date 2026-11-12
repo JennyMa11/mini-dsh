@@ -1,0 +1,663 @@
+{
+  "schema_version": "1.0",
+  "kind": "prove_it_rerun",
+  "base_commit": "a7c5d3bb0eff990e701051e6262a62a82bfbf349",
+  "branch": "feat/memory-system",
+  "gates": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.13,
+      "stdout": "295 files already formatted\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.144,
+      "stdout": "All checks passed!\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "mypy",
+        "src",
+        "tests"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.342,
+      "stdout": "Success: no issues found in 165 source files\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "pytest"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 49.923,
+      "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.12.14, pytest-8.4.2, pluggy-1.6.0\nrootdir: /Users/jennyma/Projects/mini-dsh-memory\nconfigfile: pyproject.toml\ntestpaths: tests\nplugins: cov-7.1.0, asyncio-1.4.0, anyio-4.15.1\nasyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function\ncollected 1009 items\n\ntests/test_ablation.py ...............                                   [  1%]\ntests/test_adapters.py .........                                         [  2%]\ntests/test_agent_loop.py ............                                    [  3%]\ntests/test_benchmark.py ............                                     [  4%]\ntests/test_cli.py ..................                                     [  6%]\ntests/test_collaboration.py .................                            [  8%]\ntests/test_composition.py ................                               [  9%]\ntests/test_config.py ................................................... [ 14%]\n........                                                                 [ 15%]\ntests/test_container_archive.py ...                                      [ 15%]\ntests/test_context.py .........                                          [ 16%]\ntests/test_context_retention.py ..                                       [ 17%]\ntests/test_conversations.py ...                                          [ 17%]\ntests/test_credentials.py .............                                  [ 18%]\ntests/test_docs.py ..................                                    [ 20%]\ntests/test_evaluation.py ......................................          [ 24%]\ntests/test_extension_acceptance.py ..............                        [ 25%]\ntests/test_extension_comparison.py .............                         [ 26%]\ntests/test_extension_hooks.py .......................................... [ 31%]\n.................................                                        [ 34%]\ntests/test_extension_matrix.py ...                                       [ 34%]\ntests/test_file_backend.py .....                                         [ 35%]\ntests/test_followup_study.py .........                                   [ 35%]\ntests/test_formal_corpus.py ...........................                  [ 38%]\ntests/test_formal_study.py ........                                      [ 39%]\ntests/test_gui.py ............                                           [ 40%]\ntests/test_hard_context_experiment.py ....                               [ 41%]\ntests/test_hard_suite.py .......                                         [ 41%]\ntests/test_harness_extensions.py .........                               [ 42%]\ntests/test_harness_metrics.py ............                               [ 43%]\ntests/test_harness_safety.py .............                               [ 45%]\ntests/test_harness_study.py ...........................                  [ 47%]\ntests/test_integration.py ...............................                [ 50%]\ntests/test_interactive.py ................................               [ 54%]\ntests/test_local_first_contracts.py ..................                   [ 55%]\ntests/test_mcp.py .........                                              [ 56%]\ntests/test_mcp_http.py ..                                                [ 56%]\ntests/test_memory_composition.py ........................                [ 59%]\ntests/test_memory_domain.py ......................                       [ 61%]\ntests/test_memory_evidence.py ..................................         [ 64%]\ntests/test_memory_runtime.py ........................                    [ 67%]\ntests/test_memory_selection.py ...                                       [ 67%]\ntests/test_memory_sqlite.py .............................                [ 70%]\ntests/test_mini_dsh_acceptance.py .........                              [ 71%]\ntests/test_offline_regression.py .....                                   [ 71%]\ntests/test_plugin_catalog.py ..                                          [ 71%]\ntests/test_public_lite.py ..............                                 [ 73%]\ntests/test_public_swe.py ....................                            [ 75%]\ntests/test_runtime.py .......................                            [ 77%]\ntests/test_security.py .....................................             [ 81%]\ntests/test_session_journal.py ..........                                 [ 82%]\ntests/test_sessions.py ....                                              [ 82%]\ntests/test_skill_context.py ...........................................  [ 86%]\ntests/test_skill_files.py .....................                          [ 88%]\ntests/test_skill_runtime.py ..........                                   [ 89%]\ntests/test_skills.py .........................                           [ 92%]\ntests/test_terminal.py ........................                          [ 94%]\ntests/test_terminal_agent.py .....                                       [ 95%]\ntests/test_tools.py .............                                        [ 96%]\ntests/test_verification.py ..............................                [ 99%]\ntests/test_work_profile.py ....                                          [100%]\n\n============================ 1009 passed in 49.36s =============================\n",
+      "stderr": ""
+    }
+  ],
+  "checks": [
+    {
+      "name": "source_manifest_hash",
+      "passed": true,
+      "detail": "existing sealed manifest"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "GLOSSARY.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "README.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/adr/README.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/extension-memory.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/extension-roadmap.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/adr/0031-progressive-project-memory.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/memory-v2-design.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/memory-v2-acceptance.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/research/memory-frameworks-2026-11-11.md"
+    },
+    {
+      "name": "document_hash",
+      "passed": true,
+      "detail": "docs/results/memory-v2-p0-p1-2026-11-11.md"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/domain/memory.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/ports/memory.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/runtime/memory.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/runtime/memory_maintenance.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/adapters/memory.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/adapters/memory_evidence.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/application/memory_query.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/application/context_assembly.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/composition.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "src/minidsh/work_profile.py"
+    },
+    {
+      "name": "local_source_hash",
+      "passed": true,
+      "detail": "docs/adr/0026-private-project-memory.md"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/pyproject.toml"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/config/default.yaml"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/index/search.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/components/file_store/local_file_store.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/evolve/dream/extract.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/evolve/dream/integrate.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/evolve/dream/finish.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/agentscope-ai/ReMe/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/components/job/background_job.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/package.json"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/context/ContextBuilder.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/context/ContextBudget.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/worker/search/SearchOrchestrator.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/servers/mcp-server.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/worker/SessionManager.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/worker-service.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/thedotmack/claude-mem/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/shared/SettingsDefaultsManager.ts"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/langchain-ai/langmem/8620b986af5b0c7593e6b7fbece2998690d22d15/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/langchain-ai/langmem/8620b986af5b0c7593e6b7fbece2998690d22d15/pyproject.toml"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/langchain-ai/langmem/8620b986af5b0c7593e6b7fbece2998690d22d15/src/langmem/knowledge/tools.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/langchain-ai/langmem/8620b986af5b0c7593e6b7fbece2998690d22d15/src/langmem/knowledge/extraction.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/langchain-ai/langmem/8620b986af5b0c7593e6b7fbece2998690d22d15/src/langmem/reflection.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/vectorize-io/hindsight/586f0faed1e39e8334d999d2545d1ebafb1c5b64/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/vectorize-io/hindsight/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/pyproject.toml"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/vectorize-io/hindsight/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/consolidation/consolidator.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/vectorize-io/hindsight/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/memories/pg/recall.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/vectorize-io/hindsight/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/reflect/agent.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/vectorize-io/hindsight/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/mental_model_refresh.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/mem0ai/mem0/f1791daa86d469249c9b002f62644d58a1eb96a0/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/mem0ai/mem0/f1791daa86d469249c9b002f62644d58a1eb96a0/pyproject.toml"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/mem0ai/mem0/f1791daa86d469249c9b002f62644d58a1eb96a0/mem0/memory/main.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/mem0ai/mem0/f1791daa86d469249c9b002f62644d58a1eb96a0/mem0/memory/telemetry.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/getzep/graphiti/ebef986a0b2360211b65751c111cacb4a7d790eb/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/getzep/graphiti/ebef986a0b2360211b65751c111cacb4a7d790eb/pyproject.toml"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/getzep/graphiti/ebef986a0b2360211b65751c111cacb4a7d790eb/graphiti_core/graphiti.py"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/letta-ai/letta-code/ad308cd3cb8486afa0bb8ad624c690b828339ea7/LICENSE"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/letta-ai/letta-code/ad308cd3cb8486afa0bb8ad624c690b828339ea7/package.json"
+    },
+    {
+      "name": "remote_source_hash",
+      "passed": true,
+      "detail": "https://raw.githubusercontent.com/letta-ai/letta-code/ad308cd3cb8486afa0bb8ad624c690b828339ea7/README.md"
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "README.md",
+        "target": "docs/memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/adr/README.md",
+        "target": "0031-progressive-project-memory.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-memory.md",
+        "target": "memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-memory.md",
+        "target": "research/memory-frameworks-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-memory.md",
+        "target": "extension-roadmap.md#memory-v2-范围追加2026-11-11"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-roadmap.md",
+        "target": "research/memory-frameworks-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-roadmap.md",
+        "target": "memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-roadmap.md",
+        "target": "memory-v2-acceptance.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-roadmap.md",
+        "target": "adr/0031-progressive-project-memory.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/extension-roadmap.md",
+        "target": "results/memory-v2-p0-p1-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/adr/0031-progressive-project-memory.md",
+        "target": "../memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/adr/0031-progressive-project-memory.md",
+        "target": "../memory-v2-acceptance.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/adr/0031-progressive-project-memory.md",
+        "target": "../research/memory-frameworks-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-design.md",
+        "target": "research/memory-frameworks-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-design.md",
+        "target": "adr/0031-progressive-project-memory.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-design.md",
+        "target": "extension-roadmap.md#memory-v2-范围追加2026-11-11"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-design.md",
+        "target": "../GLOSSARY.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-design.md",
+        "target": "results/memory-v2-p0-p1-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-design.md",
+        "target": "memory-v2-acceptance.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/memory-v2-acceptance.md",
+        "target": "memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/research/memory-frameworks-2026-11-11.md",
+        "target": "memory-frameworks-2026-11-11.sources.json"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/research/memory-frameworks-2026-11-11.md",
+        "target": "../memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/research/memory-frameworks-2026-11-11.md",
+        "target": "../results/memory-v2-p0-p1-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../research/memory-frameworks-2026-11-11.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../research/memory-frameworks-2026-11-11.sources.json"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../memory-v2-design.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../adr/0031-progressive-project-memory.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../extension-roadmap.md#memory-v2-范围追加2026-11-11"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../../GLOSSARY.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "../memory-v2-acceptance.md"
+      }
+    },
+    {
+      "name": "relative_link",
+      "passed": true,
+      "detail": {
+        "source": "docs/results/memory-v2-p0-p1-2026-11-11.md",
+        "target": "memory-v2-p0-p1-2026-11-11.checks.json"
+      }
+    },
+    {
+      "name": "frozen_cases",
+      "passed": true,
+      "detail": {
+        "declared": 20,
+        "new_runtime_cases_executed": 0
+      }
+    },
+    {
+      "name": "documentation_only",
+      "passed": true,
+      "detail": [
+        "GLOSSARY.md",
+        "README.md",
+        "docs/adr/README.md",
+        "docs/extension-memory.md",
+        "docs/extension-roadmap.md",
+        "docs/adr/0031-progressive-project-memory.md",
+        "docs/memory-v2-acceptance.md",
+        "docs/memory-v2-design.md",
+        "docs/research/memory-frameworks-2026-11-11.md",
+        "docs/research/memory-frameworks-2026-11-11.sources.json",
+        "docs/results/memory-v2-p0-p1-2026-11-11.checks.json",
+        "docs/results/memory-v2-p0-p1-2026-11-11.md"
+      ]
+    },
+    {
+      "name": "git_diff_check",
+      "passed": true,
+      "detail": {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "duration_seconds": 0.009,
+        "stdout": "",
+        "stderr": ""
+      }
+    }
+  ],
+  "duration_seconds": 61.952,
+  "screenshot": "not_applicable_documentation_only",
+  "limitations": [
+    "P2 implementation and runtime cases not executed",
+    "third-party frameworks not installed or benchmarked",
+    "no v2 OS isolation or efficacy claim"
+  ],
+  "passed": true
+}

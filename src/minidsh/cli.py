@@ -77,6 +77,7 @@ from minidsh.evaluation.inference import inference_from_trace
 from minidsh.evaluation.replay import to_markdown as replay_markdown
 from minidsh.gui import GuiSession, serve_gui
 from minidsh.interactive import InteractiveChat
+from minidsh.memory_cli import MEMORY_ACTIONS, memory_command
 from minidsh.ports import Model
 
 _MINIMUM_PYTHON: Final = (3, 12)
@@ -239,6 +240,25 @@ def _build_parser() -> argparse.ArgumentParser:  # noqa: PLR0915 - CLI command d
     config = subparsers.add_parser("config", help="print the effective layered configuration")
     _add_common_options(config)
     config.add_argument("--workspace", type=Path, default=Path.cwd())
+    memory = subparsers.add_parser(
+        "memory", help="run explicit Memory maintenance; consolidate uses a model"
+    )
+    memory.add_argument("memory_action", choices=tuple(MEMORY_ACTIONS))
+    memory.add_argument("--config", type=Path)
+    memory.add_argument("--profile")
+    memory.add_argument("--workspace", type=Path, default=Path.cwd())
+    memory.add_argument("--operator", required=True)
+    memory.add_argument(
+        "--provider", choices=_PROVIDERS, default="scripted", action=_ProviderSelection
+    )
+    memory.add_argument("--model-profile")
+    memory.add_argument("--script", type=Path, help="offline response script for consolidate")
+    memory.add_argument("--temperature", type=float, default=0.0)
+    memory.add_argument("--max-attempts", type=int, default=1)
+    memory.set_defaults(allow_unpriced=True)
+    memory.add_argument(
+        "--arguments", default="{}", help="Tool arguments as a JSON object, at most 64 KiB"
+    )
     return parser
 
 
@@ -1766,6 +1786,34 @@ def _work_config(_args: argparse.Namespace, resolved: ResolvedConfig) -> Resolve
     )
 
 
+async def _memory(args: argparse.Namespace) -> int:
+    workspace = await asyncio.to_thread(Path(args.workspace).resolve, strict=True)
+    configured = await asyncio.to_thread(_resolve, args, workspace)
+    if configured.options.memory is None:
+        raise ValueError("Memory is not enabled in the explicit project configuration")
+
+    def consolidation_model() -> Model:
+        if args.script is not None:
+            return ScriptedModel.from_file(args.script)
+        selected = _select_model(args, configured)
+        if selected.model is not None:
+            return selected.model
+        if selected.script is None:
+            raise ValueError("consolidate requires a configured model or --script")
+        return ScriptedModel.from_file(selected.script)
+
+    return await memory_command(
+        workspace=workspace,
+        memory=configured.options.memory,
+        operator_id=args.operator,
+        action=args.memory_action,
+        arguments_text=args.arguments,
+        denied_tools=configured.options.denied_tools,
+        output_limit=configured.options.tool_output_limit,
+        model_factory=consolidation_model if args.memory_action == "consolidate" else None,
+    )
+
+
 def main(argv: Sequence[str] | None = None) -> None:
     """Run the Mini-dsh command-line interface."""
     arguments = list(sys.argv[1:] if argv is None else argv)
@@ -1790,6 +1838,7 @@ def main(argv: Sequence[str] | None = None) -> None:
         "harness-study": harness_study_command,
         "report": _report,
         "config": _config,
+        "memory": _memory,
     }
     try:
         if args.command in {"chat", "gui", "work"}:

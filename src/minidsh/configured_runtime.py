@@ -48,6 +48,11 @@ from minidsh.runtime.memory_maintenance import (
     memory_maintenance_definitions,
     validate_memory_operator_id,
 )
+from minidsh.runtime.memory_note_tools import (
+    memory_note_maintenance_definitions,
+    memory_note_proposal_definition,
+)
+from minidsh.runtime.memory_reading import memory_reading_definitions
 from minidsh.tools.runtime import PermissionAuthorizer, PermissionPolicy, ToolBundle
 
 
@@ -96,6 +101,8 @@ class _Host:
             permissions.update(
                 {"memory.read", "memory.evidence.read", "memory.propose", "memory.maintain"}
             )
+            if options.memory.retrieval_mode == "progressive_v2":
+                permissions.add("memory.migrate")
         defaults: dict[str, object] = {
             "model": model,
             "context": self.initial.context
@@ -188,7 +195,13 @@ class _Host:
                         | {tool.definition.name for tool in components.tools}
                         | ({"load_skill"} if options.skill_roots else set())
                         | ({"test"} if options.verification is not None else set())
-                        | ({"propose_memory"} if options.memory is not None else set()),
+                        | ({"propose_memory"} if options.memory is not None else set())
+                        | (
+                            {"search_memory", "read_memory", "propose_memory_note"}
+                            if options.memory is not None
+                            and options.memory.retrieval_mode == "progressive_v2"
+                            else set()
+                        ),
                     )
                 if self.initial.close is not None:
                     await self.initial.close()
@@ -242,6 +255,12 @@ class _Tools:
         available = self.host.initial.tools.definitions()
         if self.host.options.memory is not None:
             available = (*available, ProposeMemoryTool.definition)
+            if self.host.options.memory.retrieval_mode == "progressive_v2":
+                available = (
+                    *available,
+                    *memory_reading_definitions()[1:],
+                    memory_note_proposal_definition(),
+                )
         return tuple(tool for tool in available if selected is None or tool.name in selected)
 
     def bind_approvals(self, provider: ApprovalProvider) -> None:
@@ -263,7 +282,15 @@ class _MemoryMaintenance:
         self.operator_id = operator_id
 
     def definitions(self) -> tuple[ToolDefinition, ...]:
-        return memory_maintenance_definitions()
+        memory = self.host.options.memory
+        return (
+            *memory_maintenance_definitions(),
+            *(
+                memory_note_maintenance_definitions()
+                if memory is not None and memory.retrieval_mode == "progressive_v2"
+                else ()
+            ),
+        )
 
     async def execute(self, call: ToolCall, run_id: str, step_id: int) -> ToolObservation:
         runtime = await self.host.start()

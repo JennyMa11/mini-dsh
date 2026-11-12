@@ -7,7 +7,7 @@ import tomllib
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Annotated, Any, Self, cast
+from typing import Annotated, Any, Literal, Self, cast
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
@@ -202,6 +202,10 @@ class _MemorySettings(BaseModel):
     applicable_version: str
     database: str
     storage_root: str
+    retrieval_mode: Literal["deterministic_v1", "progressive_v2"] = "deterministic_v1"
+    index_token_limit: int = Field(default=512, ge=1, le=512)
+    search_token_limit: int = Field(default=512, ge=1, le=512)
+    read_token_limit: int = Field(default=2048, ge=1, le=2048)
     evidence_root: str | None = None
     evidence_grants: list[_MemoryGrantSettings] = Field(
         default_factory=list, max_length=MAX_PROJECT_ENTRIES
@@ -219,6 +223,10 @@ class _MemorySettings(BaseModel):
             self.evidence_root,
             tuple(grant.as_domain() for grant in self.evidence_grants),
             tuple(self.forbidden_content_sha256),
+            self.retrieval_mode,
+            self.index_token_limit,
+            self.search_token_limit,
+            self.read_token_limit,
         )
 
     @model_validator(mode="after")

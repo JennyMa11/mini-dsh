@@ -9,6 +9,7 @@ from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
 from enum import StrEnum
 from pathlib import PurePath, PurePosixPath
+from typing import Literal
 
 from minidsh.domain.redaction import redact_text
 
@@ -42,6 +43,7 @@ class MemoryStatus(StrEnum):
     APPROVED = "approved"
     COMMITTED = "committed"
     REJECTED = "rejected"
+    SUPERSEDED = "superseded"
 
 
 class MemoryEvidenceKind(StrEnum):
@@ -102,8 +104,21 @@ class MemoryConfig:
     evidence_root: str | None = None
     evidence_grants: tuple[MemoryEvidenceGrant, ...] = ()
     forbidden_content_sha256: tuple[str, ...] = ()
+    retrieval_mode: Literal["deterministic_v1", "progressive_v2"] = "deterministic_v1"
+    index_token_limit: int = 512
+    search_token_limit: int = 512
+    read_token_limit: int = 2048
 
     def __post_init__(self) -> None:
+        if self.retrieval_mode not in {"deterministic_v1", "progressive_v2"} or any(
+            type(value) is not int or not 1 <= value <= maximum
+            for value, maximum in (
+                (self.index_token_limit, 512),
+                (self.search_token_limit, 512),
+                (self.read_token_limit, 2048),
+            )
+        ):
+            raise MemoryValidationError("memory_config_invalid")
         if _ID.fullmatch(self.project_id) is None:
             raise MemoryValidationError("memory_identifier_invalid")
         if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._+-]{0,127}", self.applicable_version) is None:
@@ -203,6 +218,7 @@ class MemoryEntry:
             MemoryStatus.PROPOSED,
             MemoryStatus.VALIDATED,
             MemoryStatus.REJECTED,
+            MemoryStatus.SUPERSEDED,
         } and any(
             value is not None
             for value in (
@@ -214,9 +230,11 @@ class MemoryEntry:
         ):
             raise MemoryValidationError("memory_state_invalid")
         if (
-            self.status in {MemoryStatus.PROPOSED, MemoryStatus.REJECTED}
+            self.status in {MemoryStatus.PROPOSED, MemoryStatus.REJECTED, MemoryStatus.SUPERSEDED}
             and self.validation_sha256 is not None
         ):
+            raise MemoryValidationError("memory_state_invalid")
+        if self.status is MemoryStatus.SUPERSEDED and self.evidence_sha256 is not None:
             raise MemoryValidationError("memory_state_invalid")
         if self.status in {
             MemoryStatus.VALIDATED,
@@ -339,12 +357,15 @@ class MemoryEntry:
             raise MemoryValidationError("memory_approval_stale")
         return replace(self, status=MemoryStatus.COMMITTED)
 
-    def revise(self, *, content: str, expected_revision: int) -> MemoryEntry:
+    def revise(
+        self, *, content: str, expected_revision: int, source_run_id: str | None = None
+    ) -> MemoryEntry:
         if expected_revision != self.revision:
             raise MemoryValidationError("memory_revision_stale")
         return replace(
             self,
             content=content,
+            source_run_id=self.source_run_id if source_run_id is None else source_run_id,
             revision=self.revision + 1,
             status=MemoryStatus.PROPOSED,
             evidence_sha256=None,
@@ -375,10 +396,21 @@ class MemoryEntry:
             raise MemoryValidationError("memory_scope_mismatch")
         if self == updated and self.status is MemoryStatus.COMMITTED:
             return
+        if self.status is MemoryStatus.COMMITTED and updated == self.supersede(
+            expected_revision=self.revision
+        ):
+            return
         if updated == self.reject(expected_revision=self.revision):
             return
         if updated.revision == self.revision + 1 and updated.status is MemoryStatus.PROPOSED:
-            if self.revise(content=updated.content, expected_revision=self.revision) != updated:
+            if (
+                self.revise(
+                    content=updated.content,
+                    expected_revision=self.revision,
+                    source_run_id=updated.source_run_id,
+                )
+                != updated
+            ):
                 raise MemoryValidationError("memory_transition_invalid")
             return
         following = {
@@ -407,6 +439,13 @@ class MemoryEntry:
             updated.approval_sha256,
         ):
             raise MemoryValidationError("memory_approval_stale")
+
+    def supersede(self, *, expected_revision: int) -> MemoryEntry:
+        if self.status is not MemoryStatus.COMMITTED:
+            raise MemoryValidationError("memory_transition_invalid")
+        return replace(
+            self.reject(expected_revision=expected_revision), status=MemoryStatus.SUPERSEDED
+        )
 
 
 @dataclass(frozen=True, slots=True)

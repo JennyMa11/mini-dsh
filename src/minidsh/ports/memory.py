@@ -2,7 +2,9 @@
 
 from typing import Protocol, runtime_checkable
 
+from minidsh.domain import Message
 from minidsh.domain.memory import MemoryEntry, MemoryEvidence, MemorySelection
+from minidsh.domain.memory_history import MemoryHistoryPage, MemoryMigration
 
 
 class MemoryStoreError(RuntimeError):
@@ -18,6 +20,21 @@ class MemoryStore(Protocol):
     async def snapshot(self, project_id: str) -> tuple[MemoryEntry, ...]: ...
     async def replace(self, expected: MemoryEntry, updated: MemoryEntry) -> MemoryEntry: ...
     async def close(self) -> None: ...
+
+
+@runtime_checkable
+class MemoryHistoryStore(MemoryStore, Protocol):
+    async def history_enabled(self) -> bool: ...
+    async def migrate_history(self) -> MemoryMigration: ...
+    async def history(
+        self, project_id: str, entry_id: str, *, after_sequence: int = 0, limit: int = 20
+    ) -> MemoryHistoryPage: ...
+    async def revision(
+        self, project_id: str, entry_id: str, revision: int, proposal_sha256: str
+    ) -> MemoryEntry | None: ...
+    async def replace_many(
+        self, changes: tuple[tuple[MemoryEntry, MemoryEntry], ...]
+    ) -> tuple[MemoryEntry, ...]: ...
 
 
 class MemoryEvidenceError(RuntimeError):
@@ -40,3 +57,9 @@ class MemoryView(Protocol):
         paths: tuple[str, ...] = (),
         error_type: str | None = None,
     ) -> MemorySelection | None: ...
+
+
+class ProgressiveMemoryView(Protocol):
+    def observe_history(self, history: tuple[Message, ...]) -> None: ...
+
+    def messages_for(self, run_id: str) -> tuple[Message, ...]: ...

@@ -1,0 +1,359 @@
+{
+  "schema_version": "1.0",
+  "review_date": "2026-11-11",
+  "method": "git ls-remote HEAD; download codeload archive at resolved commit; read selected source files; hash unmodified bytes; no third-party code executed",
+  "scope": "static source review only; no installation, model calls, benchmark reproduction, license legal opinion or complete security audit",
+  "local_base_commit": "a7c5d3bb0eff990e701051e6262a62a82bfbf349",
+  "local_sources": [
+    {
+      "path": "src/minidsh/domain/memory.py",
+      "sha256": "a87133d5748c144ddef6eaef533f8113d79c43384a4a6d12144782566c417ea7"
+    },
+    {
+      "path": "src/minidsh/ports/memory.py",
+      "sha256": "7eb6e2635dc0ddc07dd42abac433e26d3542d53f0f9dcf1d895f8c0f2528a8ab"
+    },
+    {
+      "path": "src/minidsh/runtime/memory.py",
+      "sha256": "b25464ad0599f5efd0be2045294268a906ef9c6b54727cf7bd408b39cba01e00"
+    },
+    {
+      "path": "src/minidsh/runtime/memory_maintenance.py",
+      "sha256": "e7cec2da561caad229bf40e9392ef3df83ae88472c62a7a2263b624196844cb7"
+    },
+    {
+      "path": "src/minidsh/adapters/memory.py",
+      "sha256": "0443e001db8d28606d5619b70b269a1159e735b1adeb8495dea120d21bc18663"
+    },
+    {
+      "path": "src/minidsh/adapters/memory_evidence.py",
+      "sha256": "ee0124f39bb325ff3346bdcdff33b4a918d307bbcd2511cf6fa0e3714c91c3cb"
+    },
+    {
+      "path": "src/minidsh/application/memory_query.py",
+      "sha256": "d71a7a2d7c6367edfabff66f95331ad704aeaf1af80a488e960f4c56140b311f"
+    },
+    {
+      "path": "src/minidsh/application/context_assembly.py",
+      "sha256": "5919b2e36cd42d87121a717234c2b3866904f61c03177db344113b8b8e037738"
+    },
+    {
+      "path": "src/minidsh/composition.py",
+      "sha256": "4c6b813a17597b858c900e93bbc4a92373f1e4f98bd3908ed3e5e447fd49cbab"
+    },
+    {
+      "path": "src/minidsh/work_profile.py",
+      "sha256": "465497263e31afacb712f4ec3cf98ad591a026776b2911b5b1d2e388f43da6ca"
+    },
+    {
+      "path": "docs/adr/0026-private-project-memory.md",
+      "sha256": "b5ddbf48018432f1d18b6f9de7af77d7e758e2d9a6800366cbb3506b185e9c6c"
+    }
+  ],
+  "projects": [
+    {
+      "repo": "agentscope-ai/ReMe",
+      "commit": "55a3bb7b0f868c95a14721301475bb3b91eab612",
+      "archive_sha256": "ceab5c25a399b57d4e7faae4d03be2e7be856a0c128d669a94302b5a825bb67f",
+      "files": 1226,
+      "license": "Apache-2.0",
+      "review_depth": "focused_source_review",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "cc54d679aaced751c096f120b666355c106d9394d28f93f6df353973f6cd7dbe",
+          "bytes": 11343,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "0ac9712a74d530edef7cab85a30424f6ab1587ef70bda800c1a9cbc13412f5ca",
+          "bytes": 3177,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/pyproject.toml"
+        },
+        {
+          "path": "reme/config/default.yaml",
+          "sha256": "e7a8a48e26a5f625495081841d620a1cb80405589c2082e667ab613cd68505ef",
+          "bytes": 32460,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/config/default.yaml"
+        },
+        {
+          "path": "reme/steps/index/search.py",
+          "sha256": "cd01d073e9a30556d74fb1b1e12ca39945143c6af7cbfd25a0b205e1918d47d1",
+          "bytes": 16147,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/index/search.py"
+        },
+        {
+          "path": "reme/components/file_store/local_file_store.py",
+          "sha256": "3e129294c0a6cb06da5c613f048db62d6145db82ab57d4fb8f64fe33da856786",
+          "bytes": 55567,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/components/file_store/local_file_store.py"
+        },
+        {
+          "path": "reme/steps/evolve/dream/extract.py",
+          "sha256": "7e5788da1340f1d561d777e050d465fc3a30c048871c1b9d9dd600dae7eae849",
+          "bytes": 18054,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/evolve/dream/extract.py"
+        },
+        {
+          "path": "reme/steps/evolve/dream/integrate.py",
+          "sha256": "0dab6b5ccf08abd96cc94ad59f253bbd94aaf8407196df223277a5bcb7568443",
+          "bytes": 15026,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/evolve/dream/integrate.py"
+        },
+        {
+          "path": "reme/steps/evolve/dream/finish.py",
+          "sha256": "9bf64c672722d61677496c7be334c0fa830d7d953815c186389ab8f98435bee6",
+          "bytes": 6406,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/steps/evolve/dream/finish.py"
+        },
+        {
+          "path": "reme/components/job/background_job.py",
+          "sha256": "43ad8f11622ff1230e902d356fcb2dd13a54b6e367db211e3d1ac0b2a1f59976",
+          "bytes": 6303,
+          "url": "https://github.com/agentscope-ai/ReMe/blob/55a3bb7b0f868c95a14721301475bb3b91eab612/reme/components/job/background_job.py"
+        }
+      ]
+    },
+    {
+      "repo": "thedotmack/claude-mem",
+      "commit": "6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb",
+      "archive_sha256": "62db5c26d3937f415fe24e929c90a114dee37f02be7a1f6e49c6a2f950542cc1",
+      "files": 3405,
+      "license": "Apache-2.0",
+      "review_depth": "focused_source_review",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+          "bytes": 11358,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/LICENSE"
+        },
+        {
+          "path": "package.json",
+          "sha256": "c5e28b4666b6fa82003ed25c6e63a94e1a0555bb3678d663425a72bec6a69608",
+          "bytes": 10331,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/package.json"
+        },
+        {
+          "path": "src/services/context/ContextBuilder.ts",
+          "sha256": "77de11ba8a632612bae243a21448bd645a80c7ffea33cfb698fd39dfe430ef5a",
+          "bytes": 28595,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/context/ContextBuilder.ts"
+        },
+        {
+          "path": "src/services/context/ContextBudget.ts",
+          "sha256": "e792395320592413d35b434e659681f2decc7a08cb95b683b15d953ae58fab8f",
+          "bytes": 5769,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/context/ContextBudget.ts"
+        },
+        {
+          "path": "src/services/worker/search/SearchOrchestrator.ts",
+          "sha256": "8c860080c5c5d315fb2be546eee1dcc4364dd6bfffbf2548b9cf89b4535896ec",
+          "bytes": 13233,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/worker/search/SearchOrchestrator.ts"
+        },
+        {
+          "path": "src/servers/mcp-server.ts",
+          "sha256": "de221e5383a509f8386fbcf798d143d350b960e3eb46914e68e9d61337448070",
+          "bytes": 66289,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/servers/mcp-server.ts"
+        },
+        {
+          "path": "src/services/worker/SessionManager.ts",
+          "sha256": "ac386679845a01e3018c59601ae01fdbf0a88494e33dfec343a4ad82dee32f02",
+          "bytes": 44461,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/worker/SessionManager.ts"
+        },
+        {
+          "path": "src/services/worker-service.ts",
+          "sha256": "27cec2391d004a4944550331a4c420a50ee9ed75af3698e758b165cbdcd727de",
+          "bytes": 127097,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/services/worker-service.ts"
+        },
+        {
+          "path": "src/shared/SettingsDefaultsManager.ts",
+          "sha256": "6102318f364bcef478a2e7a843c068083ac3cd1277f14076646c565dc1e9964c",
+          "bytes": 74014,
+          "url": "https://github.com/thedotmack/claude-mem/blob/6b779c06796138aeb4b0ee2fa7dbd25912e4f7fb/src/shared/SettingsDefaultsManager.ts"
+        }
+      ]
+    },
+    {
+      "repo": "langchain-ai/langmem",
+      "commit": "8620b986af5b0c7593e6b7fbece2998690d22d15",
+      "archive_sha256": "63876b06070f55474f01c44171482a035aa8b56cf84e09374455a31a7e88d299",
+      "files": 91,
+      "license": "MIT",
+      "review_depth": "focused_source_review",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "98af1351ea856e008c835bc89a312905960a318072f950732bf346c741027c7d",
+          "bytes": 1066,
+          "url": "https://github.com/langchain-ai/langmem/blob/8620b986af5b0c7593e6b7fbece2998690d22d15/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "8fcfd63d312ea0f1bd679d70c6b9a7c10e3d1f6a4cb557500a59758fd02e9901",
+          "bytes": 2205,
+          "url": "https://github.com/langchain-ai/langmem/blob/8620b986af5b0c7593e6b7fbece2998690d22d15/pyproject.toml"
+        },
+        {
+          "path": "src/langmem/knowledge/tools.py",
+          "sha256": "0118d3623a19c9b6c8c3d477aead51f08eeb44771c3ae3f51cd32d8a800b78d7",
+          "bytes": 19240,
+          "url": "https://github.com/langchain-ai/langmem/blob/8620b986af5b0c7593e6b7fbece2998690d22d15/src/langmem/knowledge/tools.py"
+        },
+        {
+          "path": "src/langmem/knowledge/extraction.py",
+          "sha256": "165d4c019f55a365dba5a551e1af0c0313a2f4bab292e47493acc6f1cd62c13e",
+          "bytes": 81775,
+          "url": "https://github.com/langchain-ai/langmem/blob/8620b986af5b0c7593e6b7fbece2998690d22d15/src/langmem/knowledge/extraction.py"
+        },
+        {
+          "path": "src/langmem/reflection.py",
+          "sha256": "a30f32253da2bad1349a20927e90620827867536c0ed09d26f9783e2dbfa5d1d",
+          "bytes": 16450,
+          "url": "https://github.com/langchain-ai/langmem/blob/8620b986af5b0c7593e6b7fbece2998690d22d15/src/langmem/reflection.py"
+        }
+      ]
+    },
+    {
+      "repo": "vectorize-io/hindsight",
+      "commit": "586f0faed1e39e8334d999d2545d1ebafb1c5b64",
+      "archive_sha256": "13a5ca3f8cb0561f0af084288fc593d7c93e2c2746c59cdd1501a5f05aaa0089",
+      "files": 5307,
+      "license": "MIT",
+      "review_depth": "focused_source_review",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "01fde0bedf83bdc185065d7af524a61690efe576a67f922eaff3a1280c17b63a",
+          "bytes": 1075,
+          "url": "https://github.com/vectorize-io/hindsight/blob/586f0faed1e39e8334d999d2545d1ebafb1c5b64/LICENSE"
+        },
+        {
+          "path": "hindsight-api-slim/pyproject.toml",
+          "sha256": "e1c9a0d63ca303e99d487b9d2d92aee21d580d2e0ea5db5ccef101f38619309b",
+          "bytes": 18579,
+          "url": "https://github.com/vectorize-io/hindsight/blob/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/pyproject.toml"
+        },
+        {
+          "path": "hindsight-api-slim/hindsight_api/engine/consolidation/consolidator.py",
+          "sha256": "edb96378c305ce9e9a9e77727d36df83e89cdf6ccee8c6eea5e14b7182803e34",
+          "bytes": 210159,
+          "url": "https://github.com/vectorize-io/hindsight/blob/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/consolidation/consolidator.py"
+        },
+        {
+          "path": "hindsight-api-slim/hindsight_api/engine/memories/pg/recall.py",
+          "sha256": "2526ca0189c0994f9ceee6e0e5e4171933d7af24d1d17d80766e4174e72e1c23",
+          "bytes": 32649,
+          "url": "https://github.com/vectorize-io/hindsight/blob/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/memories/pg/recall.py"
+        },
+        {
+          "path": "hindsight-api-slim/hindsight_api/engine/reflect/agent.py",
+          "sha256": "7d66bcf0263fd6ca1f16d44312240f94dcfdaac9ec9c215fc016b3ca5cc0cfd9",
+          "bytes": 134449,
+          "url": "https://github.com/vectorize-io/hindsight/blob/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/reflect/agent.py"
+        },
+        {
+          "path": "hindsight-api-slim/hindsight_api/engine/mental_model_refresh.py",
+          "sha256": "7120417b5b6e35d17331c8171937b98cfa59a78b9e56cb151f39daa54e5d686b",
+          "bytes": 17927,
+          "url": "https://github.com/vectorize-io/hindsight/blob/586f0faed1e39e8334d999d2545d1ebafb1c5b64/hindsight-api-slim/hindsight_api/engine/mental_model_refresh.py"
+        }
+      ]
+    },
+    {
+      "repo": "mem0ai/mem0",
+      "commit": "f1791daa86d469249c9b002f62644d58a1eb96a0",
+      "archive_sha256": "112badd52ad88af3c6e174ce4a4880320bd17636299fd52881afb7a2407b2236",
+      "files": 1832,
+      "license": "Apache-2.0",
+      "review_depth": "source_spot_check",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "0bbcbe931c353293a2fafce08326181dfeea0e568c566afd4ce8337a70f5e219",
+          "bytes": 11349,
+          "url": "https://github.com/mem0ai/mem0/blob/f1791daa86d469249c9b002f62644d58a1eb96a0/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "d4bc078a05cc7b9d677bbf4d0b262cfc532495b5aadeded053ac84fd90b6e974",
+          "bytes": 3394,
+          "url": "https://github.com/mem0ai/mem0/blob/f1791daa86d469249c9b002f62644d58a1eb96a0/pyproject.toml"
+        },
+        {
+          "path": "mem0/memory/main.py",
+          "sha256": "e37b2775aafbc654113cb643dae2a8a9cf299d2e7eee29904f1ed212f89aa570",
+          "bytes": 170171,
+          "url": "https://github.com/mem0ai/mem0/blob/f1791daa86d469249c9b002f62644d58a1eb96a0/mem0/memory/main.py"
+        },
+        {
+          "path": "mem0/memory/telemetry.py",
+          "sha256": "89f36bd0b87059fa0710adcccfbd9639ab4d5c4a762d875a1caceaf688aca687",
+          "bytes": 9024,
+          "url": "https://github.com/mem0ai/mem0/blob/f1791daa86d469249c9b002f62644d58a1eb96a0/mem0/memory/telemetry.py"
+        }
+      ]
+    },
+    {
+      "repo": "getzep/graphiti",
+      "commit": "ebef986a0b2360211b65751c111cacb4a7d790eb",
+      "archive_sha256": "37aa82a7950938c873139dc4ffa58e0d61078738c95d081d37fd0d531d7a8e3a",
+      "files": 424,
+      "license": "Apache-2.0",
+      "review_depth": "source_spot_check",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "2825300b20d7b951209835a4a331f29e24725a39d65168e4b831df53aa372650",
+          "bytes": 11325,
+          "url": "https://github.com/getzep/graphiti/blob/ebef986a0b2360211b65751c111cacb4a7d790eb/LICENSE"
+        },
+        {
+          "path": "pyproject.toml",
+          "sha256": "f409096fde64090b47e7a6c8cc1edeceb521edb737a6bf2b7468e8f8edaee1e0",
+          "bytes": 2999,
+          "url": "https://github.com/getzep/graphiti/blob/ebef986a0b2360211b65751c111cacb4a7d790eb/pyproject.toml"
+        },
+        {
+          "path": "graphiti_core/graphiti.py",
+          "sha256": "4e456b2255196d13466e31d13d0f5790e85d611731cbdfa733abfb3091f24040",
+          "bytes": 93250,
+          "url": "https://github.com/getzep/graphiti/blob/ebef986a0b2360211b65751c111cacb4a7d790eb/graphiti_core/graphiti.py"
+        }
+      ]
+    },
+    {
+      "repo": "letta-ai/letta-code",
+      "commit": "ad308cd3cb8486afa0bb8ad624c690b828339ea7",
+      "archive_sha256": "1eb58232941f29246c805bf4727a2b8c9cd7883fe0ebca94a24165c9d0db3d0b",
+      "files": 2852,
+      "license": "Apache-2.0",
+      "review_depth": "source_spot_check",
+      "reviewed_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "036e78b9d7dd33ae5b378fdda973b4aad7901c8d8371a0ae40fae1f6659a89d0",
+          "bytes": 11092,
+          "url": "https://github.com/letta-ai/letta-code/blob/ad308cd3cb8486afa0bb8ad624c690b828339ea7/LICENSE"
+        },
+        {
+          "path": "package.json",
+          "sha256": "661f4f7c31c1cf85284c6c644e0f06951aa951c23e5927dbd5fbba732790fee2",
+          "bytes": 10087,
+          "url": "https://github.com/letta-ai/letta-code/blob/ad308cd3cb8486afa0bb8ad624c690b828339ea7/package.json"
+        },
+        {
+          "path": "README.md",
+          "sha256": "7543b5df7349bb8fbdbf7f377a161c3163b6ff062a9c6f7b7430a5ca9a3d0abe",
+          "bytes": 9952,
+          "url": "https://github.com/letta-ai/letta-code/blob/ad308cd3cb8486afa0bb8ad624c690b828339ea7/README.md"
+        }
+      ]
+    }
+  ]
+}

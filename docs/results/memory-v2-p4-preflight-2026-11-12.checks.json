@@ -1,0 +1,3154 @@
+{
+  "schema_version": "1.0",
+  "phase": "P4",
+  "phase_acceptance": false,
+  "source_sha256": "b7a2e8f28599fa7b614fe4fc7006379aeafc2ea693de79fe8850536ded662c54",
+  "source_manifest_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/source_manifest.json",
+  "source_archive_sha256": "e89b18e89fd694217768cd9dab806497836a74819d876cbe37430bc781b1a7a6",
+  "protocol_sha256": "01d395147c545337f1ef0adc2e1f0ad1d05b1d1912bd79e4df3bed6ad49124b2",
+  "native_protocol_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/protocol.json",
+  "native_protocol_sha256": "01d395147c545337f1ef0adc2e1f0ad1d05b1d1912bd79e4df3bed6ad49124b2",
+  "matrix_sha256": "0322667d1603d2f47a12521f6a760a3256f2884a5cd6ba3ebacad0ee1334eeb3",
+  "memory_cases": {
+    "passed": 388,
+    "declared": 388,
+    "failed": 0,
+    "not_run": 0
+  },
+  "primary_protocol_nodes_including_legacy": 70,
+  "new_p4_cases": 53,
+  "all_memory_loop_runs": 179,
+  "memory_witnesses": {
+    "memory_operator_trace": 86,
+    "memory_effects": 61,
+    "memory_requests": 44
+  },
+  "gates": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.04515941708814353,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/gate-0.log",
+      "log_sha256": "c26e879205eca0faa548756197aa664dee030e33a50885d9f29d7328a5399944"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.022122833062894642,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/gate-1.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "mypy",
+        "src",
+        "tests"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.32361816707998514,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/gate-2.log",
+      "log_sha256": "92efc7d00dbb5d490bb7c1aca5d93325db570e7b7dcc5df01b928531ceaf43e5"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "pytest"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 58.755628083017655,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/gate-3.log",
+      "log_sha256": "c829ecda57ddce841074724551cc9058e6e192c994ba11d4fe1427e905979540"
+    }
+  ],
+  "probes": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "examples/project_memory_demo.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.1476400839164853,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-0.log",
+      "log_sha256": "f29bf1e43db79211f8212b3424a1eeb230f1a595d869ce96151e7bcac93c12bb"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "examples/progressive_memory_demo.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.16756108298432082,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-1.log",
+      "log_sha256": "1c2ca5312012693ae1f284403adca3477e0b1fd3dca64f8faf21aa21b91b7c00"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "examples/structured_memory_demo.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.2054182500578463,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-2.log",
+      "log_sha256": "1e9acb39358c4ca5cb85d3ba474db0b240ffeb5e4a71f3dcb5ccf5998bf5c401"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "examples/memory_consolidation_demo.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.1538006670307368,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-3.log",
+      "log_sha256": "b3bb7a7fa314e6ad80c00729008004fd4a3582795b6b1794e71d039e8b8e7739"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "/Users/jennyma/Projects/mini-dsh-memory/benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/native_world.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 2.277809458086267,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-4.log",
+      "log_sha256": "a029cb5217abd377dc55e6cc0bb30889e9b8ff3ba66319616aea1cab87930ae9"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "/Users/jennyma/Projects/mini-dsh-memory/benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/interruptions.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 6.050540708005428,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-5.log",
+      "log_sha256": "e62a88ce43d0ea400498923b6c1998bfc4f58bd7a422bfeb162e8b089b926ceb"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "/Users/jennyma/Projects/mini-dsh-memory/benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/error_recovery.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.6761645000660792,
+      "log": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/probe-6.log",
+      "log_sha256": "6bbdff9472bef76939ee7de2ddaa6a2d416cc7e0fc68e32bd7d0508e9850cb68"
+    }
+  ],
+  "native_predicates": 37,
+  "native": [
+    {
+      "case": "native_world_2",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/native_world_2/check.json",
+      "check_sha256": "c5c8c4357c54621cb1aa9c77fdc469ca4193b32991ba6f3d549664ebe81ff023",
+      "checks": {
+        "host_db_absent_in_guest": true,
+        "host_db_unchanged": true,
+        "private_read_write_blocked": true,
+        "absolute_file_tools_denied": true,
+        "only_workspace_mount": true,
+        "cpu_limit": true,
+        "caps_dropped": true,
+        "allowed_workspace_write_and_read": true,
+        "guest_native_architecture": true,
+        "guest_memory_limit": true,
+        "guest_network_none": true,
+        "finished": true,
+        "memory_index_present": true,
+        "approved_body_read": true,
+        "backup_unchanged": true,
+        "physical_schema_migrated": true
+      },
+      "operator_trace_sha256": "8efaf8da5a3a64584cf7d88374ba17dd50d5b3b45e8bfdab0593076859c7e832",
+      "fixture_receipt_sha256": "0412161816e4a76ef5948d29656f494473bc993754498c529db460bf94997bc9"
+    },
+    {
+      "case": "interrupt_timeout_0",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/interrupt_timeout_0/check.json",
+      "check_sha256": "d7230ff8490183bada5ed992a68631a80f239ce95d51497a1cff38ee42a29ce2",
+      "checks": {
+        "real_child_started": true,
+        "entire_container_stopped": true,
+        "container_removed": true,
+        "host_database_unchanged": true,
+        "operator_guard_released": true,
+        "backup_unchanged": true
+      },
+      "operator_trace_sha256": "ba52d641ff1718e94a5735e44ef20f36670e596f9fe9250344628034cf2dbbe9",
+      "fixture_receipt_sha256": "0412161816e4a76ef5948d29656f494473bc993754498c529db460bf94997bc9"
+    },
+    {
+      "case": "interrupt_cancel_0",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/interrupt_cancel_0/check.json",
+      "check_sha256": "a2e0ff6c40a620279d8c4df6973d3bf09af52403dc24aea20cbfacc86eaca54e",
+      "checks": {
+        "real_child_started": true,
+        "entire_container_stopped": true,
+        "container_removed": true,
+        "host_database_unchanged": true,
+        "operator_guard_released": true,
+        "backup_unchanged": true
+      },
+      "operator_trace_sha256": "78db3582f897ebf4c2e47436ecbee1b6c6dbeeaa1ee00ad356d7a9e029113331",
+      "fixture_receipt_sha256": "0412161816e4a76ef5948d29656f494473bc993754498c529db460bf94997bc9"
+    },
+    {
+      "case": "native_error_recovery_0",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/native_error_recovery_0/check.json",
+      "check_sha256": "092a0d3ffd87462b8dca20b8e201330a2c062a813384a8c412e5f1fe0b04e543",
+      "checks": {
+        "actual_python_failure": true,
+        "actual_python_recovery": true,
+        "body_exposed_with_error": true,
+        "body_withdrawn_after_recovery": true,
+        "factual_tool_result_preserved": true,
+        "later_read_not_applicable": true,
+        "host_db_unchanged": true,
+        "finished": true,
+        "backup_unchanged": true
+      },
+      "operator_trace_sha256": "4c47e6bd66668ff2a6383d5f9f28d384ccbfd2ad81ecce6bb51cc7e94e7dc393",
+      "fixture_receipt_sha256": "409e0a9a8e6d3f25bc6618abd5a23f8ed7da2574b27550136bc462556c0e4d37"
+    }
+  ],
+  "coverage_matrix": [
+    {
+      "case_id": "C01",
+      "criterion": "docs/memory-v2-p4-contract.md#C01",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c01_actual_loop_binds_inputs_and_only_creates_proposed",
+        "tests/test_memory_consolidation.py::test_c01_input_hash_binds_materials_and_operator_identity"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 2,
+      "declared": 2,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c01_actual_loop_binds_inputs_and_only_creates_proposed": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2b715af93224bbbf6682/check.json",
+          "sha256": "ca3f94633f2113df1f746ea944fc9c4bfdc2ff0761d6abcb1dd88124977ed333",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c01_input_hash_binds_materials_and_operator_identity": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/dff4a47f558ab3212d15/check.json",
+          "sha256": "dd3e97eafbf489bf130f5f2ddd9be1589dcf835d415dbccce5518129810efe1f",
+          "status": "pass",
+          "run_count": 0
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C02",
+      "criterion": "docs/memory-v2-p4-contract.md#C02",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[1]",
+        "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[true]",
+        "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[None]",
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[authorization]",
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[redacted]",
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[hash]",
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[extra]",
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[empty]",
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[False]",
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[True]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[secret]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[duplicate_sources]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[duplicate_facts]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[many_sources]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[many_facts]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[fact_bytes]",
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[fact_total]"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 17,
+      "declared": 17,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[1]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e8d12d3836c0e272b9c0/check.json",
+          "sha256": "36594a3cb066ee617051e56667361af8b49636b620b6497959e1dc58e329a349",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[true]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1f08ab928155a813a6f7/check.json",
+          "sha256": "0d8e1d58af489d2ed82cc896557c394591328cfc92138372c82c4c29ad050ec2",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[None]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6dd534a075fe165a75eb/check.json",
+          "sha256": "5865dea88250bf6d299730d032d224ebb5fadf4601743d013d8c16021165359f",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[authorization]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9bc858389c1e291f4884/check.json",
+          "sha256": "23afdfc0dcff2638c96c7ab29db8d8d6fa40f1de0550aa88565bd859ecca440b",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[redacted]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d86cc0f43ab31d729214/check.json",
+          "sha256": "04b90d048279811d340d6213765435d443dddac6a0dc58744982b7aec6cf0dc8",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[hash]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/30dc1e950b20f3f75a66/check.json",
+          "sha256": "f4ed8e3e0a69837ac936664ec00be2386488fc68a47316817b5ebbb3852fcbe7",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[extra]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/31f021b6d85fd3a67fa7/check.json",
+          "sha256": "9978dd9cd3e892f21c97c51a6e9580cec9340c674307517708309bee0ebbc075",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[empty]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/05c2873536cd73a34dd6/check.json",
+          "sha256": "6855df47be3ce52da61d55351d9a0e774ce693f198cb989d7bcf5ce0795c5c10",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[False]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e3c2ec4e11d808c626f6/check.json",
+          "sha256": "ae63ec92b3c07112911ab1b97ac77d0d72d7bfb8d2576d304087f1b72459e17d",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[True]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fa292c374841e46f598e/check.json",
+          "sha256": "fb8624fe004cc62365c7663a5b54e8d01e484bd2e1c790d3cbf32127e163963f",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[secret]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9e212c62ad8903f5c01e/check.json",
+          "sha256": "33230a20b37ed74a5abf6bb90fc9892ac68e1c149fef1a7dfc4b5a315b4954c1",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[duplicate_sources]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2efeab30e11d8da7f536/check.json",
+          "sha256": "8a4b6ebd2b5b97b823736d134346e28f30b04e112aa244281fe9132cb628ec3b",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[duplicate_facts]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/35919519e0dcf965de0f/check.json",
+          "sha256": "b53268248bb98fe366f8d1b881d253efef37a19dda8b33ee5a30966c9d49e6bf",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[many_sources]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cc817fa4a706505aa71e/check.json",
+          "sha256": "edd37c70c4cf0d9bf07f5df3d95b1da8ab630184760674ddc57c0236a5c361c7",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[many_facts]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0c63a569e84f73aeafa9/check.json",
+          "sha256": "8e64547abe3c8a04a45c95d0c64f6ada0a9f0f5a884eb33f9c642aec59fd1219",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[fact_bytes]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3f43421b429dbd6aeaf8/check.json",
+          "sha256": "8d55f5311b528abc0dfe4610d53cf191d36f01025c4ebc98a6fe6d2c653f265f",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[fact_total]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a0d8fe7fc0051a2450dd/check.json",
+          "sha256": "ba1275fa1b4079a31d11ad77f8293f4a751899159cd9b7091e73242d5646ca59",
+          "status": "pass",
+          "run_count": 0
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C03",
+      "criterion": "docs/memory-v2-p4-contract.md#C03",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[consolidate_memory]",
+        "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[load_consolidation_inputs]",
+        "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[propose_consolidated_note]",
+        "tests/test_memory_consolidation.py::test_c03_permission_or_active_actor_rejects_before_model[True]",
+        "tests/test_memory_consolidation.py::test_c03_permission_or_active_actor_rejects_before_model[False]",
+        "tests/test_memory_consolidation.py::test_c03_05_wall_timeout_and_concurrent_run_leave_no_writes",
+        "tests/test_memory_consolidation.py::test_c03_real_pending_maintenance_blocks_consolidation"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 7,
+      "declared": 7,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[consolidate_memory]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/97cfaf8521eb592ae414/check.json",
+          "sha256": "d84687021bee0b89bd0fcb3c31eecefaf84c8c3697118454e770e4e84f186c6b",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[load_consolidation_inputs]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7b5445b1afe513247a92/check.json",
+          "sha256": "70c1bc675dc41d70effbc45c265bd3a0d2bc784a1fe132e73550534b518b3805",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[propose_consolidated_note]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/14c6b4644efbb7ddf224/check.json",
+          "sha256": "39f505bf9b96edde79d09fa58cae2ff9bdb2c40da94c94316b7a692e6c655319",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c03_permission_or_active_actor_rejects_before_model[True]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/084f3f54a1c7c5e4565b/check.json",
+          "sha256": "bca2c7305af6455af6e067cdfca13f47a2b6fe4b4595fb54911ed96707ccd7b9",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c03_permission_or_active_actor_rejects_before_model[False]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5befbb521d72f60adf33/check.json",
+          "sha256": "e147bce692eb2f185763b4cd3b3203f8fbfc0c7cd2ace49f71af827cdbaa1064",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c03_05_wall_timeout_and_concurrent_run_leave_no_writes": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2c162c5aa39234f7e936/check.json",
+          "sha256": "731ce5423f8fd603c970a1bef407868f13604108f73f28e28cf0575d89a6c42c",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c03_real_pending_maintenance_blocks_consolidation": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/86d8311230364f4013ea/check.json",
+          "sha256": "19a1564b29e8dc283c6fc79db10aae54c589b68c7b57a7e8c3ba0103ff7813d6",
+          "status": "pass",
+          "run_count": 0
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C04",
+      "criterion": "docs/memory-v2-p4-contract.md#C04",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[revision]",
+        "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[fingerprint]",
+        "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[evidence]",
+        "tests/test_memory_consolidation.py::test_c04_source_changes_between_model_exposure_and_write_prevent_draft",
+        "tests/test_memory_consolidation.py::test_c04_no_history_port_or_unmigrated_store_cannot_reach_model[False]",
+        "tests/test_memory_consolidation.py::test_c04_no_history_port_or_unmigrated_store_cannot_reach_model[True]",
+        "tests/test_memory_consolidation.py::test_c04_scope_is_bound_to_the_service_not_supplied_by_model[project]",
+        "tests/test_memory_consolidation.py::test_c04_scope_is_bound_to_the_service_not_supplied_by_model[version]"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 8,
+      "declared": 8,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[revision]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d87e77cd9883b0a68f4a/check.json",
+          "sha256": "5ad51a41478b58d8a2f95b48256222e5ac5dba62a093b5815f9afa9782a035a2",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[fingerprint]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1e993751965ca6a8c205/check.json",
+          "sha256": "7e7558b8e646febbd9e4fa6ec04f5b270a4288d59805d01c6d54cbbed46e7a39",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[evidence]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b4af75b5a38b8f853b72/check.json",
+          "sha256": "700756fc729141a4f1604a668e1a311378c5bbbae7f4218192320d833553cded",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_source_changes_between_model_exposure_and_write_prevent_draft": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a38209be32669553b5e0/check.json",
+          "sha256": "8915e4116ed254ee1c2c1d6e90eda6260d021c4332e2b19541f710ba6a109323",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_no_history_port_or_unmigrated_store_cannot_reach_model[False]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c180c7f297c223160901/check.json",
+          "sha256": "8014dcaf4a3058ab289f9ef112a2957e473df7c5ad2d00156bdb39aba33f2958",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_no_history_port_or_unmigrated_store_cannot_reach_model[True]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e678f4c5e595aeed2658/check.json",
+          "sha256": "6e9c48e5532cd994217e9c75c3a353b8aa5e467e748426e0239e09d091322eda",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_scope_is_bound_to_the_service_not_supplied_by_model[project]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b55717e5f0386ffc39ae/check.json",
+          "sha256": "9d31dc26d77522ce3da52bc73d4a6847109148bd085a7e25bbf4c3e44732d463",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c04_scope_is_bound_to_the_service_not_supplied_by_model[version]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f10571736a4ac60de5ec/check.json",
+          "sha256": "a01cedf3694a53874027e94f167c317f06daf2f566f6148aaf14c23d5f61d3ba",
+          "status": "pass",
+          "run_count": 1
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C05",
+      "criterion": "docs/memory-v2-p4-contract.md#C05",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[tools]",
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[steps]",
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[tokens]",
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[unknown]",
+        "tests/test_memory_consolidation.py::test_c03_05_wall_timeout_and_concurrent_run_leave_no_writes"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 5,
+      "declared": 5,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[tools]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/679a5a66e299aebcafa1/check.json",
+          "sha256": "1681da6cd8794da63f33c851b4d769e2238f057e40a0e505cdc3fffdbf6a8c9b",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[steps]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1d1cc7d85e1cd95c8623/check.json",
+          "sha256": "cf15d58d9e7d98d02064488c0d08c289b29171da0b8ce2c8e78af7e35d8f59c9",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[tokens]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4a7bb7ae6184f5b95434/check.json",
+          "sha256": "e8ac72ba18dc1c6612f6667fcecf6f77bdb3b04dfbaccf710ee08e78545a0456",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[unknown]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f3e90a754c997dea1ea9/check.json",
+          "sha256": "feee3afc99ba6a5a62e75a9f61a03e3d06724c2f423521e42155dfa4f2895d24",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c03_05_wall_timeout_and_concurrent_run_leave_no_writes": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2c162c5aa39234f7e936/check.json",
+          "sha256": "731ce5423f8fd603c970a1bef407868f13604108f73f28e28cf0575d89a6c42c",
+          "status": "pass",
+          "run_count": 1
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C06",
+      "criterion": "docs/memory-v2-p4-contract.md#C06",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c06_cancelled_model_keeps_completed_proposal_and_releases_guard",
+        "tests/test_memory_consolidation.py::test_c06_real_storage_fault_does_not_retry_and_readback_is_truthful[before_storage_publish]",
+        "tests/test_memory_consolidation.py::test_c06_real_storage_fault_does_not_retry_and_readback_is_truthful[after_commit]",
+        "tests/test_memory_consolidation.py::test_c06_cancelled_publication_settles_worker_and_operator_can_review_by_run[before_storage_publish]",
+        "tests/test_memory_consolidation.py::test_c06_cancelled_publication_settles_worker_and_operator_can_review_by_run[after_commit]",
+        "tests/test_memory_consolidation.py::test_c06_model_failure_records_usage_and_releases_run"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 6,
+      "declared": 6,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c06_cancelled_model_keeps_completed_proposal_and_releases_guard": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/784f528d7bc7d7f4f1ea/check.json",
+          "sha256": "6de8aff93f08c5c206d00c2d3a838b62c5ef9180ea9f181fad069866c860289f",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c06_real_storage_fault_does_not_retry_and_readback_is_truthful[before_storage_publish]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4b582731f78745a61dcf/check.json",
+          "sha256": "356699021d24f0fe0b698b033079628b972b740cff0d805a91d64e7d1127da44",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c06_real_storage_fault_does_not_retry_and_readback_is_truthful[after_commit]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/172f320f2ae8e6050524/check.json",
+          "sha256": "f2c6dc39d8bd8b696184b62e42ce0da0afd9b1bb638dbed82fbb32d783856033",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c06_cancelled_publication_settles_worker_and_operator_can_review_by_run[before_storage_publish]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/06899c1ff1e56053c0f6/check.json",
+          "sha256": "2c65f1c9096a71cd350d5826f407ec16f9905ce380450f939c82a2fca7dd423b",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c06_cancelled_publication_settles_worker_and_operator_can_review_by_run[after_commit]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3c7686ab243b093edd3d/check.json",
+          "sha256": "51234a3fe9771bf8aa4769c06c5e797e609a28975f39c00388d0ed7d9445a228",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c06_model_failure_records_usage_and_releases_run": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3d8a6af761a0af638774/check.json",
+          "sha256": "658fd2a632c3334268a7db0e256af4d2875cfba305ca745e0dc5b4e1fea2c0a5",
+          "status": "pass",
+          "run_count": 1
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C07",
+      "criterion": "docs/memory-v2-p4-contract.md#C07",
+      "nodes": [
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[raw_fact]",
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[source]",
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[accepted]",
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[maintenance]",
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[hidden_loader]",
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[shell]",
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[file]",
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[False]",
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[True]",
+        "tests/test_memory_consolidation.py::test_c07_candidate_attempt_cap_preserves_old_knowledge"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 10,
+      "declared": 10,
+      "evidence": {
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[raw_fact]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a3f8b35720b55d825dbf/check.json",
+          "sha256": "0fa177e6d4c6ae80e07f09c646d10eaa2f33d6d5da9b376cff9359d8208caf83",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[source]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/989afd6d2a909cbe26d2/check.json",
+          "sha256": "a60de3c548ef6d8469590bda725193ee4bc84e9d0201d1ab3b1a5e2c7e6d4ccf",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[accepted]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/99bb17e9b384119cd8dd/check.json",
+          "sha256": "43043f147dbc11df77318ec2cb3e9ff5967bec4b5de16f324927d7396033585c",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[maintenance]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1e47498579d620969b0b/check.json",
+          "sha256": "ea99de406e059abfa7e04e30356f86f837d18af15e90d01d887cab6af399c1bd",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[hidden_loader]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1f9e62f54249799fd2b3/check.json",
+          "sha256": "baedc65fb77a49c8ab4ea0c8e7534e6b833f71c5e6691794fb84b2d48896bcce",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[shell]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8ce9cdc2559b9608675a/check.json",
+          "sha256": "23354c44dc070bc270995da2e6dffb3202db438f66dc4a7195edfb2a1a78716f",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[file]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/abf6b0b2fd9524e01d5a/check.json",
+          "sha256": "2ae097705a42da48888af688eef11225b5a8e4b52d7cc03fc1c3f276da71891b",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[False]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e3c2ec4e11d808c626f6/check.json",
+          "sha256": "ae63ec92b3c07112911ab1b97ac77d0d72d7bfb8d2576d304087f1b72459e17d",
+          "status": "pass",
+          "run_count": 1
+        },
+        "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[True]": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fa292c374841e46f598e/check.json",
+          "sha256": "fb8624fe004cc62365c7663a5b54e8d01e484bd2e1c790d3cbf32127e163963f",
+          "status": "pass",
+          "run_count": 0
+        },
+        "tests/test_memory_consolidation.py::test_c07_candidate_attempt_cap_preserves_old_knowledge": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b6706045c435e34cf861/check.json",
+          "sha256": "8fd6cba212d75a457be6f6c4496557c8a64dce7a133ffe84e5e3b44d3e6a6dbd",
+          "status": "pass",
+          "run_count": 1
+        }
+      },
+      "additional_native": []
+    },
+    {
+      "case_id": "C08",
+      "criterion": "docs/memory-v2-p4-contract.md#C08",
+      "nodes": [
+        "tests/test_memory_cli.py::test_c08_cli_consolidation_uses_explicit_model_and_private_audit"
+      ],
+      "supporting_memory_regression": "all listed memory nodes",
+      "status": "pass",
+      "passed": 1,
+      "declared": 1,
+      "evidence": {
+        "tests/test_memory_cli.py::test_c08_cli_consolidation_uses_explicit_model_and_private_audit": {
+          "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/78ccd9df74f643cec1da/check.json",
+          "sha256": "475b37ea340d362fabdd7b33bb50babe7cf5af6359994612b5f08b53f520f102",
+          "status": "pass",
+          "run_count": 1
+        }
+      },
+      "additional_native": [
+        {
+          "case": "native_world_2",
+          "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/native_world_2/check.json",
+          "check_sha256": "c5c8c4357c54621cb1aa9c77fdc469ca4193b32991ba6f3d549664ebe81ff023",
+          "checks": {
+            "host_db_absent_in_guest": true,
+            "host_db_unchanged": true,
+            "private_read_write_blocked": true,
+            "absolute_file_tools_denied": true,
+            "only_workspace_mount": true,
+            "cpu_limit": true,
+            "caps_dropped": true,
+            "allowed_workspace_write_and_read": true,
+            "guest_native_architecture": true,
+            "guest_memory_limit": true,
+            "guest_network_none": true,
+            "finished": true,
+            "memory_index_present": true,
+            "approved_body_read": true,
+            "backup_unchanged": true,
+            "physical_schema_migrated": true
+          },
+          "operator_trace_sha256": "8efaf8da5a3a64584cf7d88374ba17dd50d5b3b45e8bfdab0593076859c7e832",
+          "fixture_receipt_sha256": "0412161816e4a76ef5948d29656f494473bc993754498c529db460bf94997bc9"
+        },
+        {
+          "case": "interrupt_timeout_0",
+          "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/interrupt_timeout_0/check.json",
+          "check_sha256": "d7230ff8490183bada5ed992a68631a80f239ce95d51497a1cff38ee42a29ce2",
+          "checks": {
+            "real_child_started": true,
+            "entire_container_stopped": true,
+            "container_removed": true,
+            "host_database_unchanged": true,
+            "operator_guard_released": true,
+            "backup_unchanged": true
+          },
+          "operator_trace_sha256": "ba52d641ff1718e94a5735e44ef20f36670e596f9fe9250344628034cf2dbbe9",
+          "fixture_receipt_sha256": "0412161816e4a76ef5948d29656f494473bc993754498c529db460bf94997bc9"
+        },
+        {
+          "case": "interrupt_cancel_0",
+          "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/interrupt_cancel_0/check.json",
+          "check_sha256": "a2e0ff6c40a620279d8c4df6973d3bf09af52403dc24aea20cbfacc86eaca54e",
+          "checks": {
+            "real_child_started": true,
+            "entire_container_stopped": true,
+            "container_removed": true,
+            "host_database_unchanged": true,
+            "operator_guard_released": true,
+            "backup_unchanged": true
+          },
+          "operator_trace_sha256": "78db3582f897ebf4c2e47436ecbee1b6c6dbeeaa1ee00ad356d7a9e029113331",
+          "fixture_receipt_sha256": "0412161816e4a76ef5948d29656f494473bc993754498c529db460bf94997bc9"
+        },
+        {
+          "case": "native_error_recovery_0",
+          "check_path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/native_error_recovery_0/check.json",
+          "check_sha256": "092a0d3ffd87462b8dca20b8e201330a2c062a813384a8c412e5f1fe0b04e543",
+          "checks": {
+            "actual_python_failure": true,
+            "actual_python_recovery": true,
+            "body_exposed_with_error": true,
+            "body_withdrawn_after_recovery": true,
+            "factual_tool_result_preserved": true,
+            "later_read_not_applicable": true,
+            "host_db_unchanged": true,
+            "finished": true,
+            "backup_unchanged": true
+          },
+          "operator_trace_sha256": "4c47e6bd66668ff2a6383d5f9f28d384ccbfd2ad81ecce6bb51cc7e94e7dc393",
+          "fixture_receipt_sha256": "409e0a9a8e6d3f25bc6618abd5a23f8ed7da2574b27550136bc462556c0e4d37"
+        }
+      ]
+    }
+  ],
+  "contract_checks": {
+    "tests/test_memory_cli.py::test_c08_cli_consolidation_uses_explicit_model_and_private_audit": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/78ccd9df74f643cec1da/check.json",
+      "sha256": "475b37ea340d362fabdd7b33bb50babe7cf5af6359994612b5f08b53f520f102",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_cli.py::test_n12_cli_migration_never_initializes_a_model_and_saves_operator_trace": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/90c03fe029739c044722/check.json",
+      "sha256": "1f8d99fc6e187608454464f80d919f9149df541bf2bd6ffeed8d62d916a37102",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_cli.py::test_n12_cli_review_and_explicit_approval_commit_a_structured_draft": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/080a3ffb0e8498e877c7/check.json",
+      "sha256": "d67f93ea766342a6176395e55f9678929b71438d5f668deb9ddab84f599c1221",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_cli.py::test_n12_cli_invalid_arguments_do_not_create_a_database": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/21c1cf3004187cd884d6/check.json",
+      "sha256": "7a67623c3470506f77e668c47be7e819d3896ccc0b91fe8a0c44403f75ba4b09",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_cli.py::test_n12_cli_deny_rule_overrides_explicit_operator_migration": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8b38b272d507fcfd39fd/check.json",
+      "sha256": "2fe70a391303d3bb7730c8948de1d0f24cfb2a5931113aa408165ed49d649b6c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_composition.py::test_file_only_runtime_prepares_memory_and_persists_only_an_unapproved_proposal": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2a49448e060b03ff6d99/check.json",
+      "sha256": "006047046a6b18a1bdd194ff882c59f9c9496ec3665613699241d4c173aacaa1",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_managed_routes_expose_the_same_memory_tools_and_operator_boundary[configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/01e87aae93db6e693b97/check.json",
+      "sha256": "1c71cb917b63a13cde32e0f11fcd6717fb2222844cddb2fae5e32191148e4229",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_managed_routes_expose_the_same_memory_tools_and_operator_boundary[plugin]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/26fc3a4ed06d18064a9c/check.json",
+      "sha256": "35bd64eb5216964e166b724a441d419e5929cb2582009fd4b66b9f02eb3155f2",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[full]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/61fabcc919945e9201b6/check.json",
+      "sha256": "28fd9e04da00ef6769b8d340a3d95cc055cdb64e2e5799d9efbe60dba8578d59",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[sliding]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e46df7866fc5a3be2c56/check.json",
+      "sha256": "043832b541850a9a7ff00cf0b41a375e6f2550586286691ded125df80b0c65bf",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[summary]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b8157d5fed49f4624336/check.json",
+      "sha256": "a7b2085c8d406de31319d89d181da78768d4ac029a93d9d56fd2efe8e5033736",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[retrieval]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0a0928cf5645c297c23e/check.json",
+      "sha256": "d6b46d002b2921360374744979df5911c26c5e043cfeb8f77873814a26cc99fd",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[retrieval_summary]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7c3d1f0324692e765be9/check.json",
+      "sha256": "1973f310a5e5db0a9871c21b82bf9ac3d27b2a0879452df4eb5e1b8fccfee339",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[symbol]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/70e06a898f1c9729607a/check.json",
+      "sha256": "81df9cfed22693fdf9bcc10ca41f50d1272bc987097ed4d10b73a8f26b9cea0f",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[budget]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/bb6781c04332740da2f6/check.json",
+      "sha256": "2e2eabe78847db7d65976bc256b3673912f8f97fada6c470c870a9981fe00e4d",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_memory_preparation_obeys_global_limits_before_model_and_releases_the_run[tool_budget]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4bd692536422d217426b/check.json",
+      "sha256": "73b04d993c597035b4944f487a8b704e0a01e5b3b88037b491bf4e3d8f1d29d8",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_memory_preparation_obeys_global_limits_before_model_and_releases_the_run[input_budget]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8c90def6df14ee6cbae5/check.json",
+      "sha256": "ff52bc9e3f9724ac281197710556887786776c843124f14e71b7edc12c89ceea",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_memory_preparation_obeys_global_limits_before_model_and_releases_the_run[permission]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7744419feae933f7f789/check.json",
+      "sha256": "836308d9648a34a82c951ed55efadde0413c6a5eaf302806188fc14a3865cf47",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_composition.py::test_memory_cannot_write_after_model_usage_exhaustion[overrun]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/bc33d238a63e6a124877/check.json",
+      "sha256": "8efa8f0695b6ddf95f94143cc1c6f08895ad468ef6e446e2dfe1906ed437f798",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_memory_cannot_write_after_model_usage_exhaustion[unknown]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6d59273bdbc08a09e828/check.json",
+      "sha256": "8211e6169da169197236dd8da8f57cc9143793455fbbbf120b4a9ef395786267",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_memory_refuses_unisolated_process_capabilities_before_any_run[default_git]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1dbec524cdd25fb07c86/check.json",
+      "sha256": "a8b4da80467a98c208a253f24c3f90ab3f6f7b9ea11e8780412c8f69f9c918ce",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_composition.py::test_memory_refuses_unisolated_process_capabilities_before_any_run[shell]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c0f3d61436aee288654a/check.json",
+      "sha256": "b75e7ea6daa0852ee7558d479a04d394c2dcc5b558a25a8a4ff70d1fe1301112",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_composition.py::test_memory_refuses_unisolated_process_capabilities_before_any_run[fixed_verification]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/22b25571b01d376ffd76/check.json",
+      "sha256": "f450f0a2405cfb8e6fd4f77da68e442f5b730ac574f7c197fea0da3f7be96df3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_composition.py::test_unattested_file_adapters_cannot_implicitly_claim_memory_isolation": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/391dbc45b2cca0e3ecde/check.json",
+      "sha256": "b6b9de1c627364899d744ad16620000c1dd6cb6ef8cfc3a0078809f5f3a533d8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_composition.py::test_operator_boundary_covers_start_end_hooks_and_releases_after_the_run": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b6e4cd449b73f36d7401/check.json",
+      "sha256": "eea023c78bdd162a878cb9c700b5cc0feb7cfde50ee22064a7080aa505118b9d",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_rejected_memory_arguments_are_not_echoed_into_the_next_model_request[secret]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/65e506bd8686fadaaee3/check.json",
+      "sha256": "42c245a71ac9901c214f3d46ced5f5468f5f36f8c9889e525cc75112da19262c",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_rejected_memory_arguments_are_not_echoed_into_the_next_model_request[forbidden_label]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8860d377fbcb2f2b3d04/check.json",
+      "sha256": "d36e79c7a3a8e59cd76ec3ac13bb60dcb7f7b48df2654fd6325bff7e01c2a3dc",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_raw_file_output_cannot_be_proposed_later_in_the_same_response": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/108c60f37d87be1292cc/check.json",
+      "sha256": "b8914c4066b70896f8bcab7b60ff2ccb29667d990e7cba5662fa933855ba41ba",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_composition.py::test_explicit_memory_store_is_selected_even_when_it_is_falsey": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/be046e8ef2add85e6096/check.json",
+      "sha256": "7735e0f2a8c72d03fc8e35cd49cd16dd87812c174e60e7cd284609e99511d9ae",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e8d12d3836c0e272b9c0/check.json",
+      "sha256": "36594a3cb066ee617051e56667361af8b49636b620b6497959e1dc58e329a349",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[true]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1f08ab928155a813a6f7/check.json",
+      "sha256": "0d8e1d58af489d2ed82cc896557c394591328cfc92138372c82c4c29ad050ec2",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_authorization_requires_actual_boolean_true[None]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6dd534a075fe165a75eb/check.json",
+      "sha256": "5865dea88250bf6d299730d032d224ebb5fadf4601743d013d8c16021165359f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[consolidate_memory]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/97cfaf8521eb592ae414/check.json",
+      "sha256": "d84687021bee0b89bd0fcb3c31eecefaf84c8c3697118454e770e4e84f186c6b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[load_consolidation_inputs]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7b5445b1afe513247a92/check.json",
+      "sha256": "70c1bc675dc41d70effbc45c265bd3a0d2bc784a1fe132e73550534b518b3805",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c03_deny_rules_apply_to_outer_load_and_proposal[propose_consolidated_note]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/14c6b4644efbb7ddf224/check.json",
+      "sha256": "39f505bf9b96edde79d09fa58cae2ff9bdb2c40da94c94316b7a692e6c655319",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[revision]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d87e77cd9883b0a68f4a/check.json",
+      "sha256": "5ad51a41478b58d8a2f95b48256222e5ac5dba62a093b5815f9afa9782a035a2",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[fingerprint]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1e993751965ca6a8c205/check.json",
+      "sha256": "7e7558b8e646febbd9e4fa6ec04f5b270a4288d59805d01c6d54cbbed46e7a39",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_current_source_is_rechecked_before_exposure[evidence]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b4af75b5a38b8f853b72/check.json",
+      "sha256": "700756fc729141a4f1604a668e1a311378c5bbbae7f4218192320d833553cded",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[tools]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/679a5a66e299aebcafa1/check.json",
+      "sha256": "1681da6cd8794da63f33c851b4d769e2238f057e40a0e505cdc3fffdbf6a8c9b",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[steps]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1d1cc7d85e1cd95c8623/check.json",
+      "sha256": "cf15d58d9e7d98d02064488c0d08c289b29171da0b8ce2c8e78af7e35d8f59c9",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[tokens]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4a7bb7ae6184f5b95434/check.json",
+      "sha256": "e8ac72ba18dc1c6612f6667fcecf6f77bdb3b04dfbaccf710ee08e78545a0456",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c05_budget_uses_existing_loop_and_prevents_followup_writes[unknown]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f3e90a754c997dea1ea9/check.json",
+      "sha256": "feee3afc99ba6a5a62e75a9f61a03e3d06724c2f423521e42155dfa4f2895d24",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[raw_fact]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a3f8b35720b55d825dbf/check.json",
+      "sha256": "0fa177e6d4c6ae80e07f09c646d10eaa2f33d6d5da9b376cff9359d8208caf83",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[source]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/989afd6d2a909cbe26d2/check.json",
+      "sha256": "a60de3c548ef6d8469590bda725193ee4bc84e9d0201d1ab3b1a5e2c7e6d4ccf",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[accepted]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/99bb17e9b384119cd8dd/check.json",
+      "sha256": "43043f147dbc11df77318ec2cb3e9ff5967bec4b5de16f324927d7396033585c",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[maintenance]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1e47498579d620969b0b/check.json",
+      "sha256": "ea99de406e059abfa7e04e30356f86f837d18af15e90d01d887cab6af399c1bd",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[hidden_loader]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1f9e62f54249799fd2b3/check.json",
+      "sha256": "baedc65fb77a49c8ab4ea0c8e7534e6b833f71c5e6691794fb84b2d48896bcce",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[shell]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8ce9cdc2559b9608675a/check.json",
+      "sha256": "23354c44dc070bc270995da2e6dffb3202db438f66dc4a7195edfb2a1a78716f",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_model_cannot_escalate_authority_or_store_raw_facts[file]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/abf6b0b2fd9524e01d5a/check.json",
+      "sha256": "2ae097705a42da48888af688eef11225b5a8e4b52d7cc03fc1c3f276da71891b",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c06_cancelled_model_keeps_completed_proposal_and_releases_guard": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/784f528d7bc7d7f4f1ea/check.json",
+      "sha256": "6de8aff93f08c5c206d00c2d3a838b62c5ef9180ea9f181fad069866c860289f",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c01_actual_loop_binds_inputs_and_only_creates_proposed": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2b715af93224bbbf6682/check.json",
+      "sha256": "ca3f94633f2113df1f746ea944fc9c4bfdc2ff0761d6abcb1dd88124977ed333",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c03_permission_or_active_actor_rejects_before_model[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/084f3f54a1c7c5e4565b/check.json",
+      "sha256": "bca2c7305af6455af6e067cdfca13f47a2b6fe4b4595fb54911ed96707ccd7b9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c03_permission_or_active_actor_rejects_before_model[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5befbb521d72f60adf33/check.json",
+      "sha256": "e147bce692eb2f185763b4cd3b3203f8fbfc0c7cd2ace49f71af827cdbaa1064",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[authorization]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9bc858389c1e291f4884/check.json",
+      "sha256": "23afdfc0dcff2638c96c7ab29db8d8d6fa40f1de0550aa88565bd859ecca440b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[redacted]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d86cc0f43ab31d729214/check.json",
+      "sha256": "04b90d048279811d340d6213765435d443dddac6a0dc58744982b7aec6cf0dc8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[hash]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/30dc1e950b20f3f75a66/check.json",
+      "sha256": "f4ed8e3e0a69837ac936664ec00be2386488fc68a47316817b5ebbb3852fcbe7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[extra]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/31f021b6d85fd3a67fa7/check.json",
+      "sha256": "9978dd9cd3e892f21c97c51a6e9580cec9340c674307517708309bee0ebbc075",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_invalid_materials_do_not_reach_model_or_database[empty]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/05c2873536cd73a34dd6/check.json",
+      "sha256": "6855df47be3ce52da61d55351d9a0e774ce693f198cb989d7bcf5ce0795c5c10",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c06_real_storage_fault_does_not_retry_and_readback_is_truthful[before_storage_publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4b582731f78745a61dcf/check.json",
+      "sha256": "356699021d24f0fe0b698b033079628b972b740cff0d805a91d64e7d1127da44",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c06_real_storage_fault_does_not_retry_and_readback_is_truthful[after_commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/172f320f2ae8e6050524/check.json",
+      "sha256": "f2c6dc39d8bd8b696184b62e42ce0da0afd9b1bb638dbed82fbb32d783856033",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c06_cancelled_publication_settles_worker_and_operator_can_review_by_run[before_storage_publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/06899c1ff1e56053c0f6/check.json",
+      "sha256": "2c65f1c9096a71cd350d5826f407ec16f9905ce380450f939c82a2fca7dd423b",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c06_cancelled_publication_settles_worker_and_operator_can_review_by_run[after_commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3c7686ab243b093edd3d/check.json",
+      "sha256": "51234a3fe9771bf8aa4769c06c5e797e609a28975f39c00388d0ed7d9445a228",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_source_changes_between_model_exposure_and_write_prevent_draft": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a38209be32669553b5e0/check.json",
+      "sha256": "8915e4116ed254ee1c2c1d6e90eda6260d021c4332e2b19541f710ba6a109323",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c03_05_wall_timeout_and_concurrent_run_leave_no_writes": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2c162c5aa39234f7e936/check.json",
+      "sha256": "731ce5423f8fd603c970a1bef407868f13604108f73f28e28cf0575d89a6c42c",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e3c2ec4e11d808c626f6/check.json",
+      "sha256": "ae63ec92b3c07112911ab1b97ac77d0d72d7bfb8d2576d304087f1b72459e17d",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c02_07_registered_material_is_rejected_before_persistence_and_keeps_usage[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fa292c374841e46f598e/check.json",
+      "sha256": "fb8624fe004cc62365c7663a5b54e8d01e484bd2e1c790d3cbf32127e163963f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[secret]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9e212c62ad8903f5c01e/check.json",
+      "sha256": "33230a20b37ed74a5abf6bb90fc9892ac68e1c149fef1a7dfc4b5a315b4954c1",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[duplicate_sources]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2efeab30e11d8da7f536/check.json",
+      "sha256": "8a4b6ebd2b5b97b823736d134346e28f30b04e112aa244281fe9132cb628ec3b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[duplicate_facts]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/35919519e0dcf965de0f/check.json",
+      "sha256": "b53268248bb98fe366f8d1b881d253efef37a19dda8b33ee5a30966c9d49e6bf",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[many_sources]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cc817fa4a706505aa71e/check.json",
+      "sha256": "edd37c70c4cf0d9bf07f5df3d95b1da8ab630184760674ddc57c0236a5c361c7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[many_facts]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0c63a569e84f73aeafa9/check.json",
+      "sha256": "8e64547abe3c8a04a45c95d0c64f6ada0a9f0f5a884eb33f9c642aec59fd1219",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[fact_bytes]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3f43421b429dbd6aeaf8/check.json",
+      "sha256": "8d55f5311b528abc0dfe4610d53cf191d36f01025c4ebc98a6fe6d2c653f265f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c02_input_bounds_reject_before_closed_store[fact_total]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a0d8fe7fc0051a2450dd/check.json",
+      "sha256": "ba1275fa1b4079a31d11ad77f8293f4a751899159cd9b7091e73242d5646ca59",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c04_no_history_port_or_unmigrated_store_cannot_reach_model[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c180c7f297c223160901/check.json",
+      "sha256": "8014dcaf4a3058ab289f9ef112a2957e473df7c5ad2d00156bdb39aba33f2958",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_no_history_port_or_unmigrated_store_cannot_reach_model[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e678f4c5e595aeed2658/check.json",
+      "sha256": "6e9c48e5532cd994217e9c75c3a353b8aa5e467e748426e0239e09d091322eda",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_scope_is_bound_to_the_service_not_supplied_by_model[project]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b55717e5f0386ffc39ae/check.json",
+      "sha256": "9d31dc26d77522ce3da52bc73d4a6847109148bd085a7e25bbf4c3e44732d463",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c04_scope_is_bound_to_the_service_not_supplied_by_model[version]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f10571736a4ac60de5ec/check.json",
+      "sha256": "a01cedf3694a53874027e94f167c317f06daf2f566f6148aaf14c23d5f61d3ba",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c07_candidate_attempt_cap_preserves_old_knowledge": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b6706045c435e34cf861/check.json",
+      "sha256": "8fd6cba212d75a457be6f6c4496557c8a64dce7a133ffe84e5e3b44d3e6a6dbd",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c06_model_failure_records_usage_and_releases_run": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3d8a6af761a0af638774/check.json",
+      "sha256": "658fd2a632c3334268a7db0e256af4d2875cfba305ca745e0dc5b4e1fea2c0a5",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_consolidation.py::test_c03_real_pending_maintenance_blocks_consolidation": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/86d8311230364f4013ea/check.json",
+      "sha256": "19a1564b29e8dc283c6fc79db10aae54c589b68c7b57a7e8c3ba0103ff7813d6",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_consolidation.py::test_c01_input_hash_binds_materials_and_operator_identity": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/dff4a47f558ab3212d15/check.json",
+      "sha256": "dd3e97eafbf489bf130f5f2ddd9be1589dcf835d415dbccce5518129810efe1f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u4e8b\\u52a1\\u53d6\\u6d88-expected0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a41c65616454561adee8/check.json",
+      "sha256": "0da4a4a64e6df4aeca74f6d9fc75bf907d093513b85043835fe101c0931e3727",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\uff33\\uff31\\uff2c\\uff29\\uff34\\uff25-expected1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b24bdb8a32503d121b9c/check.json",
+      "sha256": "32eef88b62df7343dcfb4a289d6893dcc6a9d3224b0320a509293d626133632f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[sqlite_cancel-expected2]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3a0b353e885aedd0a196/check.json",
+      "sha256": "99fdc991ed08689d21861469237d055b8ee8d519e50c34d8fd972f0945c71bde",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u53d6\\u6d88-expected3]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4c8fe64b83ddfa79fb08/check.json",
+      "sha256": "54eae3af782533c25237b16bb671046d2979ab8d443447b33a54858646fdcbf5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[!?!-expected4]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/562587917f5e8f936fb5/check.json",
+      "sha256": "3d4db177516818391db08aa7d875d533d63d153a14f78fde4eeeaa2772b1244c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\xe9chec \\u03bb\\u03bf\\u03b3\\u03b9\\u03ba\\u03ae-expected5]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c371a94f4ad1ae52d829/check.json",
+      "sha256": "a4eade64dbef4d907e34821d8f45f6c35ff66092afc3fd3005b94ad39a9d67bf",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u9519-expected6]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d39ba9a35b5498b8db26/check.json",
+      "sha256": "9ded2889488fd8b4ecaacd0cfb766f45ececaa2cc6dd89f84bbcf339b78a315b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_01_discovery_shows_scoped_topics_without_leaking_the_body": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/27b8b14ed71188897f24/check.json",
+      "sha256": "f904e19fd22c4a13d0ae63ae9ed73b9bc896a65a86a3a9bc6ad600eea669357e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_05_weighted_search_and_snapshot_are_independent_of_input_order": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/14811e069afbbb867ff6/check.json",
+      "sha256": "8f9f9ca50b3ab22e360c26439654905eb9f25338bd59d6572fcb8c15d4dcdb6a",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_07_search_does_not_fall_back_to_unrelated_notes[\\u4e2d\\u65ad]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7ce4a2ad7993070bde46/check.json",
+      "sha256": "9799b13106599b60bd4e31d1bddfab1645b91af147ee375f15038677d30942ce",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_07_search_does_not_fall_back_to_unrelated_notes[!?!]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f0737c3b1267acf8d8a1/check.json",
+      "sha256": "5ac5ec61d6d65fd7550d5dc9188b487ae9f5472772ee0b9e34cf6e6c64758f44",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_09_unapproved_other_version_and_other_project_are_not_discoverable": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fd135a34647137b960c9/check.json",
+      "sha256": "3831af29d879f70f5c922c5b2b3cc01e7a6d09f4e31668d82ff713d7b451cc70",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_10_conflicts_are_excluded_before_query_and_scope_filtering": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/35a1439e66c05f1ed555/check.json",
+      "sha256": "b5a9ecc215c96c0efcd9371b5a2dbdf40e19a1f5788dc8ce16db56fe93d2c918",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_08_explicit_path_filter_only_narrows_discovery": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7db3b985c815bbe3726f/check.json",
+      "sha256": "d54e0c2668c00d7bcf05fc6024604bfe640171a316ec03becbf559d183e7eacc",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a919afcd8d9af366f6a4/check.json",
+      "sha256": "ceca9208dec3eeaee04845e1312db40ccd0a870f5c7b916926779b316f505132",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6785a742b751773eb98b/check.json",
+      "sha256": "7645f111652a3b904c2e08264cd5763162786f6bf252d9af87932c6895d237b7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[\\ud800]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b2d810f2b32b00029a5d/check.json",
+      "sha256": "e142b990e19371241a16c4e5aceb7aedf64d3e0a2e647062b1899a092dcd1c02",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[password=memory_v2_canary_9c21]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/03c4b769d8e2496df201/check.json",
+      "sha256": "47f3948c601ec037002cdda93cb669b00b2d5b1f28c8bae8db065f98bbacd027",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_discovery.py::test_mv2_15_caps_results_without_changing_the_snapshot": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5225f7a1e6d860b92db1/check.json",
+      "sha256": "568d2d66bbfc6bc22b95feeabb1bfc19f08954199a344b816e5d9c35babeae52",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_a_repair_requires_validation_and_revision_bound_explicit_approval": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/66cd6d078510e7003936/check.json",
+      "sha256": "f8beb8248c17a1cdd12269c9871031981dc9cd856a0c5b4694df39251c828955",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_editing_approved_content_invalidates_all_previous_authority": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2cd7f9fcab89b929e2f9/check.json",
+      "sha256": "0619bfe58c3642a4236834fbe53463000c524c589c87fe166080815cbc240d20",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_unapproved_states_cannot_carry_approval_authority[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e311c7c6c2f126ad189f/check.json",
+      "sha256": "82b4256cdc564f58a413ad1a2b19dcd698447e12ac56ef1ce3cb1058ceb16cb8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_unapproved_states_cannot_carry_approval_authority[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/946ee0f30a61ce5ba9d4/check.json",
+      "sha256": "f53253a73c8ff64f517846507923bf9213b3176825ab7cae5d6a1392b4cc3784",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[accepted-False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6a8e57791332c2feb2a8/check.json",
+      "sha256": "88d59c667dd61663893246fbfa88159b6527bf037c23f4ec512bbf56068aa2ac",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[accepted-true]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cb628bbd01df42313e90/check.json",
+      "sha256": "a28b8ebaaf6cd7fe13ba35972236254a9718a41457c4b34e41e413c81e3067f4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[accepted-1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e96ee381b544bda42f12/check.json",
+      "sha256": "fe9f2cbbaad175624819cbcaf11c117e13d3283a750936dfb41d3be6db84e8ef",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_exists-False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4daf549a25de830f0b41/check.json",
+      "sha256": "ee972e7301c0599088321759eeb39a52f59f4cbfa81c7ead31ff1f6d604bb7d8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_exists-true]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0c2a714b39406c94c494/check.json",
+      "sha256": "b56319bd5f4eec19245b3ec347799b777015284c7d1341d493d11002358031fb",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_exists-1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ac73556f48babe7554f3/check.json",
+      "sha256": "2a8673490ce2ef8fe8f2d618ef82c307d67c92ca4bd0f12e77aa60fff181220e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[project_id-other_project]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1b21478f65c26a32033a/check.json",
+      "sha256": "4e0b341d859ee216683882a765b1076646db8793359f3f30b57e1108cdfe9803",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[applicable_version-v2]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/04300c984758b52d653a/check.json",
+      "sha256": "e7b9a1203d2b3c7165d059ea45223a623e88ce5104636d92df1a6db28e794e2f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_run_id-another_run]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8b93c4b50137000f1b49/check.json",
+      "sha256": "ba89cca3832888c178989a3f29831ff7c11ddc31262a434e6ab8e56709665082",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[kind-operator_configuration]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/55ff11518d78e0e610ce/check.json",
+      "sha256": "6554e8120cf42558d5682c47e14671aab256d50268812cf99907aa1296985e5b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[None]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2101e78e6e111f08c162/check.json",
+      "sha256": "a2525f9d4b91a4702f7d2a859526fdb4f64eb499d2d2f14c1075b89205bb2f11",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c38c030704086b0ae17f/check.json",
+      "sha256": "def585911db4515b5a0a1d80c5155ea52935092e8cdc7fc6ffa45873f2f4bef4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[  ]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/50e72407c2cd3f67bef8/check.json",
+      "sha256": "9d72355d591e81efc230cc59e066734a48d12960ad49966e3cd4e5b713ecc038",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[fixture_operator]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3df3bdfdfe4096a03a35/check.json",
+      "sha256": "33f1308d8d83edae21645db085b02116b44f8a604006a68cea810934740a0139",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[proposed]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/91e6329ac370429b45f0/check.json",
+      "sha256": "921fcdd570ac66c9966a8e3d6a43d420b905c57adcd2f7a49534645c7d3af3c8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[validated]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4b258e807cef6624fbc4/check.json",
+      "sha256": "f7568eb9ca0845b2fe0df8e20652157764b55117149b7215a6252a6d77bf17b5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[approved]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/34fa80b02926d5085b57/check.json",
+      "sha256": "52da23bb0d3141991770b88fb324cf05b72ae8b902ba255c8f070a04f2814e41",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[committed]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0f03955cb7af1e2d4ee0/check.json",
+      "sha256": "387242590bcec7e752c72251c2430610118e69f742b324c15c197f7a6acd9dab",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_registered_evidence_checks_real_backing_files_without_exposing_their_contents": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ad0bf61316f75ae09185/check.json",
+      "sha256": "d602625e0100fecb31af7da4c023345ae2f4ca39575802e7337cc5698f970c1c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[failed]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/76e91fa84e9ccf235b91/check.json",
+      "sha256": "9b531fea33a63693d2959699ccab0942127909fe782102a5d3305f6cec4f635f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[unknown]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/29f6b972f3e094e85275/check.json",
+      "sha256": "a74715f53fa08bfe0dee1446575193f09e7e80b5055b877b6ae8b3d461805952",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[coerced_boolean]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/04abcf727a3fc8974c7e/check.json",
+      "sha256": "e2a503ce30d679747c497ea1cb55773f6aef53b3cc90511b35acbacca2133c57",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[wrong_run]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/900c45607cfd84c48643/check.json",
+      "sha256": "01ce239fdc2efe5e26ccfb1f710be1beb54d989804508098d8d62348eb31e8b0",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[wrong_criterion]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8a95248ed6dec1e5ba68/check.json",
+      "sha256": "87f60fb71ddf16ad48d82c80efcb59d5ee41fcfa38b3bf916a73ec3509e8fa05",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[unfinished]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7232215cbfbb4617bb30/check.json",
+      "sha256": "4ebfb07d866b7673a62e74c178a61ac46bc4039c2b14474c820f4c5a1ef9b927",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[late_call]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/50d272dd1b7b0014612b/check.json",
+      "sha256": "aed0ca707f4407a872bc950f59de90e149d7667b0d75b0bb085d6e28da91e1f9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[bundle.json]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/dd06db65d60438e796b2/check.json",
+      "sha256": "5e4978a5d0f720835ba09a0dcaa7fa6959f57d347de37a66de095fda120c9c62",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[acceptance.json]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f1d4522468a71affa854/check.json",
+      "sha256": "4d399ded89919b63e9f02b62bf55ffba706421030f6082a1f5ce9321ab89a356",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[trace.jsonl]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/92dd6d2f48fbd94efa21/check.json",
+      "sha256": "445a1bf33b06fa42e40d760e724c7c113af6891367ac19bd29cbfa7889d04719",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[result.txt]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/07ce819242a89f0cde55/check.json",
+      "sha256": "df3776971ebf40f10d5367a24eccb1635f587941f170080b662fc5379df45d22",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_an_evidence_id_cannot_select_an_unregistered_path_or_follow_a_symlink": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/77360603f84eb25f779a/check.json",
+      "sha256": "c2f46401a06711c940862c32bf20c1276a2d770380c1485fb041cf86f28d38a1",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_environment_source_requires_a_pinned_operator_confirmation": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/640f24b6ffca470760fa/check.json",
+      "sha256": "82be495aafe59310f4a78f73f716a7b8c116f86af1f20dc2fb934692e3d6e98d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_outside_run_tools_validate_review_approve_and_commit_with_real_evidence": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/25ab1bd58ee62d2ade17/check.json",
+      "sha256": "c9161fa1000a2ef82616a187856fe672646253a9a1516b7bad3c015e0e1d126a",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_permissioned_retrieval_populates_only_a_run_owned_readonly_view": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a7cdc73d7e0bb17873be/check.json",
+      "sha256": "b63f14918966dc85326af2cbdae0adf5bea705620477a3249dc7929f06c8f934",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_retrieval_omits_unverifiable_committed_records_without_mutating_them[changed]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ea91a03f99f05dc786e2/check.json",
+      "sha256": "293b7b7337b0ee3f0bebda443304e33cba01d7fd38e015e371182d729a5ed5f4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_retrieval_omits_unverifiable_committed_records_without_mutating_them[ungranted]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0b66243367007c5c733f/check.json",
+      "sha256": "4dd247932aa79ffcfced3363d7fecbea9f539d647dc65bcf0718e8d118b8bc20",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_context_prepares_memory_through_tools_then_reuses_a_readonly_run_view": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d45480d62314079d333d/check.json",
+      "sha256": "bdab36cc6eadad61b4acaf867b8fd0a25d716264bd2f4ff49b65aef50a040c98",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_context_matches_memory_to_observed_file_paths_and_structured_error_feedback": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f623ca45add1cdb1d50e/check.json",
+      "sha256": "ec2217de9d53d0b09ca5a46e40281c0d527d59e8ae2c04bd76928f2a13117418",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_changed_evidence_invalidates_authority_before_approval_or_commit[approve]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3eeffd2bd3cab7aaa660/check.json",
+      "sha256": "e39f2bd2f3ffb96076a15f9a380144602ffd90504331c817767a2aa6dea0bc3a",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_changed_evidence_invalidates_authority_before_approval_or_commit[commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/366ad7122497d6ae78ba/check.json",
+      "sha256": "3c2c5c8d828664c1f679214e164681f538def7ac6380a8b0c1472a9fbf0efc8a",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_conflicting_validated_topic_blocks_each_authorizing_transition[validate]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7900efc779896205835a/check.json",
+      "sha256": "a6b19175be33c9fe4a5f904d46b9c281769a9eddb912204b13e12f187db5e95e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_conflicting_validated_topic_blocks_each_authorizing_transition[approve]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9ee4a2ea54ab85b95b26/check.json",
+      "sha256": "42716aabe6a9723873af88306a4c624ef15115c41cfcaa2f9ce50f44ee110cdf",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_conflicting_validated_topic_blocks_each_authorizing_transition[commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8ba593f4b42a6d293f8c/check.json",
+      "sha256": "fd6a60dffd0557c79cb0c909d8504fc7fb8129943a7f773cff34fe7197a94b57",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_operator_edit_and_rejection_remove_old_authority_through_the_tool_pipeline": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c9c3b4d6c9190f3f6da6/check.json",
+      "sha256": "6ddd56c5e0f7349496642958092e8b55db1fe10507ef3c9cc11cf54499b8adf7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[review_memory-arguments0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/47dc0beaa012f09699ec/check.json",
+      "sha256": "4a0064b68efdb0f5538835f7555618f75f977cbd996fd43a4add17f8c4561e0c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[validate_memory-arguments1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/14a8c8c9f0e139edf009/check.json",
+      "sha256": "5f96845de9ac08c653e2b2ebfef90050b476af9e76d073d384dd7d9049700a7d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[approve_memory-arguments2]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/10b43c4039ad236a16cc/check.json",
+      "sha256": "42264acb734720f81f016120f89bc6db78a1d5572a1104a3ccede15a3afcb68b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[commit_memory-arguments3]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/81fc4e29052080959e7c/check.json",
+      "sha256": "4bdc554e6dce4824d9cfe9c4efac8b5333b89ccf9fe33dee388a936c2afaaa13",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[revise_memory-arguments4]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b73376216f36c5faf27b/check.json",
+      "sha256": "2b468353912048a2dd0ceb35c108495af92d491dd1502da7efb155a8b16a6fef",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[reject_memory-arguments5]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9acc7bc1b875df834b1a/check.json",
+      "sha256": "eeea6274a334ef896f617cab6e5efdb832ffea38b9eaa34d023d405563627e7b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_operator_identity_cannot_be_overridden_in_approval_arguments": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2ed18c1cac0659c3f2e0/check.json",
+      "sha256": "1b4939f07d89f134b243e51def0125e2117e26377eb5a510a195519cbe53ee62",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_evidence.py::test_cancelled_evidence_io_releases_maintenance_without_starting_a_run_mid_validation": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/414f66fea853d7d7e11f/check.json",
+      "sha256": "b8c692c6c60032f71e1afe515a6a8c7c3383b7c8443cc44c4ab300128d866a34",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n11_history_schema_rejects_entry_101_without_eviction": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/788d1c70735054fec454/check.json",
+      "sha256": "aae2c54c32e71e4aae3a33c33cbd2999037ca1db2e2044c95b4d26bb82ee8958",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n05_explicit_migration_preserves_current_bytes_and_never_invents_past_states": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8e44a982c4db28a89cbc/check.json",
+      "sha256": "d642b00fd813e463a1ad6e3be8acddbe3f179b71493f937f87c8e277dc29532e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_version_two_without_history_is_corrupt_not_an_idempotent_migration": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c6ba277c4491e02627ec/check.json",
+      "sha256": "0af1ea9220672f4e9734adc9977be34c4da4665860739f1ff98a574147adb2d5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_post_publish_notification_failure_requires_readback_not_rollback": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/61f0b66119853f78b1fa/check.json",
+      "sha256": "97a9e4ef7c969521305dfc76c83b5600b9cec09f4cae125c02d8f45b6528c663",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_cancel_after_publication_leaves_a_readable_committed_migration": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/75a716aadd4aa29771f3/check.json",
+      "sha256": "9946e580517a992454f1c1e2b080a9fa9f9fccd70fc4b33995f66820e411b2bd",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n07_fresh_history_records_every_real_transition_and_pages_without_cross_project_leak": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0c7b8fb2131909cdf412/check.json",
+      "sha256": "80fd925402da1be1b5634c7aa87d6cb7877de52d6cfe645df2de1315c9648976",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_unknown_versions_are_not_rebuilt_or_backed_up[9]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/31bea07277ff09a8c4d6/check.json",
+      "sha256": "9ea4bdf9410a63e3633c802872f0d9cd7ddcd992c5efc7cdf102351fc5db278d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_unknown_versions_are_not_rebuilt_or_backed_up[0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0bf6f482e14414f66cf7/check.json",
+      "sha256": "59aa0bc59d08bb65ddfb2fec4b1aefe2a2762f880968fb61dd006716ff58da37",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_corrupt_database_is_preserved_without_migration_or_backup": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/97261f15a76a3697e0d3/check.json",
+      "sha256": "eb4d89f0240c3effef49fedbcb286b8e4c22f963fb9dbc71939b8babcb90c108",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_migration_failure_leaves_original_database_and_only_a_valid_backup[before_migration_publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/faf7a0a43b9773376bef/check.json",
+      "sha256": "b1aecc4652ad05c2221df0676bd854400d4ff8d47b9a1d1467f642c4b9894bce",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_migration_failure_leaves_original_database_and_only_a_valid_backup[before_storage_publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9f9782298efc55a171ac/check.json",
+      "sha256": "45fd86327ef2222c0c0062f36b5b7ce9848399e4679fc80646c35396611ef4a7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_cancelled_migration_settles_thread_before_releasing_store[before_migration_publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b357858281b2a10cc8e1/check.json",
+      "sha256": "a85f042105120c55076a2ae8ee84f139843bd8638e49d2025e7a200f472d6fa9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_cancelled_migration_settles_thread_before_releasing_store[before_storage_publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9f8f3da2bffbe6a853a1/check.json",
+      "sha256": "551d368d830fc8699f43904358bc2d01f6534aff0b05c042dc2f5c2197d55c71",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n11_history_query_bounds_precede_storage_io[0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f0e4eaf834bb81650b32/check.json",
+      "sha256": "b75f483bc2553eeb9c951f7f3a0c27cc5e6b74786e0b3781ebf20ac5210676a9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n11_history_query_bounds_precede_storage_io[101]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/556554f53d3038333ba4/check.json",
+      "sha256": "765de9a0bd53fbc646d2192cc7f3c7b9cc6ecd4a46c75c926da6a7e7be77484c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n11_history_query_bounds_precede_storage_io[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2b23ebe046466281f177/check.json",
+      "sha256": "5a4c6bad9d045c0621ffba3d223faec184dc8cd779b66cbd82d2a71aa9b0d26d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n07_history_write_and_current_record_roll_back_together": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/445f9ff5bfee8be018fb/check.json",
+      "sha256": "10c95f146de4aab1aac0a609634439bb32dc92aa36b58f3373b9c8081ca51b57",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n09_two_old_notes_and_new_commit_change_atomically_and_reconcile_replay": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fb9e6a6a6cc7a9887fb5/check.json",
+      "sha256": "12195dae4f11c1d66086f92ed391d138ee6487dd6c590f04052f9ca8be729532",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n09_stale_reference_or_publish_failure_cannot_partially_supersede[stale]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9e6798f318dc2d69875e/check.json",
+      "sha256": "bd0a7023bca8ef7afc4079ead3eff237f1d8c1b858934e727c7f6d6f9186c174",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n09_stale_reference_or_publish_failure_cannot_partially_supersede[publish]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/77d4954898562d94e44f/check.json",
+      "sha256": "b3674d7cff207d8612c127bfe297cb46a2156c20d2f14a30f52af044f7c06609",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n10_replacement_must_exactly_match_the_approved_supersedes_relation[omit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/65731de97ab2a518bf95/check.json",
+      "sha256": "c3c690008dbb7d520404600285f55faaec5b75e6ab86dd828cd7afc049c576f3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n10_replacement_must_exactly_match_the_approved_supersedes_relation[cross_project]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/625b50ca021b2a422a93/check.json",
+      "sha256": "88acca2be29e8936e9a3c79ff761782f6b930f5d886a564a89ff3a030d8bf0d8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n10_replacement_must_exactly_match_the_approved_supersedes_relation[duplicate]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6e96253e64e3162c05c9/check.json",
+      "sha256": "f077db920525bb30497994191f138324eb243896417cb7ac89e57ec137eace24",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n10_replacement_must_exactly_match_the_approved_supersedes_relation[unapproved]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6c73fa45775a253bdbcb/check.json",
+      "sha256": "22ea526af5fef1da0e3180be8f7eac737e49d8b932dfb44bf50acf468f5283b7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n09_individual_replace_cannot_create_an_orphaned_supersession": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/23427a082a9af5b41ad6/check.json",
+      "sha256": "b3d6676ebb8a8b792b6200f74347372ed74da53facf04e9a837b7b095ac2bc85",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_existing_backup_capability_cannot_be_overwritten_or_redirected[different_bytes]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b2bf7a767be676d7d7c5/check.json",
+      "sha256": "c56d13f297838f157615d14711ed452195ee7da2a33bcf96ec7ea48774e9b5bf",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_existing_backup_capability_cannot_be_overwritten_or_redirected[symlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6adf2f1beea8ac459483/check.json",
+      "sha256": "52b9f8e71d8fae79999b1e5218f22384226946424f532a7c6696af7917d00e60",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n06_existing_backup_capability_cannot_be_overwritten_or_redirected[hardlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/01e6295ff3ace2e0b329/check.json",
+      "sha256": "d8283705e6de22267a37f30d0290d3bc7b4778f2533551b2d0dca102bb82de27",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n08_structured_store_writes_require_explicit_history_migration[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5764f0dfc874db60f6ba/check.json",
+      "sha256": "0657c52048d2cd8ccb48c09a94400d42d2ea8fd73f011ee4e1bc5f9a609af077",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n08_structured_store_writes_require_explicit_history_migration[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/219e7e4667259ff578e0/check.json",
+      "sha256": "aba54f6e209747fb1ae46192e0f48d9d6f3adde6232ecb5c03939a88e5314e34",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_history.py::test_n11_real_history_growth_reaches_eight_mib_without_eviction_or_partial_publish": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5fd0eda811909172d23c/check.json",
+      "sha256": "dfc610f6551a1fab4f2f4ef4d81e00b6eb09e7c728bf3eee7ab75855eda7a312",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n10_mutually_referencing_uncommitted_drafts_cannot_authorize_each_other": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a827df6a862557514cad/check.json",
+      "sha256": "b000ac47417074779bd985a86d3f0a5479095aa0b5172a2ca64a8fbe2d9f8abe",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n04_08_09_merge_requires_new_evidence_then_atomic_supersession": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c20a6e8fc75468448bcd/check.json",
+      "sha256": "f6cbbe8036c3ea921cfb276690a61d5abb7d1c909da7849e9767847976463453",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_new_maintenance_is_denied_before_io_or_during_a_run[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4675ea6a53be358054f2/check.json",
+      "sha256": "85940ee69c0146b7e8dbc228ead17a54c5ce12666dad26c53d4018f36ba8ba22",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_new_maintenance_is_denied_before_io_or_during_a_run[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1588259b45634c33fb91/check.json",
+      "sha256": "eda363fea30fe14cb55e9f3f8baf444831c30d14eae4790ce6f7ea1607e9fbfd",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_structured_proposal_cannot_bypass_typed_permissions_with_the_plain_tool": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/525130bec3562006bb0d/check.json",
+      "sha256": "181b853f5eeb5397dfcc9046f4a45aea24b697fad4a38c88a76134fd5f9e8ac3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n03_structured_revision_binds_new_run_and_clears_old_approval": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/53cd2adda6928fc4caeb/check.json",
+      "sha256": "84e6915daf2f5cb9f637ac829f1a115eccd28e5636a4c3e583ad0393325bed7b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_legacy_store_cannot_silently_drop_note_history": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b0a76a483f1d9937bd8a/check.json",
+      "sha256": "154bba888161461b1fa7e0202c4e03197f6eb52a1854b25e76d33548c84e3027",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n10_real_foreign_committed_source_cannot_be_used_in_an_alpha_v1_note[project]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/442afb5df1cd765c7a7e/check.json",
+      "sha256": "3673697bc12b8686c853ffaa8b95ea86a1e9015ea9f109469ac8e7fe5f084c85",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n10_real_foreign_committed_source_cannot_be_used_in_an_alpha_v1_note[version]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/148992dc642ae370e412/check.json",
+      "sha256": "c2098627daad3c5172ed19a1f7f75a04e4d702c963ae6a335319136b08b7157f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n10_unverified_or_self_references_cannot_create_a_replacement[wrong_fingerprint]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/923efe5c760547cd59ff/check.json",
+      "sha256": "e13ed6e9503812dcc0f7d43c988602d76a84b5921d4afd41ecba48a986698a8c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n10_unverified_or_self_references_cannot_create_a_replacement[pending_source]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/19adac66b58fc10dc1d5/check.json",
+      "sha256": "4014f1952a78c5cb4f2fbcea4ae0e844b179d95ff0266696964017a01aa8e4fc",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n10_unverified_or_self_references_cannot_create_a_replacement[self_supersession]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cb27e1f96e61856900dd/check.json",
+      "sha256": "8f9a98293063785dee91e19747d76b58cb1dbea28ca4e0891d1ab00257e229c3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_structured_fields_cannot_wrap_observed_raw_material[trigger]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d414ed03e461236d8d7d/check.json",
+      "sha256": "9a968b7e05b694d2d9c0235f16e337628e047ae54f9f71c01a8b9942b4066f3c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_structured_fields_cannot_wrap_observed_raw_material[rule]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b81914331d763a7b9b94/check.json",
+      "sha256": "b304643dbca15cf359cd3c7e8663a9c49f133cb287226d84ce4bfb1a0c036d0d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_structured_fields_cannot_wrap_observed_raw_material[verification]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d0f2325fd536a1910759/check.json",
+      "sha256": "34f038c86cf8bc99ee2e72294ab0c67dfd3c43f99c9972cefe1b7929d821863e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n08_structured_fields_cannot_wrap_observed_raw_material[exceptions]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b04f3e502ae8396079cb/check.json",
+      "sha256": "56d02cfb87f922c90d56d9610d03d28e2be997f0d81736472dca36d49fcd90bb",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[full-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fda14ac201fce14c5521/check.json",
+      "sha256": "69db2bea7df22af1cf905b314a4440a0f5c42d1143d0e5d801690266f3bead44",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[full-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6bc15d0e5f5b6d4aa889/check.json",
+      "sha256": "5c0991c00b6624cb65897cebd0d9880e5502095f949d38654c28bc8749b277c4",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[sliding-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e1f2db58dee5675e207f/check.json",
+      "sha256": "4b8aab4b19bc857ac77923aaaccc8ffaa9a0472f22b4f75c4c5ef6fdb0076683",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[sliding-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4b0682a70781ef7e2b12/check.json",
+      "sha256": "a6e820edf661d6ac1973e46148754e8cd3df02843cea39bf475381b9c0b1d30a",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[summary-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c1fa4124d5a7afc6bb41/check.json",
+      "sha256": "c87eb199ac5135abc33858cc2b6cdafc257c82094e4daa4ee2793f0d356f7e19",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[summary-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c3960891ee17942eb49c/check.json",
+      "sha256": "f3b04d759c147ce1e4ae669f5a6ac85e50cad06d0bcbeaf24d4365f96bf9b466",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[retrieval-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a801ef6b330ed89ae9a2/check.json",
+      "sha256": "6e3cd7079b670a77c9a2a0c22c43e7cf176ec21892dc624bcf6e91fa32ef1482",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[retrieval-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8c3fa612260c8b69fbca/check.json",
+      "sha256": "a08a74edcc62c6cc31ddfb46a7ef1aa5fcfcac3811eb50db9065ecb73dacbf3c",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[retrieval_summary-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/71f69be77ee771891f68/check.json",
+      "sha256": "47904cd0f69201b1813d44fac7217620afd69833b89ae750a91964cf624f23dd",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[retrieval_summary-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1d838ad9ef1c44c990a6/check.json",
+      "sha256": "06ad731eff1051a624e20347f246026d02fd11c6b38c14dd4f72bf66896ba06d",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[symbol-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c9b7333e8a1bfe02c456/check.json",
+      "sha256": "22aafec7aa07c4b02b0a5c2d5d09595b23332f9c4c2b5fb95c3edf175861e239",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[symbol-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/15ab868582baf24e8dd3/check.json",
+      "sha256": "bfb8fd1c45e4c40781f1ea41e6a2f2e1a0a0c8f3a54e985423e27aa199ca5411",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[budget-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a001821dd52eb0909b6f/check.json",
+      "sha256": "f635b2f10fe00c3eb2bf72605fd1ad1fb1541b0a01ac42e8d9acc5ac4ba7228a",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_note_runtime.py::test_n12_actor_proposes_then_operator_commits_and_next_run_reads_note[budget-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8cf526411557c185e076/check.json",
+      "sha256": "fc0860aa5a816e092ee06c93f4a2e42f1ae47efb83b41c5be7dd07e2a92f46be",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_notes.py::test_n01_old_text_and_its_existing_approval_are_not_reencoded[Use uv.]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5da1ab37980060a9d087/check.json",
+      "sha256": "e909ec338302142ce1a85837799b305fe50740d21345114e60ea342e120415bd",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_old_text_and_its_existing_approval_are_not_reencoded[{\"rule\":\"plain old JSON\"}]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d188da8036221407102f/check.json",
+      "sha256": "34bc1bcedac0a5b71fcfbfb5ee7dd12d99a2fa6edf0efe1ef3e9971df869293d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_old_text_and_its_existing_approval_are_not_reencoded[\"plain JSON string\"]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d7b27dc57e6d863594bb/check.json",
+      "sha256": "bffd0d07061ad501902e27d720c5fe3ec4a3c61031979475807cd3e8ca341745",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_note_roundtrip_keeps_every_field_and_ignores_json_key_order": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/69696892f3cb4c9d33b2/check.json",
+      "sha256": "4a390709891da68fd632045262bf64d82f591496559ec9407206c7f844416f06",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_unknown_schema_authority_fields_and_duplicate_keys_are_rejected[version]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a9a3be40807834ab1e98/check.json",
+      "sha256": "9adcde86fef81a9087108d94a77ef56490d9df86e9db7e6523e16cca54a8b5bb",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_unknown_schema_authority_fields_and_duplicate_keys_are_rejected[extra]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/aedc6808cdfc40d19555/check.json",
+      "sha256": "6e014d2573c1157b8e9721ac04735d4026ce1b5f7a0006b6d4f9aacf39fa935d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_unknown_schema_authority_fields_and_duplicate_keys_are_rejected[accepted]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2cf72f96562805a24ebb/check.json",
+      "sha256": "9e52071d7bf4020f3b96a2a1151f8d3dd9227e5b5e5bb9f9701c48341402e493",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n01_unknown_schema_authority_fields_and_duplicate_keys_are_rejected[duplicate_key]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/63476ce99c3820691332/check.json",
+      "sha256": "ecbc9c7a39f8c3312e1156b502ea635780064ec446a5357225abccad18348172",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_lineage_revision_requires_a_strict_positive_integer[0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/11c6618e2fa2ad7850cf/check.json",
+      "sha256": "85f9b7a9fb41caf97a195612d0f4ce82ef718c6f7cdc76b766aec7b48bd75337",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_lineage_revision_requires_a_strict_positive_integer[-1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/98d924e5450bf493d2c7/check.json",
+      "sha256": "cefaa081079bb0ca798c334d0f926791f81a8aa4dccaef37b8591b92f282bef3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_lineage_revision_requires_a_strict_positive_integer[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/17395fad2a376313e4f3/check.json",
+      "sha256": "2c8feff4c2b0ff8c493a5361ea3475941722bf60ae4190494772c582c83fe584",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_note_fields_reject_empty_and_sensitive_text[trigger]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5944d43f7c1376dbdb1d/check.json",
+      "sha256": "e09a64fbf2342e5f0649d883bf4dd7d46eea7ca81a4ff3652edebdfd27006324",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_note_fields_reject_empty_and_sensitive_text[rule]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/13e8349351a0b5bd9fcf/check.json",
+      "sha256": "b82c29f24fc5be0c8532df0341fe0959fca8c38fbc182783ad4adbc048d48517",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_note_fields_reject_empty_and_sensitive_text[verification]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/87c37cf11dd22ddb816e/check.json",
+      "sha256": "a5b5a87bedb69e83a3fea8912db83435949c2f278eee026a37f3268812852b0f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n02_the_entire_envelope_must_fit_without_dropping_relations": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d0394d0799db0bce3df2/check.json",
+      "sha256": "8365bb0c2585b3095458bafc96b70e9f7e3fd5719801eb837a9048b31865b5da",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n03_every_note_field_changes_approval_material_and_old_approval_is_invalid[trigger]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2cc65035951a95dd06c7/check.json",
+      "sha256": "876cc3342d5664820b0b7bad67cd9a32a20dc1a498afdfc11c64471c6c413886",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n03_every_note_field_changes_approval_material_and_old_approval_is_invalid[rule]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/564611e954d5a187aaca/check.json",
+      "sha256": "23a1120be8be06263bb65a173c0f5d72434488e57450d92ce636e3de98e3d311",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n03_every_note_field_changes_approval_material_and_old_approval_is_invalid[verification]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/55c32be08501d10bfff8/check.json",
+      "sha256": "f193ba00d84b7f93d9b7b481436db6abac89438d4155ebf7881325854302bde4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n03_every_note_field_changes_approval_material_and_old_approval_is_invalid[exceptions]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4f45b94265ca4d8ae02f/check.json",
+      "sha256": "5ff9451f0a9e0583a0c635e99ee4f6a6ef9bb4bf01a7eed6d589af7b3f4e9ef8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n03_every_note_field_changes_approval_material_and_old_approval_is_invalid[sources]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5af31f5f450af9995d05/check.json",
+      "sha256": "dbe5821ae7e37aaf80fa12771a0cb374df30e8b2889188b942a07987baa79d1c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n03_every_note_field_changes_approval_material_and_old_approval_is_invalid[supersedes]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cd0d51381ccd24829c5d/check.json",
+      "sha256": "8dea88504dc0ab3e23bfb09e6ab2d8a1dba6742814c31de0c072d6ae9f7d7bfb",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[hash]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1a78e7f71d1110e35018/check.json",
+      "sha256": "481f725a714bd2332a44ffdf38310c3f7b2afd6e51388e56648d923e044fa87c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[source_run]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9887b74f5ad429a73d29/check.json",
+      "sha256": "6653acf84c15b59bf5e9e8921962828f60bf54530e2681ee4d1baa200e5ec060",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n04_old_lineage_cannot_validate_a_new_claim_even_as_environment_confirmation[target_run]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/84840966ee5a99485299/check.json",
+      "sha256": "34feb9350b8ffe100e0234052d8b8e776c0560880b686cfe7418d639a3510e10",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_notes.py::test_n04_new_evidence_still_requires_actual_accepted_and_matching_scope": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d13b61abddc90b45e169/check.json",
+      "sha256": "4ca6958c6dba575b56135f17532ef4eefc5a980c6de50fd428cc99838b060380",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[False-False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/aebc31c709eeb199727e/check.json",
+      "sha256": "ff5c843bff43d7811f671d7b2f864709fac2e73b1d3e4a5e2e382f987f63c7a3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[False-True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/073a7d1e19113006e47c/check.json",
+      "sha256": "32329f03cf3aaae52b396f279a7b85dd573fb2288ba8c7b69d7edf4b64810135",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[True-False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8a8e02b18e5a7e6df3d4/check.json",
+      "sha256": "7ed122644e1dd81e271a721ba4f2a78285fb9178e40868791cba5304126895f5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[True-True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c2fb46cb06cb6b40d028/check.json",
+      "sha256": "e1d45158dbaa2a7bd48d2c2d0971a2fd9df261f6daea162287f1f0a4f6146abd",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_registered_material_guard_preserves_safe_actions_and_reported_failure_usage": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/76bdc823299974da6d84/check.json",
+      "sha256": "787893d3a062320b803874806fa724296d829778f5d579f5bd6df7ffdc9c5d3e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_registered_canonical_json_material_is_rejected_inside_nested_model_arguments": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e452e8469ebc4f377045/check.json",
+      "sha256": "a6fef25f862a6dff936b685034d3e167e75c97cdcd99a2753cbe3aa53c4cffd8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_common_fixture_first_request_has_all_three_body_free_cards": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c9ffe1ef2fa06ddd23f9/check.json",
+      "sha256": "484c5e9a9eb1848d42b04e19a9bbb83c86f3d3a53b1bda9ba89ba8d48d7c8105",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_02_03_explicit_search_does_not_grant_path_applicability": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cb152478c1f87f104aeb/check.json",
+      "sha256": "312275980c60d52eb1936a496aa5b5ae817a0858a95f3bd1728c7d734f5bbf47",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_08_query_error_filter_cannot_forge_an_observed_error": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/87c40150040d667256cb/check.json",
+      "sha256": "55ce850f7299a75975f1f9f3f3f691f77e47cbb5cbfae778089e9f7d50820736",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_executed_hidden_reads_are_not_forgotten_when_main_history_has_no_tool_round": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/175d30cf8dc51fa2b2c5/check.json",
+      "sha256": "b175142a44ae535a0f147a85deeef047bcc97df38612c456252ec357c4b90743",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_11_source_changes_remove_the_card_without_mutating_committed_state": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f5c148aa2f889f1fe920/check.json",
+      "sha256": "9a798f4cfd3b87f2628ba6f933e7125b7a77bdfb0cbd279daa4693941a9c149a",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_11_five_candidates_recheck_changed_bytes_and_revoked_grant_without_backfill": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/373f91985ad85606164e/check.json",
+      "sha256": "3921256a08cd538d0cd0dd8695c7a8d2b432e3b1b79aac4fe49b5c1b4de8584e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_17_storage_and_evidence_failures_are_structured_and_recover_next_run[store]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ae39457e92b91fc82da7/check.json",
+      "sha256": "e2464c00e9a41ffd564ee068d8f4a486f9a603401f1e523728ae33cb829b9ce7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_17_storage_and_evidence_failures_are_structured_and_recover_next_run[source]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b7d38db7b6270ae89c51/check.json",
+      "sha256": "3ab2bd10c1dcbc63a6546b90a16ba9494db7f06f76312904d365dddc9662949f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_12_current_revision_is_checked_against_the_frozen_reference": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a52d7b55c47fa6f8eef2/check.json",
+      "sha256": "fd2d307a227dfd8a598cf816b2c328cf3aa65b6bdd033498e6af5014360c0fc8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[evidence]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/53643b69a0205406422c/check.json",
+      "sha256": "e2e4d6a5f06ed5c8a23a268f27a270a2653f6082948484b09d066949749d6de8",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[revise]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cfe387784347bdef0d22/check.json",
+      "sha256": "b008df148cc33398eeb46cb1913354542df611d79227235a66bb3f6a13d3c52c",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[reject]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/79e2246ae17d96503b6e/check.json",
+      "sha256": "9077f6e792b4eb498fcfbffc158a0c66bd7d166d7cff8ae13bf2f89133434740",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_13_permissions_precede_store_access_and_views_do_not_cross_runs": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ae7f8f194cc3abc42c95/check.json",
+      "sha256": "26d21ee9774693c7ac2f9b61aba32b3d8d3a43de72d1ca317916cafccc8b5cb0",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_13_each_required_capability_is_checked_before_private_io[memory.read]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4e66dab0a64570c1be20/check.json",
+      "sha256": "0bd30d06588830120399babb4614073a4e133d7cce984e8bd3b38ffefa351a94",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_13_each_required_capability_is_checked_before_private_io[memory.evidence.read]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/05a003609fc59bd4141f/check.json",
+      "sha256": "9adafa2ed387bb2758618a48998ccaab87ef23e8b8e35b7dbfcb58f23e7b4392",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_15_maximum_bodies_and_single_card_cap_bound_the_entire_projection": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e509b99fe8e07b5d5e82/check.json",
+      "sha256": "3b65b759449509c78c4d6af4f7b6616037262942b40967640fa306bbbb61c3da",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/648e31f767dea8755180/check.json",
+      "sha256": "564b9cda3d8cb379649d3de61c9ad94866e11b1cb2c6eb08064726c439e74e26",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/525ee60b3422fe1d4500/check.json",
+      "sha256": "7ef9abda4eee509d961bef4eacb62c2b9828ce1366e1aa6755fdc73a5c7a99fc",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[-1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e86df48d740a04d2016a/check.json",
+      "sha256": "a853af34bf7ec9f2c4055421bde6360d76eff391f584e68e4455dee80e9eb443",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[pending]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b9f9dc4a3bc4bae64d7d/check.json",
+      "sha256": "216c50cd6ed2b74db4a4bbaf89b8671c188c53604b7c5273da82fa2c236e122c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[user_role]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6f9b617416c50a37fff1/check.json",
+      "sha256": "237ca6db21b9256a8e879bf8bfc955672f90eea54693b694f27f60d10986266e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[missing_status]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e1b37ca252e46a527363/check.json",
+      "sha256": "e1cbd04ded5d3c97f5bd9763146988013f51cff2abf50d8d5553bdab9b670026",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[reused_id]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/539558be619b58a5c899/check.json",
+      "sha256": "ae4cf88d0d9a7464d13f4cbaa86af881a94640a0fb3fe39fe2424dd1da2fdce4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_progressive_config_is_explicit_and_limits_only_decrease": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/80fc6406d89f8a28f6e8/check.json",
+      "sha256": "f4570400b5c10889f58fe9fbebecc274f5882060da1dc915226b6f58b36746a9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1[local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/750dde214e75f926ef5d/check.json",
+      "sha256": "a72496fe3fa2eb4960d547cadfdf6c575d03237e827e60986e9518ea9876aa3b",
+      "status": "pass",
+      "run_count": 6
+    },
+    "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1[configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b851da0cc51d493113a0/check.json",
+      "sha256": "ee2b3ffbf2d81c56924e241525cf63b517e1acbb8a3bae9cd8c09dca01904983",
+      "status": "pass",
+      "run_count": 6
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a6a06386f726b2f58ef8/check.json",
+      "sha256": "7538aa7d16753566b1c6f3cafa4ac5963b92751cccc81888c5ec781e8eca7e7c",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/54712351f464ffc52122/check.json",
+      "sha256": "8def51b892d19290e146964414947e4893df2619038d641a1bf5463d7e5d015c",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/89cda9621668fddfd23c/check.json",
+      "sha256": "b9fc700c8a5890a1ff150d80e22290f7fc47260cb741d2eff6ace7408f8cb97d",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c48c27a437aa99cc8ba9/check.json",
+      "sha256": "b01164152c7babd4da2d76eb6363188b4afe63229764ede858f5e4742993f168",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ba4a201176ad57de3125/check.json",
+      "sha256": "bd67e2dd1a3319b88d8401ae1fe80afe3ef2af564af409e1d92e76cb08a7a1b9",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3ad67b74cb46f16031db/check.json",
+      "sha256": "a8e60074ded6e06857788d4b1fd19fe52dd035bacf4a1af80c27f460158e79da",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b3e09bb45a7ebdd02cce/check.json",
+      "sha256": "4cc5f84f23a61983cb502c45bf5aa24a7086d1f39bf5eb49b01b4594b8cdbd53",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d7fdbf7012dec714e0cc/check.json",
+      "sha256": "e16a993a81e0407e23bed5bfdc015ff4e94cb2634e22d6ea362fd258ebfc45eb",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/de7f3b2d4f3241f66921/check.json",
+      "sha256": "bb99eeaee45b9eb7597b185d3b1dbdd6d4e6d0a263cdbaa4b3d8efb4b9c18519",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/12e234c6b1ca7c1e11fd/check.json",
+      "sha256": "53b1098014fded022626d8af1dd892132bc7363261810f6d473ef4b3658fe1a0",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4937938a6b3284a59ccd/check.json",
+      "sha256": "4af28f08e2b2b4b48be112f2e24caffa32a1a68287c491d9d53bab6e81c6a7f4",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f48147fc134ed983f8b0/check.json",
+      "sha256": "b6707b9843b37be28bb9edae1bf859a9fe52b60dbccd03b29aa0aba2df813a86",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-local]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3f4455f3ed9884268713/check.json",
+      "sha256": "932adde4d75434c64c1bb2af54f046b01bd1a63abe859212b024ba9fc33e3383",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-configured]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/667b4c0bbf868de54946/check.json",
+      "sha256": "5f4bd83725e7f8eb2db8d696b3165ddff8080a5e0c8cf1fc7c44fa47c6d3da27",
+      "status": "pass",
+      "run_count": 3
+    },
+    "tests/test_memory_progressive.py::test_mv2_04_error_recovery_withdraws_body_from_the_derived_request[False]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d9703f3955a720b8a22e/check.json",
+      "sha256": "7ca24c709ffb0363912a72c5c175e9bcb39454025133e4447230f1124edf0192",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_04_error_recovery_withdraws_body_from_the_derived_request[True]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/6e7eabb6ef0eeda412f7/check.json",
+      "sha256": "37fdf003648d49fa3e9a56bf44eb609b58e10796cff459b25c53ba2177146c90",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_15_read_budget_keeps_whole_rules_and_records_omission": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/97320b813ba6b3e27ba6/check.json",
+      "sha256": "746025a83207d20a1d22b91d4f6cd6ae7f46c1c44b69948a124c454ef4ddf901",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_17_cancellation_waits_for_storage_and_next_run_has_a_fresh_view": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2d9d6c8ba40bf54c964d/check.json",
+      "sha256": "98da4193c7008169d4169dc3ac3e4587323dadf557d99cf4ee03cabd30d8b6ae",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_search_can_discover_beyond_the_five_startup_cards_and_survive_preparation": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2f7239539c1427243c07/check.json",
+      "sha256": "2ffd9c75d94656e148ff17f54f45ca3ef12041baa3079e4d1fc08739a4f0ccc4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_09_real_store_foreign_version_and_unapproved_rows_are_unavailable": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/75a7b78ed151a78c213e/check.json",
+      "sha256": "a40e7ccefc7d94e1c7ec9691cac878b8f610dc7e35edb2755cf223e6c59c05cf",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_10_old_conflicting_database_is_filtered_without_rewriting_it": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4c4b4fd91dfdcde6ccbf/check.json",
+      "sha256": "f1727e8bf38d788c1dd751aaa36271cbb9de04de8e57e639f3966ddc38aa6d56",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[duplicate]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a2de51fd79f375e97ce5/check.json",
+      "sha256": "8b083431edbbdcb674e73d34669b95f2e0acce7ea06e61769b126c3df9436d39",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[six]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/342f25c4e1f3f181ebba/check.json",
+      "sha256": "1ba91acd2c89f1cb95a480b4a5a1d06aaaeb7e33cab4f63b06c9650ac47ce37e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[zero]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3888621846aeafbda771/check.json",
+      "sha256": "4719525bc47b2c61ed1d19529ed37ed8e738ef74c8e117340e63d0ce46ddc3ce",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[boolean]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/21c4710b3945780719ba/check.json",
+      "sha256": "445688f21c00076bd3628101b82383288d2997f74b5b64d08cc465935a43100c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[bad_hash]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c74a1aee596ef3f8f8e4/check.json",
+      "sha256": "fe5c48b1bd2ea803e0523509df74e569a02022e3bdfddfd677f632c7bc799196",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[extra]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d04e18ede3783adeaf89/check.json",
+      "sha256": "05b5b4594fdc133bbd9092521d585598b97188e4c1ab7ed48bb3f3132b9e20be",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[missing]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/81a7796d43353daedc1c/check.json",
+      "sha256": "e2588d4663ec9ed3e6926388ba26225b4a52ec411f2994869f46ab9d3359becd",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_hash]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/282fd74a66a7cbcc7f58/check.json",
+      "sha256": "58773f6f09cec78c33cc1f28d010d0dd6a37b8eecba7b30d16bc29c03f1c3c45",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_revision]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/aa6bcb6e35ec283d3f7d/check.json",
+      "sha256": "80578fb8afb5e19042d934f56e1ea10172ee6ce307c9b1e9ab19f66bcc05d066",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_16_no_remaining_context_tool_budget_prevents_private_read": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e2beed5cc267eeb56d8b/check.json",
+      "sha256": "7d578f130d19c577bfc2735c61231a093e56e2fa5ffdd88022798f1dabcc6f43",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[tool_budget]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/dbc3749febae71b53133/check.json",
+      "sha256": "43d56df915c79bfac91a4a2c77218c02204520e67ddf70bca6dafd6ada640693",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[input_budget]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/439a8b5e3b324cc12df4/check.json",
+      "sha256": "c6c856986b605a07bc638f8a820f73d81933430c755b0d09e3aa10ab736899b9",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[permission]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/15a63e54f62ad012845a/check.json",
+      "sha256": "d99c014072fd1df0b53470fa336decabf46a0089f29ed2c7501266110f62160f",
+      "status": "pass",
+      "run_count": 2
+    },
+    "tests/test_memory_progressive.py::test_mv2_16_post_response_usage_stops_followup_reads_and_proposals[overrun]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d9ca5d25e4e106a5106f/check.json",
+      "sha256": "3fb1438e5ed38ceedfce2d884150f183c91fd1b2c257dc6d5652e904a99f67c0",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_16_post_response_usage_stops_followup_reads_and_proposals[unknown]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/57dd3a25dec425b68d24/check.json",
+      "sha256": "b8883eafa6c4cb0a282d4e83385ca36950afac6100c5cf58378fb0a171cba975",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_rejected_query_is_not_replayed_into_the_next_model_request[secret]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/10691f03d9ebde04e296/check.json",
+      "sha256": "852b984f999f7cc0209239b8ac96ec5c99afb6e86d81bbdf627f393eaa155f4c",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_rejected_query_is_not_replayed_into_the_next_model_request[forbidden]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/67ef6b56857e265f4e6e/check.json",
+      "sha256": "b7178538c044b5c217938d87bc25678b58fec91bde473954ea97ca665f56dc2b",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-topic]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7ccd833c337666a65cfa/check.json",
+      "sha256": "8f3ba3f54ae1ed2533f6f3d17f62014067ab33451f4731216ea155120dfe2e0a",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-paths]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/706300fae09673fc1b1c/check.json",
+      "sha256": "5fe2887faca57d91d95978e8882e5f9ce0dc529d13a5518d0831de0ddca27b0a",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-content]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e3b92a9e0458e97a1ff8/check.json",
+      "sha256": "3ee1f635f3a7a05f9437651beb18f4a8c00e6577c234da5d7c1d59a6a5143f16",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-topic]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5621d30930c18b7366ce/check.json",
+      "sha256": "544f6a3071b6f7fb3c611ccdea4a75b5517cf366c2b95f16139611dda783b5cf",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-paths]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ca053a0b58d3f931c269/check.json",
+      "sha256": "e79fcb531a11c6ea3e30dd7343b703e1c49b3e820893e1c551eadf929507ed30",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-content]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/42158074f63e779995f6/check.json",
+      "sha256": "3acfe25c5adf30274588138d0c47d55f13b2943032c7bc31b0de50a66615ae66",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_18_instruction_like_approved_data_cannot_grant_maintenance_authority": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/20b3befb14fd94d993f4/check.json",
+      "sha256": "83506d50d0fe8309b3196e28abb3ac6fb51e1c5a09850b68fc879efca1ee5460",
+      "status": "pass",
+      "run_count": 1
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments0]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/30bdf7ad072bae8e5238/check.json",
+      "sha256": "1cd3706aa79e5f37680d77dcee06be5256f186372754fb62f73775e22598cd2d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments1]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b89b6f4b302cb9bbfc4d/check.json",
+      "sha256": "2127fa04d25db3f665d7551810147283bb7cb28d23f5bac1cfce2f1f74325bfa",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments2]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a0a058b88e3cf9f815d5/check.json",
+      "sha256": "0fd2320395de01a98c4da85e34475a6f9175ab8862b48501a615b3e455925173",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments3]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/15a8d971b158a6ccfb36/check.json",
+      "sha256": "fbcb3fcfb501eb4f9e1da0103803a700a340289b082899c880de2ec1492655c3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments4]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/57fcdb5eaee591794d7c/check.json",
+      "sha256": "83fb5d556dc1db2fa9d9a77c63a4e4d151fec1640200f79b86d8b871b19af4cc",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments5]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/964347893a3844a04b09/check.json",
+      "sha256": "55a957e46d5fb5857cd7863c9ce52cba7f905274625cd8ea2303f938737c9883",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments6]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/acb95b88b5cfcc79ae37/check.json",
+      "sha256": "53413e2bb790b1a0ccd2a067514e7e7109564392bc9fa2aa2fac44dea4c691b8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments7]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/bd19ce4c5364845a1252/check.json",
+      "sha256": "94ee970a26cf3edf17e9651d2978f1a340bb19f15cd83e8ae62353bdc3655fc0",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments8]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1b32e4055adc471c5639/check.json",
+      "sha256": "85ff82de8e512e0dac9e6d93fd9c3d29464db72ec4ed6f73854dbb2c3ea9c72d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments9]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a378625a1a51f0045c27/check.json",
+      "sha256": "b5f03977c79ace63b5602cd7ea289212deed6b85383e8e8347fe4737db35e0cf",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments10]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8f00126f975073b63bef/check.json",
+      "sha256": "d2b3c80ee041cdfba7739c532f9715866c19adaf0dde06418c28c1b6a15e15a7",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments11]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e9a3c0bb161f58ff3278/check.json",
+      "sha256": "bbc93447c07a98a92c9205b898090895dcb565bfe09e0686a612141203ad482b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments12]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c14dcd442284ec60a1c4/check.json",
+      "sha256": "73f85badb320302e8503c6c6d53a6636f3491626a38c721032d59349ae162919",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_unreadable_observation_closes_the_proposal_guard_for_the_run": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2f903a7ab3d14faf79d6/check.json",
+      "sha256": "740aa44a765027ea652d87cc69d564d3a6f1d775b7ed583c2f9beda57a7ec46c",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_permission_precedes_proposal_io_and_only_a_scoped_proposal_is_persisted": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/629910a3e40accdffc86/check.json",
+      "sha256": "3ab055d93f19919375d7a83933572db378fac3afa175b23f7d0ef7c1d074723e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[project_id]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8b18265242e0a26b2ccc/check.json",
+      "sha256": "51c979f48d0876cf684a8d80581d52908c7cacf50ca8fb53cd362715b62579d5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[applicable_version]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/74cbff6d0a2b92c821b8/check.json",
+      "sha256": "9fb47556fd46af4c319bb48fdc8ef8cde07fbf9d01ab68b2f830e17a4fdad4e4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[source_run_id]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d6b50cf6e7571bbc81d4/check.json",
+      "sha256": "ce01eeefe91b6d5000beb946bca87e0c7255fa3c5f71c4257ca2487e06614ae0",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[approved_by]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/02a7d4bf3e5e84819eba/check.json",
+      "sha256": "b9b95caa504f20152d878081bdb43e25ff76cce318055229f9c4035e57528254",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[evidence_sha256]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/16a81a90bd42d6d8709c/check.json",
+      "sha256": "29df83c7b6e8e26226e1169225865b7c441771c91fbad4ebcbef5a0cdf34db1f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[status]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/614f3c4de04c7267bad7/check.json",
+      "sha256": "95217695f1953dc5aa5577fa00d260c5819d2cee4713c81aacddcad988fb8b52",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_inactive_or_mismatched_runs_cannot_propose_or_impersonate_execution": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/edbad26527afe6f84fdf/check.json",
+      "sha256": "c7482f378b335bec0b98987d0ce6ae54f36afe7e368473781544a4a602e8d571",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[assignment-content]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ccfa0bbffdcddd896a46/check.json",
+      "sha256": "d4f2a50e50ab7c4f7276249e618dae0b5370ac2f649ce4bf2003a274491678d1",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[assignment-paths]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0fa44af0e08c21bf89db/check.json",
+      "sha256": "7d9a623d1b4206d1f47679ffa9ecbaf9e86bc7580e215add89651b6fee2d12a9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[assignment-error_type]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7e9fc307c5fb5b03c7d9/check.json",
+      "sha256": "648c348ec9035fed159b0b7e5f64ecdb7c0ee5fa34de6ec5a1d366c2014b5bfa",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[json-content]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/0886d36c8c4556c2ae4a/check.json",
+      "sha256": "b645e7621135f26d47207a8dbe3dacc58b23728c2a1aad9296071691ff254d58",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[json-paths]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7cc351a0501df4395cef/check.json",
+      "sha256": "5a8a71048c62452d5d7e602a38906c8df6fd92a7deab37e53d9be8f84e6e7fa9",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[json-error_type]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ccb5406333fce10a9d70/check.json",
+      "sha256": "c08c8e6219f688e47132fa33c49f95a3381c43c614eb9240363fe6ffbd5e5146",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[escaped_json_key-content]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1322b91959bd51b2ad1f/check.json",
+      "sha256": "cb1763047552c92c83843b6eb77b0655df07af9e727103221a73c83fe9875e03",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[escaped_json_key-paths]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5e2cca9f0b6dc63b0546/check.json",
+      "sha256": "316bee209513916cace02b3c689ac2a9e8e15368c2b89e2961a1e70abb5febe3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[escaped_json_key-error_type]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/5b689bd8ee72d4de1db2/check.json",
+      "sha256": "961511521813ea4e72808d9b3e97a607a0b05a3f8c9e3dfcb873224f7ec8f963",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[task]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f5472404ae91db67ef11/check.json",
+      "sha256": "14dfd98713e01a27dbc118f565b994194f788da26eb8397ae70e0c40fb8ba7da",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[tool_output]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/adedf4cd0fdbdb9c1b8d/check.json",
+      "sha256": "ccdea2a5edc723b97d8dc37b4a8bdc66ae8b67f281765273db59d62226337ce0",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[named_tool_output]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2d63c56c88ade52e40be/check.json",
+      "sha256": "81d48a3e4d642a7b874244730dcf26f8a6b53c50fad36c93e10d50a1c211b3a1",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[hidden_label]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e2b40b021713226fb057/check.json",
+      "sha256": "0d0ff288a9ab55e2a987feadd6b80dcf43088b86f84ee7169b7b1086ba00942e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[summary]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/1d97a3f53138e7afe4e5/check.json",
+      "sha256": "f16d45bb50d0c588a885a75fd53dda2910ee85e1a6715993d27d2011e7cba238",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_runtime.py::test_invalid_source_text_does_not_leave_a_half_started_memory_run": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/56e77d011f3f03b3653c/check.json",
+      "sha256": "6a732f1d0a079118d2106729ac494fcce06d2ff6340e81e975134b882b814ba4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_selection.py::test_selection_excludes_out_of_scope_or_unapproved_records_and_keeps_provenance": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/8b2ba09819915e640192/check.json",
+      "sha256": "6f1b892b19119719f3c5fc6f7c3d684ae183867120c6c1701fccecbade752a6a",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_selection.py::test_selection_has_a_stable_five_entry_cap_independent_of_input_order": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cf11d93a698ef11aaa7d/check.json",
+      "sha256": "9c138cb8ed39ed642ba6e5bf52a3ebad919fdabe8373af7abc425e8f4d9dc400",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_selection.py::test_conflicting_topics_are_omitted_and_identical_knowledge_is_deduplicated": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/70ad36c055ad6329f9e7/check.json",
+      "sha256": "223a731c85613c16f4a2d8d559645ba7dcd49eb31624310b32343599c2f247a8",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_replacement_at_atomic_publish_cannot_redirect_the_write[directory]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/47876acdb0809ac8c19b/check.json",
+      "sha256": "e6ad9fc54898bbb9c3edf35df6ce35c054dcd58b8c1f9cd20fa54013f9c161e4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_replacement_at_atomic_publish_cannot_redirect_the_write[symlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/dce2af6896550b50ea8b/check.json",
+      "sha256": "7c9a2314a1ce8a90e103d259ebebf6f5f485aa4caf7d54b58da7de152eb9199d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_process_writers_do_not_lose_a_committed_update": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cfa98c449548fc624318/check.json",
+      "sha256": "9f2a855c22eb81967dd4bc3cbbb0e9b3ee9280b095998bcb18c7447da2dff210",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_unfinished_external_sqlite_sidecars_are_not_silently_adopted[-journal]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d4027af55ed94047f23c/check.json",
+      "sha256": "bacf8f4f74ae9c6c44cdbafc702e8ba672cf7ff7751053a18ef5c825c1fc9d27",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_unfinished_external_sqlite_sidecars_are_not_silently_adopted[-wal]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/79901cf5bd9400f4a1d5/check.json",
+      "sha256": "86072959552babc695b0f2a4d97ab564ea5122c6d755d398fc671c424ffd54f5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_unfinished_external_sqlite_sidecars_are_not_silently_adopted[-shm]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/91b853bf1aa94372c7f5/check.json",
+      "sha256": "7314ed39d21b77f6fef58477ae0f3343ca46d9113863e3f288b5333d8144fcca",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_oversized_database_is_rejected_without_reading_it_into_sqlite": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/b3cb7f7b80f528034f9b/check.json",
+      "sha256": "6806792732076712abe8d50eecc6eeb71d666e8f9a3811ab8093eb27aac959ec",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[get-directory]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/cec15cdfa34379a7fa2b/check.json",
+      "sha256": "477c5d4e26d1e42f3b6d994f5fae4c52e72d5fa744c0004ab305c9181d660029",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[get-symlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/dd15fc6f57eccf2c3332/check.json",
+      "sha256": "b259fea7750a0c1cf5b681cf8f29ed8cc723ae65ade05f697e7973d0e7249894",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[snapshot-directory]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/f43a5385cd338c746837/check.json",
+      "sha256": "cd025113005baf908689c329adef19b5a7c402db7d31ce05b0355095d1a766b4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[snapshot-symlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/c2cc713e83a74b0f6202/check.json",
+      "sha256": "e7714dce617cdeac14da20acbba13eade996e63caff45e60fa8f661ba473f87d",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[create-directory]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ea9b6a3da9c8e86df447/check.json",
+      "sha256": "56384bb15a1dd046cdcda3acf02d68aa9e0dbf4b421a4c100d6e83b0bbe212cc",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[create-symlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/17445b9816e325283b59/check.json",
+      "sha256": "1a5a058bdf263df47355986be2b9e97a8ab6bebf4e0778cf76b16723f96bf8e4",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[replace-directory]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d2b88e148bd9fb12ba01/check.json",
+      "sha256": "ba92078fbbababa2ae2e38e7b1e47ade0b32def508e0f8b8e3ab36ddf66ed990",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[replace-symlink]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/716ef370ad6c0d3e2485/check.json",
+      "sha256": "6bfa97b70bc89c38a3a0a91e1a13f8a9528e82da8d29af0c206378029247ebd5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_failed_initialization_leaves_no_database_and_reopen_can_create": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/ce34937ee9ae78519ce9/check.json",
+      "sha256": "d5326699570eaf2ddd47ab59f0f9af001a368e3e835b8bb18aafddde0a907a5b",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_conflicting_topic_validation_is_atomic_across_store_instances": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/3be3b051a014af74e733/check.json",
+      "sha256": "e6658864680271b27adaf7c4e7a583f7c4603a6086e57ed28dd707100182315f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_proposal_survives_reopen_and_is_scoped_to_its_project": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/e105d2b5ca0a69cfbfac/check.json",
+      "sha256": "e5ec26fed58f5153232f9b1c8a528fe67acde88afd9abe80d1971f8c36320ed5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_validated_approved_and_committed_states_are_atomically_read_back": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/4e258f21eec64eeeac03/check.json",
+      "sha256": "f70ac8861c0d338cdf9805dcd60b8a21e3bd36eee67c0afd36dcdf9379fc9e03",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_stale_updates_and_skipped_states_leave_the_stored_record_intact": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/380995a9268df9639e78/check.json",
+      "sha256": "05237532aed742a4cac816de12734891acb52fdd37e090dd9831754f56210186",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_case_alias_cannot_hide_storage_inside_the_agent_workspace": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/47835612cd0199366577/check.json",
+      "sha256": "3c20bdf71f388ed6dc264dacbb765e24a4d1383e5ec80156912d72bb2ad978ca",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_cancelling_a_pending_write_settles_and_rolls_back_before_returning": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/79976ffaf0243a8318c7/check.json",
+      "sha256": "5b433683a681d8717de7cbdbd0220b41cfd8ea6ebba7adf27ef6931162c77a6e",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_cancellation_after_commit_keeps_one_complete_record_and_close_waits": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/fafd0daf1184904b0ba1/check.json",
+      "sha256": "becbb2679f8df1f82ab0bdda8eb3f9f33f9c754b928bebe9bb2364e1fdf803ce",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[create-before_commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/a5a59245cad412b91eef/check.json",
+      "sha256": "82860adcb10804f3014a4fbdfb162b73958bb92771508964f6cc19fb6af5ece5",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[create-after_commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/d25d4676d1470dc2e790/check.json",
+      "sha256": "edb9768b5e71f72594ecbfee2aed0fb4623cd863ab4aa147d69ac8b9c2e8192f",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[replace-before_commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/7a4ff5fd7cda2c780fc5/check.json",
+      "sha256": "351127d284f8977b82872f0686bc64ce7718f56cb3de0db898de91f79d44f413",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[replace-after_commit]": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/9ddae024057f9ec589fc/check.json",
+      "sha256": "16245feaf7e65fa02c6cdbb89301ac4485f59e551f3f74537ece2a26121c97d3",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_project_quota_rejects_entry_101_without_eviction_or_cross_project_leak": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/796665950a8800650db4/check.json",
+      "sha256": "a4d97012a522cfc8f9e6fe6230b88f730adaaa5e5bd8c3180270931f277b4427",
+      "status": "pass",
+      "run_count": 0
+    },
+    "tests/test_memory_sqlite.py::test_replacing_the_granted_directory_invalidates_the_open_store": {
+      "path": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/contracts/2b8ba175ba5d392b2354/check.json",
+      "sha256": "c19ecc01f48ac7e7bee4d4ae73673c5cdcbcc7398a1135357189d373751cd0c8",
+      "status": "pass",
+      "run_count": 0
+    }
+  },
+  "real_model_calls": 0,
+  "benefit_evaluation": "not_run",
+  "limits": [
+    "Fixed synthetic inputs, explicit fingerprint content checks, exact topic conflicts, chronological committed sources; no semantic leakage detector or graph retrieval.",
+    "No actual model task benefit or Token savings conclusion.",
+    "fixture_operator does not authorize real project seeds.",
+    "Ignored local raw evidence is retained locally, not claimed uploaded.",
+    "P5 not delivered by this report."
+  ],
+  "followup_audit": "benchmark-results/extension-v1/memory-v2/p4-acceptance/attempt_0/audit_followup.json",
+  "note": "Historical preflight receipts. C08 offline provider-selection gap found during coverage audit; phase not signed. Final attempt_1 reruns corrected production source."
+}

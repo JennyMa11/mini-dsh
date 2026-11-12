@@ -42,6 +42,12 @@
 
 | [0030](0030-interactive-budget-adjustment.md) | 交互会话内查看和修改四类运行预算 | Accepted with limitations |
 
+| [0031](0031-progressive-project-memory.md) | 项目记忆渐进读取、显式模式与提议式整理 | Accepted with limitations（P2） |
+
+| [0032](0032-structured-memory-notes-and-history.md) | 结构化笔记批准绑定、显式历史迁移与人工替代 | Accepted with limitations（P3） |
+
+| [0033](0033-manual-memory-consolidation.md) | 运行外手动整理、固定输入与只提议变更集 | Accepted with limitations（P4） |
+
 ## 状态含义
 
 - **Proposed**：规划中的决策；尚未完成实现与验收。

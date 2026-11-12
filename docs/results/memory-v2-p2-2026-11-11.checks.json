@@ -1,0 +1,3290 @@
+{
+  "schema_version": "1.0",
+  "phase": "P2",
+  "status": "passed",
+  "source_manifest": {
+    "schema_version": "1.0",
+    "source_sha256": "e62b72582965b95e14031e5d85c4bf6c802f3cae68a72fb2cab59513b3c6cbdc",
+    "base_commit": "a7c5d3bb0eff990e701051e6262a62a82bfbf349",
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "c3f73b5669cbb2cbb46507988453c4f829d3743ef581db3a5f64e8c48f000ef5"
+      },
+      {
+        "path": "docs/adr/0031-progressive-project-memory.md",
+        "sha256": "48c13c76340f7e10e178c9d9aac1bf07697bbeed71248347e4fca8d456581148"
+      },
+      {
+        "path": "docs/memory-v2-acceptance.md",
+        "sha256": "3a398c55f87dd283f12954a2cc4c4be5fcd79b1be6c9c44810143f7a244f7ca4"
+      },
+      {
+        "path": "docs/memory-v2-design.md",
+        "sha256": "6de1fd5c131444359a6981eb26eb16650de52d874b7e53e674b1ec2ee1ffc7f5"
+      },
+      {
+        "path": "docs/memory-v2-p2-matrix.json",
+        "sha256": "d41095771a1266427c1197569f4fa9312690d9f23aab8ed97cb1860e45d5232b"
+      },
+      {
+        "path": "docs/memory-v2-usage.md",
+        "sha256": "e5ba2508c4656fbc1346aa25880a072a41af2c54a16d4c1258eac288f3cb7a02"
+      },
+      {
+        "path": "examples/coding_extension_demo.py",
+        "sha256": "40d4de0ace5fddeb355fb21a5382a2b399745b7e741556d69baec5a02a4c53b1"
+      },
+      {
+        "path": "examples/custom_runtime.py",
+        "sha256": "45fd2910e34292ce7d4840cd37bf5410c55f542fc8e4c58231bbb70da8b8c79e"
+      },
+      {
+        "path": "examples/extension_demo.py",
+        "sha256": "617f7d2e13c27ef5ac8b0bbdd2f710b86629636c58a26962585b0f5d1e04cab9"
+      },
+      {
+        "path": "examples/minimal_demo.py",
+        "sha256": "89c43e9a9997a85e8681bc5747b8fb81346ec642c35b9f3786eeed13f1ea9edb"
+      },
+      {
+        "path": "examples/multi_agent.py",
+        "sha256": "20263492b561a9664f28195cef02a479dc5f0504b8d3e06f3809bc678f98c59c"
+      },
+      {
+        "path": "examples/progressive_memory_demo.py",
+        "sha256": "67b1ac508bff785a6af7fbb8e5a85075ec6f59d791da482204c2d33d8d797cdc"
+      },
+      {
+        "path": "examples/project_memory_demo.py",
+        "sha256": "99efac42a058d1ec0f3040d70990ca3f6dcaaeee60c0fadc5771e5b93184cf64"
+      },
+      {
+        "path": "pyproject.toml",
+        "sha256": "5c97d565b1097b5b415f95d73941e031b782f234e0d4d2c681cf30337ae9f648"
+      },
+      {
+        "path": "src/minidsh/__init__.py",
+        "sha256": "25e35c547aa0fd0bb7b9c5a3c320099a7864bc0cf6737b84819886d21314c6e8"
+      },
+      {
+        "path": "src/minidsh/__main__.py",
+        "sha256": "5eb23de638abfa720990c9dc4875c6e6484502b3432961879470085d34b0647d"
+      },
+      {
+        "path": "src/minidsh/adapters/__init__.py",
+        "sha256": "98aba2d99d4abf1780db7a0cc26afa1f9050a0ad6b489470511ea8161c9d1499"
+      },
+      {
+        "path": "src/minidsh/adapters/conversations.py",
+        "sha256": "442f569b60a16d96b16f88bbbf1dce9584761dcff959424364e9c6e892b90496"
+      },
+      {
+        "path": "src/minidsh/adapters/credentials.py",
+        "sha256": "ea7c3d9bf1c67f9357e09518095e97f990dde1221c5cf8af0fd82c49fa12b8ee"
+      },
+      {
+        "path": "src/minidsh/adapters/file_backend.py",
+        "sha256": "5dd7096955fe0637313434fe92c68f0b51cae991d4d2a11e04c1143c09824398"
+      },
+      {
+        "path": "src/minidsh/adapters/mcp.py",
+        "sha256": "c7d4fd4bc0552d40598a252d66472601062bd4c7fb922fe5f80ac498b1bd0c84"
+      },
+      {
+        "path": "src/minidsh/adapters/mcp_http.py",
+        "sha256": "610b8cdee65f93d3312988758f09d8abf940cfefd0a7916f8acdd7686ce7e635"
+      },
+      {
+        "path": "src/minidsh/adapters/memory.py",
+        "sha256": "0443e001db8d28606d5619b70b269a1159e735b1adeb8495dea120d21bc18663"
+      },
+      {
+        "path": "src/minidsh/adapters/memory_evidence.py",
+        "sha256": "ee0124f39bb325ff3346bdcdff33b4a918d307bbcd2511cf6fa0e3714c91c3cb"
+      },
+      {
+        "path": "src/minidsh/adapters/mlx.py",
+        "sha256": "7cebffba1629e67ec619be8a921479bb0a92f47c5e639099f5039db46aaa57ce"
+      },
+      {
+        "path": "src/minidsh/adapters/models.py",
+        "sha256": "b30b1cc4b1b5f4f286ae63566171a6748717be512f10d75e4d9b11182735fb9a"
+      },
+      {
+        "path": "src/minidsh/adapters/plugin_trust.py",
+        "sha256": "6eda9b4b63e50a0c6778468e986e830914ab5d76cb9a4a214a5d61374401c5b0"
+      },
+      {
+        "path": "src/minidsh/adapters/profiles.py",
+        "sha256": "091776dbc7a47ac7539789efd9096022211e433cec1a0bd1e7c212cf372d22b8"
+      },
+      {
+        "path": "src/minidsh/adapters/session_codec.py",
+        "sha256": "5e50fc35f9143fc00c4aa77254795f2c212067379018b02591532213cd0442a3"
+      },
+      {
+        "path": "src/minidsh/adapters/session_journal.py",
+        "sha256": "11f2824e76f12fa48fdb7fe8ea9ee1c9211c5767e28c6857d19c3c65beff3755"
+      },
+      {
+        "path": "src/minidsh/adapters/sessions.py",
+        "sha256": "7411741fc2b7d2a04d1b142a4d59ea2b9432ec0f5d1947851386b13bcb8e7b15"
+      },
+      {
+        "path": "src/minidsh/adapters/streaming.py",
+        "sha256": "90aa6884e3e5ea26b70bdad918faaef05a0e1a23da21ef9f13e59d5461c82fd2"
+      },
+      {
+        "path": "src/minidsh/adapters/trace.py",
+        "sha256": "e2c5dc793f04e7bde61b20ad1117fe5f576ee3516460c29f16d39b121fcf00dd"
+      },
+      {
+        "path": "src/minidsh/application/__init__.py",
+        "sha256": "4a50b3283abd49c393eb5e1f95d8e4d264cd46fb8fa078261377b4cec55bd959"
+      },
+      {
+        "path": "src/minidsh/application/agent_loop.py",
+        "sha256": "5096ffcf172d8e20e4e46412623613d445afb53dec63379865f09fca8cc556a1"
+      },
+      {
+        "path": "src/minidsh/application/context_assembly.py",
+        "sha256": "ebafacf2a0017f4e155c95e52f871241f567de724bbb6ca87878aff17290909c"
+      },
+      {
+        "path": "src/minidsh/application/conversations.py",
+        "sha256": "1abacd3f9e32070d2bac70e8836eced22b06b981b1f792773857a021533cf3f4"
+      },
+      {
+        "path": "src/minidsh/application/local_policy.py",
+        "sha256": "39cf1feb733b9b2c1522a8f2c1f48ce344584cecc46b79db496f70d184eb7f5c"
+      },
+      {
+        "path": "src/minidsh/application/memory_query.py",
+        "sha256": "ff33ff0fa0775ee227cc1fd6089640857f39f8b973366671a058b2b69374e50b"
+      },
+      {
+        "path": "src/minidsh/application/session_journal.py",
+        "sha256": "6c57370e7c1c9758891464d36e9562d59d858a00b7a98bf63068c38683c64041"
+      },
+      {
+        "path": "src/minidsh/benchmark/__init__.py",
+        "sha256": "8cd2709ac28ecce12b2d47e2c0a3af6c5f2d180192e37699376db02eae8d97ab"
+      },
+      {
+        "path": "src/minidsh/benchmark/ablation.py",
+        "sha256": "bc01e5fa10e3e6df4a186829906c236c3087874e517ad383a12236c4c61bbb59"
+      },
+      {
+        "path": "src/minidsh/benchmark/extension_matrix.py",
+        "sha256": "b7cfc1b52e9bd0e407808e95210d8a5db0bc15bad5b4e973337c8f242309c636"
+      },
+      {
+        "path": "src/minidsh/benchmark/followup.py",
+        "sha256": "f2663d6c1a3624592ec4d99145275a70711a3dce839f9fc0caf95ecbf5c68da3"
+      },
+      {
+        "path": "src/minidsh/benchmark/formal.py",
+        "sha256": "105613ef4a619e7111bc597b62b57ad2a0721e6e452b7bd0520b3a9c3a6f894b"
+      },
+      {
+        "path": "src/minidsh/benchmark/harness_report.py",
+        "sha256": "28b2fa3258a37f2e38e93cb92d514666342f32183e0ed00cdac8c03802fe5ba6"
+      },
+      {
+        "path": "src/minidsh/benchmark/harness_runner.py",
+        "sha256": "ef923db237e40eebfc5d4e85d440b7893c03cb9324a7aa25665db58c0c1ccfe1"
+      },
+      {
+        "path": "src/minidsh/benchmark/harness_study.py",
+        "sha256": "e1b6b06cf3be587344fd2588f72042bc8705aeb83ea3671193cf543db714aa9d"
+      },
+      {
+        "path": "src/minidsh/benchmark/hashes.py",
+        "sha256": "8441050dde383958f8cbe72887c67dd8e3c689fd4d7842e090c450b09bef5c19"
+      },
+      {
+        "path": "src/minidsh/benchmark/memory.py",
+        "sha256": "52fde6257686a99a15172182ae6ac55644ddac09b7e80e721323ba4238417146"
+      },
+      {
+        "path": "src/minidsh/benchmark/mini_dsh.py",
+        "sha256": "a145ba798d8538800b1b6865e86ac7c47c8cdf68ff6a6b3a8dbf17ba38ce9160"
+      },
+      {
+        "path": "src/minidsh/benchmark/public_lite.py",
+        "sha256": "53edce8488b3750781a3c0b259bece5cc53f8905b1212ae5a70376c0915a8f65"
+      },
+      {
+        "path": "src/minidsh/benchmark/public_swe.py",
+        "sha256": "4b05aa3033a0a19080c1d0db7e795cea0e8fd72cf741cdd341ab82e293d404a7"
+      },
+      {
+        "path": "src/minidsh/benchmark/runner.py",
+        "sha256": "b5328711e26bc597609b09d1d1832d9adce13c7f88a33a26159f8748e1f55853"
+      },
+      {
+        "path": "src/minidsh/cli.py",
+        "sha256": "0eedd5ded5d635b4489dbc56de251d8ae2ea9d55206f7708c01d805d62822e59"
+      },
+      {
+        "path": "src/minidsh/collaboration.py",
+        "sha256": "b8bdc486f545edff94c09b0fafac263cd6f4dc83d8379736823e35cdba6d548a"
+      },
+      {
+        "path": "src/minidsh/composition.py",
+        "sha256": "db56d8a64f7ff790ad28a3f7fed83797b4bc8cbe7afb4cce092ed9a8adc1f77c"
+      },
+      {
+        "path": "src/minidsh/config.py",
+        "sha256": "8f5b22c2bf643e087f896e42a4e140b64971b7766655211fdc09212a7c01858b"
+      },
+      {
+        "path": "src/minidsh/configured_runtime.py",
+        "sha256": "3b470d07422ebe9224747da7c3f5f93cbb4a60feaf0045f1299e8771717d2337"
+      },
+      {
+        "path": "src/minidsh/context/__init__.py",
+        "sha256": "7bdcd2e409954b7e11e0a596979a87f6174fe2b5ad762012b89775f6ba1d0813"
+      },
+      {
+        "path": "src/minidsh/context/retrieval.py",
+        "sha256": "55659336d917f9c4eee3de9ce08274b27bfec1de158a4c6b43718e58a239acf8"
+      },
+      {
+        "path": "src/minidsh/context/snapshots.py",
+        "sha256": "91b55a22f547035ff8733b10c770925793cd26efa7836a24d3c6622a843b0b62"
+      },
+      {
+        "path": "src/minidsh/context/strategies.py",
+        "sha256": "0c9d236cb891ce8dd2c4d30cede4e43397232fbd1c2ce4ab6937c68484cd461e"
+      },
+      {
+        "path": "src/minidsh/domain/__init__.py",
+        "sha256": "22a0031f86257d52a8a2d81ca05d91413b7779e903449c0a5ea69f19b2e94fa3"
+      },
+      {
+        "path": "src/minidsh/domain/extensions.py",
+        "sha256": "6961d0463882c24721fa18c1422ab22f2b2f6b03613e7065c69cebb0c1b94b3d"
+      },
+      {
+        "path": "src/minidsh/domain/harness.py",
+        "sha256": "ddd148b1f7e52ad2f86bd5a019aba9825afe91af181c18fc7197b1a35c913c16"
+      },
+      {
+        "path": "src/minidsh/domain/memory.py",
+        "sha256": "568dab9b06932ae002775fdc015d02c3d74f26b34401829b16c0eb4a9bd41ab9"
+      },
+      {
+        "path": "src/minidsh/domain/memory_content.py",
+        "sha256": "4ff85b557aa2e4e88408fe8115c566ed2cf305ed8253580b53e53fe92ce7192f"
+      },
+      {
+        "path": "src/minidsh/domain/memory_discovery.py",
+        "sha256": "e4458217fcdafe9bd196f14f16df8df6af3d648abfcf9184c7b840fbc1d59b0a"
+      },
+      {
+        "path": "src/minidsh/domain/memory_query.py",
+        "sha256": "789302c04e38e2cd30c5a61a6045184c69b2d4a9f731326dcf0c6f3eb08c7fef"
+      },
+      {
+        "path": "src/minidsh/domain/models.py",
+        "sha256": "4ab1d8e749ff27ce70bcec00e2733a07b915aa4f76f85f08350a924af3d03bcb"
+      },
+      {
+        "path": "src/minidsh/domain/redaction.py",
+        "sha256": "d237e10b318b1a5eaea35f35b1ff75df038742c0ace3afbda3ab2d7e4d224404"
+      },
+      {
+        "path": "src/minidsh/domain/session.py",
+        "sha256": "851ac2fa067e9f1f8f75517ec759ee629a937de08560c2c8be43877b8425acdc"
+      },
+      {
+        "path": "src/minidsh/domain/skills.py",
+        "sha256": "5b0031a8ed39f2585f8cd4af90877ab109fb70cd865dcb3c848dcdd183dc35bd"
+      },
+      {
+        "path": "src/minidsh/domain/verification.py",
+        "sha256": "88be5af44a8e9b6b3290c8aac0455073069bb8ae20f12fa876e6a95ac944569a"
+      },
+      {
+        "path": "src/minidsh/evaluation/__init__.py",
+        "sha256": "49c98097e3dc9f5d759975e9d98b4765aa63fec6fc3c0b825657e1f91135822d"
+      },
+      {
+        "path": "src/minidsh/evaluation/diff.py",
+        "sha256": "088c01d12edd8b48a68ed310f5f171a87231c8925bf2d6f882829567925075e8"
+      },
+      {
+        "path": "src/minidsh/evaluation/extension_comparison.py",
+        "sha256": "7e08693a7d4e0ebac72cb09312a9005c1b8298cfd78e4d16e8ef9546b59332c4"
+      },
+      {
+        "path": "src/minidsh/evaluation/harness_metrics.py",
+        "sha256": "dacbf552def68d44c5d4e7aae43fe2c74bee862b1786bba0bd74f6c090c04c1e"
+      },
+      {
+        "path": "src/minidsh/evaluation/inference.py",
+        "sha256": "ea24733c6dd91c4e313d49e92b2c4937754b717e6ba55a2bb21ed46e702fe83c"
+      },
+      {
+        "path": "src/minidsh/evaluation/latency.py",
+        "sha256": "065cffed9dbcb5cf77a3fbe0f7008004cf8c2ab9da5dab37a91762b81f508283"
+      },
+      {
+        "path": "src/minidsh/evaluation/pareto.py",
+        "sha256": "28ffb16a9cf293ceeae0e09c74ea1135412cbea052ac9522c187ee4adcbba34f"
+      },
+      {
+        "path": "src/minidsh/evaluation/replay.py",
+        "sha256": "4a3bdc564bf098b0fb59fac978a0a3017e4ef8f2517e8f6724bd61a17582429c"
+      },
+      {
+        "path": "src/minidsh/evaluation/taxonomy.py",
+        "sha256": "934e4f749155be29b833d4fe0229307ff462a76a2d7ec116264a69d06b1c8e08"
+      },
+      {
+        "path": "src/minidsh/evaluation/tracefile.py",
+        "sha256": "b7a779415a7cc2997372cc9f594e069f3c0e5c89262bfa3242aa2aed601af53c"
+      },
+      {
+        "path": "src/minidsh/gui/__init__.py",
+        "sha256": "1bac6cb6d473f835a8a33dc79bd79f12f8f564d52de9ce12412f471f9f13f94c"
+      },
+      {
+        "path": "src/minidsh/gui/server.py",
+        "sha256": "6b2902ffd7eb7254601e40aa47fe7ff36a5c6841f132409c562679649d3df9e8"
+      },
+      {
+        "path": "src/minidsh/gui/session.py",
+        "sha256": "eeb0bad924bc31a912b5b87a398ffe2bc17cc185f9ee84514e4484d3761d94e6"
+      },
+      {
+        "path": "src/minidsh/infrastructure/__init__.py",
+        "sha256": "e36e68969bbcc8554214e61a0bb5bb5e5b45c7fc6bf005b79840f43606802554"
+      },
+      {
+        "path": "src/minidsh/infrastructure/containers.py",
+        "sha256": "ec9582d7ace977d94c6ac74377341e23ec195dd16a595c424bd7085f048e09b7"
+      },
+      {
+        "path": "src/minidsh/infrastructure/file_worker.py",
+        "sha256": "021d3d843a2a76369564b7c8e90ebba1b67f936b86bcf370319178d8459ee077"
+      },
+      {
+        "path": "src/minidsh/infrastructure/locks.py",
+        "sha256": "e310dc54617d583b30be45676c54378309feff81dca927226e5711eb60123d8e"
+      },
+      {
+        "path": "src/minidsh/infrastructure/process.py",
+        "sha256": "bf8b9757ef4debe5738aeeebe0e79597e5dd53b8362dadb019889dab27ac40e8"
+      },
+      {
+        "path": "src/minidsh/infrastructure/sandbox.py",
+        "sha256": "e8ddc992918b87f777468305abb0ff40f2303fa7a58de8dcf8ae7412c8cfe447"
+      },
+      {
+        "path": "src/minidsh/interactive.py",
+        "sha256": "03cfe59b5c33dc222534e10636b091976a42c3b4021872cf0a2bd5ee2e39d0e9"
+      },
+      {
+        "path": "src/minidsh/ports/__init__.py",
+        "sha256": "f92f40fb90d6ee624b22f5972ea20e4de0d53707dc689cce6631a3a564728f41"
+      },
+      {
+        "path": "src/minidsh/ports/conversations.py",
+        "sha256": "01857f0c95ebd6cf78ffd8ad0519e44f80f27fb36b284cb00c0737f1b0bad24a"
+      },
+      {
+        "path": "src/minidsh/ports/files.py",
+        "sha256": "c410315313195a8d68942a75a6af3812bd9cba1f9040b47fc7ca55f802bf7841"
+      },
+      {
+        "path": "src/minidsh/ports/memory.py",
+        "sha256": "8162e5482df26a77d637b8bac9ffabac9f113de1a3cad540ff3ff1369f411aaa"
+      },
+      {
+        "path": "src/minidsh/ports/protocols.py",
+        "sha256": "b771641bf9172636b348b6f908a16df1cae1d4072ededb6cacdc54fba5153d12"
+      },
+      {
+        "path": "src/minidsh/ports/skills.py",
+        "sha256": "6c664d318c5c2b060c2e495eb0b9cab77a670dcf0cd7d264a02ec72932ca4aa6"
+      },
+      {
+        "path": "src/minidsh/runtime/__init__.py",
+        "sha256": "4c75cfd5c85db1176413e13bdfb40a193402f911af4f79a5365491461e912dad"
+      },
+      {
+        "path": "src/minidsh/runtime/approvals.py",
+        "sha256": "4258279c364f087f6af3c518dc9f664109ed45f0b28741693629593be5812d52"
+      },
+      {
+        "path": "src/minidsh/runtime/catalog.py",
+        "sha256": "36b37179ae316b403bdc52aca9d1caccd43103d73d96db07981d5f28b20fbd7a"
+      },
+      {
+        "path": "src/minidsh/runtime/events.py",
+        "sha256": "8885e495d27107269dc7184223c73d2649e90fe302e6a8658187522b298e68a3"
+      },
+      {
+        "path": "src/minidsh/runtime/hooks.py",
+        "sha256": "447a794713978c459ff5a18eaefd623590b19dc4c43c41062704da22dbf1cbd4"
+      },
+      {
+        "path": "src/minidsh/runtime/memory.py",
+        "sha256": "c37dc1ba51950aef19946ba74fc1a0866aeb445db7b9c86f1297e837afc5328b"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_maintenance.py",
+        "sha256": "e7cec2da561caad229bf40e9392ef3df83ae88472c62a7a2263b624196844cb7"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_model.py",
+        "sha256": "d2972782fbb09ca6704a1a92ff6f994872dedeaddc820d0e034424b78aedd24a"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_reading.py",
+        "sha256": "3ddb58b006cc494f5d7a6203491f6c4226ebed770f9434eeae4c73fd1a048843"
+      },
+      {
+        "path": "src/minidsh/runtime/memory_runner.py",
+        "sha256": "7a2cc1e3acdac704e980f5fb4545dd5c26e6efea40bc8919c05d1899bd24d8eb"
+      },
+      {
+        "path": "src/minidsh/runtime/plugins.py",
+        "sha256": "bfe7b0c360dd99d21004183a546aae1b3f17c42aaefa79774ece14f0b2f8b9ab"
+      },
+      {
+        "path": "src/minidsh/runtime/services.py",
+        "sha256": "62e4a8554aa458b92d31c235b58071d4f687a444d1dbc516bd3a7281b2c254d7"
+      },
+      {
+        "path": "src/minidsh/runtime/skills/__init__.py",
+        "sha256": "08eb9dd1be4ec0137184178553a16a379d4270c68d0ada647f35e9f11a5078f8"
+      },
+      {
+        "path": "src/minidsh/runtime/skills/service.py",
+        "sha256": "389f599374c92107502bb2209b0dc2e40cb503fa8989e4f38e34041078c7b414"
+      },
+      {
+        "path": "src/minidsh/runtime/skills/tools.py",
+        "sha256": "5bb067716d9881c04d6bf87c6538bf0860baaf0532bd2d52f306f115f50ad07b"
+      },
+      {
+        "path": "src/minidsh/runtime/verification.py",
+        "sha256": "44de555438b415df735194a72c113579517ad8488b6f57e1f3fdea71ca73c39a"
+      },
+      {
+        "path": "src/minidsh/terminal.py",
+        "sha256": "f223caf0ffc3c66a8cd4200aacd6d5555c6a6d24c176ce0de2ca3baa0815eadd"
+      },
+      {
+        "path": "src/minidsh/tools/__init__.py",
+        "sha256": "7d3e8315662ab9aaa6bd1a4169dd9128664597a2fd90af1c37229e322abeaf76"
+      },
+      {
+        "path": "src/minidsh/tools/builtin.py",
+        "sha256": "158f23eafd3a08d2c68bf23b48a5fec0d09eaaca44dc6932952243a1bd265860"
+      },
+      {
+        "path": "src/minidsh/tools/results.py",
+        "sha256": "72262ab1d6fd0a2bbf445f29daaa5e0a56355bd795d5c8e62d8e006e6dcf5513"
+      },
+      {
+        "path": "src/minidsh/tools/runtime.py",
+        "sha256": "c9afb491484ffbca3c6c5c0218adfd380112e9eb6450f0f22bc35c602448f638"
+      },
+      {
+        "path": "src/minidsh/work_profile.py",
+        "sha256": "465497263e31afacb712f4ec3cf98ad591a026776b2911b5b1d2e388f43da6ca"
+      },
+      {
+        "path": "tests/conftest.py",
+        "sha256": "e71c0be0ebc777d143a49f8b16d57c464876a8f700f99228bcf6313d1fb199d6"
+      },
+      {
+        "path": "tests/test_ablation.py",
+        "sha256": "e2dc01303c98eabe094139e9d13fd6d4cfe5969750cb4d8b931fdf52c8a0e307"
+      },
+      {
+        "path": "tests/test_adapters.py",
+        "sha256": "5838b8af8b5a546a522a286dacc5274b0e3a2b42d7f04ae34da2720f5de05418"
+      },
+      {
+        "path": "tests/test_agent_loop.py",
+        "sha256": "74ab91f3c49ce84acd2af65bf8413cc669c6c4873ffbc33f4b9bc7dd194a6d55"
+      },
+      {
+        "path": "tests/test_benchmark.py",
+        "sha256": "2c13817bc3475b2921f47cbf5608850580bfbc5e36f988af7438d75dfe26bbbf"
+      },
+      {
+        "path": "tests/test_cli.py",
+        "sha256": "79af093b8a9bc695fc84f837d16dd8eff6a5e9976e24bd2b304ceae1e38dd449"
+      },
+      {
+        "path": "tests/test_collaboration.py",
+        "sha256": "8ba889eab90e9d89cb4b18a8761fb74ccf003fbdfea25de25f4912958c9fc0e6"
+      },
+      {
+        "path": "tests/test_composition.py",
+        "sha256": "113d9ea9cadc5983d9db48405060ff33036d5dbfec6ec5fe2625c296a22a92ad"
+      },
+      {
+        "path": "tests/test_config.py",
+        "sha256": "ac56d6100011d23621b795a9fe62aa70b266a231500c58dd9623aaa0690d001b"
+      },
+      {
+        "path": "tests/test_container_archive.py",
+        "sha256": "51ad6253318a7504d384f2234ba51117ebf01f2b46c8ca5082e39f8f6b160d6a"
+      },
+      {
+        "path": "tests/test_context.py",
+        "sha256": "2b946ac0ce74dfefe498f873745d2bb151d9494e885415aa11e304b31d15b250"
+      },
+      {
+        "path": "tests/test_context_retention.py",
+        "sha256": "7c4793a2ec45c6909a1d8b80a17cf9783efbd181277cdc5c70da5798154b95c6"
+      },
+      {
+        "path": "tests/test_conversations.py",
+        "sha256": "60829662b4797fbca832c6da662750523e6412ae08fee4fdf16dd5f4720b57aa"
+      },
+      {
+        "path": "tests/test_credentials.py",
+        "sha256": "755129781486d1fe8f63f4eb67bf91f6d3e36498b99dbee5ef03d5f84581855f"
+      },
+      {
+        "path": "tests/test_docs.py",
+        "sha256": "a9fdc7a9f9f4d3de7bb53dbfc5003f50719913fcd256ef182e047b37ee671550"
+      },
+      {
+        "path": "tests/test_evaluation.py",
+        "sha256": "8eb2bd3e4343450f9286b1403cb096d5b9feb31eac57fdd26e3e7cd84ef17314"
+      },
+      {
+        "path": "tests/test_extension_acceptance.py",
+        "sha256": "850dcd572cbd4db63b98975f70dac3ec87e01aa1e381d026163f2baf7b93d059"
+      },
+      {
+        "path": "tests/test_extension_comparison.py",
+        "sha256": "772f1fbb8210c1b8d47c2d1ed09d1434d91d60dce28ac2bd6063bd695ec716e3"
+      },
+      {
+        "path": "tests/test_extension_hooks.py",
+        "sha256": "500040a3eaed9b879bac9b744d978797bd790a8c1ac0c6381e714a7345999143"
+      },
+      {
+        "path": "tests/test_extension_matrix.py",
+        "sha256": "030037f1a70a27c9634a6233644cf5c11c0e52f9b8792d0d0a34429e8d4a17a5"
+      },
+      {
+        "path": "tests/test_file_backend.py",
+        "sha256": "15a316f27d6634924c9d115687a71d72e3da0854396cf99a02d7b0ce1a8fd2f3"
+      },
+      {
+        "path": "tests/test_followup_study.py",
+        "sha256": "54f6d1ff69e02b30b7c6ab32169d28c5b5f6a4996fc583b413d0d0ee5110e415"
+      },
+      {
+        "path": "tests/test_formal_corpus.py",
+        "sha256": "deae60220a88a91e36bf3932171b6da65188da2b10a62836130b52334edbfff1"
+      },
+      {
+        "path": "tests/test_formal_study.py",
+        "sha256": "12b9b40a8921f098f235f8db5ba7dc7480ab4b5eb2c82173f72dfcd7a20f6298"
+      },
+      {
+        "path": "tests/test_gui.py",
+        "sha256": "2430935ffda795216ce2c7b1fad4bc605afafc6a4e2479fc83548327866b567c"
+      },
+      {
+        "path": "tests/test_hard_context_experiment.py",
+        "sha256": "e7643cc73d86328865075437a1d8e04b95e787f2d84c5a6b57b57ebaf30f709c"
+      },
+      {
+        "path": "tests/test_hard_suite.py",
+        "sha256": "a0dc5a0a70d79a9c7f7eed501c67f3efc067096dc7302f10fedcb987e544e3b8"
+      },
+      {
+        "path": "tests/test_harness_extensions.py",
+        "sha256": "73a956d92cee488f39ab1cf6e93064137e31a702a4efe7cf3f88cf84bb5c24e0"
+      },
+      {
+        "path": "tests/test_harness_metrics.py",
+        "sha256": "cd0109912131284f8f70914f6d7c7425d42bd7f6890027fef0bb996569fa1a2f"
+      },
+      {
+        "path": "tests/test_harness_safety.py",
+        "sha256": "d81c1b9453934e5ea7e7c61094730d3b1fc78fab761447c99c82baf8bc1ddae0"
+      },
+      {
+        "path": "tests/test_harness_study.py",
+        "sha256": "405de4f578f8d11c0f872d8405cc67ccd226e504ae3163d050a2521a74e183a0"
+      },
+      {
+        "path": "tests/test_integration.py",
+        "sha256": "3ab65a05601cce293c3ec73249e16ec1105128a811682eeae1c63999e72b803a"
+      },
+      {
+        "path": "tests/test_interactive.py",
+        "sha256": "b859c8bd85ddcdefb0842f10db11338740302554c4241afc0b5d02a2224b6659"
+      },
+      {
+        "path": "tests/test_local_first_contracts.py",
+        "sha256": "a628da470e81cc0b691d77a815bf822ca8ac830a4a4425511aeac986cab9eab8"
+      },
+      {
+        "path": "tests/test_mcp.py",
+        "sha256": "13aa4ee9c98ed74ee88d36e40a0003daafd4ed961256dee8b7eaec64f187dbe4"
+      },
+      {
+        "path": "tests/test_mcp_http.py",
+        "sha256": "f9c4cb484a4195da1bdfdf4cc710521f926164c898ec16b1fc7663dc4ecfb18b"
+      },
+      {
+        "path": "tests/test_memory_composition.py",
+        "sha256": "af8ec37549c5c9425c6d1d4c127573efcad2c008ec408b19f625178eceb84f6d"
+      },
+      {
+        "path": "tests/test_memory_discovery.py",
+        "sha256": "ab7114c2697bdbcbc61742e0b474cf163eaa447c3ea6742fa944c94c00fd11c2"
+      },
+      {
+        "path": "tests/test_memory_domain.py",
+        "sha256": "a49c77b9cb95e3d582beaf6d17e7f3bc7afd50dd4968ba33131ae2f62c99e7c3"
+      },
+      {
+        "path": "tests/test_memory_evidence.py",
+        "sha256": "8361e35c7c3b79039733b58e59c4f7bfb931ca7ad12ebfb30725e89e067b0b58"
+      },
+      {
+        "path": "tests/test_memory_progressive.py",
+        "sha256": "65b8bcc948227811e6fa7c2d1e1c57a6f7996ecb982b256d98eb1d4f7553fcf1"
+      },
+      {
+        "path": "tests/test_memory_runtime.py",
+        "sha256": "d9e958d23db6713e11a395314aed3770efad95b5baa0a186163cb87053bef7c7"
+      },
+      {
+        "path": "tests/test_memory_selection.py",
+        "sha256": "494ca8cf0da4801012e1393c6268e9ebbc2011de172b3219d9ac12587336e4da"
+      },
+      {
+        "path": "tests/test_memory_sqlite.py",
+        "sha256": "d817b7168ab959902f98918ed6b33b5937e3e9b6e06695226aeb6fb7ae3b21da"
+      },
+      {
+        "path": "tests/test_mini_dsh_acceptance.py",
+        "sha256": "a497d2425c0738be2d20b627d989c699aab8ac7f8162cf4cb75634903190d3fc"
+      },
+      {
+        "path": "tests/test_offline_regression.py",
+        "sha256": "e275cb5873e03cbc7b5f743c65e02c3faa7f27549ba9c16eb5845332dd8fdabf"
+      },
+      {
+        "path": "tests/test_plugin_catalog.py",
+        "sha256": "765536f5547a7e194ec056708c1445a107207bad28973f55583f53bc058f3566"
+      },
+      {
+        "path": "tests/test_public_lite.py",
+        "sha256": "2b9527bd88465f0cf8dcfd3e5117ca5ead235b8f20a68301ef2dc0f0282c7b7b"
+      },
+      {
+        "path": "tests/test_public_swe.py",
+        "sha256": "2f80fe8113c88f0d2298c5febd1f9dc23e1867b4e014ec55f752b0c3eb9a578b"
+      },
+      {
+        "path": "tests/test_runtime.py",
+        "sha256": "1fa4dd3a1fbc437ee811a42a89889da716cff3f1f05101d199fd6ae5e92a9efd"
+      },
+      {
+        "path": "tests/test_security.py",
+        "sha256": "86353e3692ede025c0d619808b386bac5e03ce19377eba5cdc84b2a587bcb00e"
+      },
+      {
+        "path": "tests/test_session_journal.py",
+        "sha256": "96ca3bc8fc298380d961f7c110df0e90eb03c63641f6ecc28d01364844538730"
+      },
+      {
+        "path": "tests/test_sessions.py",
+        "sha256": "73a1c36770038f48139b69f4b145c22dcb6ce46467dcaa175145e4f245d519de"
+      },
+      {
+        "path": "tests/test_skill_context.py",
+        "sha256": "88c38106432a61ea4af7068ca8c3ed6c4cdecbcaa52a03d5808f4ab04e29712f"
+      },
+      {
+        "path": "tests/test_skill_files.py",
+        "sha256": "1e474ccbff355bc094621c610a671af5b906a2395d56868c1637cd563593c568"
+      },
+      {
+        "path": "tests/test_skill_runtime.py",
+        "sha256": "fd900051d1748e3cdab9661e147e229b25cab51919d123b8afe405a885820aeb"
+      },
+      {
+        "path": "tests/test_skills.py",
+        "sha256": "3f7cf3969ef484eeb9cbf4ccec7324089351b9d4516526a99af885d8cdebf093"
+      },
+      {
+        "path": "tests/test_terminal.py",
+        "sha256": "ee641b6ee52c8784a142f4c65d3ccf44d6c2f501a9b81942e76b2963ac0a7430"
+      },
+      {
+        "path": "tests/test_terminal_agent.py",
+        "sha256": "6ed7048afa4403055eea21508e5047785b18bb6b74ae55f3a8d1b055edab5a96"
+      },
+      {
+        "path": "tests/test_tools.py",
+        "sha256": "eddf31caba2fea682c6f43978caced084ab2dda0c92b055e22370c517f0979b9"
+      },
+      {
+        "path": "tests/test_verification.py",
+        "sha256": "82e1740c0f0e9add85de658ebac17537724d1cc2beca1d492f40aea8133f8e72"
+      },
+      {
+        "path": "tests/test_work_profile.py",
+        "sha256": "b9c4df987789470621b3035e1204f41a3c1c34c193c76296f4c1ab78931efce6"
+      },
+      {
+        "path": "uv.lock",
+        "sha256": "7e419b2d20bb62de39c05d5f5355dc5cb2ada9fc5f309790cf4cb8f5ae004f70"
+      }
+    ],
+    "scope": "Python src/tests/examples, project/lock, AGENTS, P1 spec/design/ADR and P2 executable matrix/usage; later status/report docs excluded"
+  },
+  "protocol": {
+    "schema_version": "1.0",
+    "source_sha256": "e62b72582965b95e14031e5d85c4bf6c802f3cae68a72fb2cab59513b3c6cbdc",
+    "criterion_version": "memory_v2_contract_v1_execution_1",
+    "matrix_sha256": "d41095771a1266427c1197569f4fa9312690d9f23aab8ed97cb1860e45d5232b",
+    "per_pytest_case_timeout_seconds": 30,
+    "native_expected_predicates": {
+      "native_world_2": [
+        "host_db_absent_in_guest",
+        "host_db_unchanged",
+        "private_read_write_blocked",
+        "absolute_file_tools_denied",
+        "only_workspace_mount",
+        "cpu_limit",
+        "caps_dropped",
+        "allowed_workspace_write_and_read",
+        "guest_native_architecture",
+        "guest_memory_limit",
+        "guest_network_none",
+        "finished",
+        "memory_index_present",
+        "approved_body_read"
+      ],
+      "interrupt_timeout_0": [
+        "real_child_started",
+        "entire_container_stopped",
+        "container_removed",
+        "host_database_unchanged",
+        "operator_guard_released"
+      ],
+      "interrupt_cancel_0": [
+        "real_child_started",
+        "entire_container_stopped",
+        "container_removed",
+        "host_database_unchanged",
+        "operator_guard_released"
+      ],
+      "native_error_recovery_0": [
+        "actual_python_failure",
+        "actual_python_recovery",
+        "body_exposed_with_error",
+        "body_withdrawn_after_recovery",
+        "factual_tool_result_preserved",
+        "later_read_not_applicable",
+        "host_db_unchanged",
+        "finished"
+      ]
+    },
+    "native_driver_sha256": {
+      "native_world.py": "3c0c726f8ae57293bad9ef5a8bda9f47a03a666c8aac4e4741241c57797f4e64",
+      "interruptions.py": "c8c66200f9eccbb2bbfaae45140dda5109932a4fe8905adc9c38c0c962e25272",
+      "error_recovery.py": "90835c6e795b7a5e2d6ab1193d4a6ef60f81facc4cc61323847e5a584f33bece"
+    },
+    "image": "docker.1ms.run/library/python@sha256:e0b3f8d16a5ccfbe602d5c94297e5dbcda2ec256edca2b80fcd44e39e1ff6feb",
+    "native_deadline_seconds": 120,
+    "real_model_calls": 0,
+    "note": "Native drivers retain their original development labels; this pre-execution protocol reuses their fixed assertions as P2 acceptance and binds all expected predicate IDs, source and driver hashes. Historical outputs are not reused."
+  },
+  "matrix": [
+    {
+      "case_id": "MV2_01",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_01_common_fixture_first_request_has_all_three_body_free_cards",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-configured]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_02",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_02_03_explicit_search_does_not_grant_path_applicability"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_03",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_02_03_explicit_search_does_not_grant_path_applicability",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-configured]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_04",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_04_error_recovery_withdraws_body_from_the_derived_request[False]",
+        "tests/test_memory_progressive.py::test_mv2_04_error_recovery_withdraws_body_from_the_derived_request[True]"
+      ],
+      "native_probes": [
+        "native_error_recovery_0"
+      ]
+    },
+    {
+      "case_id": "MV2_05",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_05_weighted_search_and_snapshot_are_independent_of_input_order"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_06",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u4e8b\\u52a1\\u53d6\\u6d88-expected0]",
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\uff33\\uff31\\uff2c\\uff29\\uff34\\uff25-expected1]",
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[sqlite_cancel-expected2]",
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u53d6\\u6d88-expected3]",
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[!?!-expected4]",
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\xe9chec \\u03bb\\u03bf\\u03b3\\u03b9\\u03ba\\u03ae-expected5]",
+        "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u9519-expected6]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_07",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_07_search_does_not_fall_back_to_unrelated_notes[\\u4e2d\\u65ad]",
+        "tests/test_memory_discovery.py::test_mv2_07_search_does_not_fall_back_to_unrelated_notes[!?!]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_08",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_08_explicit_path_filter_only_narrows_discovery",
+        "tests/test_memory_progressive.py::test_mv2_08_query_error_filter_cannot_forge_an_observed_error"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_09",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_09_unapproved_other_version_and_other_project_are_not_discoverable",
+        "tests/test_memory_progressive.py::test_mv2_09_real_store_foreign_version_and_unapproved_rows_are_unavailable",
+        "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[missing]",
+        "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_hash]",
+        "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_revision]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_10",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_10_conflicts_are_excluded_before_query_and_scope_filtering",
+        "tests/test_memory_progressive.py::test_mv2_10_old_conflicting_database_is_filtered_without_rewriting_it"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_11",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_11_source_changes_remove_the_card_without_mutating_committed_state",
+        "tests/test_memory_progressive.py::test_mv2_11_five_candidates_recheck_changed_bytes_and_revoked_grant_without_backfill",
+        "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[evidence]",
+        "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[revise]",
+        "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[reject]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_12",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_12_current_revision_is_checked_against_the_frozen_reference",
+        "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[evidence]",
+        "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[revise]",
+        "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[reject]",
+        "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[missing]",
+        "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_hash]",
+        "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_revision]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_13",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_13_permissions_precede_store_access_and_views_do_not_cross_runs",
+        "tests/test_memory_progressive.py::test_mv2_13_each_required_capability_is_checked_before_private_io[memory.read]",
+        "tests/test_memory_progressive.py::test_mv2_13_each_required_capability_is_checked_before_private_io[memory.evidence.read]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_14",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[]",
+        "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+        "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[\\ud800]",
+        "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[password=memory_v2_canary_9c21]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[0]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[True]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[-1]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[duplicate]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[six]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[zero]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[boolean]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[bad_hash]",
+        "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[extra]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments0]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments1]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments2]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments3]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments4]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments5]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments6]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments7]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments8]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments9]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments10]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments11]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments12]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_15",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_discovery.py::test_mv2_15_caps_results_without_changing_the_snapshot",
+        "tests/test_memory_progressive.py::test_mv2_15_maximum_bodies_and_single_card_cap_bound_the_entire_projection",
+        "tests/test_memory_progressive.py::test_mv2_15_read_budget_keeps_whole_rules_and_records_omission"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_16",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_16_no_remaining_context_tool_budget_prevents_private_read",
+        "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[tool_budget]",
+        "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[input_budget]",
+        "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[permission]",
+        "tests/test_memory_progressive.py::test_mv2_16_post_response_usage_stops_followup_reads_and_proposals[overrun]",
+        "tests/test_memory_progressive.py::test_mv2_16_post_response_usage_stops_followup_reads_and_proposals[unknown]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_17",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_mv2_17_storage_and_evidence_failures_are_structured_and_recover_next_run[store]",
+        "tests/test_memory_progressive.py::test_mv2_17_storage_and_evidence_failures_are_structured_and_recover_next_run[source]",
+        "tests/test_memory_progressive.py::test_mv2_17_cancellation_waits_for_storage_and_next_run_has_a_fresh_view"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_18",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[False-False]",
+        "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[False-True]",
+        "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[True-False]",
+        "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[True-True]",
+        "tests/test_memory_progressive.py::test_registered_material_guard_preserves_safe_actions_and_reported_failure_usage",
+        "tests/test_memory_progressive.py::test_registered_canonical_json_material_is_rejected_inside_nested_model_arguments",
+        "tests/test_memory_progressive.py::test_mv2_18_rejected_query_is_not_replayed_into_the_next_model_request[secret]",
+        "tests/test_memory_progressive.py::test_mv2_18_rejected_query_is_not_replayed_into_the_next_model_request[forbidden]",
+        "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-topic]",
+        "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-paths]",
+        "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-content]",
+        "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-topic]",
+        "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-paths]",
+        "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-content]",
+        "tests/test_memory_progressive.py::test_mv2_18_instruction_like_approved_data_cannot_grant_maintenance_authority",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments0]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments1]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments2]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments3]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments4]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments5]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments6]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments7]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments8]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments9]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments10]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments11]",
+        "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments12]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_19",
+      "status": "passed",
+      "nodes": [
+        "tests/test_memory_progressive.py::test_progressive_config_is_explicit_and_limits_only_decrease",
+        "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1[local]",
+        "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1[configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-configured]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-local]",
+        "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-configured]"
+      ],
+      "native_probes": []
+    },
+    {
+      "case_id": "MV2_20",
+      "status": "passed",
+      "nodes": [],
+      "native_probes": [
+        "native_world_2",
+        "interrupt_timeout_0",
+        "interrupt_cancel_0"
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.056449415999999995,
+      "log": "gate-0.log",
+      "output": "305 files already formatted\n",
+      "log_sha256": "41370db5edd9a86009e12fb20fa2f7633dedd9ea4e76d2fda79c69312e6cc209"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.027557250000000005,
+      "log": "gate-1.log",
+      "output": "All checks passed!\n",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "mypy",
+        "src",
+        "tests"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.33070004099999994,
+      "log": "gate-2.log",
+      "output": "Success: no issues found in 171 source files\n",
+      "log_sha256": "5a5d18602ec811a5e8d5394689dedc469378e3dc613794f1897fef5a5de66523"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "pytest",
+        "-q"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 54.268268958,
+      "log": "gate-3.log",
+      "output": "........................................................................ [  6%]\n........................................................................ [ 12%]\n........................................................................ [ 19%]\n........................................................................ [ 25%]\n........................................................................ [ 32%]\n........................................................................ [ 38%]\n........................................................................ [ 45%]\n........................................................................ [ 51%]\n........................................................................ [ 57%]\n........................................................................ [ 64%]\n........................................................................ [ 70%]\n........................................................................ [ 77%]\n........................................................................ [ 83%]\n........................................................................ [ 90%]\n........................................................................ [ 96%]\n......................................                                   [100%]\n1118 passed in 53.98s\n",
+      "log_sha256": "cb2d198829fbeb8a0f5ee6bdcbd725ed8f6d9d5a8b05f8209de8d816c0231dbe"
+    }
+  ],
+  "probes": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/native_world.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 2.319601208,
+      "log": "probe-0.log",
+      "output": "{\"host_db_absent_in_guest\": true, \"host_db_unchanged\": true, \"private_read_write_blocked\": true, \"absolute_file_tools_denied\": true, \"only_workspace_mount\": true, \"cpu_limit\": true, \"caps_dropped\": true, \"allowed_workspace_write_and_read\": true, \"guest_native_architecture\": true, \"guest_memory_limit\": true, \"guest_network_none\": true, \"finished\": true, \"memory_index_present\": true, \"approved_body_read\": true}\n",
+      "log_sha256": "21d2f377468157149648d580d0d37ffffaa12aafa678194be8d906c5a0ed7643"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/interruptions.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 5.97205375,
+      "log": "probe-1.log",
+      "output": "{\"variant\": \"timeout\", \"checks\": {\"real_child_started\": true, \"entire_container_stopped\": true, \"container_removed\": true, \"host_database_unchanged\": true, \"operator_guard_released\": true}}\n{\"variant\": \"cancel\", \"checks\": {\"real_child_started\": true, \"entire_container_stopped\": true, \"container_removed\": true, \"host_database_unchanged\": true, \"operator_guard_released\": true}}\n",
+      "log_sha256": "4722f9da0bd75e82b791d4ac3c7f10bbfc9dce5ccd0b3249ef6f3a11d4e58b23"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/error_recovery.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.7501465829999994,
+      "log": "probe-2.log",
+      "output": "{\"actual_python_failure\": true, \"actual_python_recovery\": true, \"body_exposed_with_error\": true, \"body_withdrawn_after_recovery\": true, \"factual_tool_result_preserved\": true, \"later_read_not_applicable\": true, \"host_db_unchanged\": true, \"finished\": true}\n",
+      "log_sha256": "cbbd20f81da06eca49d92664e78103a3ca63487602c5d967dcd6794bd7fa905d"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "examples/project_memory_demo.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.1559948749999993,
+      "log": "probe-3.log",
+      "output": "{\"run_id\": \"5f8f92602e484cf2a6dffd08c078b0b5\", \"default_off_created_database\": false, \"proposal_status\": \"proposed\", \"approved_by\": null, \"injected_unverified_memory\": false, \"real_model_calls\": 0}\n",
+      "log_sha256": "48911b30502d97065636fa774723ca0af5fd789cd837e846bb2de5adb989c1d4"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "examples/progressive_memory_demo.py"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.17497108299999908,
+      "log": "probe-4.log",
+      "output": "{\"mode\": \"progressive_v2\", \"synthetic_operator\": \"fixture_operator\", \"search_contains_body\": false, \"approved_body_read\": true, \"capture_status\": \"finished\", \"recall_status\": \"finished\", \"real_model_calls\": 0}\n",
+      "log_sha256": "1c2ca5312012693ae1f284403adca3477e0b1fd3dca64f8faf21aa21b91b7c00"
+    }
+  ],
+  "cases": [
+    {
+      "node_id": "tests/test_memory_composition.py::test_file_only_runtime_prepares_memory_and_persists_only_an_unapproved_proposal",
+      "exit_code": 0,
+      "duration_seconds": 0.516549792,
+      "log": "logs/2a49448e060b03ff6d99.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2a49448e060b03ff6d99/check.json",
+      "check_sha256": "93e6a1ac4438f6a33f9cb1493a5d4c7255459743728e563ff3bab3574c0132a6"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_managed_routes_expose_the_same_memory_tools_and_operator_boundary[configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.279567334,
+      "log": "logs/01e87aae93db6e693b97.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/01e87aae93db6e693b97/check.json",
+      "check_sha256": "6b1c03bf651d593e2f1b6404d266e9581871f4c5ca2bb731f08b6712714d6c52"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_managed_routes_expose_the_same_memory_tools_and_operator_boundary[plugin]",
+      "exit_code": 0,
+      "duration_seconds": 0.350052583,
+      "log": "logs/26fc3a4ed06d18064a9c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/26fc3a4ed06d18064a9c/check.json",
+      "check_sha256": "5910f882fcd77ab5fb60296d950a8e37c1eed7aa8ae19df7f072845f1642825b"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[full]",
+      "exit_code": 0,
+      "duration_seconds": 0.3030357079999999,
+      "log": "logs/61fabcc919945e9201b6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/61fabcc919945e9201b6/check.json",
+      "check_sha256": "28edffabaa679d3908fcc567337d57c1c1394f1999f1ea2d478870af79ac5132"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[sliding]",
+      "exit_code": 0,
+      "duration_seconds": 0.29948095900000005,
+      "log": "logs/e46df7866fc5a3be2c56.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e46df7866fc5a3be2c56/check.json",
+      "check_sha256": "ecea2dd2ec80da6ade63cff7cd7369b480f810442649d123e8db513a438dd0cd"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[summary]",
+      "exit_code": 0,
+      "duration_seconds": 0.3070322080000001,
+      "log": "logs/b8157d5fed49f4624336.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b8157d5fed49f4624336/check.json",
+      "check_sha256": "0a38c740907ea6450c3482bedeb90ac27255e7d215b3d6e868cab09b6a7fd376"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[retrieval]",
+      "exit_code": 0,
+      "duration_seconds": 0.32659024999999975,
+      "log": "logs/0a0928cf5645c297c23e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/0a0928cf5645c297c23e/check.json",
+      "check_sha256": "e07e763b83e1f84e35e5e8c906656af58a718ec9e327522b3c9d479077f8d530"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[retrieval_summary]",
+      "exit_code": 0,
+      "duration_seconds": 0.3916372499999996,
+      "log": "logs/7c3d1f0324692e765be9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7c3d1f0324692e765be9/check.json",
+      "check_sha256": "1340df63dd3695a1fe944698c0425227b9d3dd57544c114e5de75e2cfca1a3d2"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[symbol]",
+      "exit_code": 0,
+      "duration_seconds": 0.2999665,
+      "log": "logs/70e06a898f1c9729607a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/70e06a898f1c9729607a/check.json",
+      "check_sha256": "4a0f09484afbfe13d165784b7f41f23b3b12eeaefa3a8ca40379e0af600b3f95"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_all_context_strategies_consume_real_private_evidence_as_user_data[budget]",
+      "exit_code": 0,
+      "duration_seconds": 0.2800864999999999,
+      "log": "logs/bb6781c04332740da2f6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/bb6781c04332740da2f6/check.json",
+      "check_sha256": "d45f3bde8f4b125c8bedec0595ba9e344c2a21a7ec31febfc644ec3ad13a3e9b"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_preparation_obeys_global_limits_before_model_and_releases_the_run[tool_budget]",
+      "exit_code": 0,
+      "duration_seconds": 0.290725916,
+      "log": "logs/4bd692536422d217426b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4bd692536422d217426b/check.json",
+      "check_sha256": "73a7a6018b0ccef31ecba0357d9a6686094475e6a79ff9c47f855fd1331b1612"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_preparation_obeys_global_limits_before_model_and_releases_the_run[input_budget]",
+      "exit_code": 0,
+      "duration_seconds": 0.3106275000000003,
+      "log": "logs/8c90def6df14ee6cbae5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8c90def6df14ee6cbae5/check.json",
+      "check_sha256": "1c8b14c73dd1e096d6f44e2d8c7c04393c6a7b4b852db8b65a1d7f22a42cebf4"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_preparation_obeys_global_limits_before_model_and_releases_the_run[permission]",
+      "exit_code": 0,
+      "duration_seconds": 0.31991191699999977,
+      "log": "logs/7744419feae933f7f789.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7744419feae933f7f789/check.json",
+      "check_sha256": "1a794be8ac19434b3a8dd79c7480d740c99be22fde2fd40c891806bb5e27a041"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_cannot_write_after_model_usage_exhaustion[overrun]",
+      "exit_code": 0,
+      "duration_seconds": 0.33049070800000013,
+      "log": "logs/bc33d238a63e6a124877.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/bc33d238a63e6a124877/check.json",
+      "check_sha256": "cdaa9f4759101e4a6a7e16c389983c31b26a8cbdd20bd7191af4bda3eada59bd"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_cannot_write_after_model_usage_exhaustion[unknown]",
+      "exit_code": 0,
+      "duration_seconds": 0.3107142920000001,
+      "log": "logs/6d59273bdbc08a09e828.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/6d59273bdbc08a09e828/check.json",
+      "check_sha256": "bb7f45ace03770a5036c0efac02bc9a9e6356e3f8828f81ec0bd5a4b54ea01c0"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_refuses_unisolated_process_capabilities_before_any_run[default_git]",
+      "exit_code": 0,
+      "duration_seconds": 0.27984091700000047,
+      "log": "logs/1dbec524cdd25fb07c86.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/1dbec524cdd25fb07c86/check.json",
+      "check_sha256": "a926f4bf5dd198e71c419a1c75b226e9b3bd200a12f328d90fa3eec42f71f270"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_refuses_unisolated_process_capabilities_before_any_run[shell]",
+      "exit_code": 0,
+      "duration_seconds": 0.2779065420000002,
+      "log": "logs/c0f3d61436aee288654a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c0f3d61436aee288654a/check.json",
+      "check_sha256": "2c9b4aa040e31492bcca3f666b3533f5b87653678beb33db7fee5db0a93d116c"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_memory_refuses_unisolated_process_capabilities_before_any_run[fixed_verification]",
+      "exit_code": 0,
+      "duration_seconds": 0.2698046249999999,
+      "log": "logs/22b25571b01d376ffd76.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/22b25571b01d376ffd76/check.json",
+      "check_sha256": "854fbb36903af8f2f4c9b26fda847151a8c4a53d316b667fa86580af7ee62344"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_unattested_file_adapters_cannot_implicitly_claim_memory_isolation",
+      "exit_code": 0,
+      "duration_seconds": 0.27196712499999975,
+      "log": "logs/391dbc45b2cca0e3ecde.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/391dbc45b2cca0e3ecde/check.json",
+      "check_sha256": "5366faa840f14ee4a8e0c3f057045f918a5d0ad1198b2020d3b3f18abeba4777"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_operator_boundary_covers_start_end_hooks_and_releases_after_the_run",
+      "exit_code": 0,
+      "duration_seconds": 0.27909995799999976,
+      "log": "logs/b6e4cd449b73f36d7401.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b6e4cd449b73f36d7401/check.json",
+      "check_sha256": "bd09c3bf1220881d00fbea9b8640d4c3150a00fe955448e5ce936c3decebf3ee"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_rejected_memory_arguments_are_not_echoed_into_the_next_model_request[secret]",
+      "exit_code": 0,
+      "duration_seconds": 0.27648383299999946,
+      "log": "logs/65e506bd8686fadaaee3.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/65e506bd8686fadaaee3/check.json",
+      "check_sha256": "7836fa2d920d33f4d2aa7dbee781b1be8385f25f496019b4a802b624d3011c79"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_rejected_memory_arguments_are_not_echoed_into_the_next_model_request[forbidden_label]",
+      "exit_code": 0,
+      "duration_seconds": 0.291283333,
+      "log": "logs/8860d377fbcb2f2b3d04.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8860d377fbcb2f2b3d04/check.json",
+      "check_sha256": "909cc7bf9ce26768d6c4d3733660860a011f8e22e9feb64ee4a5fa03956f3f15"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_raw_file_output_cannot_be_proposed_later_in_the_same_response",
+      "exit_code": 0,
+      "duration_seconds": 0.2897409169999996,
+      "log": "logs/108c60f37d87be1292cc.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/108c60f37d87be1292cc/check.json",
+      "check_sha256": "001bba86f86ac51f714119afbbb06841749309873b8c472f780035e5af8441f8"
+    },
+    {
+      "node_id": "tests/test_memory_composition.py::test_explicit_memory_store_is_selected_even_when_it_is_falsey",
+      "exit_code": 0,
+      "duration_seconds": 0.29410733400000044,
+      "log": "logs/be046e8ef2add85e6096.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/be046e8ef2add85e6096/check.json",
+      "check_sha256": "d46a4c7747b5b229e72a128b4686e20e9633d0811166d70a4860e31e87521d0c"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u4e8b\\u52a1\\u53d6\\u6d88-expected0]",
+      "exit_code": 0,
+      "duration_seconds": 0.2841707910000002,
+      "log": "logs/a41c65616454561adee8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a41c65616454561adee8/check.json",
+      "check_sha256": "851e4ea8a97c625da128201badc573b7b66eeda619e31ef8f3f48d3e50971868"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\uff33\\uff31\\uff2c\\uff29\\uff34\\uff25-expected1]",
+      "exit_code": 0,
+      "duration_seconds": 0.28308162499999945,
+      "log": "logs/b24bdb8a32503d121b9c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b24bdb8a32503d121b9c/check.json",
+      "check_sha256": "efa3abd31aa62e212496e1062fb14d4f830ee01a46b59a2714ec48d1f3543728"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[sqlite_cancel-expected2]",
+      "exit_code": 0,
+      "duration_seconds": 0.2851843330000001,
+      "log": "logs/3a0b353e885aedd0a196.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3a0b353e885aedd0a196/check.json",
+      "check_sha256": "6c1b5a44a76a233413a846d2f9cbca0077eca3ec78610d40e9e4dfba1ded8894"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u53d6\\u6d88-expected3]",
+      "exit_code": 0,
+      "duration_seconds": 0.28147858300000017,
+      "log": "logs/4c8fe64b83ddfa79fb08.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4c8fe64b83ddfa79fb08/check.json",
+      "check_sha256": "d27ce0b3f3be87d5c7f6f477e42681f55415fa4e51d0e4f5bcb15188980a5a6c"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[!?!-expected4]",
+      "exit_code": 0,
+      "duration_seconds": 0.27988154200000004,
+      "log": "logs/562587917f5e8f936fb5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/562587917f5e8f936fb5/check.json",
+      "check_sha256": "d1a6fd0cc39e3eae3956947e5ca06b1c0ea7fa15dffa012566c093538581ced9"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\xe9chec \\u03bb\\u03bf\\u03b3\\u03b9\\u03ba\\u03ae-expected5]",
+      "exit_code": 0,
+      "duration_seconds": 0.2844046250000005,
+      "log": "logs/c371a94f4ad1ae52d829.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c371a94f4ad1ae52d829/check.json",
+      "check_sha256": "5cfd0ba995ca7fc697a7609c6b862e0c341e11940142ffbd58089d09dc46e3e2"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_06_normalization_has_frozen_multilingual_terms[\\u9519-expected6]",
+      "exit_code": 0,
+      "duration_seconds": 0.2750366249999985,
+      "log": "logs/d39ba9a35b5498b8db26.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d39ba9a35b5498b8db26/check.json",
+      "check_sha256": "8a02c35222ee8ed1bb6690b920e1f5d3b5cf9f1560493fe5c217a26df8ad62ef"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_01_discovery_shows_scoped_topics_without_leaking_the_body",
+      "exit_code": 0,
+      "duration_seconds": 0.27948641599999924,
+      "log": "logs/27b8b14ed71188897f24.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/27b8b14ed71188897f24/check.json",
+      "check_sha256": "5dc53563eedee274e571019ef6da5d9653b2d7ed7da340441ca17512a0b6a800"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_05_weighted_search_and_snapshot_are_independent_of_input_order",
+      "exit_code": 0,
+      "duration_seconds": 0.2793856659999996,
+      "log": "logs/14811e069afbbb867ff6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/14811e069afbbb867ff6/check.json",
+      "check_sha256": "aaaf46ad53d453ead238cb547722bf065002c0558b9be62e7af3bbdba35310f3"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_07_search_does_not_fall_back_to_unrelated_notes[\\u4e2d\\u65ad]",
+      "exit_code": 0,
+      "duration_seconds": 0.3013078749999991,
+      "log": "logs/7ce4a2ad7993070bde46.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7ce4a2ad7993070bde46/check.json",
+      "check_sha256": "e04c9b9d4d04b2a76a0d73c0c07aa9dc39d50cacac7caf8ebd894b72113d56db"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_07_search_does_not_fall_back_to_unrelated_notes[!?!]",
+      "exit_code": 0,
+      "duration_seconds": 0.32268962499999887,
+      "log": "logs/f0737c3b1267acf8d8a1.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f0737c3b1267acf8d8a1/check.json",
+      "check_sha256": "fd2e87ca1176729f252e711f02c97de04174c2ff0bec32743dc7235ef4cc04ff"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_09_unapproved_other_version_and_other_project_are_not_discoverable",
+      "exit_code": 0,
+      "duration_seconds": 0.31270970899999995,
+      "log": "logs/fd135a34647137b960c9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/fd135a34647137b960c9/check.json",
+      "check_sha256": "5e08796d5efd12d80ba3252cbbf9cf935fa92e6ad14a008b6584fbe7207a6066"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_10_conflicts_are_excluded_before_query_and_scope_filtering",
+      "exit_code": 0,
+      "duration_seconds": 0.32810391699999997,
+      "log": "logs/35a1439e66c05f1ed555.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/35a1439e66c05f1ed555/check.json",
+      "check_sha256": "7d74ab43990fca072f6d68150c0e88588189116eb0e5639c03f709c0ac7603da"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_08_explicit_path_filter_only_narrows_discovery",
+      "exit_code": 0,
+      "duration_seconds": 0.3045927079999995,
+      "log": "logs/7db3b985c815bbe3726f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7db3b985c815bbe3726f/check.json",
+      "check_sha256": "2f9a36ccf9abe2dd3b698900d504185361ec0fe3aec2e3e2a335ffae301bb142"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[]",
+      "exit_code": 0,
+      "duration_seconds": 0.27832304100000016,
+      "log": "logs/a919afcd8d9af366f6a4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a919afcd8d9af366f6a4/check.json",
+      "check_sha256": "ed78b314f6566d0684f6b05e8ecc520bbfd06dc53e1989e646e8e31c0443850b"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]",
+      "exit_code": 0,
+      "duration_seconds": 0.2746177079999992,
+      "log": "logs/6785a742b751773eb98b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/6785a742b751773eb98b/check.json",
+      "check_sha256": "09b6c0a66c424ffc47370b0a7d3b494167c66e187389c2db5b2b140b434afddb"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[\\ud800]",
+      "exit_code": 0,
+      "duration_seconds": 0.279891417,
+      "log": "logs/b2d810f2b32b00029a5d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b2d810f2b32b00029a5d/check.json",
+      "check_sha256": "0a2a42f151ff3909314454e0282cd8545e87f632177fbfeb4133dd03f9f636f8"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_14_invalid_or_sensitive_query_is_rejected[password=memory_v2_canary_9c21]",
+      "exit_code": 0,
+      "duration_seconds": 0.2829998749999998,
+      "log": "logs/03c4b769d8e2496df201.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/03c4b769d8e2496df201/check.json",
+      "check_sha256": "b29feffae72edf6e0d0c6e325aa4c4a4b023e710e6faa78e9a7bff45892eac39"
+    },
+    {
+      "node_id": "tests/test_memory_discovery.py::test_mv2_15_caps_results_without_changing_the_snapshot",
+      "exit_code": 0,
+      "duration_seconds": 0.2862014169999991,
+      "log": "logs/5225f7a1e6d860b92db1.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/5225f7a1e6d860b92db1/check.json",
+      "check_sha256": "b93afddda06ef449e05e06a60b28fc83ce34ddb2b6990bc3fe919c35f7efce36"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_a_repair_requires_validation_and_revision_bound_explicit_approval",
+      "exit_code": 0,
+      "duration_seconds": 0.28605383299999865,
+      "log": "logs/66cd6d078510e7003936.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/66cd6d078510e7003936/check.json",
+      "check_sha256": "5616050be8fa862ee5a24b8e6c3909c2bc84e335667e1dfc040de1e063ecf23b"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_editing_approved_content_invalidates_all_previous_authority",
+      "exit_code": 0,
+      "duration_seconds": 0.27750091699999935,
+      "log": "logs/2cd7f9fcab89b929e2f9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2cd7f9fcab89b929e2f9/check.json",
+      "check_sha256": "729320612947864032101db87ef09d4e33f0db63b57b74f76a4c0ea852b5f126"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_unapproved_states_cannot_carry_approval_authority[False]",
+      "exit_code": 0,
+      "duration_seconds": 0.29383241700000085,
+      "log": "logs/e311c7c6c2f126ad189f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e311c7c6c2f126ad189f/check.json",
+      "check_sha256": "90065f13186f8022094b1ebd68aca0628ebe83da1fb491f04d0d42e495f7046a"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_unapproved_states_cannot_carry_approval_authority[True]",
+      "exit_code": 0,
+      "duration_seconds": 0.29258204200000115,
+      "log": "logs/946ee0f30a61ce5ba9d4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/946ee0f30a61ce5ba9d4/check.json",
+      "check_sha256": "54b37af7ebb2811085c1416fb40546bfed2bbd3e8742c3381e606b02c8a1e898"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[accepted-False]",
+      "exit_code": 0,
+      "duration_seconds": 0.29365537500000016,
+      "log": "logs/6a8e57791332c2feb2a8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/6a8e57791332c2feb2a8/check.json",
+      "check_sha256": "86a92dea9075245cd50e1855219bbd3f0a9a0eecd16b9fe22bd2dcd598e53926"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[accepted-true]",
+      "exit_code": 0,
+      "duration_seconds": 0.28888599999999975,
+      "log": "logs/cb628bbd01df42313e90.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/cb628bbd01df42313e90/check.json",
+      "check_sha256": "c6b347cb77a27308ac017a5e3c05071b9b566786500aac98d17a2a32fc74f46b"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[accepted-1]",
+      "exit_code": 0,
+      "duration_seconds": 0.2779958330000003,
+      "log": "logs/e96ee381b544bda42f12.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e96ee381b544bda42f12/check.json",
+      "check_sha256": "fb1221cbdcb4c4abac32104597a51fdd679e560e66f6f78b7e551aea031e815a"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_exists-False]",
+      "exit_code": 0,
+      "duration_seconds": 0.2816060829999998,
+      "log": "logs/4daf549a25de830f0b41.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4daf549a25de830f0b41/check.json",
+      "check_sha256": "2312440ac5ac59d7a4d2ec5fcafa64cef02ed394e0c876012b7f033b822e3fbf"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_exists-true]",
+      "exit_code": 0,
+      "duration_seconds": 0.27652733400000074,
+      "log": "logs/0c2a714b39406c94c494.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/0c2a714b39406c94c494/check.json",
+      "check_sha256": "a499c7b459cc3f261ef901100b5788fb3bdfda4126efbc173780a95144400658"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_exists-1]",
+      "exit_code": 0,
+      "duration_seconds": 0.2788537499999997,
+      "log": "logs/ac73556f48babe7554f3.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ac73556f48babe7554f3/check.json",
+      "check_sha256": "8b9aeb2d2ca7a40f2cc0facad2157183625a5eb1b3d0e795e95fd2acf8b8ad0a"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[project_id-other_project]",
+      "exit_code": 0,
+      "duration_seconds": 0.2789083330000004,
+      "log": "logs/1b21478f65c26a32033a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/1b21478f65c26a32033a/check.json",
+      "check_sha256": "ec7820bdde22c04d7dbc51d49f363b12b6368f8965851cf3f46942d2cd1d9a19"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[applicable_version-v2]",
+      "exit_code": 0,
+      "duration_seconds": 0.27705566699999906,
+      "log": "logs/04300c984758b52d653a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/04300c984758b52d653a/check.json",
+      "check_sha256": "081409031d8c9ca8a782b2184a924671aaaf8e15541bd6c89a964fe50e91c6c4"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[source_run_id-another_run]",
+      "exit_code": 0,
+      "duration_seconds": 0.2836205410000012,
+      "log": "logs/8b93c4b50137000f1b49.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8b93c4b50137000f1b49/check.json",
+      "check_sha256": "0779c3d1617458bf815cdd25e1e7cef35a4ae790f43e9f7d79bdea28b9def917"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_uncertain_or_out_of_scope_evidence_cannot_validate[kind-operator_configuration]",
+      "exit_code": 0,
+      "duration_seconds": 0.2721041249999985,
+      "log": "logs/55ff11518d78e0e610ce.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/55ff11518d78e0e610ce/check.json",
+      "check_sha256": "569b230960058157ad69c5fc1745eaafdb0969bcd2675cfec12dd88c7d71ecd6"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[None]",
+      "exit_code": 0,
+      "duration_seconds": 0.27677258299999963,
+      "log": "logs/2101e78e6e111f08c162.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2101e78e6e111f08c162/check.json",
+      "check_sha256": "a0a5605d68948c88c78baef11bbf251e428ad242b283f0b23529ea11090cd64e"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[]",
+      "exit_code": 0,
+      "duration_seconds": 0.28319116699999825,
+      "log": "logs/c38c030704086b0ae17f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c38c030704086b0ae17f/check.json",
+      "check_sha256": "2d8adcd6356bb3fb9b8acc63a3fd4f4ce91aa45f4e5e0939c9bb04bfb18a59c1"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[  ]",
+      "exit_code": 0,
+      "duration_seconds": 0.27655900000000244,
+      "log": "logs/50e72407c2cd3f67bef8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/50e72407c2cd3f67bef8/check.json",
+      "check_sha256": "ec9f6c1a6ad099cc944f9089a10453de4d20a1d83d526c4d86b0a0a89831f960"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_environment_validation_requires_an_identified_configuration_confirmation[fixture_operator]",
+      "exit_code": 0,
+      "duration_seconds": 0.2766966669999995,
+      "log": "logs/3df3bdfdfe4096a03a35.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3df3bdfdfe4096a03a35/check.json",
+      "check_sha256": "dc743b18be586bee06e544b681d0a434d583f91c12a8fc5c8edd984681708a53"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[proposed]",
+      "exit_code": 0,
+      "duration_seconds": 0.27674425000000014,
+      "log": "logs/91e6329ac370429b45f0.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/91e6329ac370429b45f0/check.json",
+      "check_sha256": "a81ccf94453204c2956d37afe1c6169624594927c2003c468ae9972f06b6cab7"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[validated]",
+      "exit_code": 0,
+      "duration_seconds": 0.273575417,
+      "log": "logs/4b258e807cef6624fbc4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4b258e807cef6624fbc4/check.json",
+      "check_sha256": "ce78dc53e925aef653166f6420349bd435ce6024d926249c2b4f50f16a363c93"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[approved]",
+      "exit_code": 0,
+      "duration_seconds": 0.2729870409999968,
+      "log": "logs/34fa80b02926d5085b57.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/34fa80b02926d5085b57/check.json",
+      "check_sha256": "c991699d6dced5f151011a53704386a9d9bcc66335d4f9b1eed6d8ea08af3d34"
+    },
+    {
+      "node_id": "tests/test_memory_domain.py::test_manual_rejection_removes_authority_and_requires_fresh_validation_after_edit[committed]",
+      "exit_code": 0,
+      "duration_seconds": 0.2723864579999997,
+      "log": "logs/0f03955cb7af1e2d4ee0.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/0f03955cb7af1e2d4ee0/check.json",
+      "check_sha256": "1b97286d54cf8af4017340218a01d110ae157fb12df4f09bec5192613c86205a"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_registered_evidence_checks_real_backing_files_without_exposing_their_contents",
+      "exit_code": 0,
+      "duration_seconds": 0.27795866599999997,
+      "log": "logs/ad0bf61316f75ae09185.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ad0bf61316f75ae09185/check.json",
+      "check_sha256": "3a060fdb723317666d4b94b561ef5351bf8a1fab426350eb49954c0c22f0ee5f"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[failed]",
+      "exit_code": 0,
+      "duration_seconds": 0.2769086670000007,
+      "log": "logs/76e91fa84e9ccf235b91.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/76e91fa84e9ccf235b91/check.json",
+      "check_sha256": "b5d92f4a2bdd73eff344d1abd6db979f74e75221c483b3951783a771de7e0f32"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[unknown]",
+      "exit_code": 0,
+      "duration_seconds": 0.2716092500000009,
+      "log": "logs/29f6b972f3e094e85275.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/29f6b972f3e094e85275/check.json",
+      "check_sha256": "8b9c644fbd9f7821b8056a0a77247512552b3a2e04c1ee1b19d57470b9f19486"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[coerced_boolean]",
+      "exit_code": 0,
+      "duration_seconds": 0.27540487499999955,
+      "log": "logs/04abcf727a3fc8974c7e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/04abcf727a3fc8974c7e/check.json",
+      "check_sha256": "dd6d89ab2b7d7e8c22546c86b3ea519432bd91a176e82e559253cd73b1a41351"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[wrong_run]",
+      "exit_code": 0,
+      "duration_seconds": 0.27434270799999894,
+      "log": "logs/900c45607cfd84c48643.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/900c45607cfd84c48643/check.json",
+      "check_sha256": "9db008c76134bfbd9de1bbc34e2e6951e2f54d18e29caf02f321e31c123e9fc8"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[wrong_criterion]",
+      "exit_code": 0,
+      "duration_seconds": 0.27531179100000003,
+      "log": "logs/8a95248ed6dec1e5ba68.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8a95248ed6dec1e5ba68/check.json",
+      "check_sha256": "d3e5f738ccf1fa9020d2789480d13df9c692553ce920978b3a186f61f2fa72be"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[unfinished]",
+      "exit_code": 0,
+      "duration_seconds": 0.27499920800000055,
+      "log": "logs/7232215cbfbb4617bb30.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7232215cbfbb4617bb30/check.json",
+      "check_sha256": "aa4c29e6ab2860d29c7d7b3fff815aa70c737e41cbee663255871c19fa524854"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_pinned_bytes_do_not_turn_invalid_or_incomplete_verifier_facts_into_acceptance[late_call]",
+      "exit_code": 0,
+      "duration_seconds": 0.27756524999999854,
+      "log": "logs/50d272dd1b7b0014612b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/50d272dd1b7b0014612b/check.json",
+      "check_sha256": "498a3a0255dc9258e278b248c9e8f2bf250b20f5626143f66c439f1598852702"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[bundle.json]",
+      "exit_code": 0,
+      "duration_seconds": 0.2739984580000012,
+      "log": "logs/dd06db65d60438e796b2.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/dd06db65d60438e796b2/check.json",
+      "check_sha256": "2170015ca6061d90e5f050186073e05735bd66d869d2202e939b9c7f19d155f4"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[acceptance.json]",
+      "exit_code": 0,
+      "duration_seconds": 0.2756108329999982,
+      "log": "logs/f1d4522468a71affa854.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f1d4522468a71affa854/check.json",
+      "check_sha256": "bd8196ec400e0cf6c3affcd1799223255202aa6c0ddfd769179ead66924227e4"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[trace.jsonl]",
+      "exit_code": 0,
+      "duration_seconds": 0.2791936660000012,
+      "log": "logs/92dd6d2f48fbd94efa21.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/92dd6d2f48fbd94efa21/check.json",
+      "check_sha256": "e5aa99cd071d14151a30d1106a6cef19bcc2f59e06828d5105b03901a917a3cc"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_changed_registered_files_are_refused_without_echoing_private_bytes[result.txt]",
+      "exit_code": 0,
+      "duration_seconds": 0.28212858299999866,
+      "log": "logs/07ce819242a89f0cde55.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/07ce819242a89f0cde55/check.json",
+      "check_sha256": "70c92331daf3c966e2ea1eff1c9967a7da56d16fb90a245a23e0d96a995c0e6f"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_an_evidence_id_cannot_select_an_unregistered_path_or_follow_a_symlink",
+      "exit_code": 0,
+      "duration_seconds": 0.27514287500000023,
+      "log": "logs/77360603f84eb25f779a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/77360603f84eb25f779a/check.json",
+      "check_sha256": "bce19f24a98cf385682d208c772f22550bcd32502b2879b2ae212545da28e799"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_environment_source_requires_a_pinned_operator_confirmation",
+      "exit_code": 0,
+      "duration_seconds": 0.2814937499999992,
+      "log": "logs/640f24b6ffca470760fa.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/640f24b6ffca470760fa/check.json",
+      "check_sha256": "84164b04a24164fa2e9d0fb16d450f2ec97aa9d513a9a46bcd6da4901401e24a"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_outside_run_tools_validate_review_approve_and_commit_with_real_evidence",
+      "exit_code": 0,
+      "duration_seconds": 0.29173212499999934,
+      "log": "logs/25ab1bd58ee62d2ade17.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/25ab1bd58ee62d2ade17/check.json",
+      "check_sha256": "317935dfcfaf2f999b1b8c1887699a209a596ebc58c3b6420f3b23131a306035"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_permissioned_retrieval_populates_only_a_run_owned_readonly_view",
+      "exit_code": 0,
+      "duration_seconds": 0.2880880420000018,
+      "log": "logs/a7cdc73d7e0bb17873be.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a7cdc73d7e0bb17873be/check.json",
+      "check_sha256": "14a40b41d6583a27b3fe6c626dd69afe8ae28f9d3cdf5b5598845043931f8458"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_retrieval_omits_unverifiable_committed_records_without_mutating_them[changed]",
+      "exit_code": 0,
+      "duration_seconds": 0.29043704200000064,
+      "log": "logs/ea91a03f99f05dc786e2.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ea91a03f99f05dc786e2/check.json",
+      "check_sha256": "e545ca0075fb5be940878191b790903b1020af33790d549e9822e49588f6b128"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_retrieval_omits_unverifiable_committed_records_without_mutating_them[ungranted]",
+      "exit_code": 0,
+      "duration_seconds": 0.28934341699999777,
+      "log": "logs/0b66243367007c5c733f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/0b66243367007c5c733f/check.json",
+      "check_sha256": "e1570dba0aa4c106058013e58adcaa8d5810d80397f14ac7c554f4d90a25b755"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_context_prepares_memory_through_tools_then_reuses_a_readonly_run_view",
+      "exit_code": 0,
+      "duration_seconds": 0.2892621250000005,
+      "log": "logs/d45480d62314079d333d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d45480d62314079d333d/check.json",
+      "check_sha256": "76f4d4468f5816a49b3c4b7bf91d326e02eec76b8f152023b2c070ef1ee04fea"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_context_matches_memory_to_observed_file_paths_and_structured_error_feedback",
+      "exit_code": 0,
+      "duration_seconds": 0.28346358299999963,
+      "log": "logs/f623ca45add1cdb1d50e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f623ca45add1cdb1d50e/check.json",
+      "check_sha256": "2f76ffdd0364e7e86452567b1d6ec7ea90c64cbbb32eb33df054923ae213cb60"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_changed_evidence_invalidates_authority_before_approval_or_commit[approve]",
+      "exit_code": 0,
+      "duration_seconds": 0.28128604199999785,
+      "log": "logs/3eeffd2bd3cab7aaa660.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3eeffd2bd3cab7aaa660/check.json",
+      "check_sha256": "6c4f811aca0ed9b3e9984f0b0a9dbd023355806ce1ccd997c98e837e63606e72"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_changed_evidence_invalidates_authority_before_approval_or_commit[commit]",
+      "exit_code": 0,
+      "duration_seconds": 0.28354666599999945,
+      "log": "logs/366ad7122497d6ae78ba.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/366ad7122497d6ae78ba/check.json",
+      "check_sha256": "a045e28c994567188e58cee6ecf217a7ad310b5e78cca99b3b6d5e8c2c274b93"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_conflicting_validated_topic_blocks_each_authorizing_transition[validate]",
+      "exit_code": 0,
+      "duration_seconds": 0.2788235830000012,
+      "log": "logs/7900efc779896205835a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7900efc779896205835a/check.json",
+      "check_sha256": "ed41bb331a167dce56882fedf1d697baacfcf5b30db2f3d6d146037f2c6700ac"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_conflicting_validated_topic_blocks_each_authorizing_transition[approve]",
+      "exit_code": 0,
+      "duration_seconds": 0.27980754100000027,
+      "log": "logs/9ee4a2ea54ab85b95b26.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/9ee4a2ea54ab85b95b26/check.json",
+      "check_sha256": "376ebe08546d27ec5d46699390dfdb29142659955fec3224f1f38aae1ba62324"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_conflicting_validated_topic_blocks_each_authorizing_transition[commit]",
+      "exit_code": 0,
+      "duration_seconds": 0.2835415829999981,
+      "log": "logs/8ba593f4b42a6d293f8c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8ba593f4b42a6d293f8c/check.json",
+      "check_sha256": "a19601812ff5c1702ebdddfffda6ddcac51393ae8c5cb780b96b6cf8287391c6"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_operator_edit_and_rejection_remove_old_authority_through_the_tool_pipeline",
+      "exit_code": 0,
+      "duration_seconds": 0.28543133299999823,
+      "log": "logs/c9c3b4d6c9190f3f6da6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c9c3b4d6c9190f3f6da6/check.json",
+      "check_sha256": "8f0cd115158539f093f3354bcda5da872ca694b230b2cc6f351a49c30b9fa9c8"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[review_memory-arguments0]",
+      "exit_code": 0,
+      "duration_seconds": 0.27574383299999994,
+      "log": "logs/47dc0beaa012f09699ec.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/47dc0beaa012f09699ec/check.json",
+      "check_sha256": "9ebadef634cf9a559f42407fe07ba1bc836bfe8b20bf858a6f2fb6694d69d8d6"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[validate_memory-arguments1]",
+      "exit_code": 0,
+      "duration_seconds": 0.2724497079999999,
+      "log": "logs/14a8c8c9f0e139edf009.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/14a8c8c9f0e139edf009/check.json",
+      "check_sha256": "5ce4f3b9d8bbe40619aa5021fb7674c5df871839d5449cc51fe4738920c9b350"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[approve_memory-arguments2]",
+      "exit_code": 0,
+      "duration_seconds": 0.2732269589999987,
+      "log": "logs/10b43c4039ad236a16cc.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/10b43c4039ad236a16cc/check.json",
+      "check_sha256": "c32075aac649d6869f41212a4c8b5727d65d249e1970ee9c66791467456d0fdc"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[commit_memory-arguments3]",
+      "exit_code": 0,
+      "duration_seconds": 0.27518866699999833,
+      "log": "logs/81fc4e29052080959e7c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/81fc4e29052080959e7c/check.json",
+      "check_sha256": "48827ba8b1c02357ac2a3d550f0be0d75e46bf8e9c2ac6217ea7d6a421d68693"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[revise_memory-arguments4]",
+      "exit_code": 0,
+      "duration_seconds": 0.29094804200000013,
+      "log": "logs/b73376216f36c5faf27b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b73376216f36c5faf27b/check.json",
+      "check_sha256": "6116fc61dad7f00f099ce9179f2caa652dbbe5966edb078cb9e408748aa05746"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_every_maintenance_tool_is_unavailable_throughout_an_active_run[reject_memory-arguments5]",
+      "exit_code": 0,
+      "duration_seconds": 0.2905092079999996,
+      "log": "logs/9acc7bc1b875df834b1a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/9acc7bc1b875df834b1a/check.json",
+      "check_sha256": "ff3e964b786a6f95a223ffe1d960998b27efe43ce198ba3e6cec25ca791c5406"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_operator_identity_cannot_be_overridden_in_approval_arguments",
+      "exit_code": 0,
+      "duration_seconds": 0.2886072920000018,
+      "log": "logs/2ed18c1cac0659c3f2e0.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2ed18c1cac0659c3f2e0/check.json",
+      "check_sha256": "5979b5f41d32e3c0c8c94577d0302cc4e7f68832da10d7306045bacc463c8fb6"
+    },
+    {
+      "node_id": "tests/test_memory_evidence.py::test_cancelled_evidence_io_releases_maintenance_without_starting_a_run_mid_validation",
+      "exit_code": 0,
+      "duration_seconds": 0.2911168329999967,
+      "log": "logs/414f66fea853d7d7e11f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/414f66fea853d7d7e11f/check.json",
+      "check_sha256": "e79f389997bcb19cecc3dad8df79bf7f2a36463c5fb2f63add4607beb6c7ad22"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[False-False]",
+      "exit_code": 0,
+      "duration_seconds": 0.28874829099999744,
+      "log": "logs/aebc31c709eeb199727e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/aebc31c709eeb199727e/check.json",
+      "check_sha256": "e3f05aa14ad6e49d7b58305edfa5e1201bc89086ca8d01cb6f74b9726c128969"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[False-True]",
+      "exit_code": 0,
+      "duration_seconds": 0.29042499999999905,
+      "log": "logs/073a7d1e19113006e47c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/073a7d1e19113006e47c/check.json",
+      "check_sha256": "be0746d48e6dc44c48b0108b049afe9efc21e2b9a00be080ebb3b8ac2b5ac469"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[True-False]",
+      "exit_code": 0,
+      "duration_seconds": 0.28704349999999934,
+      "log": "logs/8a8e02b18e5a7e6df3d4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8a8e02b18e5a7e6df3d4/check.json",
+      "check_sha256": "ee67ff0c3c2d6f8f081ff9c600b79b26193bdc6fedd7ebe01088bb4c72c88632"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_registered_material_ingress_preserves_usage_and_suppresses_split_streams[True-True]",
+      "exit_code": 0,
+      "duration_seconds": 0.28918900000000036,
+      "log": "logs/c2fb46cb06cb6b40d028.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c2fb46cb06cb6b40d028/check.json",
+      "check_sha256": "60e56956e612c5e0e9a4280cafa9db3f61474e770ed8d089bbe90240ecd264e4"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_registered_material_guard_preserves_safe_actions_and_reported_failure_usage",
+      "exit_code": 0,
+      "duration_seconds": 0.2825189580000007,
+      "log": "logs/76bdc823299974da6d84.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/76bdc823299974da6d84/check.json",
+      "check_sha256": "b8a7e1c483a2b1fe241a3a5d06b20a63195613a2319a2d949ee57a3c74c6cadc"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_registered_canonical_json_material_is_rejected_inside_nested_model_arguments",
+      "exit_code": 0,
+      "duration_seconds": 0.27176016700000005,
+      "log": "logs/e452e8469ebc4f377045.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e452e8469ebc4f377045/check.json",
+      "check_sha256": "3b7e4596dcd7b236808b73fc9ce8483d8af2f6f8b1630b09d935958acad6b237"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_common_fixture_first_request_has_all_three_body_free_cards",
+      "exit_code": 0,
+      "duration_seconds": 0.31618608299999806,
+      "log": "logs/c9ffe1ef2fa06ddd23f9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c9ffe1ef2fa06ddd23f9/check.json",
+      "check_sha256": "15b1cae48f82cf95bb73ce73dff0ced15fda996901046eebff3403ea0adc7ce7"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_02_03_explicit_search_does_not_grant_path_applicability",
+      "exit_code": 0,
+      "duration_seconds": 0.28772929200000164,
+      "log": "logs/cb152478c1f87f104aeb.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/cb152478c1f87f104aeb/check.json",
+      "check_sha256": "8419533490837fd5a7df50c17d77c97174e2ba8dfbc896f02204c403ce811566"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_08_query_error_filter_cannot_forge_an_observed_error",
+      "exit_code": 0,
+      "duration_seconds": 0.28568266699999967,
+      "log": "logs/87c40150040d667256cb.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/87c40150040d667256cb/check.json",
+      "check_sha256": "266caf79db75db5fb568d56fb0dc5cc219a13d5180065670c233b334afd80787"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_executed_hidden_reads_are_not_forgotten_when_main_history_has_no_tool_round",
+      "exit_code": 0,
+      "duration_seconds": 0.2877887920000006,
+      "log": "logs/175d30cf8dc51fa2b2c5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/175d30cf8dc51fa2b2c5/check.json",
+      "check_sha256": "6014ceedf4d4ef0aab42e6df6ff706ffd95a2489068f61ebfe278009d1621eae"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_11_source_changes_remove_the_card_without_mutating_committed_state",
+      "exit_code": 0,
+      "duration_seconds": 0.2856499580000005,
+      "log": "logs/f5c148aa2f889f1fe920.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f5c148aa2f889f1fe920/check.json",
+      "check_sha256": "28668e410cf57da30dced61c7fb13a01735b48a16bc8120496edc0df16f02de3"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_11_five_candidates_recheck_changed_bytes_and_revoked_grant_without_backfill",
+      "exit_code": 0,
+      "duration_seconds": 0.3388708329999979,
+      "log": "logs/373f91985ad85606164e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/373f91985ad85606164e/check.json",
+      "check_sha256": "0a9a40b5663dfb6246f2fd7b99d0767c0c47e5475deb617b36d694e5088fdda9"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_17_storage_and_evidence_failures_are_structured_and_recover_next_run[store]",
+      "exit_code": 0,
+      "duration_seconds": 0.28741520799999876,
+      "log": "logs/ae39457e92b91fc82da7.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ae39457e92b91fc82da7/check.json",
+      "check_sha256": "84f6ea9aa395e2a864411ada55b4886c45b4327d05afc0deef1f221f3da76969"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_17_storage_and_evidence_failures_are_structured_and_recover_next_run[source]",
+      "exit_code": 0,
+      "duration_seconds": 0.2867528330000013,
+      "log": "logs/b7d38db7b6270ae89c51.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b7d38db7b6270ae89c51/check.json",
+      "check_sha256": "2fd464f10782b9886f046630b3a8e6b60404481f59c4929101dd7a8d2d5b71fa"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_12_current_revision_is_checked_against_the_frozen_reference",
+      "exit_code": 0,
+      "duration_seconds": 0.2985658750000013,
+      "log": "logs/a52d7b55c47fa6f8eef2.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a52d7b55c47fa6f8eef2/check.json",
+      "check_sha256": "f39d3ff119750fa8b3eda48e7bc91cb2bd9f5ad1fbe120625843a08a999dc999"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[evidence]",
+      "exit_code": 0,
+      "duration_seconds": 0.3309715830000002,
+      "log": "logs/53643b69a0205406422c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/53643b69a0205406422c/check.json",
+      "check_sha256": "a4dd7d4748924d9a41203a078cff001963d44f365b694ab838c545f9be3b3bae"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[revise]",
+      "exit_code": 0,
+      "duration_seconds": 0.3337244999999953,
+      "log": "logs/cfe387784347bdef0d22.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/cfe387784347bdef0d22/check.json",
+      "check_sha256": "5e4008959e1ff18b92c6710849b3c2162ec42a643e1f5f107472be1769487f54"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_11_12_external_change_withdraws_previously_visible_body_in_actual_loop[reject]",
+      "exit_code": 0,
+      "duration_seconds": 0.33365412499999536,
+      "log": "logs/79e2246ae17d96503b6e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/79e2246ae17d96503b6e/check.json",
+      "check_sha256": "3c90910d096a771cede72949e6aa4385f2c24535a0051c77155f318d1645898a"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_13_permissions_precede_store_access_and_views_do_not_cross_runs",
+      "exit_code": 0,
+      "duration_seconds": 0.2850989590000026,
+      "log": "logs/ae7f8f194cc3abc42c95.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ae7f8f194cc3abc42c95/check.json",
+      "check_sha256": "d24ffc2cad85f3e2b93434f4ab91a1e22dc2265673079ba5a444893b3c4ae364"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_13_each_required_capability_is_checked_before_private_io[memory.read]",
+      "exit_code": 0,
+      "duration_seconds": 0.28536599999999623,
+      "log": "logs/4e66dab0a64570c1be20.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4e66dab0a64570c1be20/check.json",
+      "check_sha256": "a67be9aefb9a02e37c882b3605a2e630934a23ab9b37cab514550fb4b52ab5ae"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_13_each_required_capability_is_checked_before_private_io[memory.evidence.read]",
+      "exit_code": 0,
+      "duration_seconds": 0.28405383300000153,
+      "log": "logs/05a003609fc59bd4141f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/05a003609fc59bd4141f/check.json",
+      "check_sha256": "04d22e8eb7b8e1c58422dc4e722ec514e9490c2396f900f437886ffaed42bf0a"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_15_maximum_bodies_and_single_card_cap_bound_the_entire_projection",
+      "exit_code": 0,
+      "duration_seconds": 0.35402704199999846,
+      "log": "logs/e509b99fe8e07b5d5e82.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e509b99fe8e07b5d5e82/check.json",
+      "check_sha256": "99435ba1184161f27d448211b2783dcec45ca93a72e923b734e6c6e1ae9b3f50"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[0]",
+      "exit_code": 0,
+      "duration_seconds": 0.27143262500000276,
+      "log": "logs/648e31f767dea8755180.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/648e31f767dea8755180/check.json",
+      "check_sha256": "4d54ee4e53fd84c28d0b0c5afec230528d8dfd45f8912b2497d6cd3a3d5bfa34"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[True]",
+      "exit_code": 0,
+      "duration_seconds": 0.2710576250000045,
+      "log": "logs/525ee60b3422fe1d4500.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/525ee60b3422fe1d4500/check.json",
+      "check_sha256": "f6773bc292172b9fa3e78c0d0dc42573b766f2359a9cd70ca4759bdcfb0213f1"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_revision_requires_a_positive_integer[-1]",
+      "exit_code": 0,
+      "duration_seconds": 0.27138937499999827,
+      "log": "logs/e86df48d740a04d2016a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e86df48d740a04d2016a/check.json",
+      "check_sha256": "025673c307002f3a13113f6753fd803e68636e8d31e8584e741b28c4497abcf7"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[pending]",
+      "exit_code": 0,
+      "duration_seconds": 0.28258062500000136,
+      "log": "logs/b9f9dc4a3bc4bae64d7d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b9f9dc4a3bc4bae64d7d/check.json",
+      "check_sha256": "044a87fd8b3aac2fa2b7adf3f4e3bb11d08d0bfa22916acb4a56d903dacb9774"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[user_role]",
+      "exit_code": 0,
+      "duration_seconds": 0.28353658300000006,
+      "log": "logs/6f9b617416c50a37fff1.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/6f9b617416c50a37fff1/check.json",
+      "check_sha256": "f5396578b5caa34de5fa72d71fa6dc4903cea92cbf21738106379cb834219fec"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[missing_status]",
+      "exit_code": 0,
+      "duration_seconds": 0.2854121660000004,
+      "log": "logs/e1b37ca252e46a527363.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e1b37ca252e46a527363/check.json",
+      "check_sha256": "c39aeb054fe1328264ed984e75a5c195e58b3003c1782bd12ade761f728ba53d"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_forged_future_tool_calls_are_not_observations[reused_id]",
+      "exit_code": 0,
+      "duration_seconds": 0.2863843330000009,
+      "log": "logs/539558be619b58a5c899.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/539558be619b58a5c899/check.json",
+      "check_sha256": "2f975e88f8830e212d5c77357969bb46cb790c1a18dac079fb3dcf3062076fe5"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_progressive_config_is_explicit_and_limits_only_decrease",
+      "exit_code": 0,
+      "duration_seconds": 0.2725155840000042,
+      "log": "logs/80fc6406d89f8a28f6e8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/80fc6406d89f8a28f6e8/check.json",
+      "check_sha256": "039684ec1034e1cf5f55c7b8ff3b1ab2a499df57ee9f00f3bb113b90975a1dda"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1[local]",
+      "exit_code": 0,
+      "duration_seconds": 0.31349466599999687,
+      "log": "logs/750dde214e75f926ef5d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/750dde214e75f926ef5d/check.json",
+      "check_sha256": "de838bbac40292b529974dd84f18d1796fe2ee47fb288b0adf88edfaadb42cb8"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_19_disabled_does_no_memory_io_and_default_v1_matches_explicit_v1[configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.31770504200000005,
+      "log": "logs/b851da0cc51d493113a0.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b851da0cc51d493113a0/check.json",
+      "check_sha256": "c22af5cceb2fba4d283c8dd997c602f998d73572c7b7f779815d1dcb658888b1"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.3512979169999966,
+      "log": "logs/a6a06386f726b2f58ef8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a6a06386f726b2f58ef8/check.json",
+      "check_sha256": "1cbafc251f7c777416259949047f839e4b7a59508df5d9fc95d5c969a434345e"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[full-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.35510933300000147,
+      "log": "logs/54712351f464ffc52122.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/54712351f464ffc52122/check.json",
+      "check_sha256": "e2ddc0d45400b3c72478a2a6ecd48bc4f4023f539928954743c6899eb43c28c0"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.34847062499999737,
+      "log": "logs/89cda9621668fddfd23c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/89cda9621668fddfd23c/check.json",
+      "check_sha256": "878d2698bd5f108a3250223104be4d0ee0ed0423769c53769fc841f1656574b2"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[sliding-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.3500553750000037,
+      "log": "logs/c48c27a437aa99cc8ba9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c48c27a437aa99cc8ba9/check.json",
+      "check_sha256": "37cda2535aaa143610f70fd04720d3b73336696bf52c5c5ac9bbc1bf892e915e"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.3488125829999973,
+      "log": "logs/ba4a201176ad57de3125.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ba4a201176ad57de3125/check.json",
+      "check_sha256": "142662b0dd626ccbaff8e5df8ce39978cc4a96a378bcd52093cf4e3cbac430ca"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[summary-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.3576583339999999,
+      "log": "logs/3ad67b74cb46f16031db.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3ad67b74cb46f16031db/check.json",
+      "check_sha256": "fd6ce7beece995046cb088d960abe98d84edf782e11224ed49897b73ea7ad9e9"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.3999984579999989,
+      "log": "logs/b3e09bb45a7ebdd02cce.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b3e09bb45a7ebdd02cce/check.json",
+      "check_sha256": "5ffc554c7ab6f8e8dbc163bf4728f8d358ee63c86d12becf2c8fed9dcd56043a"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.3852736250000035,
+      "log": "logs/d7fdbf7012dec714e0cc.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d7fdbf7012dec714e0cc/check.json",
+      "check_sha256": "e0536d35ff76ade07451d87bb12ec62e099028099fa0091cec7b98203c2eddee"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.3913927500000014,
+      "log": "logs/de7f3b2d4f3241f66921.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/de7f3b2d4f3241f66921/check.json",
+      "check_sha256": "8b81479992b155b653b1ca91eef6dda84631e16d396e20bd2f20dbf4d4d07572"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[retrieval_summary-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.3978629590000011,
+      "log": "logs/12e234c6b1ca7c1e11fd.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/12e234c6b1ca7c1e11fd/check.json",
+      "check_sha256": "fecb9ee461fb4841e2b831b98e2f322725ad8dfcbec13578aa6863040f63409d"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.39542229200000634,
+      "log": "logs/4937938a6b3284a59ccd.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4937938a6b3284a59ccd/check.json",
+      "check_sha256": "6c9023e74dffcbb057005f0e6bd7731822a36089404adca739d950f307645cce"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[symbol-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.3988810419999993,
+      "log": "logs/f48147fc134ed983f8b0.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f48147fc134ed983f8b0/check.json",
+      "check_sha256": "51fe2f04311c455a1a3d93b018ec06cd62023d2225f58217accf4676c151a284"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-local]",
+      "exit_code": 0,
+      "duration_seconds": 0.36992316699999606,
+      "log": "logs/3f4455f3ed9884268713.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3f4455f3ed9884268713/check.json",
+      "check_sha256": "f45d186bf8f8ed4e5d2aeadedb896cd3ed35a7e07ead640e25aebde0a724b514"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_01_03_19_actual_loop_indexes_then_reads_without_future_call_authority[budget-configured]",
+      "exit_code": 0,
+      "duration_seconds": 0.37552258400000227,
+      "log": "logs/667b4c0bbf868de54946.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/667b4c0bbf868de54946/check.json",
+      "check_sha256": "06a7d46edd58bdea4b47599314a9d68eb5da5651206bd52e9fbd986f52c69226"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_04_error_recovery_withdraws_body_from_the_derived_request[False]",
+      "exit_code": 0,
+      "duration_seconds": 0.30562904199999963,
+      "log": "logs/d9703f3955a720b8a22e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d9703f3955a720b8a22e/check.json",
+      "check_sha256": "1a35218d1a47cdbd2be9d265902b853ceae722a4a2b16ff76eddb31728eae733"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_04_error_recovery_withdraws_body_from_the_derived_request[True]",
+      "exit_code": 0,
+      "duration_seconds": 0.3104541249999997,
+      "log": "logs/6e7eabb6ef0eeda412f7.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/6e7eabb6ef0eeda412f7/check.json",
+      "check_sha256": "63dc46c6a257486b159bb21d8fbbd0fe3c6aac9daf239989af7edf8ff14ec6a0"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_15_read_budget_keeps_whole_rules_and_records_omission",
+      "exit_code": 0,
+      "duration_seconds": 0.3002004590000027,
+      "log": "logs/97320b813ba6b3e27ba6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/97320b813ba6b3e27ba6/check.json",
+      "check_sha256": "3f39c2b44f9b7be9e0fbf15d1905e751d7f871a522d823cec241e38df2947d71"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_17_cancellation_waits_for_storage_and_next_run_has_a_fresh_view",
+      "exit_code": 0,
+      "duration_seconds": 0.2993607499999982,
+      "log": "logs/2d9d6c8ba40bf54c964d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2d9d6c8ba40bf54c964d/check.json",
+      "check_sha256": "af4d9280b9bde02de6add7b5a02ecdfbcc531f0d6948770a98a7816681639c40"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_search_can_discover_beyond_the_five_startup_cards_and_survive_preparation",
+      "exit_code": 0,
+      "duration_seconds": 0.31852454100000216,
+      "log": "logs/2f7239539c1427243c07.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2f7239539c1427243c07/check.json",
+      "check_sha256": "cb4001e0610a8832bae175e0461217483d19b786be4f786c92e24daf4ed3ad4d"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_09_real_store_foreign_version_and_unapproved_rows_are_unavailable",
+      "exit_code": 0,
+      "duration_seconds": 0.3069286249999976,
+      "log": "logs/75a7b78ed151a78c213e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/75a7b78ed151a78c213e/check.json",
+      "check_sha256": "0fc3dcdef55d74424d76235c42a5f349d68008c5758da6cda91500c831ffd4b2"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_10_old_conflicting_database_is_filtered_without_rewriting_it",
+      "exit_code": 0,
+      "duration_seconds": 0.28729150000000203,
+      "log": "logs/4c4b4fd91dfdcde6ccbf.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4c4b4fd91dfdcde6ccbf/check.json",
+      "check_sha256": "b880a541b27d661788514885702c834231118be64da1426fea3ec4417b6368e2"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[duplicate]",
+      "exit_code": 0,
+      "duration_seconds": 0.28589166699999424,
+      "log": "logs/a2de51fd79f375e97ce5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a2de51fd79f375e97ce5/check.json",
+      "check_sha256": "360ef3878de2d51b4111a942d7306c6c2392b9ff739f8860b99f04fdf4845455"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[six]",
+      "exit_code": 0,
+      "duration_seconds": 0.2866317080000016,
+      "log": "logs/342f25c4e1f3f181ebba.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/342f25c4e1f3f181ebba/check.json",
+      "check_sha256": "8d74cc1a566e14c5c8364e6cda5986129acfb73c1c71b79dc264ad7e62785e89"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[zero]",
+      "exit_code": 0,
+      "duration_seconds": 0.2850358749999984,
+      "log": "logs/3888621846aeafbda771.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3888621846aeafbda771/check.json",
+      "check_sha256": "60a344502314e9684a0ea1e49d5e91fdd653bacf1cc9410bb7a3cd5bdc0a6899"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[boolean]",
+      "exit_code": 0,
+      "duration_seconds": 0.28402912500000355,
+      "log": "logs/21c4710b3945780719ba.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/21c4710b3945780719ba/check.json",
+      "check_sha256": "08d08f68ada4d033f35bf5b3f5ac7d11e144f9510bba25883ef02869c81f0048"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[bad_hash]",
+      "exit_code": 0,
+      "duration_seconds": 0.28991612500000485,
+      "log": "logs/c74a1aee596ef3f8f8e4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c74a1aee596ef3f8f8e4/check.json",
+      "check_sha256": "f9b220c5c3b678ba67f7514f72a4b9490df319063ec583b6b2623de400c633b3"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_reference_schema_rejects_before_store_access[extra]",
+      "exit_code": 0,
+      "duration_seconds": 0.2871559579999996,
+      "log": "logs/d04e18ede3783adeaf89.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d04e18ede3783adeaf89/check.json",
+      "check_sha256": "1a867e5b3028597372cff2d78f51a02eeae1c7cab101f93eb1c86d0f1501c55c"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[missing]",
+      "exit_code": 0,
+      "duration_seconds": 0.2868256670000022,
+      "log": "logs/81a7796d43353daedc1c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/81a7796d43353daedc1c/check.json",
+      "check_sha256": "2f8c95c82eca4d5fdd105f10b6fab833fa4391d48f0a236dbab8d606827c9f46"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_hash]",
+      "exit_code": 0,
+      "duration_seconds": 0.28602712500000393,
+      "log": "logs/282fd74a66a7cbcc7f58.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/282fd74a66a7cbcc7f58/check.json",
+      "check_sha256": "788d6a4be5eb4d0061667666d10f5eb10756aefc57fd0961ecdacb69b16b43dd"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_09_12_invalid_references_never_reveal_a_body[stale_revision]",
+      "exit_code": 0,
+      "duration_seconds": 0.28723600000000005,
+      "log": "logs/aa6bcb6e35ec283d3f7d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/aa6bcb6e35ec283d3f7d/check.json",
+      "check_sha256": "d152efb28b6d557c34707b496844fa96c3652d611224432c950af272eefd3d92"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_16_no_remaining_context_tool_budget_prevents_private_read",
+      "exit_code": 0,
+      "duration_seconds": 0.28972779200000076,
+      "log": "logs/e2beed5cc267eeb56d8b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e2beed5cc267eeb56d8b/check.json",
+      "check_sha256": "3c538db057405de3d7766c2381eeb7bd851d75ce9eae7fe53f8d074aac029026"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[tool_budget]",
+      "exit_code": 0,
+      "duration_seconds": 0.29271808400000054,
+      "log": "logs/dbc3749febae71b53133.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/dbc3749febae71b53133/check.json",
+      "check_sha256": "b9f9c115899b080e146745d0d87922346d21d2efe3c6db6441bf568e4470a270"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[input_budget]",
+      "exit_code": 0,
+      "duration_seconds": 0.3080933329999951,
+      "log": "logs/439a8b5e3b324cc12df4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/439a8b5e3b324cc12df4/check.json",
+      "check_sha256": "687a3c3179782145bf94b92ad3400b2c689f7ca39d7ffc1fb5d6210e73c1f50b"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_16_preparation_stops_before_model_and_releases_the_run[permission]",
+      "exit_code": 0,
+      "duration_seconds": 0.3054918750000013,
+      "log": "logs/15a63e54f62ad012845a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/15a63e54f62ad012845a/check.json",
+      "check_sha256": "a83e432df97ef957a33070f47cbedf42138ace0ec571f672b39e4815e05bd775"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_16_post_response_usage_stops_followup_reads_and_proposals[overrun]",
+      "exit_code": 0,
+      "duration_seconds": 0.3135519579999979,
+      "log": "logs/d9ca5d25e4e106a5106f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d9ca5d25e4e106a5106f/check.json",
+      "check_sha256": "c4b12841d21718969121f08f8ffa33b9056f18339b5cba44c546463eef308b93"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_16_post_response_usage_stops_followup_reads_and_proposals[unknown]",
+      "exit_code": 0,
+      "duration_seconds": 0.3098827499999999,
+      "log": "logs/57dd3a25dec425b68d24.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/57dd3a25dec425b68d24/check.json",
+      "check_sha256": "4571ede9233f385f0933bc0dbf90b7691d87c4c5e70da9ec4d58c99d1e772ebf"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_rejected_query_is_not_replayed_into_the_next_model_request[secret]",
+      "exit_code": 0,
+      "duration_seconds": 0.3059561250000016,
+      "log": "logs/10691f03d9ebde04e296.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/10691f03d9ebde04e296/check.json",
+      "check_sha256": "c5e16483e5c9718419ec27829d732e2cb4ca70d6823662a1cba6500e60bee654"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_rejected_query_is_not_replayed_into_the_next_model_request[forbidden]",
+      "exit_code": 0,
+      "duration_seconds": 0.2987264170000046,
+      "log": "logs/67ef6b56857e265f4e6e.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/67ef6b56857e265f4e6e/check.json",
+      "check_sha256": "85300bc47614e7206ebf57cde202748c3db5a3e70685797e142492c13d6d9869"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-topic]",
+      "exit_code": 0,
+      "duration_seconds": 0.30432154200000383,
+      "log": "logs/7ccd833c337666a65cfa.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7ccd833c337666a65cfa/check.json",
+      "check_sha256": "2adb12ab91858a70c95eb66434308622dc2eca19039297290ea58244499e2b08"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-paths]",
+      "exit_code": 0,
+      "duration_seconds": 0.30574299999999965,
+      "log": "logs/706300fae09673fc1b1c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/706300fae09673fc1b1c/check.json",
+      "check_sha256": "8a8216fb0f20e2b2bdddc7dc910f8888eb7d65da7d1049a967769c76e1e363fa"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[secret-content]",
+      "exit_code": 0,
+      "duration_seconds": 0.3034216249999986,
+      "log": "logs/e3b92a9e0458e97a1ff8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e3b92a9e0458e97a1ff8/check.json",
+      "check_sha256": "bd29f1dc2d5503a856e7149c44ca46dc5fe30fe99eadf13b22e6019d76f4ab62"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-topic]",
+      "exit_code": 0,
+      "duration_seconds": 0.2988927080000039,
+      "log": "logs/5621d30930c18b7366ce.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/5621d30930c18b7366ce/check.json",
+      "check_sha256": "536e5665455b930c4118ba893010e2093bcee872a0da1e32495798d75c385d34"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-paths]",
+      "exit_code": 0,
+      "duration_seconds": 0.3036377090000002,
+      "log": "logs/ca053a0b58d3f931c269.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ca053a0b58d3f931c269/check.json",
+      "check_sha256": "fd80301b07dfb9d705efa9ac0d04bbd01a0ca1bf48d1a3d3abafa29899757371"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_proposal_fields_reject_registered_material_before_trace_or_storage[forbidden-content]",
+      "exit_code": 0,
+      "duration_seconds": 0.3000711670000058,
+      "log": "logs/42158074f63e779995f6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/42158074f63e779995f6/check.json",
+      "check_sha256": "cd013424ff22f5940af14ad60bee465baa2d1b3b86a68630427084b7efa9e9e1"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_18_instruction_like_approved_data_cannot_grant_maintenance_authority",
+      "exit_code": 0,
+      "duration_seconds": 0.3134437499999976,
+      "log": "logs/20b3befb14fd94d993f4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/20b3befb14fd94d993f4/check.json",
+      "check_sha256": "fdb1ff9eb5247c6197d3555e7e38a2aee37fdb68324af53f8888e7064f8e3448"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments0]",
+      "exit_code": 0,
+      "duration_seconds": 0.28262400000000554,
+      "log": "logs/30bdf7ad072bae8e5238.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/30bdf7ad072bae8e5238/check.json",
+      "check_sha256": "8a672065a6a364b66150621dce28f0a24ac4b71b79654253855d118d1b070d8d"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments1]",
+      "exit_code": 0,
+      "duration_seconds": 0.2847324159999971,
+      "log": "logs/b89b6f4b302cb9bbfc4d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b89b6f4b302cb9bbfc4d/check.json",
+      "check_sha256": "2c0b79daf8feccb26b3a223631b352bbb2623a3a59589127ad4869f17c0324ca"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments2]",
+      "exit_code": 0,
+      "duration_seconds": 0.30098037499999464,
+      "log": "logs/a0a058b88e3cf9f815d5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a0a058b88e3cf9f815d5/check.json",
+      "check_sha256": "daac2ddcc63ad4b9b81d7c05c9d57a8a7ae22732f7eb63ae250aba411fccee9a"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments3]",
+      "exit_code": 0,
+      "duration_seconds": 0.28920016600000054,
+      "log": "logs/15a8d971b158a6ccfb36.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/15a8d971b158a6ccfb36/check.json",
+      "check_sha256": "d1a1a28136c56d2966da9ff731d6e5754ffb8a3f23121ef220a79ebd86b67bef"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments4]",
+      "exit_code": 0,
+      "duration_seconds": 0.2856763750000013,
+      "log": "logs/57fcdb5eaee591794d7c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/57fcdb5eaee591794d7c/check.json",
+      "check_sha256": "19fbf2a01b1baa11fe772c67933364d6add5bb6de10ebecef334c24a459f300f"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments5]",
+      "exit_code": 0,
+      "duration_seconds": 0.29171437499999797,
+      "log": "logs/964347893a3844a04b09.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/964347893a3844a04b09/check.json",
+      "check_sha256": "52ac48f044205b2a17bd1f8aa627c8a3f4bb01dc01f2e972fce54d190d76a90a"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments6]",
+      "exit_code": 0,
+      "duration_seconds": 0.2872067909999956,
+      "log": "logs/acb95b88b5cfcc79ae37.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/acb95b88b5cfcc79ae37/check.json",
+      "check_sha256": "cc33f26580e0c1c247c767bd419aa8fa6bb09e664c81279a7bf8750e3f8c7ffe"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments7]",
+      "exit_code": 0,
+      "duration_seconds": 0.2839482910000015,
+      "log": "logs/bd19ce4c5364845a1252.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/bd19ce4c5364845a1252/check.json",
+      "check_sha256": "1c71cf3abfcafe1636f206816f9661728266010f38f180db64dca2ceeb1d52a4"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments8]",
+      "exit_code": 0,
+      "duration_seconds": 0.2842854589999959,
+      "log": "logs/1b32e4055adc471c5639.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/1b32e4055adc471c5639/check.json",
+      "check_sha256": "9e32047517c8febd9f5d9cba71655bd490b881e907826c0f34dc2e9c6c06f0c4"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments9]",
+      "exit_code": 0,
+      "duration_seconds": 0.3011466249999941,
+      "log": "logs/a378625a1a51f0045c27.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a378625a1a51f0045c27/check.json",
+      "check_sha256": "e3fb2febde6ee6554e4d70edef09855d2ca49ec5693cf2d777a96859e94a9e0d"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments10]",
+      "exit_code": 0,
+      "duration_seconds": 0.6057691670000054,
+      "log": "logs/8f00126f975073b63bef.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8f00126f975073b63bef/check.json",
+      "check_sha256": "b8492e2f9889afbd5ad88a9eb8f7bde234f78a0a0ad4ac4b7ad5ec814f59beb9"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments11]",
+      "exit_code": 0,
+      "duration_seconds": 0.28339608400000316,
+      "log": "logs/e9a3c0bb161f58ff3278.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e9a3c0bb161f58ff3278/check.json",
+      "check_sha256": "e2cc1d563c2d621d3167c9bdfe1cb165bdea29cfc937564c2601d936ea20d707"
+    },
+    {
+      "node_id": "tests/test_memory_progressive.py::test_mv2_14_18_schema_rejects_before_store_and_secret_never_enters_trace[arguments12]",
+      "exit_code": 0,
+      "duration_seconds": 0.2829285420000005,
+      "log": "logs/c14dcd442284ec60a1c4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c14dcd442284ec60a1c4/check.json",
+      "check_sha256": "c2352f50baf031c88c75c3d00bc82f60f1343956b03a23d2597c3f6680d867cc"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_unreadable_observation_closes_the_proposal_guard_for_the_run",
+      "exit_code": 0,
+      "duration_seconds": 0.2739622089999969,
+      "log": "logs/2f903a7ab3d14faf79d6.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2f903a7ab3d14faf79d6/check.json",
+      "check_sha256": "f0635e18daafa4661d2e392173a12ada3284b3754832dcf44678bcbe68475c77"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_permission_precedes_proposal_io_and_only_a_scoped_proposal_is_persisted",
+      "exit_code": 0,
+      "duration_seconds": 0.27211216699999596,
+      "log": "logs/629910a3e40accdffc86.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/629910a3e40accdffc86/check.json",
+      "check_sha256": "6b8356d3cc372631a3431d690b182e6ba72fefcdf07fdf871782ec4fba076e12"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[project_id]",
+      "exit_code": 0,
+      "duration_seconds": 0.27301108399999663,
+      "log": "logs/8b18265242e0a26b2ccc.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8b18265242e0a26b2ccc/check.json",
+      "check_sha256": "9a279fbd35be16f5b776236554f4b4c4575bc4264578a1b5954f29b68b317f9e"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[applicable_version]",
+      "exit_code": 0,
+      "duration_seconds": 0.2670182909999994,
+      "log": "logs/74cbff6d0a2b92c821b8.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/74cbff6d0a2b92c821b8/check.json",
+      "check_sha256": "d4003cd461e6e163013ee59ab3b8ce5a09ec025dcc27f056372bbe814c09731b"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[source_run_id]",
+      "exit_code": 0,
+      "duration_seconds": 0.26548958299999725,
+      "log": "logs/d6b50cf6e7571bbc81d4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d6b50cf6e7571bbc81d4/check.json",
+      "check_sha256": "fab8e8a7a96aa5df9d02c0401615bce84e703c5e3f58958233cd833b53e435e6"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[approved_by]",
+      "exit_code": 0,
+      "duration_seconds": 0.2681594169999997,
+      "log": "logs/02a7d4bf3e5e84819eba.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/02a7d4bf3e5e84819eba/check.json",
+      "check_sha256": "bbc945957471a7b8c32fe7131d83479af5b1ada1db95e178803f3ab46f18f54a"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[evidence_sha256]",
+      "exit_code": 0,
+      "duration_seconds": 0.2682263330000012,
+      "log": "logs/16a81a90bd42d6d8709c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/16a81a90bd42d6d8709c/check.json",
+      "check_sha256": "552df11183bd5aeed58112d37f9fc3b12ef455a9ad3f64889cea6f419672bc8a"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_model_cannot_choose_project_evidence_or_approval[status]",
+      "exit_code": 0,
+      "duration_seconds": 0.26815554200000236,
+      "log": "logs/614f3c4de04c7267bad7.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/614f3c4de04c7267bad7/check.json",
+      "check_sha256": "3651dcb151a470e3265e0a937b539b97e1e4f9f9b7da7fe1b4104b0680538c88"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_inactive_or_mismatched_runs_cannot_propose_or_impersonate_execution",
+      "exit_code": 0,
+      "duration_seconds": 0.26803354200000484,
+      "log": "logs/edbad26527afe6f84fdf.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/edbad26527afe6f84fdf/check.json",
+      "check_sha256": "2b56ac8e862d3ff20c7a63b34fa604c704e55e89bd090c5d3d834d8a842a3749"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[assignment-content]",
+      "exit_code": 0,
+      "duration_seconds": 0.26669187499999936,
+      "log": "logs/ccfa0bbffdcddd896a46.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ccfa0bbffdcddd896a46/check.json",
+      "check_sha256": "35cfc5db801923fe4441d7c0238f0508c96fe51db0ba0c2cbfe2b83e171a070f"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[assignment-paths]",
+      "exit_code": 0,
+      "duration_seconds": 0.26911858400000455,
+      "log": "logs/0fa44af0e08c21bf89db.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/0fa44af0e08c21bf89db/check.json",
+      "check_sha256": "d7758f41358b974aec05bd192a9f0004c6af24c9d4ed7b9d9189fe85b3e74ac1"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[assignment-error_type]",
+      "exit_code": 0,
+      "duration_seconds": 0.26615395799999675,
+      "log": "logs/7e9fc307c5fb5b03c7d9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7e9fc307c5fb5b03c7d9/check.json",
+      "check_sha256": "f8b4f6833183268c95234a04389f5630700f408d21384112d6e18210f15a0065"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[json-content]",
+      "exit_code": 0,
+      "duration_seconds": 0.2683049170000018,
+      "log": "logs/0886d36c8c4556c2ae4a.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/0886d36c8c4556c2ae4a/check.json",
+      "check_sha256": "0dfe3e2b68ed6fc1dc26c517d85630c09f6f1ea2f0fc4e662c95bf9d3bc2c6f5"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[json-paths]",
+      "exit_code": 0,
+      "duration_seconds": 0.26862408299999885,
+      "log": "logs/7cc351a0501df4395cef.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7cc351a0501df4395cef/check.json",
+      "check_sha256": "022d60bda7ba01e4b94fb740c9906f83cefb6526f4a76eb28813ccc5b54b3d89"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[json-error_type]",
+      "exit_code": 0,
+      "duration_seconds": 0.2688965839999966,
+      "log": "logs/ccb5406333fce10a9d70.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ccb5406333fce10a9d70/check.json",
+      "check_sha256": "0dde86e98e706b6b396c463adf1dc2221b0f65509aa7d55318f617a3ea768746"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[escaped_json_key-content]",
+      "exit_code": 0,
+      "duration_seconds": 0.2699368329999956,
+      "log": "logs/1322b91959bd51b2ad1f.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/1322b91959bd51b2ad1f/check.json",
+      "check_sha256": "766b62f79e30ff05fe1f9fc6c1fc882b901e85702f7884088e0eea7c83bb7363"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[escaped_json_key-paths]",
+      "exit_code": 0,
+      "duration_seconds": 0.26903270800000456,
+      "log": "logs/5e2cca9f0b6dc63b0546.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/5e2cca9f0b6dc63b0546/check.json",
+      "check_sha256": "50538438e6891c906982621e22e4ff421ae2c487b37bbb22a9340320a1e7d63c"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_sensitive_summary_or_metadata_never_reaches_storage_or_trace[escaped_json_key-error_type]",
+      "exit_code": 0,
+      "duration_seconds": 0.2686325000000025,
+      "log": "logs/5b689bd8ee72d4de1db2.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/5b689bd8ee72d4de1db2/check.json",
+      "check_sha256": "1f53196874939e2aa0f7a1493b535078e8e19d54586a3aafc795075cc0676559"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[task]",
+      "exit_code": 0,
+      "duration_seconds": 0.268034458999999,
+      "log": "logs/f5472404ae91db67ef11.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f5472404ae91db67ef11/check.json",
+      "check_sha256": "de6d60eebe02832116e7cd8c2f4e1e93dcffad46f358d76ebb3bffd82bc25daf"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[tool_output]",
+      "exit_code": 0,
+      "duration_seconds": 0.2674755419999997,
+      "log": "logs/adedf4cd0fdbdb9c1b8d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/adedf4cd0fdbdb9c1b8d/check.json",
+      "check_sha256": "c818e13fbea6b15c6177d2deb470b791aee01ff5744fd1d014d38c276e4922ec"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[named_tool_output]",
+      "exit_code": 0,
+      "duration_seconds": 0.2687842909999958,
+      "log": "logs/2d63c56c88ade52e40be.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2d63c56c88ade52e40be/check.json",
+      "check_sha256": "81ab61bc52e4fec52285ac80ac0d274fcca95752576732c562956ff462fe8990"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[hidden_label]",
+      "exit_code": 0,
+      "duration_seconds": 0.2681189580000023,
+      "log": "logs/e2b40b021713226fb057.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e2b40b021713226fb057/check.json",
+      "check_sha256": "f5edf8fde80aafeb9779c71e10ddccd7faedbb02de0fc04418b492691a741624"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_proposals_reject_known_raw_material_before_storage_and_allow_a_summary[summary]",
+      "exit_code": 0,
+      "duration_seconds": 0.2695843750000009,
+      "log": "logs/1d97a3f53138e7afe4e5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/1d97a3f53138e7afe4e5/check.json",
+      "check_sha256": "01a9a7af63fba3054c7db626b8446a4c7080322414bd7334af4833c4fd437cdd"
+    },
+    {
+      "node_id": "tests/test_memory_runtime.py::test_invalid_source_text_does_not_leave_a_half_started_memory_run",
+      "exit_code": 0,
+      "duration_seconds": 0.265971792000002,
+      "log": "logs/56e77d011f3f03b3653c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/56e77d011f3f03b3653c/check.json",
+      "check_sha256": "8938c4ee2d77cc1dc860a4d2b59eab49525ef6513b7b3d6bbef21e611b9ac078"
+    },
+    {
+      "node_id": "tests/test_memory_selection.py::test_selection_excludes_out_of_scope_or_unapproved_records_and_keeps_provenance",
+      "exit_code": 0,
+      "duration_seconds": 0.2662164159999989,
+      "log": "logs/8b2ba09819915e640192.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/8b2ba09819915e640192/check.json",
+      "check_sha256": "18865c665c327d9f1be29091736a425eff292bf3c9c9d475a88cff1265c19e2a"
+    },
+    {
+      "node_id": "tests/test_memory_selection.py::test_selection_has_a_stable_five_entry_cap_independent_of_input_order",
+      "exit_code": 0,
+      "duration_seconds": 0.266948124999999,
+      "log": "logs/cf11d93a698ef11aaa7d.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/cf11d93a698ef11aaa7d/check.json",
+      "check_sha256": "757beb5a02adbca16c64d27d54710064f780c68e921191c35936f75af6d915b5"
+    },
+    {
+      "node_id": "tests/test_memory_selection.py::test_conflicting_topics_are_omitted_and_identical_knowledge_is_deduplicated",
+      "exit_code": 0,
+      "duration_seconds": 0.265737417000004,
+      "log": "logs/70ad36c055ad6329f9e7.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/70ad36c055ad6329f9e7/check.json",
+      "check_sha256": "760c7dddf39ddcba070c160ac9d3d7666e1da8b7478143ed5fda0b1648666a07"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_replacement_at_atomic_publish_cannot_redirect_the_write[directory]",
+      "exit_code": 0,
+      "duration_seconds": 0.28117158300000256,
+      "log": "logs/47876acdb0809ac8c19b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/47876acdb0809ac8c19b/check.json",
+      "check_sha256": "4291ff0af77b5df8a4dc5cc1300ce0b1eddace27a00d5e2b73522c23bf45f16c"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_replacement_at_atomic_publish_cannot_redirect_the_write[symlink]",
+      "exit_code": 0,
+      "duration_seconds": 0.2820350410000003,
+      "log": "logs/dce2af6896550b50ea8b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/dce2af6896550b50ea8b/check.json",
+      "check_sha256": "df23be33073f49fb606baaf7376dff6cf096608f57a8a5ae0a805508efed392d"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_process_writers_do_not_lose_a_committed_update",
+      "exit_code": 0,
+      "duration_seconds": 0.5243946249999993,
+      "log": "logs/cfa98c449548fc624318.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/cfa98c449548fc624318/check.json",
+      "check_sha256": "90f523ea54ee4dd9c4e75af3543591968f1e42bbb946f0e5d81a4f2d97c90c1e"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_unfinished_external_sqlite_sidecars_are_not_silently_adopted[-journal]",
+      "exit_code": 0,
+      "duration_seconds": 0.2760917079999956,
+      "log": "logs/d4027af55ed94047f23c.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d4027af55ed94047f23c/check.json",
+      "check_sha256": "9a4fea38dd16fd4b278f0f184c99d03accf5ac4a82c8a3b61fb821d81f744a24"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_unfinished_external_sqlite_sidecars_are_not_silently_adopted[-wal]",
+      "exit_code": 0,
+      "duration_seconds": 0.26990308300000265,
+      "log": "logs/79901cf5bd9400f4a1d5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/79901cf5bd9400f4a1d5/check.json",
+      "check_sha256": "c26500e4f0db3f16889feb84a842b922ba2077725245a23eb63a1b2a158ba2ab"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_unfinished_external_sqlite_sidecars_are_not_silently_adopted[-shm]",
+      "exit_code": 0,
+      "duration_seconds": 0.27412629199999117,
+      "log": "logs/91b853bf1aa94372c7f5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/91b853bf1aa94372c7f5/check.json",
+      "check_sha256": "b0f05d81888791a69b0ec8cb232eb92d36b8069469ec35f86202338c82132a26"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_oversized_database_is_rejected_without_reading_it_into_sqlite",
+      "exit_code": 0,
+      "duration_seconds": 0.26986474999999643,
+      "log": "logs/b3cb7f7b80f528034f9b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/b3cb7f7b80f528034f9b/check.json",
+      "check_sha256": "28778726fdcb5d67ee1becf0ecbe695b1e202799467f2afb1fdc7268ac62fddf"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[get-directory]",
+      "exit_code": 0,
+      "duration_seconds": 0.2766992079999966,
+      "log": "logs/cec15cdfa34379a7fa2b.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/cec15cdfa34379a7fa2b/check.json",
+      "check_sha256": "ef3fdd3cf50c5e22b89d18d7847d9a42f9bc34b21badf3e0b561ed81305dc271"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[get-symlink]",
+      "exit_code": 0,
+      "duration_seconds": 0.27687924999999325,
+      "log": "logs/dd15fc6f57eccf2c3332.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/dd15fc6f57eccf2c3332/check.json",
+      "check_sha256": "3c987b01ff0690cc555304ffcffd5df7b0487dd054a8dddb95af1fd13f2a014f"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[snapshot-directory]",
+      "exit_code": 0,
+      "duration_seconds": 0.27635262500000124,
+      "log": "logs/f43a5385cd338c746837.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/f43a5385cd338c746837/check.json",
+      "check_sha256": "089cc27b4b8e5b5deeb8c6f43b561ef24f4b913e6a742f1a30defc98127849f0"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[snapshot-symlink]",
+      "exit_code": 0,
+      "duration_seconds": 0.27584691699999553,
+      "log": "logs/c2cc713e83a74b0f6202.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/c2cc713e83a74b0f6202/check.json",
+      "check_sha256": "23eeda8ac140af39ef73b5320f06f34ad30d5d6703967b740ec28a8f6f4df975"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[create-directory]",
+      "exit_code": 0,
+      "duration_seconds": 0.2758929169999931,
+      "log": "logs/ea9b6a3da9c8e86df447.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ea9b6a3da9c8e86df447/check.json",
+      "check_sha256": "fc4bcc5a3fddeb6d27fa2e2e487e92b16616c26679521670aaa5ad3c40ce4bf7"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[create-symlink]",
+      "exit_code": 0,
+      "duration_seconds": 0.27615570799999034,
+      "log": "logs/17445b9816e325283b59.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/17445b9816e325283b59/check.json",
+      "check_sha256": "28cbf68e0e162f41a62da631f67bd7c25720abad7e3abd9bee27e42331a802da"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[replace-directory]",
+      "exit_code": 0,
+      "duration_seconds": 0.2766629999999992,
+      "log": "logs/d2b88e148bd9fb12ba01.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d2b88e148bd9fb12ba01/check.json",
+      "check_sha256": "0ac811dddd90615ac24dcd23260fc3c72135ac2027dd9a296be50eb2cda09ad7"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_path_replacement_at_storage_read_never_reads_or_changes_the_outside_database[replace-symlink]",
+      "exit_code": 0,
+      "duration_seconds": 0.27664429100001087,
+      "log": "logs/716ef370ad6c0d3e2485.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/716ef370ad6c0d3e2485/check.json",
+      "check_sha256": "db40bc996c30b77a4ba5aebb34c33448b28f79fb8c7d24568a42925acb66f183"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_failed_initialization_leaves_no_database_and_reopen_can_create",
+      "exit_code": 0,
+      "duration_seconds": 0.27320141699999567,
+      "log": "logs/ce34937ee9ae78519ce9.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/ce34937ee9ae78519ce9/check.json",
+      "check_sha256": "a64cea3f4512912e62fba614bfb30a6c0969471dca3f922e345ca49e4089ebc8"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_conflicting_topic_validation_is_atomic_across_store_instances",
+      "exit_code": 0,
+      "duration_seconds": 0.2805847499999885,
+      "log": "logs/3be3b051a014af74e733.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/3be3b051a014af74e733/check.json",
+      "check_sha256": "7b5865b940a37a078975d274e891ecb5ad2048d999a74b7576cad4fc26095c10"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_proposal_survives_reopen_and_is_scoped_to_its_project",
+      "exit_code": 0,
+      "duration_seconds": 0.2766057080000053,
+      "log": "logs/e105d2b5ca0a69cfbfac.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/e105d2b5ca0a69cfbfac/check.json",
+      "check_sha256": "e5a9176e7f7dca1578343575480f86e048015f75b539fbf8b8de9b2db3596d68"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_validated_approved_and_committed_states_are_atomically_read_back",
+      "exit_code": 0,
+      "duration_seconds": 0.283591959000006,
+      "log": "logs/4e258f21eec64eeeac03.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/4e258f21eec64eeeac03/check.json",
+      "check_sha256": "abdb43d41d8b4df4b2b323273fcfc4008af3adcf08afc7bb35354b647e6697eb"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_stale_updates_and_skipped_states_leave_the_stored_record_intact",
+      "exit_code": 0,
+      "duration_seconds": 0.28127641700000083,
+      "log": "logs/380995a9268df9639e78.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/380995a9268df9639e78/check.json",
+      "check_sha256": "ba1b7799ae607fa9d3961f2845654a2ecf980aa900dc3de77429bbd32a81a462"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_case_alias_cannot_hide_storage_inside_the_agent_workspace",
+      "exit_code": 0,
+      "duration_seconds": 0.2687772919999958,
+      "log": "logs/47835612cd0199366577.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/47835612cd0199366577/check.json",
+      "check_sha256": "9b1a13d1b303c5b1d1a38d80da105ea1549e41656131d371724f5f7296e6f2aa"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_cancelling_a_pending_write_settles_and_rolls_back_before_returning",
+      "exit_code": 0,
+      "duration_seconds": 0.2734973330000088,
+      "log": "logs/79976ffaf0243a8318c7.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/79976ffaf0243a8318c7/check.json",
+      "check_sha256": "1d4e0f235ee206a4feb75bc0b8ce956de9388398db98836f806661f95e492719"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_cancellation_after_commit_keeps_one_complete_record_and_close_waits",
+      "exit_code": 0,
+      "duration_seconds": 0.2748793749999976,
+      "log": "logs/fafd0daf1184904b0ba1.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/fafd0daf1184904b0ba1/check.json",
+      "check_sha256": "28d6bbe50e2f3dba2d8a09433b5e66878a0be38ce9677fa894af9ecaf2922f32"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[create-before_commit]",
+      "exit_code": 0,
+      "duration_seconds": 0.2722279579999878,
+      "log": "logs/a5a59245cad412b91eef.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/a5a59245cad412b91eef/check.json",
+      "check_sha256": "0545c52b3380b5db16f6cdd38615c9d16491a2dbca5d7897bc5ed55bae5a67d7"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[create-after_commit]",
+      "exit_code": 0,
+      "duration_seconds": 0.2737197090000052,
+      "log": "logs/d25d4676d1470dc2e790.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/d25d4676d1470dc2e790/check.json",
+      "check_sha256": "d1d5f1f02c52367eea42cb4e998e720f9ebf2416e1e07c4daa6fe4d374136312"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[replace-before_commit]",
+      "exit_code": 0,
+      "duration_seconds": 0.27339758300000483,
+      "log": "logs/7a4ff5fd7cda2c780fc5.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/7a4ff5fd7cda2c780fc5/check.json",
+      "check_sha256": "6074934aceee19eb58212a7d3981cc09fbbaf5b3098803af8986471f34346a44"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_transaction_fault_has_an_explicit_reopenable_outcome[replace-after_commit]",
+      "exit_code": 0,
+      "duration_seconds": 0.2749105830000076,
+      "log": "logs/9ddae024057f9ec589fc.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/9ddae024057f9ec589fc/check.json",
+      "check_sha256": "db50e5022daacde55b6495f7ca109d1d454a7bcdc56fbc407e8e304a0ce01920"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_project_quota_rejects_entry_101_without_eviction_or_cross_project_leak",
+      "exit_code": 0,
+      "duration_seconds": 0.4416585000000026,
+      "log": "logs/796665950a8800650db4.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/796665950a8800650db4/check.json",
+      "check_sha256": "310c63ff16b93a269dc51feaac261ba1f05d9f0fedab829eb3e0f3f41c286fa1"
+    },
+    {
+      "node_id": "tests/test_memory_sqlite.py::test_replacing_the_granted_directory_invalidates_the_open_store",
+      "exit_code": 0,
+      "duration_seconds": 0.26740674999999214,
+      "log": "logs/2b8ba175ba5d392b2354.log",
+      "check_path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/contracts/2b8ba175ba5d392b2354/check.json",
+      "check_sha256": "031179f59903047fad12b32a911a911f0ae74a7574e6c264c0b6255e3d10fded"
+    }
+  ],
+  "native": {
+    "native_world_2": {
+      "path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/native_world_2/check.json",
+      "sha256": "622cfdd1cde077405fea6cf43a5e2265814023924b5fa8868374861ec71c31c9",
+      "run_id": "mv2-native-world",
+      "checks": {
+        "host_db_absent_in_guest": true,
+        "host_db_unchanged": true,
+        "private_read_write_blocked": true,
+        "absolute_file_tools_denied": true,
+        "only_workspace_mount": true,
+        "cpu_limit": true,
+        "caps_dropped": true,
+        "allowed_workspace_write_and_read": true,
+        "guest_native_architecture": true,
+        "guest_memory_limit": true,
+        "guest_network_none": true,
+        "finished": true,
+        "memory_index_present": true,
+        "approved_body_read": true
+      },
+      "criterion_sha256": "b1e831f7ae86baebee5e9334ced9176001914234a8e21cbf3efbf8aa01ad956d"
+    },
+    "interrupt_timeout_0": {
+      "path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/interrupt_timeout_0/check.json",
+      "sha256": "4c70ec2970a623049b8b17e816d768ae02ee2df8a11b6590338c5e4b40839df2",
+      "run_id": "mv2-memory-timeout",
+      "checks": {
+        "real_child_started": true,
+        "entire_container_stopped": true,
+        "container_removed": true,
+        "host_database_unchanged": true,
+        "operator_guard_released": true
+      },
+      "criterion_sha256": "23624e557c3c99a81c86e1acfa5847d81d816eb55ed68c3537d41d4164cbec38"
+    },
+    "interrupt_cancel_0": {
+      "path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/interrupt_cancel_0/check.json",
+      "sha256": "fc893e3541f0270a476f3da2d86ee57e71eee333e4f9d134084abc9ba2675e40",
+      "run_id": "mv2-memory-cancel",
+      "checks": {
+        "real_child_started": true,
+        "entire_container_stopped": true,
+        "container_removed": true,
+        "host_database_unchanged": true,
+        "operator_guard_released": true
+      },
+      "criterion_sha256": "8f9ebf9821e12c3ae2e0a51ef30fc914ca7a50513a4e446891d0548366fe4d7c"
+    },
+    "native_error_recovery_0": {
+      "path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/native_error_recovery_0/check.json",
+      "sha256": "096b29d1d85604c5c8dfe69105e86879fbc5f7790cb786928c3d21189b4461bb",
+      "run_id": "mv2-native-error-recovery",
+      "checks": {
+        "actual_python_failure": true,
+        "actual_python_recovery": true,
+        "body_exposed_with_error": true,
+        "body_withdrawn_after_recovery": true,
+        "factual_tool_result_preserved": true,
+        "later_read_not_applicable": true,
+        "host_db_unchanged": true,
+        "finished": true
+      },
+      "criterion_sha256": "b756807c5a94fafaa82e7e8711cd9edd8aedd0d58d486b648ca620f48ecfa472"
+    }
+  },
+  "summary": {
+    "declared_memory_nodes": 245,
+    "passed_memory_nodes": 245,
+    "failed_memory_nodes": 0,
+    "unrun_memory_nodes": 0,
+    "matrix_rows": 20,
+    "passed_matrix_rows": 20,
+    "captured_loop_runs": 105,
+    "request_witnesses": 29,
+    "effect_witnesses": 45,
+    "native_predicates": 32,
+    "full_suite_passed": 1118,
+    "full_suite_failed": 0,
+    "real_model_calls": 0
+  },
+  "source_archive": {
+    "path": "benchmark-results/extension-v1/memory-v2/p2-acceptance/attempt_0/frozen-source.tar.gz",
+    "sha256": "08ce272445a491942cd1cbe293bc8d22b447ce60010c1fdc5643ed3e334766bf"
+  },
+  "limits": [
+    "Scripted functional verification; no real-model mechanism benefit conclusion.",
+    "Exact registered material probes and stated sandbox world only, not arbitrary semantic/encoded leak resistance or hostile same-UID writer protection.",
+    "Evidence artifacts are local ignored files; report preserves hashes but does not claim remote publication.",
+    "P3/P4/P5 remain unfinished."
+  ]
+}

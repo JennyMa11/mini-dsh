@@ -1,5 +1,7 @@
 # Project Memory：PR 4 开发记录
 
+2026-11-11 后续升级：[Memory v2 设计](memory-v2-design.md)及[P0 源码调研](research/memory-frameworks-2026-11-11.md)保留P0/P1冻结文本；P2索引/主动读取已[验收](results/memory-v2-p2-2026-11-11.md)，[使用说明](memory-v2-usage.md)为当前入口，P3–P5尚未完成。新范围见[主计划追加](extension-roadmap.md#memory-v2-范围追加2026-11-11)，不覆盖本文历史记录。
+
 PR 3 已验收并封存，见 [阶段报告](results/extension-pr3-2026-10-29.md)。本阶段依据 [主计划](extension-roadmap.md) M01–M04/E03；功能、兼容性和出关结论以 [PR 4 独立报告](results/extension-pr4-2026-10-30.md) 为准。本文记录接口、迁移限制和开发证据。原有 benchmark/memory.py 统计进程内存，与这里的项目知识无关。
 
 本文保留开发阶段的历史状态；文中的未批准、0/90 等读数描述当时版本。实际种子授权、真实队列及最终停止结论见 [M5 报告](results/extension-m5-2026-10-30.md)，不反向改写历史审阅包或 Trace。

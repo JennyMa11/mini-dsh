@@ -81,7 +81,7 @@ def validate_memory_operator_id(operator_id: str) -> None:
         raise ValueError("memory_operator_invalid")
 
 
-def _receipt(entry: MemoryEntry, *, content: bool) -> dict[str, JsonValue]:
+def memory_entry_receipt(entry: MemoryEntry, *, content: bool) -> dict[str, JsonValue]:
     result: dict[str, JsonValue] = {
         "entry_id": entry.entry_id,
         "project_id": entry.project_id,
@@ -120,7 +120,7 @@ class _MaintenanceTool:
         self.definition = spec.definition()
 
     async def execute(self, arguments: BaseModel) -> JsonValue:
-        return _receipt(await self._action(arguments), content=self._content)
+        return memory_entry_receipt(await self._action(arguments), content=self._content)
 
 
 def memory_maintenance_tools(service: MemoryService, *, operator_id: str) -> tuple[Tool, ...]:

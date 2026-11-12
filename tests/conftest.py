@@ -25,6 +25,24 @@ def isolate_global_credentials(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) 
 _EXTENSION_REPORT = pytest.StashKey[str]()
 
 
+def _copy_memory_witnesses(source: Path, destination: Path) -> dict[str, JsonValue]:
+    witnesses: dict[str, JsonValue] = {}
+    for name, limit in (
+        ("memory_effects.json", 8192),
+        ("memory_requests.json", 8 * 1024 * 1024),
+        ("memory_operator_trace.jsonl", 8 * 1024 * 1024),
+    ):
+        path = source / name
+        if not path.is_file() or path.is_symlink():
+            continue
+        data = path.read_bytes()
+        if len(data) > limit:
+            raise ValueError("Memory witness exceeds its bound")
+        (destination / name).write_bytes(data)
+        witnesses[path.stem + "_sha256"] = hashlib.sha256(data).hexdigest()
+    return witnesses
+
+
 def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption(
         "--extension-evidence",
@@ -151,4 +169,5 @@ def extension_evidence(
         "artifact_sha256": artifacts,
         "artifact_scope": "explicit fixture file allowlist; assertions remain the criterion",
     }
+    check.update(_copy_memory_witnesses(tmp_path, case))
     (case / "check.json").write_text(json.dumps(check, indent=2) + "\n")

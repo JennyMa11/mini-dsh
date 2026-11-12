@@ -1,0 +1,123 @@
+{
+  "schema_version": "1.0",
+  "phase": "P5_in_progress",
+  "phase_acceptance": false,
+  "verification_source_sha256": "81a897caf7624e2cfafe5f5c10f25e95f0aa9bbea0b28ae6b44ff5740fbb4162",
+  "execution_source_sha256": "7379361453de7a91ee768f9646b23bd7ed33e7d17b846a25d103f01336db4a8b",
+  "protocol_sha256": "ad88d0ab3f48f076ba4358945702b989ceba5916cb84a55596cce15cb6ed9c64",
+  "snapshot": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_1/snapshot",
+  "execution_snapshot": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_0/snapshot",
+  "gates": [
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "format",
+        "--check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.08394791698083282,
+      "log_sha256": "a00378bb7f80b7ecf8425e95d6c669c99560048a226f13f5f0b5346cf925cbe0"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "ruff",
+        "check",
+        "."
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.04371137509588152,
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "mypy",
+        "src",
+        "tests"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 0.3843779159942642,
+      "log_sha256": "65638be1b18ffeafcffbbb3243e3cc2c739a82ed3b00bca512594205965022a3"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "pytest"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 60.7734263750026,
+      "log_sha256": "6e8e779254257b2fc3c608e82268cd32934fb8c45a6b3e9abfc8e3abb98dd968"
+    }
+  ],
+  "pytest": {
+    "passed": 1290,
+    "failed": 0,
+    "skipped": 0
+  },
+  "mypy_files": 186,
+  "scripted_cohort": {
+    "checked_slots": 90,
+    "declared_slots": 90,
+    "independent_task_passes": 90,
+    "known_tokens": 181587,
+    "usage_basis": "scripted_prompt_estimates",
+    "real_model_calls": 0,
+    "raw_execution": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_0/offline/execution.json",
+    "raw_execution_sha256": "2bf7cace38a09ca7c4c3fe66204fa0867c18abb3c7d6c8af82dda0f23d139259",
+    "derived_report": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_1/derived/report.json",
+    "derived_report_sha256": "67ae08f4e90a407e3f0023721ba38ebe8b086f75a641f0a28b5b72862b9f8acd",
+    "benefit_evaluation": "not_assessable"
+  },
+  "mechanism_probes": {
+    "cases": 6,
+    "predicates": 53,
+    "passed": true,
+    "source_sha256": "7379361453de7a91ee768f9646b23bd7ed33e7d17b846a25d103f01336db4a8b",
+    "path": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_0/native_retry_1/native_checks.json",
+    "sha256": "feb807036ac5ae4afe393d5e47f3340474a6162953d32f751a91cbbb1e215baa"
+  },
+  "os_probes": {
+    "cases": 3,
+    "predicates": 19,
+    "passed": true,
+    "source_sha256": "81a897caf7624e2cfafe5f5c10f25e95f0aa9bbea0b28ae6b44ff5740fbb4162",
+    "path": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_1/os_checks.json",
+    "sha256": "5c5b976da2db6e6b0061b03bdb78e9a71b48a0c4adb362f1446b7a7b57c83ed4"
+  },
+  "regression_red_log": {
+    "path": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_0/exposure-coverage-red.log",
+    "sha256": "a7ecd5d6ffa9e9a485df360319a32fa735b1eec2d0ee3a64d7c8493713b85761",
+    "mutation": "restore legacy D-only exposure opportunities; new coverage assertion fails"
+  },
+  "artifact_index": {
+    "path": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_1/artifact_index.json",
+    "sha256": "4a3ac1ab3913a9fb84530e79af420b1a92bf40816af6cd2403991e9d215eb00e",
+    "file_count": 2801
+  },
+  "source_delta": {
+    "path": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_1/source_delta.json",
+    "sha256": "189bfa8156c96106f57f7f9b98ce703f3ca1729a5974b4dae8a690757566d504",
+    "scope": "P5 report opportunity normalization, regression test and current document counts only; original traces not changed or relabeled as a new run"
+  },
+  "retained_failed_probe": {
+    "path": "benchmark-results/extension-v1/memory-v2/p5-prove-it/attempt_0/native_active/probe_check.json",
+    "sha256": "f1d10cd857a1e9e75d9e1f8d9ee6b617ff18e0a1cd07e0b676e74ece4d8ac996",
+    "reason": "checker inspected all requests instead of the initial request; active read legitimately publishes approved body later; corrected criteria reran all six probes in native_retry_1"
+  },
+  "unverified": [
+    "P5 complete P501-P508 coverage signoff and preflight integration",
+    "real provider consolidation quality and real paired task results",
+    "semantic/encoded secret leakage beyond exact active-credential scans"
+  ],
+  "external_inputs": {
+    "deepseek_credentials_available": false,
+    "new_exact_seed_approval_obtained": false
+  }
+}

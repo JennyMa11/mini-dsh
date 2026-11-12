@@ -9,7 +9,16 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from minidsh.domain import JsonValue, Message, ModelRequest, Role, ToolDefinition, ToolObservation
+from minidsh.domain import (
+    JsonValue,
+    Message,
+    ModelRequest,
+    Role,
+    ToolCall,
+    ToolDefinition,
+    ToolObservation,
+    redact_text,
+)
 from minidsh.domain.extensions import HookView
 from minidsh.domain.memory import (
     MAX_MEMORY_BYTES,
@@ -17,6 +26,7 @@ from minidsh.domain.memory import (
     MAX_MEMORY_PATH_CHARS,
     MAX_MEMORY_PATHS,
     MAX_PROJECT_ENTRIES,
+    MemoryConfig,
     MemoryEntry,
     MemoryKind,
     MemoryOmission,
@@ -26,12 +36,23 @@ from minidsh.domain.memory import (
     select_memory,
 )
 from minidsh.domain.memory_content import MemoryContentPolicy
+from minidsh.domain.memory_history import MemoryHistoryPage, MemoryMigration
+from minidsh.domain.memory_notes import (
+    MemoryNote,
+    MemoryNoteSource,
+    parse_memory_note,
+    permits_pending_supersession,
+    validate_note_evidence,
+)
+from minidsh.ports import EventSink
 from minidsh.ports.memory import (
     MemoryEvidenceError,
     MemoryEvidenceSource,
+    MemoryHistoryStore,
     MemoryStore,
     MemoryStoreError,
 )
+from minidsh.runtime.memory_reading import ProgressiveMemoryReader
 from minidsh.tools.runtime import ToolError, schema_for
 
 
@@ -51,6 +72,8 @@ class MemoryService:
         evidence: MemoryEvidenceSource | None = None,
         forbidden_content_sha256: tuple[str, ...] = (),
         detailed_tool_feedback: bool = True,
+        config: MemoryConfig | None = None,
+        events: EventSink | None = None,
     ) -> None:
         self._store = store
         self._project_id = project_id
@@ -63,9 +86,30 @@ class MemoryService:
         self._query: tuple[tuple[str, ...], str | None] | None = None
         self._selection: MemorySelection | None = None
         self._base_policy = MemoryContentPolicy(forbidden_content_sha256)
+        self._forbidden_content_sha256 = tuple(forbidden_content_sha256)
         self._run_policy: MemoryContentPolicy | None = None
         self._entry_policies: dict[str, MemoryContentPolicy] = {}
         self._detailed_feedback = detailed_tool_feedback
+        self.reader: ProgressiveMemoryReader | None = None
+        if config is not None and config.retrieval_mode == "progressive_v2":
+            if config.project_id != project_id or config.applicable_version != applicable_version:
+                raise MemoryValidationError("memory_config_invalid")
+            self.reader = ProgressiveMemoryReader(
+                store,
+                project_id=project_id,
+                applicable_version=applicable_version,
+                validate_source=self.check_source,
+                check_content=self.check_content,
+                index_token_limit=config.index_token_limit,
+                search_token_limit=config.search_token_limit,
+                read_token_limit=config.read_token_limit,
+                events=events,
+                forbidden_content_sha256=forbidden_content_sha256,
+            )
+
+    @property
+    def forbidden_content_sha256(self) -> tuple[str, ...]:
+        return self._forbidden_content_sha256
 
     def begin_run(self, run_id: str, *, task: str | None = None) -> None:
         if self._active_run is not None:
@@ -75,6 +119,8 @@ class MemoryService:
         policy = self._base_policy.copy()
         if task is not None:
             policy.observe((Message(Role.USER, task),))
+        if self.reader is not None:
+            self.reader.begin_run(run_id)
         self._active_run = run_id
         self._run_token = object()
         self._run_policy = policy
@@ -82,6 +128,8 @@ class MemoryService:
     def end_run(self, run_id: str) -> None:
         if self._active_run != run_id:
             raise ToolError("memory_run_mismatch", "memory_run_mismatch")
+        if self.reader is not None:
+            self.reader.end_run(run_id)
         self._active_run = None
         self._run_token = None
         self._snapshot = None
@@ -95,6 +143,8 @@ class MemoryService:
         self._run_policy.observe(messages)
 
     async def before_model(self, request: ModelRequest, view: HookView) -> ModelRequest:
+        if self.reader is not None:
+            request = self.reader.sanitize_request(request)
         self.observe_context(view.run_id, (*view.messages, *request.messages))
         messages: list[Message] = []
         for message in request.messages:
@@ -116,6 +166,21 @@ class MemoryService:
         # This is a derived request view. The factual history and call identities
         # remain intact, including the tool response paired with a rejected call.
         return replace(request, messages=tuple(messages))
+
+    async def before_tool(self, call: ToolCall, view: HookView) -> ToolCall:
+        if self.reader is not None and call.name == "search_memory":
+            if self._active_run != view.run_id:
+                raise ToolError("memory_run_mismatch", "memory_run_mismatch")
+            values = [
+                value
+                for key in ("query", "error_type")
+                if isinstance((value := call.arguments.get(key)), str)
+            ]
+            paths = call.arguments.get("paths")
+            if isinstance(paths, list):
+                values.extend(value for value in paths[:MAX_MEMORY_PATHS] if isinstance(value, str))
+            self.reader.validate_query_values(tuple(values))
+        return call
 
     def _model_value(self, value: JsonValue) -> JsonValue:
         if isinstance(value, dict):
@@ -141,6 +206,13 @@ class MemoryService:
         return value
 
     async def after_tool(self, observation: ToolObservation, view: HookView) -> None:
+        if self.reader is not None:
+            if self._active_run != view.run_id:
+                raise ToolError("memory_run_mismatch", "memory_run_mismatch")
+            self.reader.observe(observation)
+            await self.reader.publish_observation(
+                observation, run_id=view.run_id, step_id=view.step_id
+            )
         # Observe before the next call in the same response, without including
         # model-authored arguments or variable wall-clock telemetry as raw output.
         payload: dict[str, JsonValue] = {
@@ -179,6 +251,83 @@ class MemoryService:
         policy = self._entry_policies.get(entry.entry_id)
         if policy is not None:
             policy.check(body)
+        note = parse_memory_note(body)
+        if note is not None:
+            self.check_note_content(note)
+            if policy is not None:
+                for value in (note.trigger, note.rule, note.verification, *note.exceptions):
+                    policy.check(value)
+
+    def check_note_content(self, note: MemoryNote) -> None:
+        """Pure boundary policy: safe to invoke during schema validation, before private I/O."""
+        values = [note.to_content(), note.trigger, note.rule, note.verification, *note.exceptions]
+        for source in note.sources:
+            values.extend(
+                (
+                    source.entry_id,
+                    source.source_run_id,
+                    source.proposal_sha256,
+                    source.evidence_sha256,
+                )
+            )
+        for value in values:
+            self._base_policy.check(value)
+
+    def check_content(self, entry: MemoryEntry) -> None:
+        """Apply the same content policy to all derived Memory readers."""
+        self._check_content(entry)
+        for value in (entry.topic, *entry.paths, entry.error_type or "", entry.source_run_id):
+            self._base_policy.check(value)
+
+    def check_consolidation_material(self, value: str) -> None:
+        """Pure registered-material check before operator input becomes a tool fact."""
+        self._base_policy.check(value)
+        if redact_text(value) != value:
+            raise MemoryValidationError("memory_sensitive_content")
+
+    async def consolidation_sources(
+        self, run_id: str, sources: tuple[MemoryNoteSource, ...]
+    ) -> tuple[MemoryEntry, ...]:
+        """Exact current, authorized source snapshots for one exclusive maintenance run."""
+        if self._active_run != run_id:
+            raise ToolError("memory_run_mismatch", "memory_run_mismatch")
+        await self._history_store()
+        entries = []
+        for source in sources:
+            entry = await self._entry(source.entry_id, source.revision)
+            if (
+                entry.status is not MemoryStatus.COMMITTED
+                or MemoryNoteSource.from_entry(entry) != source
+            ):
+                raise ToolError("memory_note_source_unavailable", "memory_note_source_unavailable")
+            self.check_content(entry)
+            await self._fresh_source(entry)
+            entries.append(entry)
+        return tuple(entries)
+
+    async def consolidation_candidates(self, run_id: str) -> tuple[MemoryEntry, ...]:
+        """Read back durable candidates within the same authorized run, without retrying a write."""
+        if self._active_run != run_id:
+            raise ToolError("memory_run_mismatch", "memory_run_mismatch")
+        return await self._consolidation_entries(run_id)
+
+    async def _consolidation_entries(self, run_id: str) -> tuple[MemoryEntry, ...]:
+        entries = tuple(
+            entry
+            for entry in await self._store.snapshot(self._project_id)
+            if entry.source_run_id == run_id and entry.applicable_version == self._version
+        )
+        for entry in entries:
+            self.check_content(entry)
+        return entries
+
+    async def review_consolidation(self, run_id: str) -> tuple[MemoryEntry, ...]:
+        async with self._outside_run():
+            return await self._consolidation_entries(run_id)
+
+    async def check_source(self, entry: MemoryEntry) -> None:
+        """Validate a hash-bound source without exposing its private material."""
+        await self._fresh_source(entry)
 
     def selection_for(
         self, run_id: str, *, paths: tuple[str, ...] = (), error_type: str | None = None
@@ -257,6 +406,11 @@ class MemoryService:
     async def revise(self, entry_id: str, *, expected_revision: int, content: str) -> MemoryEntry:
         async with self._outside_run():
             entry = await self._entry(entry_id, expected_revision)
+            if (
+                parse_memory_note(content) is not None
+                or parse_memory_note(entry.content) is not None
+            ):
+                raise ToolError("memory_note_tool_required", "memory_note_tool_required")
             self._check_content(entry, content=content)
             return await self._store.replace(
                 entry, entry.revise(content=content, expected_revision=expected_revision)
@@ -279,7 +433,8 @@ class MemoryService:
                 raise ToolError("memory_evidence_unavailable", "memory_evidence_unavailable")
             self._check_content(entry)
             evidence = await self._evidence.resolve(evidence_id)
-            validated = entry.validate(evidence)
+            await self._check_note_sources(entry)
+            validated = validate_note_evidence(entry, evidence)
             await self._no_conflict(validated)
             return await self._store.replace(entry, validated)
 
@@ -301,6 +456,7 @@ class MemoryService:
                 approved_at=approved_at,
             )
             await self._fresh_source(entry)
+            await self._check_note_sources(entry)
             await self._no_conflict(approved)
             return await self._store.replace(entry, approved)
 
@@ -315,7 +471,22 @@ class MemoryService:
             if committed == entry:
                 return entry
             await self._fresh_source(entry)
-            await self._no_conflict(committed)
+            await self._check_note_sources(entry)
+            await self._no_conflict(entry)
+            note = parse_memory_note(entry.content)
+            if note is not None and note.supersedes:
+                history = await self._history_store()
+                changes = [(entry, committed)]
+                for source in note.supersedes:
+                    old = await self._entry(source.entry_id, source.revision)
+                    if (
+                        old.status is not MemoryStatus.COMMITTED
+                        or MemoryNoteSource.from_entry(old) != source
+                    ):
+                        raise ToolError("memory_reference_stale", "memory_reference_stale")
+                    changes.append((old, old.supersede(expected_revision=source.revision)))
+                await history.replace_many(tuple(changes))
+                return committed
             return await self._store.replace(entry, committed)
 
     async def _no_conflict(self, entry: MemoryEntry) -> None:
@@ -327,6 +498,7 @@ class MemoryService:
             and other.status
             in {MemoryStatus.VALIDATED, MemoryStatus.APPROVED, MemoryStatus.COMMITTED}
             and other.content_sha256 != entry.content_sha256
+            and not permits_pending_supersession(entry, other)
             for other in others
         ):
             raise ToolError("memory_topic_conflict", "memory_topic_conflict")
@@ -345,7 +517,7 @@ class MemoryService:
             approved_revision=None,
             approval_sha256=None,
         )
-        if proposed.validate(evidence).proposal_sha256 != entry.proposal_sha256:
+        if validate_note_evidence(proposed, evidence).proposal_sha256 != entry.proposal_sha256:
             raise ToolError("memory_evidence_changed", "memory_evidence_changed")
 
     async def propose(  # noqa: PLR0913 - explicit summary fields, scope is not caller input
@@ -372,7 +544,9 @@ class MemoryService:
                 paths=paths,
                 error_type=error_type,
             )
-            self._base_policy.check(content)
+            if parse_memory_note(content) is not None:
+                raise ToolError("memory_note_tool_required", "memory_note_tool_required")
+            self.check_content(entry)
             if self._run_policy is None:
                 raise ToolError("memory_run_mismatch", "memory_run_mismatch")
             self._run_policy.check(content)
@@ -381,6 +555,144 @@ class MemoryService:
             self._entry_policies[entry.entry_id] = self._run_policy.copy()
             return await self._store.create(entry)
         except (MemoryValidationError, MemoryStoreError) as exc:
+            raise ToolError(exc.code, exc.code) from None
+
+    async def _history_store(self, *, require_enabled: bool = True) -> MemoryHistoryStore:
+        if not isinstance(self._store, MemoryHistoryStore):
+            raise ToolError("memory_history_unsupported", "memory_history_unsupported")
+        if require_enabled and not await self._store.history_enabled():
+            raise ToolError("memory_history_required", "memory_history_required")
+        return self._store
+
+    async def migrate_history(self) -> MemoryMigration:
+        async with self._outside_run():
+            return await (await self._history_store(require_enabled=False)).migrate_history()
+
+    async def review_history(
+        self, entry_id: str, *, after_sequence: int = 0, limit: int = 20
+    ) -> MemoryHistoryPage:
+        async with self._outside_run():
+            await self._entry(entry_id)
+            history = await self._history_store()
+            page = await history.history(
+                self._project_id, entry_id, after_sequence=after_sequence, limit=limit
+            )
+            for record in page.records:
+                self.check_content(record.after)
+                if record.before is not None:
+                    self.check_content(record.before)
+            return page
+
+    async def _check_note_sources(self, entry: MemoryEntry) -> None:
+        note = parse_memory_note(entry.content)
+        if note is None:
+            return
+        self.check_note_content(note)
+        history = await self._history_store()
+        for source in note.sources:
+            if source in note.supersedes:
+                old = await self._store.get(self._project_id, source.entry_id)
+                if source.entry_id == entry.entry_id:
+                    raise ToolError("memory_replacement_invalid", "memory_replacement_invalid")
+            else:
+                old = await history.revision(
+                    self._project_id, source.entry_id, source.revision, source.proposal_sha256
+                )
+            if (
+                old is None
+                or old.status is not MemoryStatus.COMMITTED
+                or old.applicable_version != self._version
+                or MemoryNoteSource.from_entry(old) != source
+            ):
+                raise ToolError("memory_note_source_unavailable", "memory_note_source_unavailable")
+            await self._fresh_source(old)
+
+    async def merge_note(  # noqa: PLR0913 - trusted operator supplies explicit draft identity and scope
+        self,
+        *,
+        entry_id: str,
+        kind: MemoryKind,
+        topic: str,
+        source_run_id: str,
+        note: MemoryNote,
+        paths: tuple[str, ...] = (),
+        error_type: str | None = None,
+    ) -> MemoryEntry:
+        async with self._outside_run():
+            await self._history_store()
+            entry = MemoryEntry.propose(
+                entry_id,
+                self._project_id,
+                kind,
+                topic=topic,
+                content=note.to_content(),
+                source_run_id=source_run_id,
+                applicable_version=self._version,
+                paths=paths,
+                error_type=error_type,
+            )
+            self.check_content(entry)
+            await self._check_note_sources(entry)
+            return await self._store.create(entry)
+
+    async def revise_note(
+        self, entry_id: str, *, expected_revision: int, source_run_id: str, note: MemoryNote
+    ) -> MemoryEntry:
+        async with self._outside_run():
+            await self._history_store()
+            old = await self._entry(entry_id, expected_revision)
+            revised = old.revise(
+                content=note.to_content(),
+                expected_revision=expected_revision,
+                source_run_id=source_run_id,
+            )
+            self.check_content(revised)
+            await self._check_note_sources(revised)
+            return await self._store.replace(old, revised)
+
+    async def propose_note(  # noqa: PLR0913 - scope and actor identity are trusted, content is typed data
+        self,
+        run_id: str,
+        *,
+        kind: MemoryKind,
+        topic: str,
+        note: MemoryNote,
+        paths: tuple[str, ...] = (),
+        error_type: str | None = None,
+    ) -> MemoryEntry:
+        if self._active_run != run_id or self._run_policy is None:
+            raise ToolError("memory_run_mismatch", "memory_run_mismatch")
+        try:
+            await self._history_store()
+            entry = MemoryEntry.propose(
+                "memory_" + uuid.uuid4().hex,
+                self._project_id,
+                kind,
+                topic=topic,
+                content=note.to_content(),
+                source_run_id=run_id,
+                applicable_version=self._version,
+                paths=paths,
+                error_type=error_type,
+            )
+            self.check_content(entry)
+            for value in (
+                note.to_content(),
+                note.trigger,
+                note.rule,
+                note.verification,
+                *note.exceptions,
+                entry.topic,
+                *entry.paths,
+                entry.error_type or "",
+            ):
+                self._run_policy.check(value)
+            await self._check_note_sources(entry)
+            if len(self._entry_policies) >= MAX_PROJECT_ENTRIES:
+                raise ToolError("memory_source_guard_limit", "memory_source_guard_limit")
+            self._entry_policies[entry.entry_id] = self._run_policy.copy()
+            return await self._store.create(entry)
+        except (MemoryValidationError, MemoryStoreError, MemoryEvidenceError) as exc:
             raise ToolError(exc.code, exc.code) from None
 
 

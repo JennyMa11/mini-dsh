@@ -21,7 +21,7 @@ from minidsh.domain.extensions import ExtensionBudgetExhaustedError
 from minidsh.domain.harness import PreparedContext
 from minidsh.domain.memory import MemorySelection
 from minidsh.ports import ContextManager, ToolExecutor
-from minidsh.ports.memory import MemoryView
+from minidsh.ports.memory import MemoryView, ProgressiveMemoryView
 from minidsh.ports.protocols import AdjustableContextBudget, PreparedContextManager
 from minidsh.ports.skills import SkillView
 
@@ -39,7 +39,7 @@ def _hash(message: Message) -> str:
 class ContextAssembly:
     """One composition seam; strategies still own history selection and compaction."""
 
-    def __init__(
+    def __init__(  # noqa: PLR0913 - explicit optional context capabilities
         self,
         base: ContextManager,
         *,
@@ -47,12 +47,23 @@ class ContextAssembly:
         tools: ToolExecutor | None = None,
         count_tokens: Callable[[tuple[Message, ...]], int] = estimate_tokens,
         memory: MemoryView | None = None,
+        progressive_memory: ProgressiveMemoryView | None = None,
     ) -> None:
         self.base = base
         self._skills = skills
         self._tools = tools
         self._count = count_tokens
         self._memory = memory
+        self._progressive_memory = progressive_memory
+
+    def _memory_guidance(
+        self, run_id: str | None, memory: MemorySelection | None
+    ) -> tuple[Message, ...]:
+        if self._progressive_memory is not None:
+            if run_id is None:
+                raise ValueError("memory_requires_run_preparation")
+            return self._progressive_memory.messages_for(run_id)
+        return self._memory_messages(memory)
 
     def _guidance(self, run_id: str) -> tuple[Message, ...]:
         if self._skills is None:
@@ -166,12 +177,14 @@ class ContextAssembly:
         *,
         memory: MemorySelection | None = None,
     ) -> ContextView:
-        memory_messages = self._memory_messages(memory)
+        memory_messages = self._memory_guidance(run_id, memory)
         messages = self._ordered(view.messages, task, guidance, memory_messages)
         memory_sources = {
             id(message): entry
             for message, entry in zip(
-                memory_messages, memory.entries if memory is not None else (), strict=True
+                memory_messages if memory is not None else (),
+                memory.entries if memory is not None else (),
+                strict=True,
             )
         }
         sources: list[JsonValue] = []
@@ -183,6 +196,7 @@ class ContextAssembly:
                 "skill_body",
                 "repo_retrieval",
                 "project_memory",
+                "project_memory_index",
             }:
                 trust = "project_data"
             source_id = (
@@ -257,7 +271,9 @@ class ContextAssembly:
             )
         metadata: dict[str, JsonValue] = {
             **view.metadata,
-            "assembly_version": "1.1" if self._memory is not None else "1.0",
+            "assembly_version": "2.0"
+            if self._progressive_memory is not None
+            else ("1.1" if self._memory is not None else "1.0"),
             "sources": sources,
         }
         if memory is not None:
@@ -276,7 +292,7 @@ class ContextAssembly:
     def build(self, history: tuple[Message, ...], task: str) -> ContextView:
         if self._skills is not None:
             raise ValueError("skills_require_run_preparation")
-        if self._memory is not None:
+        if self._memory is not None or self._progressive_memory is not None:
             raise ValueError("memory_requires_run_preparation")
         return self._view(self.base.build(history, task), history, task, ())
 
@@ -331,6 +347,16 @@ class ContextAssembly:
             if self._skills.catalog_for(run_id) is None:
                 # Do not include backend error text or partial source content in errors.
                 raise ValueError("skill_discovery_failed")
+        if self._progressive_memory is not None:
+            self._progressive_memory.observe_history(history)
+            duration += await self._prepare_tool(
+                ToolCall(f"memory-index-{step_id}", "prepare_memory_index", {}),
+                run_id,
+                step_id,
+                max_calls - calls,
+                account,
+            )
+            calls += 1
         paths, error_type = memory_query(history) if self._memory is not None else ((), None)
         memory = (
             self._memory.selection_for(run_id, paths=paths, error_type=error_type)
@@ -355,7 +381,7 @@ class ContextAssembly:
             if memory is None:
                 raise ValueError("memory_retrieval_failed")
         guidance = self._guidance(run_id)
-        memory_messages = self._memory_messages(memory)
+        memory_messages = self._memory_guidance(run_id, memory)
         base = self.base
         if (guidance or memory_messages) and isinstance(base, AdjustableContextBudget):
             base = base.with_counter(

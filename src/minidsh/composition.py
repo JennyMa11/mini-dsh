@@ -60,6 +60,9 @@ from minidsh.runtime.catalog import PluginSpec
 from minidsh.runtime.hooks import HookRegistry
 from minidsh.runtime.memory import MemoryService, ProposeMemoryTool, RetrieveMemoryTool
 from minidsh.runtime.memory_maintenance import memory_maintenance_tools
+from minidsh.runtime.memory_model import MemoryGuardedModel
+from minidsh.runtime.memory_note_tools import ProposeMemoryNoteTool, memory_note_maintenance_tools
+from minidsh.runtime.memory_reading import memory_reading_tools
 from minidsh.runtime.memory_runner import MemoryAgentRunner
 from minidsh.runtime.skills import DiscoverSkillsTool, LoadSkillTool, SkillService
 from minidsh.runtime.verification import VerificationExtension
@@ -281,6 +284,11 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
     memory: MemoryService | None = None
     if options.memory is not None:
         configured_memory = options.memory
+        if (
+            configured_memory.retrieval_mode == "progressive_v2"
+            and configured_memory.forbidden_content_sha256
+        ):
+            model = MemoryGuardedModel(model, configured_memory.forbidden_content_sha256)
         memory_store = adapters.memory_store
         if memory_store is None:
             memory_store = SQLiteMemoryStore(
@@ -302,8 +310,16 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
             evidence=evidence,
             forbidden_content_sha256=configured_memory.forbidden_content_sha256,
             detailed_tool_feedback=options.detailed_tool_feedback,
+            config=configured_memory,
+            events=bus,
         )
         extra_tools = (*extra_tools, ProposeMemoryTool(memory))
+        if memory.reader is not None:
+            extra_tools = (
+                *extra_tools,
+                *memory_reading_tools(memory.reader)[1:],
+                ProposeMemoryNoteTool(memory),
+            )
     if options.verification is not None:
         configured = options.verification
         if options.test_command is not None and options.test_command != configured.argv:
@@ -372,7 +388,10 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
     if skills is not None:
         context_registry.register(DiscoverSkillsTool(skills))
     if memory is not None:
-        context_registry.register(RetrieveMemoryTool(memory))
+        if memory.reader is not None:
+            context_registry.register(memory_reading_tools(memory.reader)[0])
+        else:
+            context_registry.register(RetrieveMemoryTool(memory))
     context_tools = ToolRuntime(
         context_registry,
         authorizer,
@@ -402,6 +421,8 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
     elif (skills or memory) and isinstance(context, RetrievalContext):
         raise ValueError("Skills/Memory require controlled snapshot retrieval")
     counter = getattr(model, "count_tokens", None)
+    if memory is not None and memory.reader is not None and callable(counter):
+        memory.reader.count_tokens = lambda messages: counter(messages, ())
     context = ContextAssembly(
         context,
         skills=skills,
@@ -409,7 +430,8 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
         count_tokens=(lambda messages: counter(messages, tool_runtime.definitions()))
         if callable(counter)
         else estimate_tokens,
-        memory=memory,
+        memory=memory if memory is not None and memory.reader is None else None,
+        progressive_memory=memory.reader if memory is not None else None,
     )
     sessions = (
         adapters.sessions if adapters.sessions is not None else JsonSessionStore(sandbox.root)
@@ -418,7 +440,11 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
     factory = adapters.agent_factory if adapters.agent_factory is not None else AgentLoopFactory()
     if memory is not None and hooks is not None:
         release_memory = hooks.register_v2(
-            "project_memory", "1.0", before_model=memory.before_model, after_tool=memory.after_tool
+            "project_memory",
+            "2.0" if memory.reader is not None else "1.0",
+            before_model=memory.before_model,
+            after_tool=memory.after_tool,
+            before_tool=memory.before_tool if memory.reader is not None else None,
         )
     if skills is not None and hooks is not None:
 
@@ -489,7 +515,12 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
         maintenance_registry = ToolRegistry()
         for tool in memory_maintenance_tools(memory, operator_id=operator_id):
             maintenance_registry.register(tool)
-        policy = PermissionPolicy(frozenset({"memory.maintain", "memory.evidence.read"}))
+        maintenance_permissions = {"memory.maintain", "memory.evidence.read"}
+        if memory.reader is not None:
+            for tool in memory_note_maintenance_tools(memory, operator_id=operator_id):
+                maintenance_registry.register(tool)
+            maintenance_permissions.add("memory.migrate")
+        policy = PermissionPolicy(frozenset(maintenance_permissions), options.denied_tools)
         maintenance_authorizer: PermissionAuthorizer = policy
         if adapters.permissions is not None:
             maintenance_authorizer = _RestrictedPermissions(policy, adapters.permissions)
