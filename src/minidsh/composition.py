@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import asyncio
 import math
-from collections.abc import AsyncIterator, Awaitable, Callable, Sequence
+from collections.abc import AsyncIterator, Awaitable, Callable, Mapping, Sequence
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field, replace
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from minidsh.adapters import JsonSessionStore
 from minidsh.adapters.conversations import JsonConversationRepository
@@ -27,8 +29,16 @@ from minidsh.context import (
     SummaryCompactionContext,
 )
 from minidsh.context.snapshots import SnapshotRetriever
-from minidsh.domain import AgentBudget, ModelPricing, RunResult, ToolDefinition, estimate_tokens
+from minidsh.domain import (
+    AgentBudget,
+    ModelPricing,
+    PhoenixConfig,
+    RunResult,
+    ToolDefinition,
+    estimate_tokens,
+)
 from minidsh.domain.memory import MemoryConfig
+from minidsh.domain.observability import AttributeValue
 from minidsh.domain.verification import VerificationConfig
 from minidsh.infrastructure import (
     CommandPolicy,
@@ -85,6 +95,9 @@ from minidsh.tools import (
 )
 from minidsh.tools import ToolBundle as ToolBundle  # noqa: PLC0414 - public compatibility export
 
+if TYPE_CHECKING:
+    from minidsh.adapters.phoenix import PhoenixTraceSubscriber
+
 MAX_SUBAGENTS = 32
 MAX_SUBAGENT_PARALLEL = 8
 
@@ -135,6 +148,7 @@ class RuntimeOptions:
     skill_roots: tuple[str, ...] = ()
     verification: VerificationConfig | None = None
     memory: MemoryConfig | None = None
+    phoenix: PhoenixConfig | None = None
 
     def __post_init__(self) -> None:
         limits = (
@@ -469,19 +483,31 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
         JsonConversationRepository(workspace), sessions, conversation_factory
     )
 
+    phoenix_subscriber: PhoenixTraceSubscriber | None = None
+    release_phoenix: Callable[[], None] | None = None
+    if options.phoenix is not None:
+        phoenix_subscriber = _phoenix_subscriber(options.phoenix, _harness_attributes(options))
+        release_phoenix = bus.subscribe("*", phoenix_subscriber)
+
     async def close() -> None:
-        if skills is not None:
-            skills.clear()
-        if release_skills is not None:
-            release_skills()
-        if verification is not None:
-            verification.clear()
-        if release_verification is not None:
-            release_verification()
-        if release_memory is not None:
-            release_memory()
-        if memory_store is not None:
-            await memory_store.close()
+        try:
+            if skills is not None:
+                skills.clear()
+            if release_skills is not None:
+                release_skills()
+            if verification is not None:
+                verification.clear()
+            if release_verification is not None:
+                release_verification()
+            if release_memory is not None:
+                release_memory()
+            if memory_store is not None:
+                await memory_store.close()
+        finally:
+            if release_phoenix is not None:
+                release_phoenix()
+            if phoenix_subscriber is not None:
+                await asyncio.to_thread(phoenix_subscriber.shutdown)
 
     def maintenance(operator_id: str) -> ToolExecutor:
         if memory is None:
@@ -515,6 +541,43 @@ def build_local_runtime(  # noqa: PLR0912, PLR0913, PLR0915 - explicit compositi
         ),
         memory_maintenance=maintenance if memory is not None else None,
     )
+
+
+def _phoenix_subscriber(
+    config: PhoenixConfig, run_attributes: Mapping[str, AttributeValue]
+) -> PhoenixTraceSubscriber:
+    try:
+        # Imported lazily because OTel/Phoenix is an optional extra.
+        from minidsh.adapters.phoenix import PhoenixTraceSubscriber  # noqa: PLC0415
+    except ImportError as exc:
+        raise ValueError(
+            "Phoenix tracing requires optional dependencies; "
+            "install them with `uv sync --extra phoenix`"
+        ) from exc
+    return PhoenixTraceSubscriber(config, run_attributes=run_attributes)
+
+
+def _harness_attributes(options: RuntimeOptions) -> dict[str, AttributeValue]:
+    """Record the knobs being compared so Phoenix can group like-for-like runs."""
+    enabled_tools = (
+        ",".join(sorted(options.enabled_tools)) if options.enabled_tools is not None else "all"
+    )
+    return {
+        "context_strategy": options.context_strategy,
+        "context_input_budget": options.context_input_budget,
+        "tool_output_limit": options.tool_output_limit,
+        "artifact_offload": options.artifact_offload,
+        "tool_max_retries": options.tool_max_retries,
+        "normalize_tool_results": options.normalize_tool_results,
+        "reflection_enabled": options.reflection_enabled,
+        "local_first_enabled": options.local_first_enabled,
+        "sandbox_backend": options.sandbox_backend,
+        "allow_write": options.allow_write,
+        "allow_shell": options.allow_shell,
+        "multi_agent_enabled": options.multi_agent_enabled,
+        "streaming_enabled": options.streaming_enabled,
+        "enabled_tools": enabled_tools,
+    }
 
 
 def _check_memory_isolation(

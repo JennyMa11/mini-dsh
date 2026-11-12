@@ -25,6 +25,7 @@ from minidsh.domain.models import (
     ToolStatus,
     estimate_tokens,
 )
+from minidsh.domain.observability import PhoenixConfig
 from minidsh.domain.redaction import REDACTED, SECRET_KEYS, redact_text, redact_value
 
 __all__ = [
@@ -43,6 +44,7 @@ __all__ = [
     "ModelPricing",
     "ModelRequest",
     "ModelResponse",
+    "PhoenixConfig",
     "Role",
     "RunResult",
     "RunStatus",

@@ -13,7 +13,7 @@ from minidsh.config import (
     load_config_file,
     resolve_config,
 )
-from minidsh.domain import TokenUsage
+from minidsh.domain import PhoenixConfig, TokenUsage
 
 
 def _config(tmp_path: Path, body: str) -> Path:
@@ -32,6 +32,50 @@ def test_defaults_apply_when_no_layer_is_present() -> None:
     assert resolved.budget.max_steps == 50
     assert resolved.options.network.enabled is False
     assert resolved.sources == {}
+
+
+def test_phoenix_is_off_by_default_and_resolves_from_the_config_file(tmp_path: Path) -> None:
+    assert resolve_config().options.phoenix is None
+    path = _config(
+        tmp_path,
+        "[minidsh]\n"
+        "phoenix_enabled = true\n"
+        'phoenix_endpoint = "http://127.0.0.1:6006"\n'
+        'phoenix_project = "harness-a"\n'
+        "phoenix_capture_content = false\n",
+    )
+
+    resolved = resolve_config(config_path=path)
+
+    assert resolved.options.phoenix == PhoenixConfig(
+        endpoint="http://127.0.0.1:6006",
+        project_name="harness-a",
+        capture_content=False,
+    )
+    assert resolved.sources["phoenix_enabled"] == "config"
+
+
+def test_phoenix_settings_follow_cli_environment_file_precedence(tmp_path: Path) -> None:
+    path = _config(tmp_path, '[minidsh]\nphoenix_endpoint = "http://file:6006"\n')
+
+    resolved = resolve_config(
+        config_path=path,
+        environ={
+            "MINIDSH_PHOENIX_ENABLED": "true",
+            "MINIDSH_PHOENIX_ENDPOINT": "http://env:6006",
+        },
+        cli={"phoenix_endpoint": "http://cli:6006"},
+    )
+
+    assert resolved.options.phoenix is not None
+    assert resolved.options.phoenix.endpoint == "http://cli:6006"
+    assert resolved.sources["phoenix_endpoint"] == "cli"
+    assert resolved.sources["phoenix_enabled"] == "env"
+
+
+def test_invalid_phoenix_endpoint_is_reported_as_a_config_error() -> None:
+    with pytest.raises(ConfigError, match="phoenix endpoint"):
+        resolve_config(cli={"phoenix_enabled": True, "phoenix_endpoint": "ftp://localhost:6006"})
 
 
 def test_config_file_layer_is_read_from_the_minidsh_table(tmp_path: Path) -> None:

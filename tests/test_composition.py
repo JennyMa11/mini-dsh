@@ -17,7 +17,15 @@ from minidsh.composition import (
     plugin_runtime,
 )
 from minidsh.context import FullHistoryContext
-from minidsh.domain import ModelResponse, RunResult, RunStatus, ToolCall, ToolStatus
+from minidsh.domain import (
+    Event,
+    ModelResponse,
+    PhoenixConfig,
+    RunResult,
+    RunStatus,
+    ToolCall,
+    ToolStatus,
+)
 from minidsh.infrastructure import ProcessResult, WorkspaceSandbox, default_opener
 from minidsh.ports import AgentDependencies, AgentRunner
 from minidsh.runtime import EventBus, PluginManifest, ServiceError, ServiceRegistry
@@ -59,6 +67,51 @@ async def test_local_runtime_registers_open_file_with_shell(tmp_path: Path) -> N
         assert runtime.close is not None
         await runtime.close()
     assert "open_file" in names
+
+
+@pytest.mark.asyncio
+async def test_runtime_subscribes_phoenix_to_every_run_and_shuts_it_down(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    captured: list[_FakePhoenix] = []
+
+    def factory(config: PhoenixConfig, run_attributes: dict[str, object]) -> _FakePhoenix:
+        subscriber = _FakePhoenix(config, run_attributes)
+        captured.append(subscriber)
+        return subscriber
+
+    monkeypatch.setattr("minidsh.composition._phoenix_subscriber", factory)
+    runtime = build_local_runtime(
+        workspace=tmp_path,
+        model=ScriptedModel([ModelResponse("done")]),
+        options=RuntimeOptions(phoenix=PhoenixConfig(project_name="harness-a")),
+    )
+
+    result = await runtime.agent.run("task")
+
+    assert result.answer == "done"
+    assert len(captured) == 1
+    assert {"run_started", "run_finished"} <= set(captured[0].events)
+    assert captured[0].config.project_name == "harness-a"
+    assert captured[0].run_attributes["tool_output_limit"] == 20_000
+    assert captured[0].run_attributes["context_strategy"] == "full"
+    assert runtime.close is not None
+    await runtime.close()
+    assert captured[0].shutdown_called is True
+
+
+class _FakePhoenix:
+    def __init__(self, config: PhoenixConfig, run_attributes: dict[str, object]) -> None:
+        self.config = config
+        self.run_attributes = run_attributes
+        self.events: list[str] = []
+        self.shutdown_called = False
+
+    async def __call__(self, event: Event) -> None:
+        self.events.append(event.name)
+
+    def shutdown(self) -> None:
+        self.shutdown_called = True
 
 
 @pytest.mark.asyncio

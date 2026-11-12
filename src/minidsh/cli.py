@@ -327,6 +327,23 @@ def _add_common_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--max-tool-calls", type=int)
     parser.add_argument("--max-seconds", type=float)
     parser.add_argument("--tool-output-limit", type=int)
+    parser.add_argument(
+        "--phoenix",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="export OpenInference spans to a local Arize Phoenix over OTLP HTTP",
+    )
+    parser.add_argument(
+        "--phoenix-endpoint",
+        help="Phoenix base URL or full OTLP traces URL; default: http://localhost:6006",
+    )
+    parser.add_argument("--phoenix-project", help="Phoenix project name; default: mini-dsh")
+    parser.add_argument(
+        "--phoenix-capture-content",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="include prompts, responses, and tool output in spans",
+    )
     parser.add_argument("--input-usd-per-million", type=float)
     parser.add_argument("--output-usd-per-million", type=float)
     parser.add_argument(
@@ -463,6 +480,10 @@ def _cli_overrides(args: argparse.Namespace) -> dict[str, Any]:
         "max_tool_calls": getattr(args, "max_tool_calls", None),
         "max_duration_seconds": getattr(args, "max_seconds", None),
         "tool_output_limit": getattr(args, "tool_output_limit", None),
+        "phoenix_enabled": getattr(args, "phoenix", None),
+        "phoenix_endpoint": getattr(args, "phoenix_endpoint", None),
+        "phoenix_project": getattr(args, "phoenix_project", None),
+        "phoenix_capture_content": getattr(args, "phoenix_capture_content", None),
         "input_usd_per_million": getattr(args, "input_usd_per_million", None),
         "output_usd_per_million": getattr(args, "output_usd_per_million", None),
         "cached_input_usd_per_million": getattr(args, "cached_input_usd_per_million", None),
@@ -1508,6 +1529,15 @@ def _config(args: argparse.Namespace) -> int:
             "tool_output_limit": resolved.options.tool_output_limit,
             "artifact_offload": resolved.options.artifact_offload,
             "tool_max_retries": resolved.options.tool_max_retries,
+            "phoenix": (
+                {
+                    "endpoint": resolved.options.phoenix.endpoint,
+                    "project": resolved.options.phoenix.project_name,
+                    "capture_content": resolved.options.phoenix.capture_content,
+                }
+                if resolved.options.phoenix is not None
+                else None
+            ),
             "network_enabled": resolved.options.network.enabled,
             "network_rules": sorted(
                 f"{rule.host}/{rule.protocol}/{sorted(rule.ports)}"

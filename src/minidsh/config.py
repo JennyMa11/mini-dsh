@@ -20,6 +20,12 @@ from minidsh.domain.memory import (
     MemoryEvidenceFile,
     MemoryEvidenceGrant,
 )
+from minidsh.domain.observability import (
+    DEFAULT_PHOENIX_ENDPOINT,
+    DEFAULT_PHOENIX_PROJECT,
+    MAX_PHOENIX_PROJECT_LENGTH,
+    PhoenixConfig,
+)
 from minidsh.domain.verification import MAX_VERIFICATION_SECONDS, VerificationConfig
 from minidsh.infrastructure import NetworkPolicy, NetworkRule
 from minidsh.runtime.catalog import PluginSpec
@@ -82,6 +88,10 @@ _ENV_FIELDS: dict[str, str] = {
     "SUBAGENT_MAX_TOOL_CALLS": "subagent_max_tool_calls",
     "SUBAGENT_MAX_SECONDS": "subagent_max_seconds",
     "MEMORY": "memory",
+    "PHOENIX_ENABLED": "phoenix_enabled",
+    "PHOENIX_ENDPOINT": "phoenix_endpoint",
+    "PHOENIX_PROJECT": "phoenix_project",
+    "PHOENIX_CAPTURE_CONTENT": "phoenix_capture_content",
 }
 
 _LIST_FIELDS = frozenset(
@@ -110,6 +120,8 @@ _BOOL_FIELDS = frozenset(
         "progressive_tools_enabled",
         "normalize_tool_results",
         "error_recovery_enabled",
+        "phoenix_enabled",
+        "phoenix_capture_content",
     }
 )
 _INT_FIELDS = frozenset(
@@ -246,6 +258,12 @@ class _ConfigModel(BaseModel):
     skill_roots: list[str] = Field(default_factory=list)
     verification: _VerificationSettings | None = None
     memory: _MemorySettings | None = None
+    phoenix_enabled: bool = False
+    phoenix_endpoint: str = Field(default=DEFAULT_PHOENIX_ENDPOINT, min_length=1)
+    phoenix_project: str = Field(
+        default=DEFAULT_PHOENIX_PROJECT, min_length=1, max_length=MAX_PHOENIX_PROJECT_LENGTH
+    )
+    phoenix_capture_content: bool = True
     local_first_enabled: bool = False
     progressive_tools_enabled: bool = False
     normalize_tool_results: bool = False
@@ -298,6 +316,12 @@ class _ConfigModel(BaseModel):
         # Reuse the same capability validation for file, environment, and API callers.
         RuntimeOptions(extra_permissions=frozenset(values))
         return values
+
+    @field_validator("phoenix_endpoint")
+    @classmethod
+    def _validate_phoenix_endpoint(cls, value: str) -> str:
+        PhoenixConfig(endpoint=value)
+        return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -456,6 +480,16 @@ def resolve_config(
             for rule in config.network_rules
         )
     )
+    phoenix: PhoenixConfig | None = None
+    if config.phoenix_enabled:
+        try:
+            phoenix = PhoenixConfig(
+                endpoint=config.phoenix_endpoint,
+                project_name=config.phoenix_project,
+                capture_content=config.phoenix_capture_content,
+            )
+        except ValueError as exc:
+            raise ConfigError(f"invalid Phoenix configuration: {exc}") from exc
     options = RuntimeOptions(
         plugin_specs=tuple(PluginSpec(spec.id, spec.config) for spec in config.plugins),
         service_selection=config.services,
@@ -466,6 +500,7 @@ def resolve_config(
         skill_roots=tuple(config.skill_roots),
         verification=config.verification.as_domain() if config.verification else None,
         memory=config.memory.as_domain() if config.memory else None,
+        phoenix=phoenix,
         local_first_enabled=config.local_first_enabled,
         progressive_tools_enabled=config.progressive_tools_enabled,
         normalize_tool_results=config.normalize_tool_results,

@@ -386,6 +386,34 @@ def test_config_profile_and_cli_can_revoke_file_permissions(
     assert output["sources"]["allow_write"] == "cli"
 
 
+def test_config_reports_phoenix_cli_flags(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    for key in tuple(os.environ):
+        if key.startswith("MINIDSH_"):
+            monkeypatch.delenv(key)
+    with pytest.raises(SystemExit) as exit_info:
+        main(
+            [
+                "config",
+                "--workspace",
+                str(tmp_path),
+                "--phoenix",
+                "--phoenix-project",
+                "harness-a",
+                "--no-phoenix-capture-content",
+            ]
+        )
+    assert exit_info.value.code == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["options"]["phoenix"] == {
+        "endpoint": "http://localhost:6006",
+        "project": "harness-a",
+        "capture_content": False,
+    }
+    assert output["sources"]["phoenix_enabled"] == "cli"
+
+
 @pytest.mark.e2e
 def test_cli_runs_an_offline_team_and_can_replay_a_child(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch

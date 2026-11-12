@@ -157,6 +157,9 @@ class BudgetContext:
             metadata={
                 "input_budget": self.input_budget,
                 "omitted_indices": list(omitted),
+                "omitted_estimated_tokens": estimate_tokens(
+                    tuple(history[index] for index in omitted)
+                ),
                 "omission_reason": "budget_or_superseded_state" if omitted else "none",
             },
         )
@@ -180,23 +183,27 @@ class SlidingWindowContext:
         if len(history) <= self.window_size + 2:
             selected = history
             start = 0
+            omitted_messages: tuple[Message, ...] = ()
         else:
             pinned = history[:2]
             start = _window_start(history, len(history) - self.window_size, floor=len(pinned))
             indices = _pinned_indices(history) | set(range(start, len(history)))
             selected = tuple(history[index] for index in sorted(indices))
-        omitted = len(history) - len(selected)
+            omitted_messages = tuple(
+                message for index, message in enumerate(history) if index not in indices
+            )
         return ContextView(
             selected,
             self.name,
             self.version,
             estimate_tokens(selected),
-            omitted_messages=omitted,
+            omitted_messages=len(omitted_messages),
             metadata={
                 "window_size": self.window_size,
                 # Recorded so the adjustment is observable rather than a silent
                 # widening of the window.  Zero for the common case.
                 "window_extended_for_tool_round": len(history) - start - self.window_size,
+                "omitted_estimated_tokens": estimate_tokens(omitted_messages),
             },
         )
 
@@ -256,6 +263,8 @@ class SummaryCompactionContext:
                 "recent_messages": self.recent_messages,
                 "summary_source_messages": len(omitted),
                 "window_extended_for_tool_round": len(history) - start - self.recent_messages,
+                "omitted_estimated_tokens": estimate_tokens(omitted),
+                "summary_estimated_tokens": estimate_tokens((summary,)) if omitted else 0,
             },
         )
 

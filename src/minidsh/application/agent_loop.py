@@ -314,6 +314,7 @@ class AgentLoop:
                         "strategy": context.strategy,
                         "version": context.version,
                         "estimated_tokens": context.estimated_tokens,
+                        "history_estimated_tokens": estimate_tokens(log.messages()),
                         "omitted_messages": context.omitted_messages,
                         "metadata": context.metadata,
                     },

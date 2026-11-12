@@ -24,7 +24,7 @@
 
 ### 5. 工程门禁全绿
 
-工程门禁包含 `ruff format --check`、`ruff check`、`mypy --strict`（165 个文件，`src` + `tests`）、`pytest`（1009 个测试）。测试分 `unit` / `integration` / `e2e` 三层。83% 总体覆盖率和 100% runtime 覆盖率是历史版本记录，本轮未重算。
+工程门禁包含 `ruff format --check`、`ruff check`、`mypy --strict`（168 个文件，`src` + `tests`）、`pytest`（1024 个测试）。测试分 `unit` / `integration` / `e2e` 三层。83% 总体覆盖率和 100% runtime 覆盖率是历史版本记录，本轮未重算。
 
 ### 6. 真实模型实测，而且报告自带实验条件
 

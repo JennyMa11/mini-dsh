@@ -42,6 +42,8 @@
 
 | [0030](0030-interactive-budget-adjustment.md) | 交互会话内查看和修改四类运行预算 | Accepted with limitations |
 
+| [0031](0031-phoenix-observability.md) | Phoenix / OpenInference 事件导出与配置化对照 | Accepted with limitations |
+
 ## 状态含义
 
 - **Proposed**：规划中的决策；尚未完成实现与验收。
